@@ -2,3 +2,5 @@ __pypackages__/
 /.idea/
 .idea/
 /DEV/
+./DEV
+./DEV/*
