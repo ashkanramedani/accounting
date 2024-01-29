@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  admin.api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: admin.api
+    volumes:
+      - ./:/app
+    ports:
+      - 6600:6600
