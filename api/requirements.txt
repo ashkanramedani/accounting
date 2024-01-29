@@ -17,7 +17,7 @@ requests
 pytz
 redis
 fastapi-limiter
-pydantic[dotenv]
+pydantic[dotenv]<2
 minio
 khayyam
 httpx
