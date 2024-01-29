@@ -1,6 +1,6 @@
 from loguru import logger
-from lib.requester import requester
-from lib.json_handler import json_handler
+from .requester import requester
+from .json_handler import json_handler
 
 class log():
     def __init__(self, config={}):

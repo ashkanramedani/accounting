@@ -4,7 +4,7 @@ import email
 # from unicodedata import category
 # from click import style
 from typing import List, Union
-from db.database import Base
+from database import Base
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, Date, Time, UniqueConstraint, Index, MetaData, Float
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship, Mapped
@@ -33,6 +33,8 @@ __all__ = [
     "Business_Trip",
     "Remote_Request"]
 
+
+# PK
 
 class Student(Base):
     __tablename__ = "student"
@@ -93,8 +95,6 @@ class Survey_Question(Base):
 
 # class Teacher_Tardy_Reports(Base):
 #     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-
 
 
 
