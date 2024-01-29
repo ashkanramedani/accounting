@@ -11,6 +11,7 @@ from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 
 from router import employee
+from router import form
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -35,6 +36,7 @@ app.add_middleware(
 )
 
 app.include_router(employee.router)
+app.include_router(form.router)
 
 @app.route("/ping")
 def ping():
