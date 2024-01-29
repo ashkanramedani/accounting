@@ -1,9 +1,23 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date
-from typing import List
+import datetime
+import email
+# from enum import unique
+# from unicodedata import category
+# from click import style
+from typing import List, Union
+from db.database import Base
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, Date, Time, UniqueConstraint, Index, MetaData, Float
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy.sql import expression, func
+from email.policy import default
+from uuid import UUID
+from typing import Optional, List, Dict, Any
 
-from sqlalchemy.orm import relationship
+# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+#    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
+from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
 
-from Connector import PSQL
+metadata_obj = MetaData()
 
 __all__ = [
     "Student",
@@ -20,12 +34,12 @@ __all__ = [
     "Remote_Request"]
 
 
-class Student(PSQL):
+class Student(Base):
     __tablename__ = "student"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class employees(PSQL):
+class employees(Base):
     __tablename__ = "employees"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, index=True)
@@ -33,7 +47,7 @@ class employees(PSQL):
     job_title = Column(String, index=True)
 
 
-class Leave_Request(PSQL):
+class Leave_Request(Base):
     __tablename__ = "leave_request"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     employee_id = Column(Integer, ForeignKey("employee.id"))
@@ -42,11 +56,11 @@ class Leave_Request(PSQL):
     Description = Column(String)
 
 
-class Teacher_Tardy_Reports(PSQL):
+class Teacher_Tardy_Reports(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class Survey(PSQL):
+class Survey(Base):
     __tablename__ = "survey"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     student_id = Column(Integer, ForeignKey("student.id"))
@@ -54,44 +68,44 @@ class Survey(PSQL):
     Description: str
 
 
-class Servey_Relation(PSQL):
+class Servey_Relation(Base):
     __tablename__ = "servey_relation"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     Survey_id = Column(Integer, ForeignKey("servey.id"), index=True, unique=False)
     Survey_Question_id = Column(Integer, ForeignKey("servey_question.id"), index=True, unique=False)
 
 
-class Survey_Question(PSQL):
+class Survey_Question(Base):
     __tablename__ = "servey_question"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     question = Column(String)
 
 
-class Teachers_Report(PSQL):
+class Teachers_Report(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class Class_Cancellation(PSQL):
+class Class_Cancellation(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class Teacher_Replacement(PSQL):
+class Teacher_Replacement(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class Employee_Timesheet(PSQL):
+class Employee_Timesheet(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class Business_Trip(PSQL):
+class Business_Trip(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class Remote_Request(PSQL):
+class Remote_Request(Base):
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-class Survey(PSQL):
+class Survey(Base):
     __tablename__ = "surveys"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
@@ -101,7 +115,7 @@ class Survey(PSQL):
     questions = relationship("Question", back_populates="survey")
 
 
-class Question(PSQL):
+class Question(Base):
     __tablename__ = "questions"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
