@@ -21,28 +21,28 @@ from db import db_employee
 
 router = APIRouter(prefix='/api/v1/employee', tags=['Employee'])
 
-# @router.post("/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-# async def add_employee(employee: sch.BASE_Employee, response: Response, db= Depends(get_db)):
-#     try:
-#         OBJ = Models.Employee(
-#                 name=employee.name,
-#                 last_name=employee.last_name,
-#                 job_title=employee.job_title)
+@router.post("/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def add_employee(employee: sch.BASE_Employee, response: Response, db= Depends(get_db)):
+    try:
+        OBJ = Models.Employee(
+                name=employee.name,
+                last_name=employee.last_name,
+                job_title=employee.job_title)
 
-#         db.add(OBJ)
-#         db.commit()
-#         db.refresh(OBJ)
-#         return 200
-#     except Exception as error:
-#         logger.error(error)
-#         return 500
+        db.add(OBJ)
+        db.commit()
+        db.refresh(OBJ)
+        return 200
+    except Exception as error:
+        logger.error(error)
+        return 500
 
 
-# @router.post("/search")
-# async def search_employee(employee_id: int, db= Depends(get_db)):
-#     res = db.query(Models.Employee).filter(Models.Employee.id == employee_id).all()
+@router.post("/search")
+async def search_employee(employee_id: int, db= Depends(get_db)):
+    res = db.query(Models.Employee).filter(Models.Employee.id == employee_id).all()
 
-#     logger.info(res)
-#     if not res:
-#         return {"status_code": 200, "res": "NotFound"}
-#     return {"status_code": 200, "res": res}
+    logger.info(res)
+    if not res:
+        return {"status_code": 200, "res": "NotFound"}
+    return {"status_code": 200, "res": res}
