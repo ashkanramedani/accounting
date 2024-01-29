@@ -24,7 +24,7 @@ router = APIRouter(prefix='/api/v1/employee', tags=['Employee'])
 @router.post("/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def add_employee(employee: sch.BASE_Employee, response: Response, db= Depends(get_db)):
     try:
-        OBJ = Models.Employee(
+        OBJ = dbm.Employees(
                 name=employee.name,
                 last_name=employee.last_name,
                 job_title=employee.job_title)
@@ -40,7 +40,7 @@ async def add_employee(employee: sch.BASE_Employee, response: Response, db= Depe
 
 @router.post("/search")
 async def search_employee(employee_id: int, db= Depends(get_db)):
-    res = db.query(Models.Employee).filter(Models.Employee.id == employee_id).all()
+    res = db.query(dbm.Employees).filter(dbm.Employees.id == employee_id).all()
 
     logger.info(res)
     if not res:

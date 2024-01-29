@@ -23,15 +23,5 @@ router = APIRouter(prefix='/api/v1/form', tags=['Form'])
 
 @router.post("/form", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def form(Form: sch.BASE_Leave_Form, db= Depends(get_db)):
-    db.query(Models.Employee).filter(Models.Employee.id == Form.id)
-    OBJ = Models.Leave_form(
-            id=Form.id,
-            employee_id=Form.employee_id,
-            Start_Date=Form.start,
-            End_Date=Form.end,
-            Description=Form.Description
-    )
-    db.add(OBJ)
-    db.commit()
-    db.refresh(OBJ)
+   return db_form.post_data(db, Form)
 

@@ -14,7 +14,6 @@ from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
 from pydantic import BaseModel
 
 class BASE_Employee(BaseModel):
-    id: int
     name: str
     last_name: str
     job_title: str
