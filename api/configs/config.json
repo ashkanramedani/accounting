@@ -5,7 +5,7 @@
     "logger": {
         "format": "<level>{time:HH:mm:ss}</level> | <cyan>{name}:{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
         "file": {
-        "path": "files/Log.log",
+        "path": "../log/Log.log",
         "size": "10 MB"
         }
     },

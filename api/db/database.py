@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import sys
 import os
-
+from loguru import logger
 from lib.json_handler import json_handler
 from lib.log import log
 
@@ -13,7 +13,7 @@ directory = os.getcwd()
 _obj_json_handler_config = json_handler(FilePath=directory +"/configs/config.json")
 config =  _obj_json_handler_config.Data
 _obj_log = log()
-logger.add(sink=join(dirname(__file__), config["logger"]["file"]["path"]), rotation=config["logger"]["file"]["size"], format=config["logger"]["format"], level="INFO")
+logger.add(sink=os.path.join(os.path.dirname(__file__), config["logger"]["file"]["path"]), rotation=config["logger"]["file"]["size"], format=config["logger"]["format"], level="INFO")
 
 if config['developer']:
     SQLALCHEMY_DATABASE_URL = f"{config['db_test']['database_type']}://{config['db_test']['username']}{':' if config['db_test']['username'] != '' else ''}{config['db_test']['password']}{'@' if config['db_test']['username'] != '' else ''}{config['db_test']['ip']}:{config['db_test']['port']}/{config['db_test']['database_name']}"

@@ -21,7 +21,7 @@ metadata_obj = MetaData()
 
 __all__ = [
     "Student",
-    "employees",
+    "Employees",
     "Leave_Request",
     "Teacher_Tardy_Reports",
     "Survey_Question",
@@ -38,72 +38,27 @@ class Student(Base):
     __tablename__ = "student"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
-
-class employees(Base):
+class Employees(Base):
     __tablename__ = "employees"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     name = Column(String, index=True)
     last_name = Column(String, index=True)
     job_title = Column(String, index=True)
 
-
 class Leave_Request(Base):
     __tablename__ = "leave_request"
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    employee_id = Column(Integer, ForeignKey("employee.id"))
+    employee_id = Column(Integer, ForeignKey("employees.id"), nullable=False)
     Start_Date = Column(Date, index=True)
     End_Date = Column(Date, index=True)
     Description = Column(String)
 
-
-class Teacher_Tardy_Reports(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-
-class Survey(Base):
-    __tablename__ = "survey"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    student_id = Column(Integer, ForeignKey("student.id"))
-    Question_list = Column()
-    Description: str
-
-
-class Servey_Relation(Base):
-    __tablename__ = "servey_relation"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    Survey_id = Column(Integer, ForeignKey("servey.id"), index=True, unique=False)
-    Survey_Question_id = Column(Integer, ForeignKey("servey_question.id"), index=True, unique=False)
-
-
-class Survey_Question(Base):
-    __tablename__ = "servey_question"
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-    question = Column(String)
-
-
-class Teachers_Report(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-
-class Class_Cancellation(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-
-class Teacher_Replacement(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-
-class Employee_Timesheet(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-
-class Business_Trip(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
-
-class Remote_Request(Base):
-    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
-
+# class Survey(Base):
+#     __tablename__ = "survey"
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+#     student_id = Column(Integer, ForeignKey("student.id"), nullable=False)
+#     Question_list = Column()
+#     Description: str
 
 class Survey(Base):
     __tablename__ = "surveys"
@@ -114,7 +69,6 @@ class Survey(Base):
     # Define a one-to-many relationship with the Question table
     questions = relationship("Question", back_populates="survey")
 
-
 class Question(Base):
     __tablename__ = "questions"
 
@@ -124,3 +78,45 @@ class Question(Base):
     # Define the foreign key relationship with the Survey table
     survey_id = Column(Integer, ForeignKey("surveys.id"))
     survey = relationship("Survey", back_populates="questions")
+
+class Servey_Relation(Base):
+    __tablename__ = "servey_relation"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    Survey_id = Column(Integer, ForeignKey("surveys.id"), index=True, unique=False)
+    Survey_Question_id = Column(Integer, ForeignKey("servey_question.id"), index=True, unique=False)
+
+
+class Survey_Question(Base):
+    __tablename__ = "servey_question"
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    question = Column(String)
+
+# class Teacher_Tardy_Reports(Base):
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+
+
+
+
+# class Teachers_Report(Base):
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+
+# class Class_Cancellation(Base):
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+
+# class Teacher_Replacement(Base):
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+
+# class Employee_Timesheet(Base):
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+
+# class Business_Trip(Base):
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+
+
+# class Remote_Request(Base):
+#     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
