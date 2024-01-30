@@ -13,7 +13,7 @@ from api.db.database import get_db
 from fastapi_limiter.depends import RateLimiter
 from api.lib import Hash, Massenger, Tools
 
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 from api.db import db_employee
