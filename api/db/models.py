@@ -150,8 +150,6 @@ class Class_Cancellation(Base):
 #     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
 
-
-
 # class Teacher_Replacement(Base):
 #     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
 
