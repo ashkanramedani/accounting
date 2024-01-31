@@ -180,23 +180,33 @@ class Questions_form(Base):
     text = Column(String)
 
 
-class Response_form(Base):
-    __tablename__ = "response"
+# class Response_form(Base):
+#     __tablename__ = "response"
 
-    response_pk__id = Column(Integer, ForeignKey("response.response_pk__id"))
-    student_id = Column(Integer, ForeignKey("student.student_pk_id"))
+#     response_pk__id = Column(Integer, ForeignKey("response.response_pk__id"))
+#     student_id = Column(Integer, ForeignKey("student.student_pk_id"))
 
-class Response_R_Answer(Base):
-    __tablename__ = "response_r_answer"
+# class Response_R_Answer(Base):
+    # __tablename__ = "response_r_answer"
 
-    survey_r_questions_pk_ = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    response_id = Column(Integer, ForeignKey("response.response_pk__id"))
-    question_id = Column(Integer, ForeignKey("answers.answer_pk_id"))
+    # survey_r_questions_pk_ = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+    # response_id = Column(Integer, ForeignKey("response.response_pk__id"))
+    # question_id = Column(Integer, ForeignKey("answers.answer_pk_id"))
 
 
-class Answer_form(Base):
-    __tablename__ = "answers"
+# class Answer_form(Base):
+#     __tablename__ = "answers"
 
-    answer_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    question_id = Column(Integer, ForeignKey("questions.question_pk_id"))
+#     answer_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+#     question_id = Column(Integer, ForeignKey("questions.question_pk_id"))
+#     answer = Column(String)
+
+
+
+ class RRR(Base):
+    __tablename__ = "tbl_rrr"
+    
+    response_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+    student_fk_id = Column(Integer, ForeignKey("student.student_pk_id"))
+    question_fk_id = Column(Integer, ForeignKey("questions.question_pk_id"))
     answer = Column(String)
