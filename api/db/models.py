@@ -25,6 +25,8 @@ from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
 metadata_obj = MetaData()
 
 
+
+
 # __all__ = [
 #     "Student",
 #     "Employees",
@@ -158,26 +160,41 @@ class Teachers_Report_form(Base):
 
 
 ## Survey Form
-class Survey_form(Base):
-    __tablename__ = "surveys"
+class Forms(Base):
+    __tablename__ = "tbl_forms"
 
-    survey_form_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+    form_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
     class_id = Column(Integer, ForeignKey("classes.class_pk_id"))
     title = Column(String, index=True)
 
-class Survey_R_Questions_Bank(Base):
-    __tablename__ = "survey_r_questions"
-
-    survey_r_questions_pk_ = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    survey_id = Column(Integer, ForeignKey("surveys.survey_form_pk_id"))
-    question_id = Column(Integer, ForeignKey("questions.question_pk_id"))
-
-
 class Questions_form(Base):
-    __tablename__ = "questions"
+    __tablename__ = "tbl_questions"
 
     question_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
     text = Column(String)
+
+forms_questions_association = Table(
+    'rel_forms_questions', 
+    Base.metadata, 
+    Column("form_fk_id", Integer, ForeignKey("tbl_forms.form_pk_id"), nullable=False, primary_key=True),
+    Column("question_fk_id", Integer, ForeignKey("tbl_questions.question_pk_id"), nullable=False, primary_key=True)
+)
+
+class RRR(Base):
+    __tablename__ = "tbl_rrr"
+    
+    response_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+    student_fk_id = Column(Integer, ForeignKey("student.student_pk_id"))
+    question_fk_id = Column(Integer, ForeignKey("questions.question_pk_id"))
+    answer = Column(String)
+
+# class Survey_R_Questions_Bank(Base):
+#     __tablename__ = "survey_r_questions"
+
+#     survey_r_questions_pk_ = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+#     survey_id = Column(Integer, )
+#     question_id = Column(Integer, )
+
 
 
 # class Response_form(Base):
@@ -203,10 +220,3 @@ class Questions_form(Base):
 
 
 
- class RRR(Base):
-    __tablename__ = "tbl_rrr"
-    
-    response_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    student_fk_id = Column(Integer, ForeignKey("student.student_pk_id"))
-    question_fk_id = Column(Integer, ForeignKey("questions.question_pk_id"))
-    answer = Column(String)
