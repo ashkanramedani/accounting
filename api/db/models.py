@@ -43,6 +43,23 @@ metadata_obj = MetaData()
 
 
 # PK
+class BaseTable: 
+    
+    priority = Column(Integer, default=5, nullable=True)
+    visible = Column(Boolean, server_default=expression.true(), nullable=False)
+    expier_date = Column(DateTime(timezone=True), default=None)
+
+    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False) 
+    # user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False)
+
+    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
+    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
+    # user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+
+    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
+    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
+    delete_date = Column(DateTime(timezone=True), default=None)    
+    # user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
 
 class Student_form(Base):
     __tablename__ = "student"
@@ -180,7 +197,7 @@ forms_questions_association = Table(
     Column("question_fk_id", Integer, ForeignKey("tbl_questions.question_pk_id"), nullable=False, primary_key=True)
 )
 
-class RRR(Base):
+class RRR(Base, BaseTable):
     __tablename__ = "tbl_rrr"
     
     response_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
@@ -194,8 +211,6 @@ class RRR(Base):
 #     survey_r_questions_pk_ = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
 #     survey_id = Column(Integer, )
 #     question_id = Column(Integer, )
-
-
 
 # class Response_form(Base):
 #     __tablename__ = "response"
@@ -217,6 +232,3 @@ class RRR(Base):
 #     answer_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
 #     question_id = Column(Integer, ForeignKey("questions.question_pk_id"))
 #     answer = Column(String)
-
-
-
