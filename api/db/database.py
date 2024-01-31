@@ -4,14 +4,13 @@ from sqlalchemy.orm import sessionmaker
 import sys
 import os
 from loguru import logger
-from lib.json_handler import json_handler
-from lib.log import log
+from api.lib import json_handler, log
 
+# to get the current working directory
 
-#to get the current working directory
-directory = os.getcwd()
-_obj_json_handler_config = json_handler(FilePath=directory +"/configs/config.json")
-config =  _obj_json_handler_config.Data
+directory = os.path.normpath(f'{os.path.dirname(__file__)}/../configs/config.json')
+_obj_json_handler_config = json_handler(FilePath=directory)
+config = _obj_json_handler_config.Data
 _obj_log = log()
 logger.add(sink=os.path.join(os.path.dirname(__file__), config["logger"]["file"]["path"]), rotation=config["logger"]["file"]["size"], format=config["logger"]["format"], level="INFO")
 
@@ -27,10 +26,11 @@ else:
 
 if config['developer_log']:
     _obj_log.show_log(SQLALCHEMY_DATABASE_URL, 'i')
-    
+
 # engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=3600, echo=True)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
 
 # Dependency
 def get_db():

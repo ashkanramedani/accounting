@@ -1,27 +1,24 @@
-import sys
 import os
-import hashlib
-import time
-import requests
-import re
+import os
 import random
-from typing import Dict, Any
-from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
-from dateutil import parser
-from datetime import date, timedelta, datetime
-from persiantools.jdatetime import JalaliDate
+import time
+from datetime import timedelta, datetime
+from typing import Any
+
+import requests
 from khayyam import JalaliDatetime
 
-from .json_handler import json_handler
-from .redis_db import Redis
-from .log import log
 from .hash import Hash
-import logging
+from .json_handler import json_handler
+from .log import log
+from .redis_db import Redis
 
 _objLog = log()
-directory = os.getcwd()
-_obj_json_handler_config = json_handler(FilePath=directory +"/configs/config.json")
+# directory = os.getcwd()
+directory = os.path.normpath(f'{os.path.dirname(__file__)}/../configs/config.json')
+
+
+_obj_json_handler_config = json_handler(FilePath=directory)
 
 config =  _obj_json_handler_config.Data
 
@@ -58,7 +55,7 @@ class Tools:
         _hash_value = Hash.hash_generator(username+_datetime)
 
         if _obj_redis.set_key(_hash_value, user_id, 24*60*60):
-            link = f"{config['verify']['url']}{hash_value}"
+            link = f"{config['verify']['url']}{_hash_value}"
             return link, _hash_value
         else: 
             return False, None

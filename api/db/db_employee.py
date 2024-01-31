@@ -17,17 +17,15 @@ def get_employee(db: Session, employee_id: int | None = None):
     try:
         if isinstance(employee_id, int):
             data = db.query(dbm.Employees_signup_form).filter(dbm.Employees_signup_form.employees_pk_id == employee_id).first()
-            if data:
-                return data.__dict__
-            return f"employee leave form Not Fount with ID: {employee_id}"
-        data = db.query(dbm.Employees_signup_form).all()
+        else:
+            data = db.query(dbm.Employees_signup_form).all()
         if data:
-            return [record.__dict__ for record in data]
-        return f"Empty Table: {employee_id}"
+            return 200, data
+        return 404, f"Not Found"
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return -1
+        return 500, e.__repr__()
 
 
 def post_employee(db: Session, Form: sch.Employee_schema):
@@ -40,23 +38,25 @@ def post_employee(db: Session, Form: sch.Employee_schema):
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
+        return 200
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return -1
+        return 500, e.__repr__()
 
 
 def delete_employee(db: Session, employee_id: int):
     try:
-        if not db.query(dbm.Employees_signup_form).filter(dbm.Employees_signup_form.employees_pk_id == employee_id).first():
-            return f"employee Does Not Exist with ID: {employee_id}"
-        db.query(dbm.Leave_request_form).filter(dbm.Employees_signup_form.employees_pk_id == employee_id).delete()
+        record = db.query(dbm.Leave_request_form).filter(dbm.Employees_signup_form.employees_pk_id == employee_id).first()
+        if not record or record.deleted is True:
+            return 404, f"employee Does Not Exist with ID: {employee_id}"
+        record.deleted = True
         db.commit()
-
+        return 200, "employee Deleted"
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return -1
+        return 500, e.__repr__()
 
 
 def update_leave_form(db: Session, Form: sch.Employee_schema, employee_id: int):
@@ -66,7 +66,8 @@ def update_leave_form(db: Session, Form: sch.Employee_schema, employee_id: int):
         record.last_name = Form.last_name,
         record.job_title = Form.job_title
         db.commit()
+        return 200, "Record Updated"
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return -1
+        return 500, e.__repr__()

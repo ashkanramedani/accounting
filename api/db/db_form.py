@@ -6,6 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from uuid import UUID
 from typing import Optional, List, Dict, Any
 
+from api.lib import unique
 import logging
 import models as dbm
 from sqlalchemy.orm import Session
@@ -28,7 +29,7 @@ def get_leave_form(db: Session, form_id: int):
         return -1
 
 
-def post_leave_form(db: Session, Form: sch.Leave_request_form):
+def post_leave_form(db: Session, Form: sch.Leave_request_schema):
     try:
         OBJ = dbm.Leave_request_form(
                 employee_id=Form.employee_id,
@@ -48,9 +49,8 @@ def post_leave_form(db: Session, Form: sch.Leave_request_form):
 
 def delete_leave_form(db: Session, leave_form_id: int):
     try:
-        if not db.query(dbm.Leave_request_form).filter(dbm.Leave_request_form.leave_request_pk_id == leave_form_id).first():
-            return f"Form Not Exist with ID: {leave_form_id}"
-        db.query(dbm.Leave_request_form).filter(dbm.Leave_request_form.leave_request_pk_id == leave_form_id).delete()
+        record = db.query(dbm.Leave_request_form).filter(dbm.Leave_request_form.leave_request_pk_id == leave_form_id).delete()
+        # if record.deleted is True:
         db.commit()
 
     except Exception as e:
@@ -59,7 +59,7 @@ def delete_leave_form(db: Session, leave_form_id: int):
         return -1
 
 
-def update_leave_form(db: Session, Form: sch.Leave_request_form, leave_request_id: int):
+def update_leave_form(db: Session, Form: sch.Leave_request_schema, leave_request_id: int):
     try:
         record = db.query(dbm.Leave_request_form).filter(dbm.Leave_request_form.leave_request_pk_id == leave_request_id).first()
         record.employee_id = Form.employee_id
@@ -67,6 +67,7 @@ def update_leave_form(db: Session, Form: sch.Leave_request_form, leave_request_i
         record.End_Date = Form.end_date,
         record.Description = Form.Description
         db.commit()
+        return 200, "Form Updated"
     except Exception as e:
         logging.error(e)
         db.rollback()
