@@ -1,97 +1,99 @@
-import datetime
-import email
-# from enum import unique
-# from unicodedata import category
-# from click import style
-from typing import List, Union
+# import datetime
+# import email
+# from typing import List, Union
 from enum import Enum as PythonEnum
+# from sqlalchemy.sql.type_api import TypeEngine
+# from sqlalchemy.dialects.postgresql import JSONB
+# from email.policy import default
+# from uuid import UUID
+# from typing import Optional, List, Dict, Any
 
-from sqlalchemy.sql.type_api import TypeEngine
-
+from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
 from database import Base
 from sqlalchemy import Enum, Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, Date, Time, UniqueConstraint, Index, MetaData, Float, Interval
-from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship, Mapped
 from sqlalchemy.sql import expression, func
-from email.policy import default
-from uuid import UUID
-from typing import Optional, List, Dict, Any
 
-# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
-#    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
-from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
-
+from api.db.database import engine
 
 metadata_obj = MetaData()
 
+IDs = {
+    "employees": "employees.employees_pk_id",
+    "classes": "classes.class_pk_id",
+    "days": "days.day_pk_id",
+    "employee_timesheet": "employee_timesheet_pk_id"
+}
 
 
+def create_Unique_ID():
+    return Column(GUID,
+                  server_default=GUID_SERVER_DEFAULT_POSTGRESQL,
+                  primary_key=True,
+                  nullable=False,
+                  unique=True,
+                  index=True)
 
-# __all__ = [
-#     "Student",
-#     "Employees",
-#     "Leave_Request",
-#     "Teacher_Tardy_Reports",
-#     "Survey_Question",
-#     "Survey",
-#     "Teachers_Report",
-#     "Class_Cancellation",
-#     "Teacher_Replacement",
-#     "Employee_Timesheet",
-#     "Business_Trip",
-#     "Remote_Request"]
+
+def create_forenKey(table: str):
+    return Column(GUID, ForeignKey(IDs[table], ondelete='SET NULL'), nullable=False)
 
 
 class BaseTable:
+    # __tablename__ = "BASE"
     priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expier_date = Column(DateTime(timezone=True), default=None)
-
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False) 
+    expire_date = Column(DateTime(timezone=True), default=None)
+    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     # user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False)
-
     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
     # user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
-    delete_date = Column(DateTime(timezone=True), default=None)    
+    delete_date = Column(DateTime(timezone=True), default=None)
     # user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-class Student_form(Base, BaseTable):
-    __tablename__ = "student"
-    student_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-
-
-class Class_form(Base, BaseTable):
-    __tablename__ = "classes"
-    class_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-
-
-class Employees_signup_form(Base, BaseTable):
-    __tablename__ = "employees"
-    employees_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    name = Column(String, nullable=False)
-    last_name = Column(String, index=True)
-    job_title = Column(String, index=True)
 
 
 class Leave_request_form(Base, BaseTable):
     __tablename__ = "leave_request"
-    leave_request_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    created_by = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    employee_id = Column(Integer, ForeignKey("employees.employees_pk_id", ondelete='SET NULL'), nullable=False)
+    leave_request_pk_id = create_Unique_ID()
+    created_by_fk_id = create_forenKey("employees")
+    created_for_fk_id = create_forenKey("employees")
     start_date = Column(Date, index=True)
     end_date = Column(Date, index=True)
     Description = Column(String)
 
 
+class Student_form(Base, BaseTable):
+    __tablename__ = "student"
+    student_pk_id = create_Unique_ID()
+    student_name = Column(String, nullable=False)
+    student_last_name = Column(String, index=True)
+    student__level = Column(String, index=True)
+    student_age = Column(Integer)
+
+
+class Class_form(Base, BaseTable):
+    __tablename__ = "classes"
+    class_pk_id = create_Unique_ID()
+    starting_time = Column(Time, nullable=False)
+    duration = Column(Interval)
+    class_date = Column(DateTime, nullable=True)
+
+
+class Employees_signup_form(Base, BaseTable):
+    __tablename__ = "employees"
+    employees_pk_id = create_Unique_ID()
+    name = Column(String, nullable=False)
+    last_name = Column(String, index=True)
+    job_title = Column(String, index=True)
+
 
 class Remote_Request_form(Base, BaseTable):
     __tablename__ = "remote_requests"
-    remote_request_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    employee_id = Column(Integer, ForeignKey("employees.employee_pk_id"))
+    remote_request_pk_id = create_Unique_ID()
+    employee_fk_id = create_forenKey("employees")
     create_date = Column(Date)
     start_date = Column(Date)
     end_date = Column(Date)
@@ -101,20 +103,20 @@ class Remote_Request_form(Base, BaseTable):
 
 class Teacher_tardy_reports_form(Base, BaseTable):
     __tablename__ = "teacher_tardy_reports"
-    Teacher_tardy_reports_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    created_by = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    teacher_id = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    class_id = Column(Integer, ForeignKey("classes.class_pk_id"))
+    Teacher_tardy_reports_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("employees")
+    teacher_fk_id = create_forenKey("employees")
+    class_fk_id = create_forenKey("classes")
     delay = Column(Interval)
 
 
 class Class_Cancellation_form(Base, BaseTable):
     __tablename__ = "class_cancellation"
-    Class_Cancellation_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+    class_cancellation_pk_id = create_Unique_ID()
     created_date = Column(Date)
-    created_by = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    class_id = Column(Integer, ForeignKey("classes.class_pk_id"))
-    teacher_id = Column(Integer, ForeignKey("employees.employee_pk_id"))
+    created_fk_by = create_forenKey("employees")
+    class_fk_id = create_forenKey("classes")
+    teacher_fk_id = create_forenKey("employees")
     replacement = Column(Date)
     class_duration = Column(Interval)
     class_location = Column(String)
@@ -123,14 +125,14 @@ class Class_Cancellation_form(Base, BaseTable):
 
 class Teacher_Replacement_form(Base, BaseTable):
     __tablename__ = "teacher_replacement"
-    teacher_replacement_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    created_by = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    teacher_id = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    replacement_teacher_id = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    class_id = Column(Integer, ForeignKey("classes.class_pk_id"))
+    teacher_replacement_pk_id = create_Unique_ID()
+    created_by_fk_id = create_forenKey("employees")
+    teacher_fk_id = create_forenKey("employees")
+    replacement_teacher_fk_id = create_forenKey("employees")
+    class_fk_id = create_forenKey("classes")
 
 
-class WeekdayEnum(Enum):
+class WeekdayEnum(PythonEnum):
     SATURDAY = "شنبه"
     SUNDAY = "یکشنبه"
     MONDAY = "دوشنبه"
@@ -142,90 +144,67 @@ class WeekdayEnum(Enum):
 
 class Day_form(Base, BaseTable):
     __tablename__ = 'days'
-    day_pk_id = Column(Integer, primary_key=True)
+    day_pk_id = create_Unique_ID()
+    time_sheet_fk_id = create_forenKey("employee_timesheet")
     date = Column(Date, nullable=False)
-    # day_of_week = Column(Enum(WeekdayEnum), nullable=False)
+    day_of_week = Column(Enum(WeekdayEnum), nullable=False)
     entry_time = Column(DateTime, nullable=False)
     exit_time = Column(DateTime, nullable=False)
     delta_time = Column(Interval, nullable=False)
-    timesheet = relationship("Employee_Timesheet_form", back_populates="day")
 
 
 class Employee_Timesheet_form(Base, BaseTable):
     __tablename__ = "employee_timesheet"
-    employee_timesheet_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    day_id = Column(Integer, ForeignKey('days.day_pk_id'))
-    day = relationship("Day_form", back_populates="timesheet")
+    employee_timesheet_pk_id = create_Unique_ID()
+    employee_fk_id = create_forenKey("employees")
 
 
 class Business_Trip_form(Base, BaseTable):
     __tablename__ = "business_trip"
-    business_trip_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    employee_id = Column(Integer, ForeignKey("employees.employee_pk_id"))
+    business_trip_pk_id = create_Unique_ID()
+    employee_fk_id = create_forenKey("employees")
     destination = Column(String)
     description = Column(String)
 
+
 class Teachers_Report_form(Base, BaseTable):
     __tablename__ = "teachers_report"
-    teachers_report_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    created_by = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    teacher_id = Column(Integer, ForeignKey("employees.employee_pk_id"))
-    ...
+    teachers_report_pk_id = create_Unique_ID()
+    created_by_fk_id = create_forenKey("employees")
+    teacher_fk_id = create_forenKey("employees")
+    score = Column(Float)
+    number_of_student = Column(Integer)
+    has_cancellation = Column(Boolean, default=False)
+    starts_at = Column(DateTime)
+    ends_at = Column(DateTime)
+    teacher_sheet_score = Column(Float, nullable=True)
 
 
 ## Survey Form
-class Forms(Base, BaseTable):
-    __tablename__ = "tbl_forms"
+class survey_form(Base, BaseTable):
+    __tablename__ = "forms"
 
-    form_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    class_id = Column(Integer, ForeignKey("classes.class_pk_id"))
+    form_pk_id = create_Unique_ID()
+    class_fk_id = create_forenKey("classes")
     title = Column(String, index=True)
 
-class Questions_form(Base, BaseTable):
-    __tablename__ = "tbl_questions"
 
-    question_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
+class Questions_form(Base, BaseTable):
+    __tablename__ = "question"
+    question_pk_id = create_Unique_ID()
     text = Column(String)
 
-forms_questions_association = Table(
-    'rel_forms_questions', 
-    Base.metadata, 
-    Column("form_fk_id", Integer, ForeignKey("tbl_forms.form_pk_id"), nullable=False, primary_key=True),
-    Column("question_fk_id", Integer, ForeignKey("tbl_questions.question_pk_id"), nullable=False, primary_key=True)
-)
 
-class RRR(Base, BaseTable):
-    __tablename__ = "tbl_rrr"
-    
-    response_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    student_fk_id = Column(Integer, ForeignKey("student.student_pk_id"))
-    question_fk_id = Column(Integer, ForeignKey("questions.question_pk_id"))
+class survey_questions_form(Base, BaseTable):
+    __tablename__ = 'forms_questions'
+    form_fk_id = create_forenKey("forms")
+    question = create_forenKey("question")
+
+
+class response_form(Base, BaseTable):
+    __tablename__ = "response"
+    response_pk_id = create_Unique_ID()
+    student_fk_id = create_forenKey("student")
+    question_fk_id = create_forenKey("question")
+    form_fk_id = create_forenKey("forms")
     answer = Column(String)
-
-# class Survey_R_Questions_Bank(Base, BaseTable):
-#     __tablename__ = "survey_r_questions"
-
-#     survey_r_questions_pk_ = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-#     survey_id = Column(Integer, )
-#     question_id = Column(Integer, )
-
-# class Response_form(Base, BaseTable):
-#     __tablename__ = "response"
-
-#     response_pk__id = Column(Integer, ForeignKey("response.response_pk__id"))
-#     student_id = Column(Integer, ForeignKey("student.student_pk_id"))
-
-# class Response_R_Answer(Base, BaseTable):
-    # __tablename__ = "response_r_answer"
-
-    # survey_r_questions_pk_ = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-    # response_id = Column(Integer, ForeignKey("response.response_pk__id"))
-    # question_id = Column(Integer, ForeignKey("answers.answer_pk_id"))
-
-
-# class Answer_form(Base, BaseTable):
-#     __tablename__ = "answers"
-
-#     answer_pk_id = Column(Integer, primary_key=True, unique=True, index=True, autoincrement=True)
-#     question_id = Column(Integer, ForeignKey("questions.question_pk_id"))
-#     answer = Column(String)
