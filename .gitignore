@@ -152,3 +152,5 @@ cython_debug/
 /Notes/
 /DEV/
 /Postgress/
+/api/configs/config_back.json
+/api/configs/config copy.json

@@ -1,4 +1,6 @@
 import uuid
+from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
+
 
 namespace = uuid.UUID(int=True)
 name = "H"
@@ -29,3 +31,5 @@ if __name__ == '__main__':
     print(unique(3, 'hex'))
     print(unique(4, 'hex'))
     print(unique(5, 'hex'))
+
+print(f'{GUID}')
