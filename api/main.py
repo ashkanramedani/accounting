@@ -9,7 +9,7 @@ import redis.asyncio as redis
 from sqlalchemy.exc import OperationalError
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
-from api.lib import log
+from lib import log
 from router import employee
 from router import form
 
@@ -53,4 +53,4 @@ def ping():
     return "All good. You don't need to be authenticated to call this"
 
 
-uvicorn.run(app, host="0.0.0.0", port=8000)
+# uvicorn.run(app, host="0.0.0.0", port=8000)

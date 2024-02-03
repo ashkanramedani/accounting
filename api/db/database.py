@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from os.path import dirname, normpath, join
 from loguru import logger
-from api.lib import json_handler, log
+from lib import json_handler, log
 
 directory = normpath(f'{dirname(__file__)}/../configs/config.json')
 _obj_json_handler_config = json_handler(FilePath=directory)

@@ -3,8 +3,8 @@ from uuid import UUID
 from loguru import logger
 from sqlalchemy.orm import Session
 
-import api.db.models as dbm
-import api.schemas as sch
+import db.models as dbm
+import schemas as sch
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
