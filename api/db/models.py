@@ -1,28 +1,42 @@
-# import datetime
-# import email
-# from typing import List, Union
 from enum import Enum as PythonEnum
-# from sqlalchemy.sql.type_api import TypeEngine
-# from sqlalchemy.dialects.postgresql import JSONB
-# from email.policy import default
-# from uuid import UUID
-# from typing import Optional, List, Dict, Any
 
 from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
-from database import Base
-from sqlalchemy import Enum, Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, Date, Time, UniqueConstraint, Index, MetaData, Float, Interval
-from sqlalchemy.orm import relationship, Mapped
+from sqlalchemy import Enum, Boolean, Column, ForeignKey, Integer, String, DateTime, Date, Time, MetaData, Float, Interval
 from sqlalchemy.sql import expression, func
 
-from api.db.database import engine
+from .database import Base
 
 metadata_obj = MetaData()
+
+__all__ = [
+    "BaseTable",
+    "Leave_request_form",
+    "Student_form",
+    "Class_form",
+    "Employees_form",
+    "Remote_Request_form",
+    "Teacher_tardy_reports_form",
+    "Class_Cancellation_form",
+    "Teacher_Replacement_form",
+    "WeekdayEnum",
+    "Day_form",
+    "Employee_Timesheet_form",
+    "Business_Trip_form",
+    "Teachers_Report_form",
+    "survey_form",
+    "Questions_form",
+    "survey_questions_form",
+    "response_form"
+]
 
 IDs = {
     "employees": "employees.employees_pk_id",
     "classes": "classes.class_pk_id",
     "days": "days.day_pk_id",
-    "employee_timesheet": "employee_timesheet_pk_id"
+    "employee_timesheet": "employee_timesheet.employee_timesheet_pk_id",
+    "forms": "forms.form_pk_id",
+    "question": "question.question_pk_id",
+    "student": "student.student_pk_id"
 }
 
 
@@ -70,7 +84,7 @@ class Student_form(Base, BaseTable):
     student_pk_id = create_Unique_ID()
     student_name = Column(String, nullable=False)
     student_last_name = Column(String, index=True)
-    student__level = Column(String, index=True)
+    student_level = Column(String, index=True)
     student_age = Column(Integer)
 
 
@@ -82,7 +96,7 @@ class Class_form(Base, BaseTable):
     class_date = Column(DateTime, nullable=True)
 
 
-class Employees_signup_form(Base, BaseTable):
+class Employees_form(Base, BaseTable):
     __tablename__ = "employees"
     employees_pk_id = create_Unique_ID()
     name = Column(String, nullable=False)
@@ -103,7 +117,7 @@ class Remote_Request_form(Base, BaseTable):
 
 class Teacher_tardy_reports_form(Base, BaseTable):
     __tablename__ = "teacher_tardy_reports"
-    Teacher_tardy_reports_pk_id = create_Unique_ID()
+    teacher_tardy_reports_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
@@ -197,8 +211,9 @@ class Questions_form(Base, BaseTable):
 
 class survey_questions_form(Base, BaseTable):
     __tablename__ = 'forms_questions'
+    survey_questions = create_Unique_ID()
     form_fk_id = create_forenKey("forms")
-    question = create_forenKey("question")
+    question_fk_id = create_forenKey("question")
 
 
 class response_form(Base, BaseTable):

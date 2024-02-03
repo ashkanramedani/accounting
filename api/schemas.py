@@ -16,7 +16,18 @@ class WeekdayEnum(str, Enum):
 
 
 # Employees Base Model
-class Employee_post_schema(BaseModel):
+class get_employee_schema(BaseModel):
+    employees_pk_id: UUID | None = None
+
+class post_employee_schema(BaseModel):
+    name: str
+    last_name: str
+    job_title: str
+class delete_employee_schema(BaseModel):
+    employees_pk_id: UUID
+
+class update_employee_schema(BaseModel):
+    employees_pk_id: UUID
     name: str
     last_name: str
     job_title: str
@@ -125,7 +136,7 @@ class update_remote_Request_schema(BaseModel):
 
 # teacher tardy reports
 class get_teacher_tardy_reports_schema(BaseModel):
-    Teacher_tardy_reports_pk_id: UUID | None = None
+    teacher_tardy_reports_pk_id: UUID | None = None
 
 
 class post_teacher_tardy_reports_schema(BaseModel):
@@ -136,11 +147,11 @@ class post_teacher_tardy_reports_schema(BaseModel):
 
 
 class delete_teacher_tardy_reports_schema(BaseModel):
-    Teacher_tardy_reports_pk_id: UUID
+    teacher_tardy_reports_pk_id: UUID
 
 
 class update_teacher_tardy_reports_schema(BaseModel):
-    Teacher_tardy_reports_pk_id: UUID
+    teacher_tardy_reports_pk_id: UUID
     created_fk_by: UUID
     teacher_fk_id: UUID
     class_fk_id: UUID

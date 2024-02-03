@@ -19,11 +19,11 @@
     },
     "db_test": {
         "database_type": "postgresql",
-        "username": "admin",
-        "password": "adminadmin",
-        "ip": "localhost",
-        "port": "5432",
-        "database_name": "tmp5"
+        "username": "ieltsdaily",
+        "password": "AliBig+Hi",
+        "ip": "87.107.161.173",
+        "port": "15432",
+        "database_name": "accounting_test"
     },
     "redis_otp": {
         "host": "87.107.161.173",
