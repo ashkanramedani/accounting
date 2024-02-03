@@ -1,43 +1,50 @@
-import logging
+# import logging
+# from uuid import UUID
+# import sqlalchemy.sql.expression as sse
+# from datetime import datetime, timedelta
+# from api.db import db_employee
+# from typing import Optional, List, Dict, Any, Union, Annotated
+# from fastapi.encoders import jsonable_encoder
+# from pydantic import BaseModel
+# from api.lib import Hash, Massenger, Tools
+# # from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
+
 import api.schemas as sch
 import api.db.models as dbm
-import sqlalchemy.sql.expression as sse
-from datetime import datetime, timedelta
-from uuid import UUID
-from typing import Optional, List, Dict, Any, Union, Annotated
 from fastapi import APIRouter, Query, Body, Path, Depends, Response, HTTPException, status, UploadFile, File
-from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
 from api.db.database import get_db
-# from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
 from fastapi_limiter.depends import RateLimiter
-from api.lib import Hash, Massenger, Tools
+import api.db as dbf
 
-# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
-#    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
-
-from api.db import db_employee
 
 router = APIRouter(prefix='/api/v1/employee', tags=['Employee'])
 
+
 @router.post("/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def add_employee(employee: sch.BASE_Employee, response: Response, db=Depends(get_db)):
-    OBJ = dbm.Employees(
-            name=employee.name,
-            last_name=employee.last_name,
-            job_title=employee.job_title)
-
-    db.add(OBJ)
-    db.commit()
-    db.refresh(OBJ)
+async def add_employee(Form: sch.post_employee_schema, db=Depends(get_db)):
+    status_code, result = dbf.post_employee(db, Form)
+    return HTTPException(status_code=status_code, detail=result)
 
 
+@router.get("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def search_employee(employee_id, db=Depends(get_db)):
+    status_code, result = dbf.get_employee(db, employee_id)
+    return HTTPException(status_code=status_code, detail=result)
 
-@router.post("/search")
-async def search_employee(employee_id: int, db= Depends(get_db)):
-    res = db.query(dbm.Employees).filter(dbm.Employees.id == employee_id).all()
 
-    logger.info(res)
-    if not res:
-        return {"status_code": 200, "res": "NotFound"}
-    return {"status_code": 200, "res": res}
+@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def search_employee(db=Depends(get_db)):
+    status_code, result = dbf.get_all_employee(db)
+    return HTTPException(status_code=status_code, detail=result)
+
+
+@router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def delete_employee(Form: sch.delete_employee_schema, db=Depends(get_db)):
+    status_code, result = dbf.delete_employee(db, Form)
+    return HTTPException(status_code=status_code, detail=result)
+
+
+@router.put("/update", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def update_employee(Form: sch.update_employee_schema, db=Depends(get_db)):
+    status_code, result = dbf.update_employee(db, Form)
+    return HTTPException(status_code=status_code, detail=result)
