@@ -1,5 +1,5 @@
 from uuid import UUID
-
+from typing import List
 from loguru import logger
 from sqlalchemy.orm import Session
 
@@ -22,15 +22,20 @@ __all__ = [
 
 ]
 
+def employee_exist(db: Session, FK_fields: List[UUID]):
+    for FK_field in FK_fields:
+        if not db.query(dbm.Employees_form).filter_by(employees_pk_id=FK_field, deleted=False).first():
+            return False
+    return True
 
-def get_employee(db: Session, employees_pk_id):
+def get_employee(db: Session, employee_id):
     try:
-        data = db.query(dbm.Employees_form).filter_by(
-                employees_pk_id=employees_pk_id,
+        record = db.query(dbm.Employees_form).filter_by(
+                employees_pk_id=employee_id,
                 deleted=False
         ).first()
-        if data:
-            return 200, data
+        if record:
+            return 200, record
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
@@ -64,9 +69,12 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         return 500, e.__repr__()
 
 
-def delete_employee(db: Session, Form: sch.delete_employee_schema):
+def delete_employee(db: Session, employee_id):
     try:
-        record = db.query(dbm.Employees_form).filter(dbm.Employees_form.employees_pk_id == Form.employees_pk_id).first()
+        record = db.query(dbm.Employees_form).filter_by(
+                employee_id=employee_id,
+                deleted=False
+        ).first()
         if not record or record.deleted:
             return 404, "Not Found"
         record.deleted = True
@@ -94,25 +102,26 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
 
 
 # Student
-
-# class Student_form(BaseTable):
-#     __tablename__ = "student"
-#     student_pk_id = create_Unique_ID()
-#     student_name = Column(String, nullable=False)
-#     student_last_name = Column(String, index=True)
-#     student__level = Column(String, index=True)
-#     student_age = Column(Integer)
-#
-
-def get_student(db: Session, Form: sch.get_student_schema):
+def get_student(db: Session, student_id):
     try:
-        if isinstance(Form.student_id, UUID):
-            data = db.query(dbm.Student_form).filter(dbm.Student_form.student_pk_id == Form.student_id).first()
-        else:
-            data = db.query(dbm.Student_form).all()
+        record = db.query(dbm.Student_form).filter_by(
+                student_pk_id=student_id,
+                deleted=False
+        ).first()
+        if record:
+            return 200, record
+        return 404, "Not Found"
+    except Exception as e:
+        db.rollback()
+        return 500, e.__repr__()
+
+
+def get_all_student(db: Session):
+    try:
+        data = db.query(dbm.Student_form).filter_by(deleted=False).all()
         if data:
             return 200, data
-        return 404, f"Not Found"
+        return 404, "Not Found"
     except Exception as e:
         db.rollback()
         return 500, e.__repr__()
@@ -135,10 +144,13 @@ def post_student(db: Session, Form: sch.post_student_schema):
         return 500, e.__repr__()
 
 
-def delete_student(db: Session, Form: sch.delete_student_schema):
+def delete_student(db: Session, student_id):
     try:
-        record = db.query(dbm.Student_form).filter(dbm.Student_form.student_pk_id == Form.student_id).first()
-        if not record or record.deleted is True:
+        record = db.query(dbm.Student_form).filter_by(
+                student_pk_id=student_id,
+                deleted=False
+        ).first()
+        if not record:
             return 404, "Not Found"
         record.deleted = True
         db.commit()
@@ -151,6 +163,8 @@ def delete_student(db: Session, Form: sch.delete_student_schema):
 def update_student(db: Session, Form: sch.update_student_schema):
     try:
         record = db.query(dbm.Student_form).filter(dbm.Student_form.student_pk_id == Form.student_pk_id).first()
+        if not record:
+            return 404, "Not Found"
         record.student_name = Form.student_name
         record.student_last_name = Form.student_last_name
         record.student_level = Form.student_level

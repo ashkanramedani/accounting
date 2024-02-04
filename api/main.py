@@ -51,6 +51,3 @@ app.include_router(form.router)
 @app.get("/ping")
 def ping():
     return "All good. You don't need to be authenticated to call this"
-
-
-# uvicorn.run(app, host="0.0.0.0", port=8000)

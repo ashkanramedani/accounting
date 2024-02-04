@@ -39,6 +39,19 @@ IDs = {
     "student": "student.student_pk_id"
 }
 
+class WeekdayEnum(PythonEnum):
+    SATURDAY = "شنبه"
+    SUNDAY = "یکشنبه"
+    MONDAY = "دوشنبه"
+    TUESDAY = "سه‌شنبه"
+    WEDNESDAY = "چهارشنبه"
+    THURSDAY = "پنجشنبه"
+    FRIDAY = "جمعه"
+
+
+class job_title_Enum(PythonEnum):
+    teacher = "teacher"
+    office = "office"
 
 def create_Unique_ID():
     return Column(GUID,
@@ -59,14 +72,11 @@ class BaseTable:
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
     expire_date = Column(DateTime(timezone=True), default=None)
     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    # user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False)
     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    # user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
     delete_date = Column(DateTime(timezone=True), default=None)
-    # user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
 
 
 class Leave_request_form(Base, BaseTable):
@@ -101,7 +111,7 @@ class Employees_form(Base, BaseTable):
     employees_pk_id = create_Unique_ID()
     name = Column(String, nullable=False)
     last_name = Column(String, index=True)
-    job_title = Column(String, index=True)
+    job_title = Column(Enum(job_title_Enum), index=True)
 
 
 class Remote_Request_form(Base, BaseTable):
@@ -145,15 +155,6 @@ class Teacher_Replacement_form(Base, BaseTable):
     replacement_teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
 
-
-class WeekdayEnum(PythonEnum):
-    SATURDAY = "شنبه"
-    SUNDAY = "یکشنبه"
-    MONDAY = "دوشنبه"
-    TUESDAY = "سه‌شنبه"
-    WEDNESDAY = "چهارشنبه"
-    THURSDAY = "پنجشنبه"
-    FRIDAY = "جمعه"
 
 
 class Day_form(Base, BaseTable):
@@ -206,7 +207,7 @@ class survey_form(Base, BaseTable):
 class Questions_form(Base, BaseTable):
     __tablename__ = "question"
     question_pk_id = create_Unique_ID()
-    text = Column(String)
+    text = Column(String, unique=True)
 
 
 class survey_questions_form(Base, BaseTable):

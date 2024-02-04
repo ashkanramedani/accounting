@@ -8,7 +8,6 @@ import db as dbf
 router = APIRouter(prefix='/api/v1/form', tags=['Form'])
 
 
-
 # leave forms
 @router.post("/leave_request/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def add_leave_request(Form: sch.post_leave_request_schema, db=Depends(get_db)):
@@ -35,8 +34,8 @@ async def search_leave_request(db=Depends(get_db)):
 
 
 @router.delete("/leave_request/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_leave_request(Form: sch.delete_leave_request_schema, db=Depends(get_db)):
-    status_code, result = dbf.delete_leave_request(db, Form)
+async def delete_leave_request(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_leave_request(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -76,8 +75,8 @@ async def search_tardy_request(db=Depends(get_db)):
 
 
 @router.delete("/tardy_request/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_tardy_request(Form: sch.delete_teacher_tardy_reports_schema, db=Depends(get_db)):
-    status_code, result = dbf.delete_tardy_request(db, Form)
+async def delete_tardy_request(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_tardy_request(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -118,8 +117,8 @@ async def search_teacher_replacement(db=Depends(get_db)):
 
 
 @router.delete("/teacher_replacement/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_tardy_request(Form: sch.delete_teacher_replacement_schema, db=Depends(get_db)):
-    status_code, result = dbf.delete_teacher_replacement(db, Form)
+async def delete_tardy_request(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_teacher_replacement(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -159,8 +158,8 @@ async def search_business_trip(db=Depends(get_db)):
 
 
 @router.delete("/business_trip/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_business_trip(Form: sch.delete_business_trip_schema, db=Depends(get_db)):
-    status_code, result = dbf.delete_business_trip_form(db, Form)
+async def delete_business_trip(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_business_trip_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -200,8 +199,8 @@ async def search_business_trip(db=Depends(get_db)):
 
 
 @router.delete("/business_trip/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_business_trip(Form: sch.delete_business_trip_schema, db=Depends(get_db)):
-    status_code, result = dbf.delete_business_trip_form(db, Form)
+async def delete_business_trip(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_business_trip_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -241,8 +240,8 @@ async def search_class_cancellation(db=Depends(get_db)):
 
 
 @router.delete("/class_cancellation/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_class_cancellation(Form: sch.delete_class_cancellation_schema, db=Depends(get_db)):
-    status_code, result = dbf.delete_class_cancellation_form(db, Form)
+async def delete_class_cancellation(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_class_cancellation_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -282,8 +281,8 @@ async def search_remote_request(db=Depends(get_db)):
 
 
 @router.delete("/remote_request/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_remote_request(Form: sch.delete_Remote_request_schema, db=Depends(get_db)):
-    status_code, result = dbf.delete_remote_request_form(db, Form)
+async def delete_remote_request(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_remote_request_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -295,3 +294,44 @@ async def update_remote_request(Form: sch.update_remote_request_schema, db=Depen
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
+# Question
+@router.post("/remote_request/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def add_remote_request(Form: sch.post_remote_request_schema, db=Depends(get_db)):
+    status_code, result = dbf.post_remote_request_form(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.get("/remote_request/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def search_remote_request(form_id, db=Depends(get_db)):
+    status_code, result = dbf.get_remote_request_form(db, form_id)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.get("/remote_request/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def search_remote_request(db=Depends(get_db)):
+    status_code, result = dbf.get_all_remote_request_form(db)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.delete("/remote_request/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def delete_remote_request(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_remote_request_form(db, form_id)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.put("/remote_request/update", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def update_remote_request(Form: sch.update_remote_request_schema, db=Depends(get_db)):
+    status_code, result = dbf.update_remote_request_form(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
