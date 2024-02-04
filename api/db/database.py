@@ -20,6 +20,8 @@ if config['developer']:
 else:
     SQLALCHEMY_DATABASE_URL = f"{config['db']['database_type']}://{config['db']['username']}:{config['db']['password']}@{config['db']['ip']}:{config['db']['port']}/{config['db']['database_name']}"
 
+
+
 if config['developer_log']:
     engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=3600, echo=True)
     _obj_log.show_log(SQLALCHEMY_DATABASE_URL, 'i')

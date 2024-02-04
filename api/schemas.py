@@ -19,12 +19,16 @@ class WeekdayEnum(str, Enum):
 class get_employee_schema(BaseModel):
     employees_pk_id: UUID | None = None
 
+
 class post_employee_schema(BaseModel):
     name: str
     last_name: str
     job_title: str
+
+
 class delete_employee_schema(BaseModel):
     employees_pk_id: UUID
+
 
 class update_employee_schema(BaseModel):
     employees_pk_id: UUID
@@ -33,7 +37,7 @@ class update_employee_schema(BaseModel):
     job_title: str
 
 
-# Leave Requests Base Model
+# Leave requests Base Model
 class get_leave_request_schema(BaseModel):
     form_id: UUID | None = None
 
@@ -105,29 +109,27 @@ class update_class_schema(BaseModel):
     class_date: date
 
 
-# Remote Request
+# Remote request
 
 class get_remote_request_schema(BaseModel):
     remote_request_pk_id: UUID | None = None
 
 
-class post_remote_Request_schema(BaseModel):
+class post_remote_request_schema(BaseModel):
     employee_fk_id: UUID
-    create_date: date
     start_date: date
     end_date: date
     working_location: str
     description: str
 
 
-class delete_Remote_Request_schema(BaseModel):
+class delete_Remote_request_schema(BaseModel):
     remote_request_pk_id: UUID
 
 
-class update_remote_Request_schema(BaseModel):
+class update_remote_request_schema(BaseModel):
     remote_request_pk_id: UUID
     employee_fk_id: UUID
-    create_date: date
     start_date: date
     end_date: date
     working_location: str
@@ -140,7 +142,7 @@ class get_teacher_tardy_reports_schema(BaseModel):
 
 
 class post_teacher_tardy_reports_schema(BaseModel):
-    created_fk_by: UUID
+    create_by_fk_id: UUID
     teacher_fk_id: UUID
     class_fk_id: UUID
     delay: timedelta
@@ -152,7 +154,7 @@ class delete_teacher_tardy_reports_schema(BaseModel):
 
 class update_teacher_tardy_reports_schema(BaseModel):
     teacher_tardy_reports_pk_id: UUID
-    created_fk_by: UUID
+    create_by_fk_id: UUID
     teacher_fk_id: UUID
     class_fk_id: UUID
     delay: timedelta
@@ -163,9 +165,8 @@ class get_class_cancellation_schema(BaseModel):
     class_cancellation_pk_id: UUID | None = None
 
 
-class post_cass_cancellation_schema(BaseModel):
-    created_date: date
-    created_fk_by: UUID
+class post_class_cancellation_schema(BaseModel):
+    create_by_fk_id: UUID
     class_fk_id: UUID
     teacher_fk_id: UUID
     replacement: date
@@ -180,8 +181,7 @@ class delete_class_cancellation_schema(BaseModel):
 
 class update_class_cancellation_schema(BaseModel):
     class_cancellation_pk_id: UUID
-    created_date: date
-    created_fk_by: UUID
+    create_by_fk_id: UUID
     class_fk_id: UUID
     teacher_fk_id: UUID
     replacement: date
@@ -260,6 +260,7 @@ class update_day_schema(BaseModel):
     entry_time: date
     exit_time: date
     duration: timedelta
+
 
 # MISSING CRUD
 """
