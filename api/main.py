@@ -10,8 +10,15 @@ from sqlalchemy.exc import OperationalError
 from fastapi_limiter import FastAPILimiter
 from fastapi_limiter.depends import RateLimiter
 from lib import log
+
 from router import employee
 from router import form
+from router import teacher_replacement
+from router import tardy_request
+from router import remote_request
+from router import leave_request
+from router import class_cancellation
+from router import business_trip
 
 Logger = log()
 
@@ -45,8 +52,12 @@ app.add_middleware(
 )
 
 app.include_router(employee.router)
-app.include_router(form.router)
-
+# app.include_router(form.router)
+app.include_router(leave_request.router)
+app.include_router(remote_request.router)
+app.include_router(tardy_request.router)
+app.include_router(teacher_replacement.router)
+app.include_router(business_trip.router)
 
 @app.get("/ping")
 def ping():
