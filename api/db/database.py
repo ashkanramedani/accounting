@@ -20,6 +20,7 @@ if config['developer']:
 else:
     SQLALCHEMY_DATABASE_URL = f"{config['db']['database_type']}://{config['db']['username']}:{config['db']['password']}@{config['db']['ip']}:{config['db']['port']}/{config['db']['database_name']}"
 
+SQLALCHEMY_DATABASE_URL = "postgresql://admin:adminadmin@localhost:5432/tmp5"
 
 
 if config['developer_log']:

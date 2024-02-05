@@ -1,21 +1,10 @@
-# import logging
-# from uuid import UUID
-# import sqlalchemy.sql.expression as sse
-# from datetime import datetime, timedelta
-# from api.db import db_employee
-# from typing import Optional, List, Dict, Any, Union, Annotated
-# from fastapi.encoders import jsonable_encoder
-# from pydantic import BaseModel
-# from api.lib import Hash, Massenger, Tools
-# # from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
 
-import schemas as sch
-import db.models as dbm
-from fastapi import APIRouter, Query, Body, Path, Depends, Response, HTTPException, status, UploadFile, File
-from db.database import get_db
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
-import db as dbf
 
+import db as dbf
+import schemas as sch
+from db.database import get_db
 
 router = APIRouter(prefix='/api/v1/employee', tags=['Employee'])
 

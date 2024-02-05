@@ -1,32 +1,21 @@
-from fastapi import Depends, FastAPI, HTTPException
+import redis.asyncio as redis
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from fastapi_limiter import FastAPILimiter
+from sqlalchemy.exc import OperationalError
 
 import db.models as models
 from db.database import engine
-import uvicorn
-import redis.asyncio as redis
-from sqlalchemy.exc import OperationalError
-from fastapi_limiter import FastAPILimiter
-from fastapi_limiter.depends import RateLimiter
 from lib import log
-
-from router import employee
-from router import form
-from router import teacher_replacement
-from router import tardy_request
-from router import remote_request
-from router import leave_request
-from router import class_cancellation
-from router import business_trip
+from router import *
 
 Logger = log()
 
 try:
     models.Base.metadata.create_all(bind=engine)
 except OperationalError as e:
-    Logger.show_log(f"[ Could Not Create Engine ]: {e}", 'e')
-
+    Logger.show_log(f"[ Could Not Create Engine ]: {e.__repr__()}", 'e')
+    exit()
 
 app = FastAPI()
 WHITELISTED_IPS = []
@@ -51,13 +40,14 @@ app.add_middleware(
         allow_headers=["*"],
 )
 
-app.include_router(employee.router)
-# app.include_router(form.router)
-app.include_router(leave_request.router)
-app.include_router(remote_request.router)
-app.include_router(tardy_request.router)
-app.include_router(teacher_replacement.router)
-app.include_router(business_trip.router)
+app.include_router(business_trip_route)
+app.include_router(class_cancellation_route)
+app.include_router(employee_route)
+app.include_router(leave_request_route)
+app.include_router(remote_request_route)
+app.include_router(tardy_request_route)
+app.include_router(teacher_replacement_route)
+
 
 @app.get("/ping")
 def ping():
