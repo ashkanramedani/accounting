@@ -1,3 +1,5 @@
+from typing import List
+
 import redis.asyncio as redis
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -7,7 +9,7 @@ from sqlalchemy.exc import OperationalError
 import db.models as models
 from db.database import engine
 from lib import log
-from router import *
+from router import routes
 
 Logger = log()
 
@@ -18,7 +20,14 @@ except OperationalError as e:
     exit()
 
 app = FastAPI()
-WHITELISTED_IPS = []
+WHITELISTED_IPS: List[str] = []
+app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=['*'],
+        allow_methods=["*"],
+        allow_headers=["*"],
+)
 
 
 @app.on_event("startup")
@@ -32,23 +41,12 @@ async def shutdown():
     await FastAPILimiter.close()
 
 
-app.add_middleware(
-        CORSMiddleware,
-        allow_credentials=True,
-        allow_origins=['*'],
-        allow_methods=["*"],
-        allow_headers=["*"],
-)
-
-app.include_router(business_trip_route)
-app.include_router(class_cancellation_route)
-app.include_router(employee_route)
-app.include_router(leave_request_route)
-app.include_router(remote_request_route)
-app.include_router(tardy_request_route)
-app.include_router(teacher_replacement_route)
-
-
-@app.get("/ping")
+@app.get("/ping", tags=["Ping"])
 def ping():
-    return "All good. You don't need to be authenticated to call this"
+    return "Pong"
+
+
+for route in routes:
+    app.include_router(route)
+
+

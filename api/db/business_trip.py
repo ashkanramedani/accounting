@@ -1,11 +1,11 @@
 import logging
-from uuid import UUID
-from .Exist import employee_exist
+
 from sqlalchemy.orm import Session
-from typing import List
-import schemas as sch
+
 import db.models as dbm
+import schemas as sch
 from .Exist import employee_exist
+
 
 # Tardy Form - get_tardy_request
 
@@ -43,11 +43,12 @@ def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema):
         if not employee_exist(db, [Form.employee_fk_id]):
             return 404, "Target Employee Not Found"
 
-        OBJ = dbm.Business_Trip_form(
-                employee_fk_id=Form.employee_fk_id,
-                destination=Form.destination,
-                description=Form.description
-        )
+        OBJ = dbm.Business_Trip_form()
+
+        OBJ.employee_fk_id = Form.employee_fk_id
+        OBJ.destination = Form.destination
+        OBJ.description = Form.description
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -96,4 +97,3 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         logging.error(e)
         db.rollback()
         return 500, e.__repr__()
-

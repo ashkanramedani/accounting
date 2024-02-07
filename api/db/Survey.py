@@ -1,11 +1,9 @@
 import logging
-from uuid import UUID
 
 from sqlalchemy.orm import Session
-from typing import List
-import schemas as sch
+
 import db.models as dbm
-from .Exist import employee_exist
+import schemas as sch
 
 
 # question
@@ -38,7 +36,9 @@ def get_all_question(db: Session):
 
 def post_question(db: Session, Form: sch.post_questions_schema):
     try:
-        OBJ = dbm.Questions_form(text=Form.text)
+        OBJ = dbm.Questions_form()
+        OBJ.text = Form.text
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -65,7 +65,7 @@ def delete_question(db: Session, question_id):
         return 500, e.__repr__()
 
 
-def update_question_id(db: Session, Form: sch.update_questions_schema):
+def update_question(db: Session, Form: sch.update_questions_schema):
     try:
         record = db.query(dbm.Remote_Request_form).filter_by(
                 question_pk_id=Form.question_pk_id,
@@ -82,6 +82,7 @@ def update_question_id(db: Session, Form: sch.update_questions_schema):
         logging.error(e)
         db.rollback()
         return 500, e.__repr__()
+
 
 # survey
 def get_survey(db: Session, survey_id):
@@ -119,12 +120,16 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 404, "Target class Not Found"
 
-        OBJ = dbm.Questions_form(title=Form.title)
+        OBJ = dbm.Questions_form()
+        OBJ.title = Form.title
+
         db.add(OBJ)
 
         form_uuid = OBJ.form_pk_id
         for uuid in Form.questions:
-            Q_OBJ = dbm.survey_questions_form(form_fk_id=form_uuid, question_fk_id=uuid)
+            Q_OBJ = dbm.survey_questions_form()
+            Q_OBJ.form_fk_id = form_uuid
+            Q_OBJ.question_fk_id = uuid
             db.add(Q_OBJ)
 
         db.commit()
@@ -146,8 +151,8 @@ def delete_survey(db: Session, survey_id):
             return 404, "Not Found"
         record.deleted = True
 
-        for survey_questions in db.query(dbm.survey_questions_form).filter_by(form_fk_id=record.form_pk_id).all:
-            survey_questions.deleted = False
+        # for survey_questions in db.query(dbm.survey_questions_form).filter_by(form_fk_id=record.form_pk_id).all:
+        #     survey_questions.deleted = False
 
         db.commit()
         return 200, "Deleted"
@@ -178,21 +183,22 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
         db.rollback()
         return 500, e.__repr__()
 
-def update_survey_question(db: Session, Form: sch.update_survey_question_schema):
-    try:
-        record = db.query(dbm.survey_questions_form).filter_by(
-                form_pk_id=Form.form_pk_id,
-                deleted=False
-        ).first()
-        if not record:
-            return 404, "Not Found"
 
-        record.questions_fk_id = Form.questions_fk_id
-        record.title = Form.new_question_fk_id
-
-        db.commit()
-        return 200, "Form Updated"
-    except Exception as e:
-        logging.error(e)
-        db.rollback()
-        return 500, e.__repr__()
+# def update_survey_question(db: Session, Form: sch.update_survey_schema):
+#     try:
+#         record = db.query(dbm.survey_questions_form).filter_by(
+#                 form_pk_id=Form.form_pk_id,
+#                 deleted=False
+#         ).first()
+#         if not record:
+#             return 404, "Not Found"
+#
+#         record.questions_fk_id = Form.questions_fk_id
+#         record.title = Form.new_question_fk_id
+#
+#         db.commit()
+#         return 200, "Form Updated"
+#     except Exception as e:
+#         logging.error(e)
+#         db.rollback()
+#         return 500, e.__repr__()

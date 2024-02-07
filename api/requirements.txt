@@ -21,3 +21,6 @@ pydantic[dotenv]<2
 minio
 khayyam
 httpx
+pandas
+xlrd
+Pyarrow

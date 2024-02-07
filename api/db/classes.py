@@ -1,18 +1,15 @@
-from uuid import UUID
-from typing import List
+from loguru import logger
 from loguru import logger
 from sqlalchemy.orm import Session
-from .Exist import employee_exist
+
 import db.models as dbm
 import schemas as sch
 
 
-
-
-def get_employee(db: Session, employee_id):
+def get_class(db: Session, class_id):
     try:
-        record = db.query(dbm.Employees_form).filter_by(
-                employees_pk_id=employee_id,
+        record = db.query(dbm.Class_form).filter_by(
+                classs_pk_id=class_id,
                 deleted=False
         ).first()
         if record:
@@ -23,9 +20,9 @@ def get_employee(db: Session, employee_id):
         return 500, e.__repr__()
 
 
-def get_all_employee(db: Session):
+def get_all_class(db: Session):
     try:
-        data = db.query(dbm.Employees_form).filter_by(deleted=False).all()
+        data = db.query(dbm.Class_form).filter_by(deleted=False).all()
         if data:
             return 200, data
         return 404, f"Not Found"
@@ -34,26 +31,27 @@ def get_all_employee(db: Session):
         return 500, e.__repr__()
 
 
-def post_employee(db: Session, Form: sch.post_employee_schema):
+def post_class(db: Session, Form: sch.post_class_schema):
     try:
-        OBJ = dbm.Employees_form(
-                name=Form.name,
-                last_name=Form.last_name,
-                job_title=Form.job_title
-        )
+        OBJ = dbm.Class_form()
+
+        OBJ.starting_time = Form.starting_time
+        OBJ.duration = Form.duration
+        OBJ.class_date = Form.class_date
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
-        return 200, "Employee Added"
+        return 200, "class Added"
     except Exception as e:
         db.rollback()
         return 500, e.__repr__()
 
 
-def delete_employee(db: Session, employee_id):
+def delete_class(db: Session, class_id):
     try:
-        record = db.query(dbm.Employees_form).filter_by(
-                employee_id=employee_id,
+        record = db.query(dbm.Class_form).filter_by(
+                class_id=class_id,
                 deleted=False
         ).first()
         if not record or record.deleted:
@@ -66,14 +64,19 @@ def delete_employee(db: Session, employee_id):
         return 500, e.__repr__()
 
 
-def update_employee(db: Session, Form: sch.update_employee_schema):
+def update_class(db: Session, Form: sch.update_class_schema):
     try:
-        record = db.query(dbm.Employees_form).filter(dbm.Employees_form.employees_pk_id == Form.employees_pk_id).first()
-        if not record or record.deleted:
+        record = db.query(dbm.Class_form).filter_by(
+                classs_pk_id=Form.class_pk_id,
+                deleted=True
+        ).first()
+        if not record:
             return 404, "Not Found"
-        record.name = Form.name,
-        record.last_name = Form.last_name,
-        record.job_title = Form.job_title
+
+        record.starting_time = Form.starting_time
+        record.duration = Form.duration
+        record.class_date = Form.class_date
+
         db.commit()
         return 200, "Record Updated"
     except Exception as e:

@@ -1,8 +1,6 @@
-from uuid import UUID
-from typing import List
 from loguru import logger
 from sqlalchemy.orm import Session
-from .Exist import employee_exist
+
 import db.models as dbm
 import schemas as sch
 
@@ -35,12 +33,13 @@ def get_all_student(db: Session):
 
 def post_student(db: Session, Form: sch.post_student_schema):
     try:
-        OBJ = dbm.Student_form(
-                student_name=Form.student_name,
-                student_last_name=Form.student_last_name,
-                student_level=Form.student_level,
-                student_age=Form.student_age
-        )
+        OBJ = dbm.Student_form()
+
+        OBJ.student_name = Form.student_name
+        OBJ.student_last_name = Form.student_last_name
+        OBJ.student_level = Form.student_level
+        OBJ.student_age = Form.student_age
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)

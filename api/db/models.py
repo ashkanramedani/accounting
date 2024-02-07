@@ -8,50 +8,58 @@ from .database import Base
 
 metadata_obj = MetaData()
 
-__all__ = [
-    "BaseTable",
-    "Leave_request_form",
-    "Student_form",
-    "Class_form",
-    "Employees_form",
-    "Remote_Request_form",
-    "Teacher_tardy_reports_form",
-    "Class_Cancellation_form",
-    "Teacher_Replacement_form",
-    "WeekdayEnum",
-    "Day_form",
-    "Employee_Timesheet_form",
-    "Business_Trip_form",
-    "Teachers_Report_form",
-    "survey_form",
-    "Questions_form",
-    "survey_questions_form",
-    "response_form"
-]
+# __all__ = [
+#     "BaseTable",
+#     "Leave_request_form",
+#     "Student_form",
+#     "Class_form",
+#     "Employees_form",
+#     "Remote_Request_form",
+#     "Teacher_tardy_reports_form",
+#     "Class_Cancellation_form",
+#     "Teacher_Replacement_form",
+#     "WeekdayEnum",
+#     "Day_form",
+#     "Employee_Timesheet_form",
+#     "Business_Trip_form",
+#     "Teachers_Report_form",
+#     "survey_form",
+#     "Questions_form",
+#     "survey_questions_form",
+#     "response_form"
+# ]
 
 IDs = {
     "employees": "employees.employees_pk_id",
     "classes": "classes.class_pk_id",
     "days": "days.day_pk_id",
-    "employee_timesheet": "employee_timesheet.employee_timesheet_pk_id",
     "forms": "forms.form_pk_id",
     "question": "question.question_pk_id",
-    "student": "student.student_pk_id"
+    "student": "student.student_pk_id",
+    "payment_method": "payment_method.payment_method_pk_id"
 }
 
+
 class WeekdayEnum(PythonEnum):
-    SATURDAY = "شنبه"
-    SUNDAY = "یکشنبه"
-    MONDAY = "دوشنبه"
-    TUESDAY = "سه‌شنبه"
-    WEDNESDAY = "چهارشنبه"
-    THURSDAY = "پنجشنبه"
-    FRIDAY = "جمعه"
+    MONDAY = "0"
+    TUESDAY = "1"
+    WEDNESDAY = "2"
+    THURSDAY = "3"
+    FRIDAY = "4"
+    SATURDAY = "5"
+    SUNDAY = "6"
+
+
+class fingerprint_scanner_Mode(PythonEnum):
+    Normal = "Normal"
 
 
 class job_title_Enum(PythonEnum):
     teacher = "teacher"
     office = "office"
+    RandD = "R&D"
+    Supervisor = "Supervisor"
+
 
 def create_Unique_ID():
     return Column(GUID,
@@ -62,12 +70,12 @@ def create_Unique_ID():
                   index=True)
 
 
-def create_forenKey(table: str):
-    return Column(GUID, ForeignKey(IDs[table], ondelete='SET NULL'), nullable=False)
+def create_forenKey(table: str, nullable=False):
+    return Column(GUID,
+                  ForeignKey(IDs[table], ondelete='SET NULL'), nullable=nullable)
 
 
 class BaseTable:
-    # __tablename__ = "BASE"
     priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
     expire_date = Column(DateTime(timezone=True), default=None)
@@ -77,12 +85,11 @@ class BaseTable:
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
     delete_date = Column(DateTime(timezone=True), default=None)
-
+    created_by_fk_id = create_forenKey("employees", nullable=True)
 
 class Leave_request_form(Base, BaseTable):
     __tablename__ = "leave_request"
     leave_request_pk_id = create_Unique_ID()
-    created_by_fk_id = create_forenKey("employees")
     created_for_fk_id = create_forenKey("employees")
     start_date = Column(Date, index=True)
     end_date = Column(Date, index=True)
@@ -150,28 +157,9 @@ class Class_Cancellation_form(Base, BaseTable):
 class Teacher_Replacement_form(Base, BaseTable):
     __tablename__ = "teacher_replacement"
     teacher_replacement_pk_id = create_Unique_ID()
-    created_by_fk_id = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
     replacement_teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
-
-
-
-class Day_form(Base, BaseTable):
-    __tablename__ = 'days'
-    day_pk_id = create_Unique_ID()
-    time_sheet_fk_id = create_forenKey("employee_timesheet")
-    date = Column(Date, nullable=False)
-    day_of_week = Column(Enum(WeekdayEnum), nullable=False)
-    entry_time = Column(DateTime, nullable=False)
-    exit_time = Column(DateTime, nullable=False)
-    delta_time = Column(Interval, nullable=False)
-
-
-class Employee_Timesheet_form(Base, BaseTable):
-    __tablename__ = "employee_timesheet"
-    employee_timesheet_pk_id = create_Unique_ID()
-    employee_fk_id = create_forenKey("employees")
 
 
 class Business_Trip_form(Base, BaseTable):
@@ -185,11 +173,12 @@ class Business_Trip_form(Base, BaseTable):
 class Teachers_Report_form(Base, BaseTable):
     __tablename__ = "teachers_report"
     teachers_report_pk_id = create_Unique_ID()
-    created_by_fk_id = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
+    class_fk_id = create_forenKey("classes")
     score = Column(Float)
     number_of_student = Column(Integer)
-    has_cancellation = Column(Boolean, default=False)
+    canceled_classes = Column(Integer, default=0)
+    replaced_classes = Column(Integer, default=0)
     starts_at = Column(DateTime)
     ends_at = Column(DateTime)
     teacher_sheet_score = Column(Float, nullable=True)
@@ -224,3 +213,32 @@ class response_form(Base, BaseTable):
     question_fk_id = create_forenKey("question")
     form_fk_id = create_forenKey("forms")
     answer = Column(String)
+
+
+class payment_method_form(Base, BaseTable):
+    __tablename__ = "payment_method"
+    payment_method_pk_id = create_Unique_ID()
+    employee_fk_id = create_forenKey("employees")
+    shaba = Column(String, nullable=False, unique=True)
+    card_number = Column(String, nullable=True, unique=True)
+    active = Column(Boolean, default=False)
+
+# class Day_form(Base, BaseTable):
+    # __tablename__ = 'days'
+    # day_pk_id = create_Unique_ID()
+    # time_sheet_fk_id = create_forenKey("employee_timesheet")
+    # date = Column(Date, nullable=False)
+    # day_of_week = Column(Enum(WeekdayEnum), nullable=False)
+    # entry_time = Column(DateTime, nullable=False)
+    # exit_time = Column(DateTime, nullable=False)
+    # delta_time = Column(Interval, nullable=False)
+
+
+class fingerprint_scanner_form(Base):
+    __tablename__ = "fingerprint_scanner"
+    fingerprint_scanner_pk_id = create_Unique_ID()
+    employee_fk_id = create_forenKey("employees")
+    In_Out = Column(Enum(fingerprint_scanner_Mode), nullable=True)
+    Antipass = Column(Integer, default=0)
+    ProxyWork = Column(Integer, default=0)
+    DateTime = Column(DateTime)

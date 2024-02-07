@@ -1,22 +1,30 @@
 from datetime import datetime, time, timedelta, date
 from uuid import UUID
-from typing import List
+from typing import List, Dict
 from pydantic import BaseModel, UUID4
 from enum import Enum
 
 
 class WeekdayEnum(str, Enum):
-    SATURDAY = "شنبه"
-    SUNDAY = "یکشنبه"
-    MONDAY = "دوشنبه"
-    TUESDAY = "سهشنبه"
-    WEDNESDAY = "چهارشنبه"
-    THURSDAY = "پنجشنبه"
-    FRIDAY = "جمعه"
+    MONDAY = "0"
+    TUESDAY = "1"
+    WEDNESDAY = "2"
+    THURSDAY = "3"
+    FRIDAY = "4"
+    SATURDAY = "5"
+    SUNDAY = "6"
+
+
+class fingerprint_scanner_Mode(str, Enum):
+    Normal = "Normal"
+
 
 class job_title_Enum(str, Enum):
     teacher = "teacher"
     office = "office"
+    RandD = "R&D"
+    Supervisor = "Supervisor"
+
 
 # Employees Base Model
 
@@ -198,10 +206,10 @@ class update_day_schema(BaseModel):
 class post_questions_schema(BaseModel):
     text: str
 
+
 class update_questions_schema(BaseModel):
     question_pk_id: UUID
     text: str
-
 
 
 class post_survey_schema(BaseModel):
@@ -209,17 +217,12 @@ class post_survey_schema(BaseModel):
     questions: List[UUID]
     title: str
 
+
 class update_survey_schema(BaseModel):
     form_pk_id: UUID
     class_fk_id: UUID
     questions: List[UUID]
     title: str
-
-
-class update_survey_question_schema(BaseModel):
-    form_pk_id: UUID
-    questions_fk_id: UUID
-    new_question_fk_id: UUID
 
 
 class post_response_schema(BaseModel):
@@ -237,11 +240,65 @@ class update_response_schema(BaseModel):
     answer: str
 
 
+class post_class_form_schema(BaseModel):
+    starting_time: date
+    duration: timedelta
+    class_date: datetime
 
-# MISSING CRUD
-"""
 
---------
-time_sheet
+class update_class_form_schema(BaseModel):
+    class_pk_id: UUID
+    starting_time: date
+    duration: timedelta
+    class_date: datetime
 
-"""
+
+class post_payment_method_schema(BaseModel):
+    employee_fk_id: UUID
+    shaba: str
+    card_number: str
+
+
+class update_payment_method_schema(BaseModel):
+    payment_method_pk_id: UUID
+    employee_fk_id: UUID
+    shaba: str
+    card_number: str
+
+
+class post_fingerprint_scanner_schema(BaseModel):
+    employee_fk_id: UUID
+    created_by_fk_id: UUID
+    In_Out: fingerprint_scanner_Mode
+    Antipass: bool
+    ProxyWork: bool
+    DateTime: datetime
+
+class post_bulk_fingerprint_scanner_schema(BaseModel):
+    created_by_fk_id: UUID
+    Records:  dict[str, dict[int, dict[str, str]]]
+
+
+class update_fingerprint_scanner_schema(BaseModel):
+    fingerprint_scanner_pk_id: UUID
+    employee_fk_id: UUID
+    created_by_fk_id: UUID
+    In_Out: fingerprint_scanner_Mode
+    Antipass: str
+    ProxyWork: str
+    DateTime: datetime
+
+
+'''
+
+class post_survey_question_schema(BaseModel):
+    form_fk_id: UUID
+    question_fk_id: UUID
+
+class update_survey_question_schema(BaseModel):
+    survey_question_pk_id: UUID
+    form_fk_id: UUID
+    question_fk_id: UUID
+    new_question_fk_id: UUID
+
+'''

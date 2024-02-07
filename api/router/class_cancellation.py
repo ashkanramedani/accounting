@@ -26,7 +26,7 @@ async def search_class_cancellation(form_id, db=Depends(get_db)):
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def search_class_cancellation(db=Depends(get_db)):
+async def search_all_class_cancellation(db=Depends(get_db)):
     status_code, result = dbf.get_all_class_cancellation_form(db)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)

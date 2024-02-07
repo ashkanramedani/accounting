@@ -1,8 +1,10 @@
+from os.path import dirname, normpath, join
+
+from loguru import logger
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-from os.path import dirname, normpath, join
-from loguru import logger
+
 from lib import json_handler, log
 
 directory = normpath(f'{dirname(__file__)}/../configs/config.json')
@@ -20,8 +22,13 @@ if config['developer']:
 else:
     SQLALCHEMY_DATABASE_URL = f"{config['db']['database_type']}://{config['db']['username']}:{config['db']['password']}@{config['db']['ip']}:{config['db']['port']}/{config['db']['database_name']}"
 
-SQLALCHEMY_DATABASE_URL = "postgresql://admin:adminadmin@localhost:5432/tmp5"
-
+try:
+    from dotenv import load_dotenv
+    import os
+    load_dotenv()
+    SQLALCHEMY_DATABASE_URL = os.getenv('LOCAL_POSTGRESS')
+except Exception:
+    pass
 
 if config['developer_log']:
     engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=3600, echo=True)

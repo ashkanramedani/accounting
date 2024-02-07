@@ -1,10 +1,11 @@
 import logging
-from uuid import UUID
-from .Exist import employee_exist
+
 from sqlalchemy.orm import Session
-from typing import List
-import schemas as sch
+
 import db.models as dbm
+import schemas as sch
+from .Exist import employee_exist
+
 
 # Tardy Form - get_tardy_request
 def get_tardy_request(db: Session, form_id):
@@ -40,12 +41,13 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
             return 404, "Target Employee Not Found"
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 404, "Target class Not Found"
-        OBJ = dbm.Teacher_tardy_reports_form(
-                create_by_fk_id=Form.create_by_fk_id,
-                teacher_fk_id=Form.teacher_fk_id,
-                class_fk_id=Form.class_fk_id,
-                delay=Form.delay
-        )
+        OBJ = dbm.Teacher_tardy_reports_form()
+
+        OBJ.create_by_fk_id=Form.create_by_fk_id,
+        OBJ.teacher_fk_id=Form.teacher_fk_id,
+        OBJ.class_fk_id=Form.class_fk_id,
+        OBJ.delay=Form.delay
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -86,9 +88,9 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
 
         if not record:
             return 404, "Not Found"
-        record.create_by_fk_id = Form.create_by_fk_id,
-        record.teacher_fk_id = Form.teacher_fk_id,
-        record.class_fk_id = Form.class_fk_id,
+        record.create_by_fk_id = Form.create_by_fk_id
+        record.teacher_fk_id = Form.teacher_fk_id
+        record.class_fk_id = Form.class_fk_id
         record.delay = Form.delay
         db.commit()
         return 200, "Form Updated"

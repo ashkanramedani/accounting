@@ -27,7 +27,7 @@ async def search_remote_request(form_id, db=Depends(get_db)):
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def search_remote_request(db=Depends(get_db)):
+async def search_all_remote_request(db=Depends(get_db)):
     status_code, result = dbf.get_all_remote_request_form(db)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
@@ -35,7 +35,7 @@ async def search_remote_request(db=Depends(get_db)):
 
 
 @router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_remote_request(form_id, db=Depends(get_db)):
+async def delete_all_remote_request(form_id, db=Depends(get_db)):
     status_code, result = dbf.delete_remote_request_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)

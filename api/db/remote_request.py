@@ -1,11 +1,11 @@
 import logging
-from uuid import UUID
-from .Exist import employee_exist
+
 from sqlalchemy.orm import Session
-from typing import List
-import schemas as sch
+
 import db.models as dbm
+import schemas as sch
 from .Exist import employee_exist
+
 
 # remote_request
 def get_remote_request_form(db: Session, form_id):
@@ -40,13 +40,14 @@ def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
         if not employee_exist(db, [Form.employee_fk_id]):
             return 404, "Target Employee Not Found"
 
-        OBJ = dbm.Remote_Request_form(
-                employee_fk_id=Form.employee_fk_id,
-                start_date=Form.start_date,
-                end_date=Form.end_date,
-                working_location=Form.working_location,
-                description=Form.description
-        )
+        OBJ = dbm.Remote_Request_form()
+
+        OBJ.employee_fk_id = Form.employee_fk_id
+        OBJ.start_date = Form.start_date
+        OBJ.end_date = Form.end_date
+        OBJ.working_location = Form.working_location
+        OBJ.description = Form.description
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)

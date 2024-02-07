@@ -1,19 +1,17 @@
 import logging
-from uuid import UUID
 
 from sqlalchemy.orm import Session
-from typing import List
-import schemas as sch
+
 import db.models as dbm
+import schemas as sch
 from .Exist import employee_exist
 
-# Tardy Form - get_tardy_request
 
-# Teacher Replacement
-def get_teacher_replacement(db: Session, form_id):
+# class_cancellation
+def get_class_cancellation_form(db: Session, form_id):
     try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(
-                teacher_replacement_pk_id=form_id,
+        record = db.query(dbm.Class_Cancellation_form).filter_by(
+                class_cancellation_pk_id=form_id,
                 deleted=False
         ).first()
         if record:
@@ -25,9 +23,9 @@ def get_teacher_replacement(db: Session, form_id):
         return 500, e.__repr__()
 
 
-def get_all_teacher_replacement(db: Session):
+def get_all_class_cancellation_form(db: Session):
     try:
-        data = db.query(dbm.Teacher_Replacement_form).filter_by(deleted=False).all()
+        data = db.query(dbm.Class_Cancellation_form).filter_by(deleted=False).all()
         if data:
             return 200, data
         return 404, "Not Found"
@@ -37,19 +35,24 @@ def get_all_teacher_replacement(db: Session):
         return 500, e.__repr__()
 
 
-def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_schema):
+def post_class_cancellation_form(db: Session, Form: sch.post_class_cancellation_schema):
     try:
-        if not employee_exist(db, [Form.created_by_fk_id, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
+        if not employee_exist(db, [Form.teacher_fk_id, Form.create_by_fk_id]):
             return 404, "Target Employee Not Found"
+
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 404, "Target class Not Found"
 
-        OBJ = dbm.Teacher_Replacement_form(
-                created_by_fk_id=Form.created_by_fk_id,
-                teacher_fk_id=Form.teacher_fk_id,
-                replacement_teacher_fk_id=Form.replacement_teacher_fk_id,
-                class_fk_id=Form.class_fk_id
-        )
+        OBJ = dbm.Class_Cancellation_form()
+
+        OBJ.create_by_fk_id = Form.create_by_fk_id
+        OBJ.class_fk_id = Form.class_fk_id
+        OBJ.teacher_fk_id = Form.teacher_fk_id
+        OBJ.replacement = Form.replacement
+        OBJ.class_duration = Form.class_duration
+        OBJ.class_location = Form.class_location
+        OBJ.description = Form.description
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -60,10 +63,10 @@ def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_sch
         return 500, e.__repr__()
 
 
-def delete_teacher_replacement(db: Session, form_id):
+def delete_class_cancellation_form(db: Session, form_id):
     try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(
-                teacher_replacement_pk_id=form_id,
+        record = db.query(dbm.Class_Cancellation_form).filter_by(
+                class_cancellation_pk_id=form_id,
                 deleted=False
         ).first()
         if not record:
@@ -76,28 +79,32 @@ def delete_teacher_replacement(db: Session, form_id):
         return 500, e.__repr__()
 
 
-def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement_schema):
+def update_class_cancellation_form(db: Session, Form: sch.update_class_cancellation_schema):
     try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(
-                teacher_tardy_reports_pk_id=Form.teacher_replacement_pk_id,
+        record = db.query(dbm.Class_Cancellation_form).filter_by(
+                class_cancellation_pk_id=Form.class_cancellation_pk_id,
                 deleted=False
         ).first()
         if not record:
             return 404, "Not Found"
 
-        if not employee_exist(db, [Form.created_by_fk_id, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
+        if not employee_exist(db, [Form.teacher_fk_id, Form.create_by_fk_id]):
             return 404, "Target Employee Not Found"
+
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 404, "Target class Not Found"
 
-        record.created_by_fk_id = Form.created_by_fk_id
-        record.teacher_fk_id = Form.teacher_fk_id
-        record.replacement_teacher_fk_id = Form.replacement_teacher_fk_id
+        record.create_by_fk_id = Form.create_by_fk_id
         record.class_fk_id = Form.class_fk_id
+        record.teacher_fk_id = Form.teacher_fk_id
+        record.replacement = Form.replacement
+        record.class_duration = Form.class_duration
+        record.class_location = Form.class_location
+        record.description = Form.description
+
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
         logging.error(e)
         db.rollback()
         return 500, e.__repr__()
-

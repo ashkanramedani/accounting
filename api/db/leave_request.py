@@ -1,10 +1,10 @@
 import logging
-from uuid import UUID
-from .Exist import employee_exist
+
 from sqlalchemy.orm import Session
-from typing import List
-import schemas as sch
+
 import db.models as dbm
+import schemas as sch
+from .Exist import employee_exist
 
 
 # Leave Request
@@ -39,13 +39,14 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
     try:
         if not employee_exist(db, [Form.created_by, Form.created_for]):
             return 404, "Target Employee Not Found"
-        OBJ = dbm.Leave_request_form(
-                created_by_fk_id=Form.created_by,
-                created_for_fk_id=Form.created_for,
-                start_date=Form.start_date,
-                end_date=Form.end_date,
-                Description=Form.Description
-        )
+        OBJ = dbm.Leave_request_form()
+
+        OBJ.created_by_fk_id = Form.created_by
+        OBJ.created_for_fk_id = Form.created_for
+        OBJ.start_date = Form.start_date
+        OBJ.end_date = Form.end_date
+        OBJ.Description = Form.Description
+
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
