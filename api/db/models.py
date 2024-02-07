@@ -85,7 +85,6 @@ class BaseTable:
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
     delete_date = Column(DateTime(timezone=True), default=None)
-    created_by_fk_id = create_forenKey("employees", nullable=True)
 
 class Leave_request_form(Base, BaseTable):
     __tablename__ = "leave_request"
@@ -157,9 +156,11 @@ class Class_Cancellation_form(Base, BaseTable):
 class Teacher_Replacement_form(Base, BaseTable):
     __tablename__ = "teacher_replacement"
     teacher_replacement_pk_id = create_Unique_ID()
+    created_by_fk_id = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
     replacement_teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
+
 
 
 class Business_Trip_form(Base, BaseTable):
@@ -173,6 +174,7 @@ class Business_Trip_form(Base, BaseTable):
 class Teachers_Report_form(Base, BaseTable):
     __tablename__ = "teachers_report"
     teachers_report_pk_id = create_Unique_ID()
+    created_by_fk_id = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
     score = Column(Float)
