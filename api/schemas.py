@@ -1,8 +1,9 @@
 from datetime import datetime, time, timedelta, date
-from uuid import UUID
-from typing import List, Dict
-from pydantic import BaseModel, UUID4
 from enum import Enum
+from typing import List
+from uuid import UUID
+
+from pydantic import BaseModel
 
 
 class WeekdayEnum(str, Enum):
@@ -32,6 +33,7 @@ class post_employee_schema(BaseModel):
     name: str
     last_name: str
     job_title: job_title_Enum
+    priority: int
 
 
 class update_employee_schema(BaseModel):
@@ -39,6 +41,7 @@ class update_employee_schema(BaseModel):
     name: str
     last_name: str
     job_title: str
+    priority: int
 
 
 # Leave requests Base Model
@@ -273,6 +276,7 @@ class post_fingerprint_scanner_schema(BaseModel):
     Antipass: bool
     ProxyWork: bool
     DateTime: datetime
+    user_ID: str
 
 class post_bulk_fingerprint_scanner_schema(BaseModel):
     created_by_fk_id: UUID
