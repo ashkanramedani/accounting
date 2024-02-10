@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -101,6 +102,7 @@ def update_class_cancellation_form(db: Session, Form: sch.update_class_cancellat
         record.class_duration = Form.class_duration
         record.class_location = Form.class_location
         record.description = Form.description
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Form Updated"

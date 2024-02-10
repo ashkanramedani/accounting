@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from loguru import logger
 from sqlalchemy.orm import Session
 
@@ -97,6 +99,7 @@ def update_response(db: Session, Form: sch.update_response_schema):
         record.question_fk_id = Form.question_fk_id
         record.form_fk_id = Form.form_fk_id
         record.answer = Form.answer
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Record Updated"

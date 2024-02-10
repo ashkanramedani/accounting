@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -95,6 +96,7 @@ def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement
         record.teacher_fk_id = Form.teacher_fk_id
         record.replacement_teacher_fk_id = Form.replacement_teacher_fk_id
         record.class_fk_id = Form.class_fk_id
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Form Updated"

@@ -1,4 +1,5 @@
-from loguru import logger
+from datetime import datetime, timezone
+
 from loguru import logger
 from sqlalchemy.orm import Session
 
@@ -76,6 +77,7 @@ def update_class(db: Session, Form: sch.update_class_schema):
         record.starting_time = Form.starting_time
         record.duration = Form.duration
         record.class_date = Form.class_date
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Record Updated"

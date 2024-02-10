@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -90,6 +91,8 @@ def update_leave_request(db: Session, Form: sch.update_leave_request_schema):
         record.Start_Date = Form.start_date,
         record.End_Date = Form.end_date,
         record.Description = Form.Description
+        record.update_date = datetime.now(timezone.utc).astimezone()
+
         db.commit()
         return 200, "Form Updated"
     except Exception as e:

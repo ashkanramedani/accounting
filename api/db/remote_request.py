@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -91,6 +92,7 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         record.end_date = Form.end_date,
         record.working_location = Form.working_location,
         record.description = Form.description
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Form Updated"

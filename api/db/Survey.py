@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -75,6 +76,7 @@ def update_question(db: Session, Form: sch.update_questions_schema):
             return 404, "Not Found"
 
         record.text = Form.text
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Form Updated"
@@ -175,6 +177,7 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
 
         record.class_fk_id = Form.class_fk_id
         record.title = Form.title
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Form Updated"

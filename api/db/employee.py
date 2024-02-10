@@ -1,4 +1,5 @@
-from loguru import logger
+from datetime import timezone, datetime
+
 from loguru import logger
 from sqlalchemy.orm import Session
 
@@ -38,6 +39,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         OBJ.name = Form.name
         OBJ.last_name = Form.last_name
         OBJ.job_title = Form.job_title
+        OBJ.priority = Form.priority
 
         db.add(OBJ)
         db.commit()
@@ -72,6 +74,8 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
         record.name = Form.name,
         record.last_name = Form.last_name,
         record.job_title = Form.job_title
+        record.update_date = datetime.now(timezone.utc).astimezone()
+
         db.commit()
         return 200, "Record Updated"
     except Exception as e:

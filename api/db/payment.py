@@ -1,9 +1,11 @@
-from loguru import logger
+from datetime import datetime, timezone
+
 from loguru import logger
 from sqlalchemy.orm import Session
-from .Exist import employee_exist
+
 import db.models as dbm
 import schemas as sch
+from .Exist import employee_exist
 
 
 def get_payment_method(db: Session, payment_method_id):
@@ -75,6 +77,7 @@ def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
         record.employee_fk_id = Form.employee_fk_id
         record.shaba = Form.shaba
         record.card_number = Form.card_number
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Record Updated"

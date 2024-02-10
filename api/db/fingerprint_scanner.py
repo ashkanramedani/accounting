@@ -1,20 +1,29 @@
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
 from .Exist import employee_exist
-from .employee import get_all_employee
 
 
 # Teacher Replacement
-def get_fingerprint_scanner(db: Session, form_id):
+def get_fingerprint_scanner(db: Session, user_id):
     try:
-        record = db.query(dbm.fingerprint_scanner_form).filter_by(
-                fingerprint_scanner_pk_id=form_id,
+
+        user = db.query(dbm.Employees_form).filter_by(
+                employees_pk_id=user_id,
                 deleted=False
         ).first()
+        if not user:
+            return 404, "User Not Found"
+
+
+        record = db.query(dbm.fingerprint_scanner_form).filter_by(
+                user_ID=user.fingerprint_scanner_user_id,
+                deleted=False
+        ).all()
         if record:
             return 200, record
         return 404, "Not Found"
@@ -38,17 +47,17 @@ def get_all_fingerprint_scanner(db: Session):
 
 def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_schema):
     try:
-        if not employee_exist(db, [Form.created_by_fk_id, Form.employee_fk_id]):
+        if not employee_exist(db, [Form.created_by_fk_id]):
             return 404, "Target Employee Not Found"
 
         OBJ = dbm.fingerprint_scanner_form()
 
-        OBJ.employee_fk_id = Form.employee_fk_id
         OBJ.created_by_fk_id = Form.created_by_fk_id
         OBJ.In_Out = Form.In_Out
         OBJ.Antipass = Form.Antipass
         OBJ.ProxyWork = Form.ProxyWork
         OBJ.DateTime = Form.DateTime
+        OBJ.user_ID = Form.user_ID
 
         db.add(OBJ)
         db.commit()
@@ -63,30 +72,28 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
 def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_scanner_schema):
     try:
 
-        status_code, all_employee = get_all_employee(db)
-        if status_code != 200:
-            return status_code, all_employee
+        if not employee_exist(db, [Form.created_by_fk_id]):
+            return 404, "Target Employee Not Found"
 
         result = {}
-        all_employee = {employee['name']: employee['employees_pk_id'] for employee in all_employee}
 
-        for employee, index in Form.Records.items():
-            if employee not in all_employee:
-                result[employee] = 404, "Target Employee Not Found"
-                continue
-
-            for i, detail in index:
-                OBJ = dbm.fingerprint_scanner_form()
-
-                OBJ.employee_fk_id = Form.Records[employee]
-                OBJ.created_by_fk_id = Form.created_by_fk_id
-                OBJ.In_Out = detail['In_Out']
-                OBJ.Antipass = detail['Antipass']
-                OBJ.ProxyWork = detail['ProxyWork']
-                OBJ.DateTime = detail['DateTime']
-                db.add(OBJ)
-                db.commit()
-                db.refresh(OBJ)
+        for User_ID, details in Form:
+            for _, detail in details:
+                try:
+                    OBJ = dbm.fingerprint_scanner_form()
+                    OBJ.created_by_fk_id = Form.created_by_fk_id
+                    OBJ.user_ID = User_ID
+                    OBJ.In_Out = detail['In_Out']
+                    OBJ.Antipass = detail['Antipass']
+                    OBJ.ProxyWork = detail['ProxyWork']
+                    OBJ.DateTime = detail['DateTime']
+                    db.add(OBJ)
+                    db.commit()
+                    db.refresh(OBJ)
+                    result[User_ID] = "User Added"
+                except Exception as e:
+                    result[User_ID] = e.args[0]
+                    db.rollback()
         return 200, result
     except Exception as e:
         logging.error(e)
@@ -128,6 +135,7 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         record.Antipass = Form.Antipass
         record.ProxyWork = Form.ProxyWork
         record.DateTime = Form.DateTime
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Form Updated"
@@ -135,75 +143,3 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         logging.error(e)
         db.rollback()
         return 500, e.__repr__()
-
-
-'''
-[
-  {
-    "priority": 5,
-    "visible": true,
-    "create_date": "2024-02-07T11:07:42.427019+00:00",
-    "update_date": null,
-    "can_deleted": true,
-    "created_by_fk_id": null,
-    "name": "string",
-    "job_title": "teacher",
-    "employees_pk_id": "671ef1bd-17f8-4898-ad10-05ffaf8c6271",
-    "last_name": "string",
-    "expire_date": null,
-    "can_update": true,
-    "deleted": false,
-    "delete_date": null
-  },
-  {
-    "priority": 5,
-    "visible": true,
-    "create_date": "2024-02-07T11:07:45.843458+00:00",
-    "update_date": null,
-    "can_deleted": true,
-    "created_by_fk_id": null,
-    "name": "string",
-    "job_title": "teacher",
-    "employees_pk_id": "20545185-406a-425d-864d-6a2c619c6d59",
-    "last_name": "string",
-    "expire_date": null,
-    "can_update": true,
-    "deleted": false,
-    "delete_date": null
-  },
-  {
-    "priority": 5,
-    "visible": true,
-    "create_date": "2024-02-07T11:07:46.534765+00:00",
-    "update_date": null,
-    "can_deleted": true,
-    "created_by_fk_id": null,
-    "name": "string",
-    "job_title": "teacher",
-    "employees_pk_id": "8447d4a0-5da6-470e-b52f-5619693aece9",
-    "last_name": "string",
-    "expire_date": null,
-    "can_update": true,
-    "deleted": false,
-    "delete_date": null
-  },
-  {
-    "priority": 5,
-    "visible": true,
-    "create_date": "2024-02-07T11:07:47.149447+00:00",
-    "update_date": null,
-    "can_deleted": true,
-    "created_by_fk_id": null,
-    "name": "string",
-    "job_title": "teacher",
-    "employees_pk_id": "3afbfa3a-17d7-4001-83a0-260310f27e7c",
-    "last_name": "string",
-    "expire_date": null,
-    "can_update": true,
-    "deleted": false,
-    "delete_date": null
-  }
-]
-
-
-'''

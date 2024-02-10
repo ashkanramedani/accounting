@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -92,6 +93,8 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
         record.teacher_fk_id = Form.teacher_fk_id
         record.class_fk_id = Form.class_fk_id
         record.delay = Form.delay
+        record.update_date = datetime.now(timezone.utc).astimezone()
+
         db.commit()
         return 200, "Form Updated"
     except Exception as e:

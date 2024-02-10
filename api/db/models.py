@@ -8,27 +8,6 @@ from .database import Base
 
 metadata_obj = MetaData()
 
-# __all__ = [
-#     "BaseTable",
-#     "Leave_request_form",
-#     "Student_form",
-#     "Class_form",
-#     "Employees_form",
-#     "Remote_Request_form",
-#     "Teacher_tardy_reports_form",
-#     "Class_Cancellation_form",
-#     "Teacher_Replacement_form",
-#     "WeekdayEnum",
-#     "Day_form",
-#     "Employee_Timesheet_form",
-#     "Business_Trip_form",
-#     "Teachers_Report_form",
-#     "survey_form",
-#     "Questions_form",
-#     "survey_questions_form",
-#     "response_form"
-# ]
-
 IDs = {
     "employees": "employees.employees_pk_id",
     "classes": "classes.class_pk_id",
@@ -76,15 +55,17 @@ def create_forenKey(table: str, nullable=False):
 
 
 class BaseTable:
-    priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expire_date = Column(DateTime(timezone=True), default=None)
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
+    priority = Column(Integer, default=5, nullable=True)
+    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
+
+    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
     delete_date = Column(DateTime(timezone=True), default=None)
+    expire_date = Column(DateTime(timezone=True), default=None)
+
 
 class Leave_request_form(Base, BaseTable):
     __tablename__ = "leave_request"
@@ -118,6 +99,7 @@ class Employees_form(Base, BaseTable):
     name = Column(String, nullable=False)
     last_name = Column(String, index=True)
     job_title = Column(Enum(job_title_Enum), index=True)
+    fingerprint_scanner_user_id = Column(String, nullable=False)
 
 
 class Remote_Request_form(Base, BaseTable):
@@ -160,7 +142,6 @@ class Teacher_Replacement_form(Base, BaseTable):
     teacher_fk_id = create_forenKey("employees")
     replacement_teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
-
 
 
 class Business_Trip_form(Base, BaseTable):
@@ -225,21 +206,11 @@ class payment_method_form(Base, BaseTable):
     card_number = Column(String, nullable=True, unique=True)
     active = Column(Boolean, default=False)
 
-# class Day_form(Base, BaseTable):
-    # __tablename__ = 'days'
-    # day_pk_id = create_Unique_ID()
-    # time_sheet_fk_id = create_forenKey("employee_timesheet")
-    # date = Column(Date, nullable=False)
-    # day_of_week = Column(Enum(WeekdayEnum), nullable=False)
-    # entry_time = Column(DateTime, nullable=False)
-    # exit_time = Column(DateTime, nullable=False)
-    # delta_time = Column(Interval, nullable=False)
-
 
 class fingerprint_scanner_form(Base):
     __tablename__ = "fingerprint_scanner"
     fingerprint_scanner_pk_id = create_Unique_ID()
-    employee_fk_id = create_forenKey("employees")
+    user_ID = Column(String, nullable=False)
     In_Out = Column(Enum(fingerprint_scanner_Mode), nullable=True)
     Antipass = Column(Integer, default=0)
     ProxyWork = Column(Integer, default=0)
