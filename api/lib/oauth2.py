@@ -1,15 +1,15 @@
-from fastapi import Depends, status
-from fastapi.security import OAuth2PasswordBearer
-from typing import Optional, Union, Any
 from datetime import datetime, timedelta
-from jose import jwt
-from api.db.database import get_db
+from typing import Union, Any
+
 from api.db import db_user
-from sqlalchemy.orm import Session
-from jose.exceptions import JWTError
+from api.db.database import get_db
+from fastapi import Depends, status
 from fastapi.exceptions import HTTPException
-import api.db.models as dbm
-import logging
+from fastapi.security import OAuth2PasswordBearer
+from jose import jwt
+from jose.exceptions import JWTError
+from sqlalchemy.orm import Session
+
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 JWT_REFRESH_SECRET_KEY = "3946a14269deb47560ca933372a5ebeef35f65c14fdcb6562ed8f670ffb8056b"

@@ -1,5 +1,7 @@
-from werkzeug.security import generate_password_hash, check_password_hash
 import hashlib
+
+from werkzeug.security import generate_password_hash, check_password_hash
+
 
 class Hash:
     @staticmethod

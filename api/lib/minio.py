@@ -1,11 +1,9 @@
 
-from fastapi import HTTPException, status, UploadFile, File
-
-import time
-import hashlib
-import shutil
-from minio import Minio
 from datetime import timedelta
+
+from fastapi import HTTPException, status, UploadFile
+from minio import Minio
+
 
 class MinioClient:
     def __init__(self, endpoint: str, access_key: str, secret_key: str, bucket_name: str):
