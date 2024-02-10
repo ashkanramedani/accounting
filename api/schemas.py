@@ -27,6 +27,7 @@ class job_title_Enum(str, Enum):
     Supervisor = "Supervisor"
 
 
+
 class post_employee_schema(BaseModel):
     name: str
     last_name: str
