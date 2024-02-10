@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
+import db as dbf
 import schemas as sch
 from db.database import get_db
-import db as dbf
 
 router = APIRouter(prefix='/api/v1/form/class_cancellation', tags=['Form Class Cancellation'])
 
