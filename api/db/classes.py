@@ -18,7 +18,7 @@ def get_class(db: Session, class_id):
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_class(db: Session):
@@ -29,7 +29,7 @@ def get_all_class(db: Session):
         return 404, f"Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_class(db: Session, Form: sch.post_class_schema):
@@ -46,7 +46,7 @@ def post_class(db: Session, Form: sch.post_class_schema):
         return 200, "class Added"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_class(db: Session, class_id):
@@ -62,7 +62,7 @@ def delete_class(db: Session, class_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_class(db: Session, Form: sch.update_class_schema):
@@ -84,4 +84,4 @@ def update_class(db: Session, Form: sch.update_class_schema):
     except Exception as e:
         logger.warning(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]

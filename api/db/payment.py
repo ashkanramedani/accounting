@@ -19,7 +19,7 @@ def get_payment_method(db: Session, payment_method_id):
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_payment_method(db: Session):
@@ -30,7 +30,7 @@ def get_all_payment_method(db: Session):
         return 404, f"Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
@@ -46,7 +46,7 @@ def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
         return 200, "payment_method Added"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_payment_method(db: Session, payment_method_id):
@@ -62,7 +62,7 @@ def delete_payment_method(db: Session, payment_method_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
@@ -84,4 +84,4 @@ def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
     except Exception as e:
         logger.warning(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]

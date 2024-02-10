@@ -21,7 +21,7 @@ def get_tardy_request(db: Session, form_id):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_tardy_request(db: Session):
@@ -33,7 +33,7 @@ def get_all_tardy_request(db: Session):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema):
@@ -56,7 +56,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_tardy_request(db: Session, form_id):
@@ -72,7 +72,7 @@ def delete_tardy_request(db: Session, form_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_schema):
@@ -100,4 +100,4 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]

@@ -18,7 +18,7 @@ def get_employee(db: Session, employee_id):
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_employee(db: Session):
@@ -29,7 +29,7 @@ def get_all_employee(db: Session):
         return 404, f"Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_employee(db: Session, Form: sch.post_employee_schema):
@@ -40,6 +40,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         OBJ.last_name = Form.last_name
         OBJ.job_title = Form.job_title
         OBJ.priority = Form.priority
+        OBJ.fingerprint_scanner_user_id = Form.user_ID
 
         db.add(OBJ)
         db.commit()
@@ -47,7 +48,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         return 200, "Employee Added"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_employee(db: Session, employee_id):
@@ -63,7 +64,7 @@ def delete_employee(db: Session, employee_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_employee(db: Session, Form: sch.update_employee_schema):
@@ -81,4 +82,4 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
     except Exception as e:
         logger.warning(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]

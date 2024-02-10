@@ -30,7 +30,7 @@ def get_fingerprint_scanner(db: Session, user_id):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_fingerprint_scanner(db: Session):
@@ -42,7 +42,7 @@ def get_all_fingerprint_scanner(db: Session):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_schema):
@@ -66,7 +66,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_scanner_schema):
@@ -98,7 +98,7 @@ def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_s
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_fingerprint_scanner(db: Session, form_id):
@@ -114,7 +114,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
@@ -142,4 +142,4 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]

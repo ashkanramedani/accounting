@@ -27,13 +27,12 @@ class job_title_Enum(str, Enum):
     Supervisor = "Supervisor"
 
 
-# Employees Base Model
-
 class post_employee_schema(BaseModel):
     name: str
     last_name: str
     job_title: job_title_Enum
-    priority: int
+    priority: int | None
+    user_ID: str | None
 
 
 class update_employee_schema(BaseModel):
@@ -41,10 +40,9 @@ class update_employee_schema(BaseModel):
     name: str
     last_name: str
     job_title: str
-    priority: int
+    priority: int | None
+    user_ID: str | None
 
-
-# Leave requests Base Model
 
 class post_leave_request_schema(BaseModel):
     created_by: UUID
@@ -63,8 +61,6 @@ class update_leave_request_schema(BaseModel):
     Description: str
 
 
-# student
-
 class post_student_schema(BaseModel):
     student_name: str
     student_last_name: str
@@ -80,8 +76,6 @@ class update_student_schema(BaseModel):
     student_age: int
 
 
-# Class Base Model
-
 class post_class_schema(BaseModel):
     starting_time: time
     duration = timedelta
@@ -93,9 +87,6 @@ class update_class_schema(BaseModel):
     starting_time: time
     duration = timedelta
     class_date: date
-
-
-# Remote request
 
 
 class post_remote_request_schema(BaseModel):
@@ -115,8 +106,6 @@ class update_remote_request_schema(BaseModel):
     description: str
 
 
-# teacher tardy reports
-
 class post_teacher_tardy_reports_schema(BaseModel):
     create_by_fk_id: UUID
     teacher_fk_id: UUID
@@ -131,8 +120,6 @@ class update_teacher_tardy_reports_schema(BaseModel):
     class_fk_id: UUID
     delay: timedelta
 
-
-# class cancellation
 
 class post_class_cancellation_schema(BaseModel):
     create_by_fk_id: UUID
@@ -155,8 +142,6 @@ class update_class_cancellation_schema(BaseModel):
     description: str
 
 
-# Teacher Replacement
-
 class post_teacher_replacement_schema(BaseModel):
     created_by_fk_id: UUID
     teacher_fk_id: UUID
@@ -172,8 +157,6 @@ class update_teacher_replacement_schema(BaseModel):
     class_fk_id: UUID
 
 
-# Business Trip Base Model
-
 class post_business_trip_schema(BaseModel):
     employee_fk_id: UUID
     destination: str
@@ -186,8 +169,6 @@ class update_business_trip_schema(BaseModel):
     destination: str
     description: str
 
-
-# DAY Base Model
 
 class post_day_schema(BaseModel):
     date: date
@@ -291,18 +272,3 @@ class update_fingerprint_scanner_schema(BaseModel):
     Antipass: str
     ProxyWork: str
     DateTime: datetime
-
-
-'''
-
-class post_survey_question_schema(BaseModel):
-    form_fk_id: UUID
-    question_fk_id: UUID
-
-class update_survey_question_schema(BaseModel):
-    survey_question_pk_id: UUID
-    form_fk_id: UUID
-    question_fk_id: UUID
-    new_question_fk_id: UUID
-
-'''

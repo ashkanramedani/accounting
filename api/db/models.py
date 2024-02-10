@@ -99,7 +99,7 @@ class Employees_form(Base, BaseTable):
     name = Column(String, nullable=False)
     last_name = Column(String, index=True)
     job_title = Column(Enum(job_title_Enum), index=True)
-    fingerprint_scanner_user_id = Column(String, nullable=False)
+    fingerprint_scanner_user_id = Column(String, nullable=True, default="Not Specified")
 
 
 class Remote_Request_form(Base, BaseTable):

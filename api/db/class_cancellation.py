@@ -21,7 +21,7 @@ def get_class_cancellation_form(db: Session, form_id):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_class_cancellation_form(db: Session):
@@ -33,7 +33,7 @@ def get_all_class_cancellation_form(db: Session):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_class_cancellation_form(db: Session, Form: sch.post_class_cancellation_schema):
@@ -61,7 +61,7 @@ def post_class_cancellation_form(db: Session, Form: sch.post_class_cancellation_
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_class_cancellation_form(db: Session, form_id):
@@ -77,7 +77,7 @@ def delete_class_cancellation_form(db: Session, form_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_class_cancellation_form(db: Session, Form: sch.update_class_cancellation_schema):
@@ -109,4 +109,4 @@ def update_class_cancellation_form(db: Session, Form: sch.update_class_cancellat
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]

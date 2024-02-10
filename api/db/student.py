@@ -19,7 +19,7 @@ def get_student(db: Session, student_id):
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_student(db: Session):
@@ -30,7 +30,7 @@ def get_all_student(db: Session):
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_student(db: Session, Form: sch.post_student_schema):
@@ -48,7 +48,7 @@ def post_student(db: Session, Form: sch.post_student_schema):
         return 200, "Student Added"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_student(db: Session, student_id):
@@ -64,7 +64,7 @@ def delete_student(db: Session, student_id):
         return 200, "employee Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_student(db: Session, Form: sch.update_student_schema):
@@ -83,6 +83,6 @@ def update_student(db: Session, Form: sch.update_student_schema):
     except Exception as e:
         logger.warning(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 #

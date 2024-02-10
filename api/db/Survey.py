@@ -20,7 +20,7 @@ def get_question(db: Session, question_id):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_question(db: Session):
@@ -32,7 +32,7 @@ def get_all_question(db: Session):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_question(db: Session, Form: sch.post_questions_schema):
@@ -47,7 +47,7 @@ def post_question(db: Session, Form: sch.post_questions_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_question(db: Session, question_id):
@@ -63,7 +63,7 @@ def delete_question(db: Session, question_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_question(db: Session, Form: sch.update_questions_schema):
@@ -83,7 +83,7 @@ def update_question(db: Session, Form: sch.update_questions_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 # survey
@@ -100,7 +100,7 @@ def get_survey(db: Session, survey_id):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_survey(db: Session):
@@ -114,7 +114,7 @@ def get_all_survey(db: Session):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_survey(db: Session, Form: sch.post_survey_schema):
@@ -140,7 +140,7 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_survey(db: Session, survey_id):
@@ -160,7 +160,7 @@ def delete_survey(db: Session, survey_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_survey(db: Session, Form: sch.update_survey_schema):
@@ -184,7 +184,7 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 # def update_survey_question(db: Session, Form: sch.update_survey_schema):
@@ -204,4 +204,4 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
 #     except Exception as e:
 #         logging.error(e)
 #         db.rollback()
-#         return 500, e.__repr__()
+#         return 500, e.args[0]

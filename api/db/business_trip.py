@@ -22,7 +22,7 @@ def get_business_trip_form(db: Session, form_id):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_business_trip_form(db: Session):
@@ -34,7 +34,7 @@ def get_all_business_trip_form(db: Session):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema):
@@ -55,7 +55,7 @@ def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_business_trip_form(db: Session, form_id):
@@ -71,7 +71,7 @@ def delete_business_trip_form(db: Session, form_id):
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema):
@@ -96,4 +96,4 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]

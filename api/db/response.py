@@ -19,7 +19,7 @@ def get_response(db: Session, response_id):
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def get_all_response(db: Session):
@@ -30,7 +30,7 @@ def get_all_response(db: Session):
         return 404, "Not Found"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def post_response(db: Session, Form: sch.post_response_schema):
@@ -57,7 +57,7 @@ def post_response(db: Session, Form: sch.post_response_schema):
         return 200, "response Added"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def delete_response(db: Session, response_id):
@@ -73,7 +73,7 @@ def delete_response(db: Session, response_id):
         return 200, "employee Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 
 def update_response(db: Session, Form: sch.update_response_schema):
@@ -106,6 +106,6 @@ def update_response(db: Session, Form: sch.update_response_schema):
     except Exception as e:
         logger.warning(e)
         db.rollback()
-        return 500, e.__repr__()
+        return 500, e.args[0]
 
 #
