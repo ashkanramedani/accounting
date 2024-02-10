@@ -122,20 +122,26 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 404, "Target class Not Found"
 
-        OBJ = dbm.Questions_form()
+
+        OBJ = dbm.survey_form()
         OBJ.title = Form.title
+        OBJ.class_fk_id = Form.class_fk_id
 
         db.add(OBJ)
+        db.commit()
+        db.refresh(OBJ)
 
         form_uuid = OBJ.form_pk_id
+
+        if not form_uuid:
+            return 404, form_uuid
         for uuid in Form.questions:
             Q_OBJ = dbm.survey_questions_form()
             Q_OBJ.form_fk_id = form_uuid
             Q_OBJ.question_fk_id = uuid
             db.add(Q_OBJ)
-
-        db.commit()
-        db.refresh(OBJ)
+            db.commit()
+            db.refresh(Q_OBJ)
         return 200, "Record has been Added"
     except Exception as e:
         logging.error(e)
@@ -152,9 +158,6 @@ def delete_survey(db: Session, survey_id):
         if not record:
             return 404, "Not Found"
         record.deleted = True
-
-        # for survey_questions in db.query(dbm.survey_questions_form).filter_by(form_fk_id=record.form_pk_id).all:
-        #     survey_questions.deleted = False
 
         db.commit()
         return 200, "Deleted"
@@ -185,23 +188,3 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
         logging.error(e)
         db.rollback()
         return 500, e.args[0]
-
-
-# def update_survey_question(db: Session, Form: sch.update_survey_schema):
-#     try:
-#         record = db.query(dbm.survey_questions_form).filter_by(
-#                 form_pk_id=Form.form_pk_id,
-#                 deleted=False
-#         ).first()
-#         if not record:
-#             return 404, "Not Found"
-#
-#         record.questions_fk_id = Form.questions_fk_id
-#         record.title = Form.new_question_fk_id
-#
-#         db.commit()
-#         return 200, "Form Updated"
-#     except Exception as e:
-#         logging.error(e)
-#         db.rollback()
-#         return 500, e.args[0]

@@ -12,7 +12,7 @@ IDs = {
     "employees": "employees.employees_pk_id",
     "classes": "classes.class_pk_id",
     "days": "days.day_pk_id",
-    "forms": "forms.form_pk_id",
+    "survey_form": "survey_form.form_pk_id",
     "question": "question.question_pk_id",
     "student": "student.student_pk_id",
     "payment_method": "payment_method.payment_method_pk_id"
@@ -90,7 +90,7 @@ class Class_form(Base, BaseTable):
     class_pk_id = create_Unique_ID()
     starting_time = Column(Time, nullable=False)
     duration = Column(Interval)
-    class_date = Column(DateTime, nullable=True)
+    class_date = Column(DateTime, nullable=False)
 
 
 class Employees_form(Base, BaseTable):
@@ -169,7 +169,7 @@ class Teachers_Report_form(Base, BaseTable):
 
 ## Survey Form
 class survey_form(Base, BaseTable):
-    __tablename__ = "forms"
+    __tablename__ = "survey_form"
 
     form_pk_id = create_Unique_ID()
     class_fk_id = create_forenKey("classes")
@@ -183,9 +183,9 @@ class Questions_form(Base, BaseTable):
 
 
 class survey_questions_form(Base, BaseTable):
-    __tablename__ = 'forms_questions'
+    __tablename__ = 'survey_form_questions'
     survey_questions = create_Unique_ID()
-    form_fk_id = create_forenKey("forms")
+    form_fk_id = create_forenKey("survey_form")
     question_fk_id = create_forenKey("question")
 
 
@@ -194,7 +194,7 @@ class response_form(Base, BaseTable):
     response_pk_id = create_Unique_ID()
     student_fk_id = create_forenKey("student")
     question_fk_id = create_forenKey("question")
-    form_fk_id = create_forenKey("forms")
+    form_fk_id = create_forenKey("survey_form")
     answer = Column(String)
 
 

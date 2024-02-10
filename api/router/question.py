@@ -47,4 +47,3 @@ async def update_question(Form: sch.update_questions_schema, db=Depends(get_db))
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-

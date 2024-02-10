@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 
 from loguru import logger
 from sqlalchemy.orm import Session
@@ -37,7 +37,7 @@ def post_class(db: Session, Form: sch.post_class_schema):
         OBJ = dbm.Class_form()
 
         OBJ.starting_time = Form.starting_time
-        OBJ.duration = Form.duration
+        OBJ.duration = timedelta(minutes=Form.duration)
         OBJ.class_date = Form.class_date
 
         db.add(OBJ)
@@ -75,7 +75,7 @@ def update_class(db: Session, Form: sch.update_class_schema):
             return 404, "Not Found"
 
         record.starting_time = Form.starting_time
-        record.duration = Form.duration
+        record.duration = timedelta(minutes=Form.duration)
         record.class_date = Form.class_date
         record.update_date = datetime.now(timezone.utc).astimezone()
 

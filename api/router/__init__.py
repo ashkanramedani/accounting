@@ -11,6 +11,7 @@ from .student import router as student_route
 from .survey import router as survey_route
 from .tardy_request import router as tardy_request_route
 from .teacher_replacement import router as teacher_replacement_route
+from .fingerScanner import router as fingerscanner_router
 
 routes = [
     business_trip_route,
@@ -25,13 +26,7 @@ routes = [
     survey_route,
     tardy_request_route,
     teacher_replacement_route,
-    route_payment]
+    route_payment,
+    fingerscanner_router]
 
-
-'''
-{
-  "detail": "IntegrityError('(psycopg2.errors.ForeignKeyViolation) insert or update on table
-   \"payment_method\" violates foreign key constraint \"payment_method_employee_fk_id_fkey\"
-   \\nDETAIL:  Key (employee_fk_id)=(3fa85f64-5717-4562-b3fc-2c963f66afa6) is not present in table \"employees\".\\n')"
-}
-'''
+__all__ = ["routes"]

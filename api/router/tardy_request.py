@@ -47,4 +47,3 @@ async def update_tardy_request(Form: sch.update_teacher_tardy_reports_schema, db
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-

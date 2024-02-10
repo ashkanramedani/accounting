@@ -27,7 +27,6 @@ class job_title_Enum(str, Enum):
     Supervisor = "Supervisor"
 
 
-
 class post_employee_schema(BaseModel):
     name: str
     last_name: str
@@ -79,14 +78,14 @@ class update_student_schema(BaseModel):
 
 class post_class_schema(BaseModel):
     starting_time: time
-    duration = timedelta
+    duration: int
     class_date: date
 
 
 class update_class_schema(BaseModel):
     class_pk_id: UUID
     starting_time: time
-    duration = timedelta
+    duration: int
     class_date: date
 
 
@@ -260,9 +259,10 @@ class post_fingerprint_scanner_schema(BaseModel):
     DateTime: datetime
     user_ID: str
 
+
 class post_bulk_fingerprint_scanner_schema(BaseModel):
     created_by_fk_id: UUID
-    Records:  dict[str, dict[int, dict[str, str]]]
+    Records: dict[str, dict[int, dict[str, str]]]
 
 
 class update_fingerprint_scanner_schema(BaseModel):

@@ -8,7 +8,6 @@ from db.database import get_db
 router = APIRouter(prefix='/api/v1/form/teacher_replacement', tags=['Form Teacher Replacement'])
 
 
-
 # Teacher replacement
 
 @router.post("/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
@@ -49,4 +48,3 @@ async def update_tardy_request(Form: sch.update_teacher_replacement_schema, db=D
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-

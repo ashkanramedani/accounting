@@ -8,7 +8,6 @@ from db.database import get_db
 router = APIRouter(prefix='/api/v1/form/remote_request', tags=['Form Remote Request'])
 
 
-
 # remote_request
 @router.post("/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def add_remote_request(Form: sch.post_remote_request_schema, db=Depends(get_db)):
@@ -48,4 +47,3 @@ async def update_remote_request(Form: sch.update_remote_request_schema, db=Depen
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-

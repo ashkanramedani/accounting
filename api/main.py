@@ -48,5 +48,3 @@ def ping():
 
 for route in routes:
     app.include_router(route)
-
-

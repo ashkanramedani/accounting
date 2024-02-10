@@ -47,4 +47,3 @@ async def update_fingerprint_scanner(Form: sch.update_fingerprint_scanner_schema
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-

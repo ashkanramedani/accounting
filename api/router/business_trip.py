@@ -47,4 +47,3 @@ async def update_business_trip(Form: sch.update_business_trip_schema, db=Depends
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-

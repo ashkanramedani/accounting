@@ -21,14 +21,12 @@ logger.add(
         format=config["logger"]["format"],
         level="INFO")
 
-
 if os.getenv('LOCAL_POSTGRES'):
     SQLALCHEMY_DATABASE_URL = os.getenv('LOCAL_POSTGRES')
 elif config['developer']:
     SQLALCHEMY_DATABASE_URL = f"{config['db_test']['database_type']}://{config['db_test']['username']}{':' if config['db_test']['username'] != '' else ''}{config['db_test']['password']}{'@' if config['db_test']['username'] != '' else ''}{config['db_test']['ip']}:{config['db_test']['port']}/{config['db_test']['database_name']}"
 else:
     SQLALCHEMY_DATABASE_URL = f"{config['db']['database_type']}://{config['db']['username']}:{config['db']['password']}@{config['db']['ip']}:{config['db']['port']}/{config['db']['database_name']}"
-
 
 if config['developer_log']:
     engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=3600, echo=True)

@@ -3,6 +3,7 @@ from .business_trip import *
 from .class_cancellation import *
 from .classes import *
 from .employee import *
+from .fingerprint_scanner import *
 from .leave_request import *
 from .payment import *
 from .remote_request import *
@@ -10,8 +11,6 @@ from .response import *
 from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
-from .fingerprint_scanner import *
-
 
 __all__ = [
     # employee.py

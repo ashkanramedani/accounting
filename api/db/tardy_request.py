@@ -44,10 +44,10 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
             return 404, "Target class Not Found"
         OBJ = dbm.Teacher_tardy_reports_form()
 
-        OBJ.create_by_fk_id=Form.create_by_fk_id,
-        OBJ.teacher_fk_id=Form.teacher_fk_id,
-        OBJ.class_fk_id=Form.class_fk_id,
-        OBJ.delay=Form.delay
+        OBJ.create_by_fk_id = Form.create_by_fk_id,
+        OBJ.teacher_fk_id = Form.teacher_fk_id,
+        OBJ.class_fk_id = Form.class_fk_id,
+        OBJ.delay = Form.delay
 
         db.add(OBJ)
         db.commit()

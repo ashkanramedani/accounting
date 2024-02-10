@@ -19,7 +19,6 @@ def get_fingerprint_scanner(db: Session, user_id):
         if not user:
             return 404, "User Not Found"
 
-
         record = db.query(dbm.fingerprint_scanner_form).filter_by(
                 user_ID=user.fingerprint_scanner_user_id,
                 deleted=False

@@ -1,4 +1,3 @@
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -16,12 +15,14 @@ async def add_employee(Form: sch.post_employee_schema, db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 @router.get("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_employee(employee_id, db=Depends(get_db)):
     status_code, result = dbf.get_employee(db, employee_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_all_employee(db=Depends(get_db)):
@@ -30,12 +31,14 @@ async def search_all_employee(db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 @router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def delete_employee(employee_id, db=Depends(get_db)):
     status_code, result = dbf.delete_employee(db, employee_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
 
 @router.put("/update", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def update_employee(Form: sch.update_employee_schema, db=Depends(get_db)):

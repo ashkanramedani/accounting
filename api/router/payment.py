@@ -47,4 +47,3 @@ async def update_payment_method(Form: sch.update_payment_method_schema, db=Depen
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-
