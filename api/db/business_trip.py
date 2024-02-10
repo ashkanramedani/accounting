@@ -1,4 +1,6 @@
+import datetime
 import logging
+from datetime import datetime, timezone
 
 from sqlalchemy.orm import Session
 
@@ -7,9 +9,6 @@ import schemas as sch
 from .Exist import employee_exist
 
 
-# Tardy Form - get_tardy_request
-
-# Teacher Replacement
 # business trip
 def get_business_trip_form(db: Session, form_id):
     try:
@@ -90,6 +89,7 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         record.employee_fk_id = Form.employee_fk_id
         record.destination = Form.destination
         record.description = Form.description
+        record.update_date = datetime.now(timezone.utc).astimezone()
 
         db.commit()
         return 200, "Form Updated"
