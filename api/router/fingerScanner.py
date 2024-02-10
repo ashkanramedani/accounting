@@ -16,6 +16,14 @@ async def add_fingerprint_scanner(Form: sch.post_fingerprint_scanner_schema, db=
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+@router.post("/bulk_add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def add_fingerprint_scanner(Form: sch.post_bulk_fingerprint_scanner_schema, db=Depends(get_db)):
+    status_code, result = dbf.post_bulk_fingerprint_scanner(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
 
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_fingerprint_scanner(form_id, db=Depends(get_db)):

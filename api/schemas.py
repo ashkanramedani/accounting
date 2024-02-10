@@ -251,7 +251,6 @@ class update_payment_method_schema(BaseModel):
 
 
 class post_fingerprint_scanner_schema(BaseModel):
-    employee_fk_id: UUID
     created_by_fk_id: UUID
     In_Out: fingerprint_scanner_Mode
     Antipass: bool
@@ -260,9 +259,17 @@ class post_fingerprint_scanner_schema(BaseModel):
     user_ID: str
 
 
+class FingerPrint_Record(BaseModel):
+    user_ID: str
+    In_Out: str
+    Antipass: str
+    ProxyWork: str
+    DateTime: str
+
+
 class post_bulk_fingerprint_scanner_schema(BaseModel):
     created_by_fk_id: UUID
-    Records: dict[str, dict[int, dict[str, str]]]
+    Records: List[FingerPrint_Record]
 
 
 class update_fingerprint_scanner_schema(BaseModel):

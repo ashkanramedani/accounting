@@ -76,23 +76,23 @@ def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_s
 
         result = {}
 
-        for User_ID, details in Form:
-            for _, detail in details:
-                try:
-                    OBJ = dbm.fingerprint_scanner_form()
-                    OBJ.created_by_fk_id = Form.created_by_fk_id
-                    OBJ.user_ID = User_ID
-                    OBJ.In_Out = detail['In_Out']
-                    OBJ.Antipass = detail['Antipass']
-                    OBJ.ProxyWork = detail['ProxyWork']
-                    OBJ.DateTime = detail['DateTime']
-                    db.add(OBJ)
-                    db.commit()
-                    db.refresh(OBJ)
-                    result[User_ID] = "User Added"
-                except Exception as e:
-                    result[User_ID] = e.args[0]
-                    db.rollback()
+        for record in Form.Records:
+            try:
+                OBJ = dbm.fingerprint_scanner_form()
+
+                OBJ.created_by_fk_id = Form.created_by_fk_id
+                OBJ.user_ID = record.user_ID
+                OBJ.In_Out = record.In_Out
+                OBJ.Antipass = record.Antipass
+                OBJ.ProxyWork = record.ProxyWork
+                OBJ.DateTime = datetime.strptime(record.DateTime, "%Y-%m-%d %H:%M:%S")
+
+                db.add(OBJ)
+                db.commit()
+                db.refresh(OBJ)
+            except Exception as e:
+                db.rollback()
+                return 500, e.args[0]
         return 200, result
     except Exception as e:
         logging.error(e)
