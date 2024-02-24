@@ -9,4 +9,4 @@ services:
     volumes:
       - ./:/app
     ports:
-      - 6600:6600
+      - 6695:6695

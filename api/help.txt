@@ -1,0 +1,28 @@
+python -m venv .venv
+source .venv/Scripts/activate ## for windows
+source .venv/bin/activate  ## for linux
+uvicorn main:app --reload --host 0.0.0.0 --port 6636 --workers 2
+
+http://127.0.0.1:8000/docs
+http://127.0.0.01:8000/redoc
+
+INFO:     Will watch for changes in these directories: ['...']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [118908] using WatchFiles
+INFO:     Started server process [119860]
+INFO:     Waiting for application startup.
+
+
+####  Delete all tabel
+DROP SCHEMA public CASCADE;
+CREATE SCHEMA public;
+
+
+cd /e/Work\ Pro/ieltsdaily/Code/accounting/api;
+source .venv/Scripts/activate;
+uvicorn main:app --reload --host 0.0.0.0 --port 6635 --workers 2;
+
+
+cd api.ieltsdaily.ir/;
+source .venv/bin/activate;
+uvicorn main:app --reload --host 0.0.0.0 --port 6635 --workers 2

@@ -12,6 +12,12 @@ from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
 
+from .db_user import *
+from .db_post import *
+from .db_tag import *
+from .db_category import *
+from .db_library import *
+
 __all__ = [
     # employee.py
     "get_employee",
@@ -100,4 +106,32 @@ __all__ = [
     "delete_fingerprint_scanner",
     "update_fingerprint_scanner"
 
+    # db_files.py
+    # db_user.py
+    "get_users_withfilter_employes",
+    # db_post.py
+    "read_all_posts_for_admin_panel",
+    "get_post_with_pid",
+    "delete_posts",
+    "update_posts",
+    "create_post",
+    # db_tag.py
+    "get_tag_by_name",
+    "get_tag_by_id",
+    "get_tages",
+    "get_all_tages",
+    "create_tag",
+    "update_tag",
+    "delete_tag",
+    # db_category.py
+    "get_category_by_name",
+    "get_category_by_id",
+    "get_categoryes",
+    "get_all_categoryes",
+    "create_category",
+    "update_category",
+    "delete_category",
+    # db_library.py
+    "get_libraries_by_library_type"
 ]
+
