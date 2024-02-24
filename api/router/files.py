@@ -33,75 +33,79 @@ from fastapi.logger import logger
 
 router = APIRouter(prefix='/api/v1/file', tags=['File'])
 
-#to get the current working directory
+# to get the current working directory
 directory = os.getcwd()
-_obj_json_handler_config = json_handler(FilePath=directory +"/configs/config.json")
-config =  _obj_json_handler_config.Data
+_obj_json_handler_config = json_handler(FilePath=directory + "/configs/config.json")
+config = _obj_json_handler_config.Data
 
-def removeChar(filename:str, ch:str):
-    return filename.replace(ch ,'')
+
+def removeChar(filename: str, ch: str):
+    return filename.replace(ch, '')
+
 
 @router.post('/files')
 async def download_file(file: Annotated[bytes, File(description="A file read as bytes")]):
     return {"file_size": len(file)}
 
+
 @router.post('/downloadfile')
-def download_files(bucket_name:str, file_path: str):
+def download_files(bucket_name: str, file_path: str):
     _obClientMinio = MinioClient(endpoint=config['minio']['endpoint'], access_key=config['minio']['access_key'], secret_key=config['minio']['secret_key'], bucket_name=bucket_name)
     _obClientMinio.download_file(file=file, file_size=81921)
 
+
 @router.post('/geturl')
-def geturl(bucket_name:str, object_name:str, limit:int=2):
+def geturl(bucket_name: str, object_name: str, limit: int = 2):
     _obClientMinio = MinioClient(endpoint=config['minio']['endpoint'], access_key=config['minio']['access_key'], secret_key=config['minio']['secret_key'], bucket_name=bucket_name)
-    url = _obClientMinio.get_url(bucket_name,object_name,limit)
-    return {"url":url}
+    url = _obClientMinio.get_url(bucket_name, object_name, limit)
+    return {"url": url}
+
 
 @router.post('/uploadfile_with_version')
-async def uploadfile_with_version(bucket_name:str, file_size:int, gname:int=0, user_id:int=1, prefix_name:str="", postfix_name:str="", file: UploadFile = File(...)):
+async def uploadfile_with_version(bucket_name: str, file_size: int, gname: int = 0, user_id: int = 1, prefix_name: str = "", postfix_name: str = "", file: UploadFile = File(...)):
     filename = file.filename
     content_type = file.content_type
 
     if gname == 1:
         pre_name = ""
 
-        prefix_name = removeChar(prefix_name, ' ')    
+        prefix_name = removeChar(prefix_name, ' ')
         prefix_name = removeChar(prefix_name, '_')
 
         if prefix_name != "":
             pre_name += prefix_name + "_"
 
-        pre_name += str( hashlib.md5( str( str(user_id)+str(filename) ).encode('utf8') ).hexdigest() )
+        pre_name += str(hashlib.md5(str(str(user_id) + str(filename)).encode('utf8')).hexdigest())
 
-        postfix_name = removeChar(postfix_name, ' ')    
+        postfix_name = removeChar(postfix_name, ' ')
         postfix_name = removeChar(postfix_name, '_')
-        
+
         if postfix_name != "":
             pre_name += "_" + postfix_name
 
-        filename = pre_name+'.'+filename.rsplit('.', 1)[1].lower()
+        filename = pre_name + '.' + filename.rsplit('.', 1)[1].lower()
 
         file.filename = filename
 
     _obClientMinio = MinioClient(endpoint=config['minio']['endpoint'], access_key=config['minio']['access_key'], secret_key=config['minio']['secret_key'], bucket_name=bucket_name)
     version_id = _obClientMinio.upload_file(file=file, file_size=file_size)
 
-    return {'bucketname': bucket_name, 'filename': filename, 'file_size': file_size, 'type': content_type, 'version_id':version_id}
+    return {'bucketname': bucket_name, 'filename': filename, 'file_size': file_size, 'type': content_type, 'version_id': version_id}
+
 
 @router.post('/uploadfile')
-async def uploadfile(bucket_name:str, file_size:int, gname:int=0, file: UploadFile = File(...)):
+async def uploadfile(bucket_name: str, file_size: int, gname: int = 0, file: UploadFile = File(...)):
     filename = file.filename
     content_type = file.content_type
     if gname == 1:
-        pre_name = str((hashlib.md5(str(str(time.time())+str(filename)).encode('utf8')).hexdigest()))
-        filename = pre_name+'.'+filename.rsplit('.', 1)[1].lower()
+        pre_name = str((hashlib.md5(str(str(time.time()) + str(filename)).encode('utf8')).hexdigest()))
+        filename = pre_name + '.' + filename.rsplit('.', 1)[1].lower()
         file.filename = filename
 
     _obClientMinio = MinioClient(endpoint=config['minio']['endpoint'], access_key=config['minio']['access_key'], secret_key=config['minio']['secret_key'], bucket_name=bucket_name)
     _obClientMinio.upload_file(file=file, file_size=file_size)
 
     return {'bucketname': bucket_name, 'filename': filename, 'file_size': file_size, 'type': content_type}
-
-
 
 
 # Directory to save uploaded files
@@ -115,6 +119,7 @@ for path in [FILE_INFO_PATH, DOWNLOAD_LOG_DIR]:
         with open(path, "w") as f:
             json.dump([], f)
 
+
 def update_file_info(filename):
     with open(FILE_INFO_PATH, "r") as f:
         file_info = json.load(f)
@@ -123,6 +128,7 @@ def update_file_info(filename):
 
     with open(FILE_INFO_PATH, "w") as f:
         json.dump(file_info, f)
+
 
 def log_download_info(filename, client_ip):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -135,6 +141,7 @@ def log_download_info(filename, client_ip):
 
         json.dump(download_log, f)
 
+
 @router.post("/uploadfile/")
 async def create_upload_file(file: UploadFile = File(...)):
     file_path = f"{UPLOAD_DIR}/{file.filename}"
@@ -146,14 +153,16 @@ async def create_upload_file(file: UploadFile = File(...)):
 
     return {"filename": file.filename}
 
+
 @router.get("/downloadfile/{filename}")
 async def read_item(filename: str):
     file_path = f"{UPLOAD_DIR}/{filename}"
 
     # Log download information
     # log_download_info(filename, client_ip)
-# 
+    #
     return FileResponse(file_path, media_type="application/octet-stream", filename=filename)
+
 
 @router.post("/savefile/")
 async def save_file_content(file: UploadFile = File(...)):
@@ -171,6 +180,7 @@ async def save_file_content(file: UploadFile = File(...)):
         "detail": f"File '{unique_filename}' saved successfully."
     }
 
+
 @router.get("/testfile/{filename}")
 async def test_file_info(filename: str):
     file_path = f"{UPLOAD_DIR}/{filename}"
@@ -184,6 +194,7 @@ async def test_file_info(filename: str):
         raise HTTPException(status_code=404, detail=f"File '{filename}' not found.")
 
     return {"filename": filename, "hash": file_hash}
+
 
 @router.put("/changefilename/{filename}")
 async def change_file_name(filename: str, new_filename: str):

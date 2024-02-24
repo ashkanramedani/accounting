@@ -23,6 +23,7 @@ class WeekdayEnum(str, Enum):
     SATURDAY = "5"
     SUNDAY = "6"
 
+
 # -------------------   Authentications   -------------------
 # class AuthenticationBase(BaseModel):
 #     username: str
@@ -48,7 +49,7 @@ class WeekdayEnum(str, Enum):
 #     login_method: Optional[str]
 #     otp_send_successful: Optional[bool]
 #     email_send_successful: Optional[bool]
-    
+
 #     class Config:
 #         orm_mode = True
 # class Token(BaseModel):
@@ -57,7 +58,7 @@ class WeekdayEnum(str, Enum):
 #     access_token: Optional[str]
 #     type_token: Optional[str]
 #     login_method: Optional[str]
-        
+
 #     class Config:
 #         orm_mode = True
 
@@ -95,18 +96,19 @@ class UserBase(BaseModel):
     # gender_fk_id: int = None
     # # branch_fk_id: int = None
     # priority: Optional[int] = None
-    
 
     # departments_user: List = []
     # roles_user: List = []
     # posts_user: List = []   
     # products_user: List = []
-    
+
     # authentication_fk_id = Column(BigInteger, ForeignKey("tbl_authentication.authentication_pk_id"))  
     # auth = relationship("Authentication", back_populates="auth_users")
     # courses_user = relationship('Course', secondary=courses_users_association, back_populates="users_course")
     # exams_user = relationship('Exam', secondary=exams_users_association, back_populates="users_exam")
-class UserCreate(BaseModel):    
+
+
+class UserCreate(BaseModel):
     # branch_fk_id: int = 1
     # email: str
     # fname: str
@@ -120,21 +122,29 @@ class UserCreate(BaseModel):
 
     class Config:
         orm_mode = True
+
+
 class User(UserBase):
     user_pk_id: int
+
     # branch_fk_id: int
     # gender_fk_id: int 
     # authentication_fk_id: int = None
 
     class Config:
         orm_mode = True
+
+
 class ProductUsers(BaseModel):
     fname: str
     lname: str
     user_pk_id: str
     image: str
+
     class Config:
         orm_mode = True
+
+
 # class UserCreateAuth(BaseModel):
 #     # password: str
 #     fname: str
@@ -160,33 +170,43 @@ class PostViwesBase(BaseModel):
     ip: str = None
     country: str = None
     user_creator_fk_id: int = None
+
+
 class PostViwesCreate(PostViwesBase):
     class Config:
         orm_mode = True
+
+
 class PostViwes(PostViwesBase):
     post_viwe_pk_id: int
+
     class Config:
         orm_mode = True
-class UserInPost(BaseModel):   
+
+
+class UserInPost(BaseModel):
     user_pk_id: int
     fname: str
     lname: str
     image: str
     # gender: str
     deleted: bool
+
     class Config:
         orm_mode = True
+
+
 class PostBase(BaseModel):
     post_title: str
-    post_summary: Optional[str]=""
-    post_discribtion: Optional[str]=""
-    post_content: Optional[str]=""
-    post_image: Optional[str]="defult_post_image.jpg"
-    priority: int = 5    
-    post_status:int = 0
+    post_summary: Optional[str] = ""
+    post_discribtion: Optional[str] = ""
+    post_content: Optional[str] = ""
+    post_image: Optional[str] = "defult_post_image.jpg"
+    priority: int = 5
+    post_status: int = 0
     post_direction: Optional[str] = "RTL"
     post_type: str
-    expier_date: Optional[date]=None
+    expier_date: Optional[date] = None
 
     # tags: List[TagsInPost] = None
     # users_post_speaker: List[UserInPost] = None
@@ -195,60 +215,77 @@ class PostBase(BaseModel):
     # likes: List[LikesInPost] = None
     # comments: List[CommentsInPost] = None
     # views: List[ViwesInPost] = None
-class PostCreate(PostBase): 
-    visible: bool=False
-    category: Optional[List[str]]=[]
-    tag: Optional[List[str]]=[]    
-    post_audio_file_link: Optional[str]=None
-    post_audio_file_path: Optional[str]=None
-    post_aparat_video_id: Optional[str]=None
-    post_aparat_video_code: Optional[str]=None   
-    post_video_file_link: Optional[str]=None
-    post_video_file_path: Optional[str]=None 
-    post_data_file_link: Optional[str]=None
-    post_data_file_path: Optional[str]=None
-    users_post_speaker: Optional[List[str]]=[] 
-    users_post_writer: Optional[List[str]]=[]
-    users_post_actor: Optional[List[str]]=[]
-    user_creator_fk_id: Optional[int]=1
+
+
+class PostCreate(PostBase):
+    visible: bool = False
+    category: Optional[List[str]] = []
+    tag: Optional[List[str]] = []
+    post_audio_file_link: Optional[str] = None
+    post_audio_file_path: Optional[str] = None
+    post_aparat_video_id: Optional[str] = None
+    post_aparat_video_code: Optional[str] = None
+    post_video_file_link: Optional[str] = None
+    post_video_file_path: Optional[str] = None
+    post_data_file_link: Optional[str] = None
+    post_data_file_path: Optional[str] = None
+    users_post_speaker: Optional[List[str]] = []
+    users_post_writer: Optional[List[str]] = []
+    users_post_actor: Optional[List[str]] = []
+    user_creator_fk_id: Optional[int] = 1
+
     class Config:
         orm_mode = True
+
+
 class PostUpdateData(BaseModel):
     class Config:
         orm_mode = True
-class Post(PostBase): 
-    post_pk_id: int  
+
+
+class Post(PostBase):
+    post_pk_id: int
     post_aparat_video_id: str = None
-    post_aparat_video_code: str = None    
+    post_aparat_video_code: str = None
     post_audio_file_link: str = None
-    post_audio_file_path: str = None  
+    post_audio_file_path: str = None
     post_video_file_link: str = None
-    post_video_file_path: str = None 
+    post_video_file_path: str = None
     post_data_file_link: str = None
-    post_data_file_path: str = None 
-    create_date: datetime    
+    post_data_file_path: str = None
+    create_date: datetime
+
     class Config:
         orm_mode = True
-class Posts(PostBase):    
-    create_date: datetime    
-    post_pk_id: int  
-    category: Optional[List[str]]=[]
-    tag: Optional[List[str]]=[]    
-    users_post_speaker: Optional[List[str]]=[] 
-    users_post_writer: Optional[List[str]]=[]
-    users_post_actor: Optional[List[str]]=[]
+
+
+class Posts(PostBase):
+    create_date: datetime
+    post_pk_id: int
+    category: Optional[List[str]] = []
+    tag: Optional[List[str]] = []
+    users_post_speaker: Optional[List[str]] = []
+    users_post_writer: Optional[List[str]] = []
+    users_post_actor: Optional[List[str]] = []
+
     class Config:
         orm_mode = True
+
+
 class PostStatus(BaseModel):
-    post_pk_id: int  
-    post_status:int
+    post_pk_id: int
+    post_status: int
+
     class Config:
         orm_mode = True
+
+
 class PostDelete(BaseModel):
-    post_pk_id: int  
+    post_pk_id: int
+
     class Config:
-        orm_mode = True   
-    # users_post = relationship("Users", secondary=users_posts_association, backref="posts_user")  
+        orm_mode = True
+        # users_post = relationship("Users", secondary=users_posts_association, backref="posts_user")
 
     # # post_category_id = Column(Integer, ForeignKey('tbl_categories.category_pk_id'))
     # # tags_post = relationship("Tag", secondary=tags_posts_association, backref="posts_tag")  
@@ -260,67 +297,87 @@ class PostDelete(BaseModel):
     # user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False)
     # user_delete_fk_id = Column(BigInteger, For
 
+
 # -------------------------------   Tag  -------------------------------
 class TagBase(BaseModel):
     tag_name: str
-class TagCreate(TagBase):    
+
+
+class TagCreate(TagBase):
     user_creator_tag_fk_id: int
     priority: Optional[int] = None
-    class Config:
-        orm_mode = True
-class Tag(TagBase):    
-    tag_pk_id: UUID
-    class Config:
-        orm_mode = True
-    
-# -------------------   Categories  -------------------
-class CategoryBase(BaseModel):
-    category_name: str
-class CategoryCreate(CategoryBase):  
-    priority: Optional[int] = None  
-    class Config:
-        orm_mode = True
-class Category(CategoryBase):    
-    category_pk_id: UUID
+
     class Config:
         orm_mode = True
 
+
+class Tag(TagBase):
+    tag_pk_id: UUID
+
+    class Config:
+        orm_mode = True
+
+
+# -------------------   Categories  -------------------
+class CategoryBase(BaseModel):
+    category_name: str
+
+
+class CategoryCreate(CategoryBase):
+    priority: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+
+class Category(CategoryBase):
+    category_pk_id: UUID
+
+    class Config:
+        orm_mode = True
+
+
 # -------------------   libraries   -------------------
-class LibraryBase(BaseModel): 
-    library_name: str     
-    library_image: str = "book2.jpg"  
-    library_type: str = "public" 
-    library_description: Optional[str] = ""  
-    library_summer: Optional[str] = ""  
+class LibraryBase(BaseModel):
+    library_name: str
+    library_image: str = "book2.jpg"
+    library_type: str = "public"
+    library_description: Optional[str] = ""
+    library_summer: Optional[str] = ""
 
     library_audio_file_link: Optional[str] = None
     library_audio_file_path: Optional[str] = None
     library_aparat_video_id: Optional[str] = None
-    library_aparat_video_code: Optional[str] = None   
+    library_aparat_video_code: Optional[str] = None
     library_video_file_link: Optional[str] = None
     library_video_file_path: Optional[str] = None
     library_data_file_link: Optional[str] = None
     library_data_file_path: Optional[str] = None
-    
+
     priority: Optional[int] = None
+
+
 class LibraryCreate(LibraryBase):
-    library_name: str     
-    library_image: str = "book2.jpg"  
-    library_type: str = "public" 
-    library_description: Optional[str] = ""  
-    library_summer: Optional[str] = ""  
+    library_name: str
+    library_image: str = "book2.jpg"
+    library_type: str = "public"
+    library_description: Optional[str] = ""
+    library_summer: Optional[str] = ""
 
     library_audio_file_link: Optional[str] = None
     library_audio_file_path: Optional[str] = None
     library_aparat_video_id: Optional[str] = None
-    library_aparat_video_code: Optional[str] = None   
+    library_aparat_video_code: Optional[str] = None
     library_video_file_link: Optional[str] = None
     library_video_file_path: Optional[str] = None
     library_data_file_link: Optional[str] = None
-    library_data_file_path: Optional[str] = None 
+    library_data_file_path: Optional[str] = None
+
     class Config:
         orm_mode = True
-class Library(LibraryBase):    
+
+
+class Library(LibraryBase):
     library_pk_id: int
     download_count: Optional[int] = 0
 
@@ -328,11 +385,10 @@ class Library(LibraryBase):
         orm_mode = True
 
 
-
-
 # --------------------------------------   Sahebkar   --------------------------------------
 class fingerprint_scanner_Mode(str, Enum):
     Normal = "Normal"
+
 
 class job_title_Enum(str, Enum):
     teacher = "teacher"
@@ -340,12 +396,14 @@ class job_title_Enum(str, Enum):
     RandD = "R&D"
     Supervisor = "Supervisor"
 
+
 class post_employee_schema(BaseModel):
     name: str
     last_name: str
     job_title: job_title_Enum
     priority: int | None
     user_ID: str | None
+
 
 class update_employee_schema(BaseModel):
     employees_pk_id: UUID
@@ -355,12 +413,14 @@ class update_employee_schema(BaseModel):
     priority: int | None
     user_ID: str | None
 
+
 class post_leave_request_schema(BaseModel):
     created_by: UUID
     created_for: UUID
     start_date: datetime
     end_date: datetime
     Description: str
+
 
 class update_leave_request_schema(BaseModel):
     leave_request_id: UUID
@@ -370,11 +430,13 @@ class update_leave_request_schema(BaseModel):
     end_date: datetime
     Description: str
 
+
 class post_student_schema(BaseModel):
     student_name: str
     student_last_name: str
     student_level: str
     student_age: int
+
 
 class update_student_schema(BaseModel):
     student_pk_id: UUID
@@ -383,10 +445,12 @@ class update_student_schema(BaseModel):
     student_level: str
     student_age: int
 
+
 class post_class_schema(BaseModel):
     starting_time: time
     duration: int
     class_date: date
+
 
 class update_class_schema(BaseModel):
     class_pk_id: UUID
@@ -394,12 +458,14 @@ class update_class_schema(BaseModel):
     duration: int
     class_date: date
 
+
 class post_remote_request_schema(BaseModel):
     employee_fk_id: UUID
     start_date: date
     end_date: date
     working_location: str
     description: str
+
 
 class update_remote_request_schema(BaseModel):
     remote_request_pk_id: UUID
@@ -409,11 +475,13 @@ class update_remote_request_schema(BaseModel):
     working_location: str
     description: str
 
+
 class post_teacher_tardy_reports_schema(BaseModel):
     create_by_fk_id: UUID
     teacher_fk_id: UUID
     class_fk_id: UUID
     delay: timedelta
+
 
 class update_teacher_tardy_reports_schema(BaseModel):
     teacher_tardy_reports_pk_id: UUID
@@ -421,6 +489,7 @@ class update_teacher_tardy_reports_schema(BaseModel):
     teacher_fk_id: UUID
     class_fk_id: UUID
     delay: timedelta
+
 
 class post_class_cancellation_schema(BaseModel):
     create_by_fk_id: UUID
@@ -430,6 +499,7 @@ class post_class_cancellation_schema(BaseModel):
     class_duration: timedelta
     class_location: str
     description: str
+
 
 class update_class_cancellation_schema(BaseModel):
     class_cancellation_pk_id: UUID
@@ -441,11 +511,13 @@ class update_class_cancellation_schema(BaseModel):
     class_location: str
     description: str
 
+
 class post_teacher_replacement_schema(BaseModel):
     created_by_fk_id: UUID
     teacher_fk_id: UUID
     replacement_teacher_fk_id: UUID
     class_fk_id: UUID
+
 
 class update_teacher_replacement_schema(BaseModel):
     teacher_replacement_pk_id: UUID
@@ -454,10 +526,12 @@ class update_teacher_replacement_schema(BaseModel):
     replacement_teacher_fk_id: UUID
     class_fk_id: UUID
 
+
 class post_business_trip_schema(BaseModel):
     employee_fk_id: UUID
     destination: str
     description: str
+
 
 class update_business_trip_schema(BaseModel):
     business_trip_pk_id: UUID
@@ -465,12 +539,14 @@ class update_business_trip_schema(BaseModel):
     destination: str
     description: str
 
+
 class post_day_schema(BaseModel):
     date: date
     day_of_week: WeekdayEnum
     entry_time: date
     exit_time: date
     duration: timedelta
+
 
 class update_day_schema(BaseModel):
     day_pk_id: UUID
@@ -480,17 +556,21 @@ class update_day_schema(BaseModel):
     exit_time: date
     duration: timedelta
 
+
 class post_questions_schema(BaseModel):
     text: str
+
 
 class update_questions_schema(BaseModel):
     question_pk_id: UUID
     text: str
 
+
 class post_survey_schema(BaseModel):
     class_fk_id: UUID
     questions: List[UUID]
     title: str
+
 
 class update_survey_schema(BaseModel):
     form_pk_id: UUID
@@ -498,11 +578,13 @@ class update_survey_schema(BaseModel):
     questions: List[UUID]
     title: str
 
+
 class post_response_schema(BaseModel):
     student_fk_id: UUID
     question_fk_id: UUID
     form_fk_id: UUID
     answer: str
+
 
 class update_response_schema(BaseModel):
     response_pk_id: UUID
@@ -511,10 +593,12 @@ class update_response_schema(BaseModel):
     form_fk_id: UUID
     answer: str
 
+
 class post_class_form_schema(BaseModel):
     starting_time: date
     duration: timedelta
     class_date: datetime
+
 
 class update_class_form_schema(BaseModel):
     class_pk_id: UUID
@@ -522,16 +606,19 @@ class update_class_form_schema(BaseModel):
     duration: timedelta
     class_date: datetime
 
+
 class post_payment_method_schema(BaseModel):
     employee_fk_id: UUID
     shaba: str
     card_number: str
+
 
 class update_payment_method_schema(BaseModel):
     payment_method_pk_id: UUID
     employee_fk_id: UUID
     shaba: str
     card_number: str
+
 
 class post_fingerprint_scanner_schema(BaseModel):
     created_by_fk_id: UUID
@@ -541,6 +628,7 @@ class post_fingerprint_scanner_schema(BaseModel):
     DateTime: datetime
     user_ID: str
 
+
 class FingerPrint_Record(BaseModel):
     user_ID: str
     In_Out: str
@@ -548,9 +636,11 @@ class FingerPrint_Record(BaseModel):
     ProxyWork: str
     DateTime: str
 
+
 class post_bulk_fingerprint_scanner_schema(BaseModel):
     created_by_fk_id: UUID
     Records: List[FingerPrint_Record]
+
 
 class update_fingerprint_scanner_schema(BaseModel):
     fingerprint_scanner_pk_id: UUID
