@@ -1,14 +1,16 @@
-import os
-from os.path import dirname, normpath, join
-
-from dotenv import load_dotenv
-from loguru import logger
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+from os.path import dirname, normpath, join
+from dotenv import load_dotenv
+from loguru import logger
+from lib.json_handler import json_handler
+from lib.log import log
 
-from lib import json_handler, log
+import sys
+import os
 
+#to get the current working directory
 load_dotenv()
 directory = normpath(f'{dirname(__file__)}/../configs/config.json')
 _obj_json_handler_config = json_handler(FilePath=directory)
@@ -28,6 +30,12 @@ elif config['developer']:
 else:
     SQLALCHEMY_DATABASE_URL = f"{config['db']['database_type']}://{config['db']['username']}:{config['db']['password']}@{config['db']['ip']}:{config['db']['port']}/{config['db']['database_name']}"
 
+if config['developer']:
+    SQLALCHEMY_DATABASE_URL = f"{config['db_test']['database_type']}://{config['db_test']['username']}{':' if config['db_test']['username'] != '' else ''}{config['db_test']['password']}{'@' if config['db_test']['username'] != '' else ''}{config['db_test']['ip']}:{config['db_test']['port']}/{config['db_test']['database_name']}"
+else:
+    SQLALCHEMY_DATABASE_URL = f"{config['db']['database_type']}://{config['db']['username']}:{config['db']['password']}@{config['db']['ip']}:{config['db']['port']}/{config['db']['database_name']}"
+    
+
 if config['developer_log']:
     engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=3600, echo=True)
     _obj_log.show_log(SQLALCHEMY_DATABASE_URL, 'i')
@@ -37,7 +45,6 @@ else:
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
-
 # Dependency
 def get_db():
     db = SessionLocal()
@@ -45,3 +52,4 @@ def get_db():
         yield db
     finally:
         db.close()
+

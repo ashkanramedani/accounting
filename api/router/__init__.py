@@ -13,6 +13,13 @@ from .tardy_request import router as tardy_request_route
 from .teacher_replacement import router as teacher_replacement_route
 from .fingerScanner import router as fingerscanner_router
 
+from .files import router as files
+from .user import router as user
+from .post import router as post
+from .tag import router as tag
+from .category import router as category
+from .library import router as library
+
 routes = [
     business_trip_route,
     class_cancellation_route,
@@ -27,6 +34,14 @@ routes = [
     tardy_request_route,
     teacher_replacement_route,
     route_payment,
-    fingerscanner_router]
+    fingerscanner_router,
+
+    files,
+    user,
+    post,
+    tag,
+    category,
+    library
+]
 
 __all__ = ["routes"]
