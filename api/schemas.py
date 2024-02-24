@@ -39,7 +39,7 @@ class update_employee_schema(BaseModel):
     employees_pk_id: UUID
     name: str
     last_name: str
-    job_title: str
+    job_title: job_title_Enum
     priority: int | None
     user_ID: str | None
 

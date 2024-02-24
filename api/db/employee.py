@@ -40,7 +40,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         OBJ.last_name = Form.last_name
         OBJ.job_title = Form.job_title
         OBJ.priority = Form.priority
-        OBJ.fingerprint_scanner_user_id = Form.user_ID
+        OBJ.fingerprint_scanner_pk_id = Form.user_ID
 
         db.add(OBJ)
         db.commit()
