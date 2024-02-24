@@ -18,7 +18,7 @@ DROP SCHEMA public CASCADE;
 CREATE SCHEMA public;
 
 
-cd /e/Work\ Pro/ieltsdaily/Code/ieltsdaily-api-admin/;
+cd /e/Work\ Pro/ieltsdaily/Code/accounting/api;
 source .venv/Scripts/activate;
 uvicorn main:app --reload --host 0.0.0.0 --port 6635 --workers 2;
 
