@@ -387,14 +387,15 @@ class Library(LibraryBase):
 
 # --------------------------------------   Sahebkar   --------------------------------------
 class fingerprint_scanner_Mode(str, Enum):
-    Normal = "Normal"
+    normal = "normal"
 
 
 class job_title_Enum(str, Enum):
     teacher = "teacher"
     office = "office"
-    RandD = "R&D"
-    Supervisor = "Supervisor"
+    rd = "rd"
+    supervisor = "supervisor"
+
 
 
 class post_employee_schema(BaseModel):
@@ -417,52 +418,49 @@ class update_employee_schema(BaseModel):
 class post_leave_request_schema(BaseModel):
     created_by: UUID
     created_for: UUID
-    start_date: datetime
-    end_date: datetime
-    Description: str
+    start_date: str
+    end_date: str
+    description: str
 
 
 class update_leave_request_schema(BaseModel):
     leave_request_id: UUID
     created_by: UUID
     created_for: UUID
-    start_date: datetime
-    end_date: datetime
-    Description: str
+    start_date: str
+    end_date: str
+    description: str
 
 
 class post_student_schema(BaseModel):
-    student_name: str
-    student_last_name: str
-    student_level: str
-    student_age: int
+    name: str
+    last_name: str
+    level: str
+    age: int
 
 
 class update_student_schema(BaseModel):
     student_pk_id: UUID
-    student_name: str
-    student_last_name: str
-    student_level: str
-    student_age: int
+    name: str
+    last_name: str
+    level: str
+    age: int
 
 
 class post_class_schema(BaseModel):
-    starting_time: time
+    class_time: str
     duration: int
-    class_date: date
-
 
 class update_class_schema(BaseModel):
     class_pk_id: UUID
-    starting_time: time
+    class_time: str
     duration: int
-    class_date: date
 
 
 class post_remote_request_schema(BaseModel):
     employee_fk_id: UUID
-    start_date: date
-    end_date: date
+    start_date: str
+    end_date: str
     working_location: str
     description: str
 
@@ -470,50 +468,50 @@ class post_remote_request_schema(BaseModel):
 class update_remote_request_schema(BaseModel):
     remote_request_pk_id: UUID
     employee_fk_id: UUID
-    start_date: date
-    end_date: date
+    start_date: str
+    end_date: str
     working_location: str
     description: str
 
 
 class post_teacher_tardy_reports_schema(BaseModel):
-    create_by_fk_id: UUID
+    created_fk_by: UUID
     teacher_fk_id: UUID
     class_fk_id: UUID
-    delay: timedelta
+    delay: int
 
 
 class update_teacher_tardy_reports_schema(BaseModel):
     teacher_tardy_reports_pk_id: UUID
-    create_by_fk_id: UUID
+    created_fk_by: UUID
     teacher_fk_id: UUID
     class_fk_id: UUID
-    delay: timedelta
+    delay: int
 
 
 class post_class_cancellation_schema(BaseModel):
-    create_by_fk_id: UUID
+    created_fk_by: UUID
     class_fk_id: UUID
     teacher_fk_id: UUID
-    replacement: date
-    class_duration: timedelta
+    replacement: str
+    class_duration: int
     class_location: str
     description: str
 
 
 class update_class_cancellation_schema(BaseModel):
     class_cancellation_pk_id: UUID
-    create_by_fk_id: UUID
+    created_fk_by: UUID
     class_fk_id: UUID
     teacher_fk_id: UUID
-    replacement: date
-    class_duration: timedelta
+    replacement: str
+    class_duration: int
     class_location: str
     description: str
 
 
 class post_teacher_replacement_schema(BaseModel):
-    created_by_fk_id: UUID
+    created_fk_by: UUID
     teacher_fk_id: UUID
     replacement_teacher_fk_id: UUID
     class_fk_id: UUID
@@ -521,7 +519,7 @@ class post_teacher_replacement_schema(BaseModel):
 
 class update_teacher_replacement_schema(BaseModel):
     teacher_replacement_pk_id: UUID
-    created_by_fk_id: UUID
+    created_fk_by: UUID
     teacher_fk_id: UUID
     replacement_teacher_fk_id: UUID
     class_fk_id: UUID
@@ -541,20 +539,20 @@ class update_business_trip_schema(BaseModel):
 
 
 class post_day_schema(BaseModel):
-    date: date
+    date: str
     day_of_week: WeekdayEnum
-    entry_time: date
-    exit_time: date
-    duration: timedelta
+    entry_time: str
+    exit_time: str
+    duration: int
 
 
 class update_day_schema(BaseModel):
     day_pk_id: UUID
-    date: date
+    date: str
     day_of_week: WeekdayEnum
-    entry_time: date
-    exit_time: date
-    duration: timedelta
+    entry_time: str
+    exit_time: str
+    duration: int
 
 
 class post_questions_schema(BaseModel):
@@ -573,7 +571,7 @@ class post_survey_schema(BaseModel):
 
 
 class update_survey_schema(BaseModel):
-    form_pk_id: UUID
+    survey_pk_id: UUID
     class_fk_id: UUID
     questions: List[UUID]
     title: str
@@ -582,7 +580,7 @@ class update_survey_schema(BaseModel):
 class post_response_schema(BaseModel):
     student_fk_id: UUID
     question_fk_id: UUID
-    form_fk_id: UUID
+    survey_fk_id: UUID
     answer: str
 
 
@@ -590,21 +588,8 @@ class update_response_schema(BaseModel):
     response_pk_id: UUID
     student_fk_id: UUID
     question_fk_id: UUID
-    form_fk_id: UUID
+    survey_fk_id: UUID
     answer: str
-
-
-class post_class_form_schema(BaseModel):
-    starting_time: date
-    duration: timedelta
-    class_date: datetime
-
-
-class update_class_form_schema(BaseModel):
-    class_pk_id: UUID
-    starting_time: date
-    duration: timedelta
-    class_date: datetime
 
 
 class post_payment_method_schema(BaseModel):
@@ -621,11 +606,11 @@ class update_payment_method_schema(BaseModel):
 
 
 class post_fingerprint_scanner_schema(BaseModel):
-    created_by_fk_id: UUID
+    created_fk_by: UUID
     In_Out: fingerprint_scanner_Mode
     Antipass: bool
     ProxyWork: bool
-    DateTime: datetime
+    DateTime: str
     user_ID: str
 
 
@@ -638,15 +623,15 @@ class FingerPrint_Record(BaseModel):
 
 
 class post_bulk_fingerprint_scanner_schema(BaseModel):
-    created_by_fk_id: UUID
+    created_fk_by: UUID
     Records: List[FingerPrint_Record]
 
 
 class update_fingerprint_scanner_schema(BaseModel):
     fingerprint_scanner_pk_id: UUID
     employee_fk_id: UUID
-    created_by_fk_id: UUID
+    created_fk_by: UUID
     In_Out: fingerprint_scanner_Mode
     Antipass: str
     ProxyWork: str
-    DateTime: datetime
+    DateTime: str

@@ -6,41 +6,32 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from .Exist import employee_exist
+from .Extra import *
 
 
 # business trip
 def get_business_trip_form(db: Session, form_id):
     try:
-        record = db.query(dbm.Business_Trip_form).filter_by(
-                business_trip_pk_id=form_id,
-                deleted=False
-        ).first()
-        if record:
-            return 200, record
-        return 404, "Not Found"
+        return 200, db.query(dbm.Business_Trip_form).filter_by(business_trip_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def get_all_business_trip_form(db: Session):
     try:
-        data = db.query(dbm.Business_Trip_form).filter_by(deleted=False).all()
-        if data:
-            return 200, data
-        return 404, "Not Found"
+        return 200, db.query(dbm.Business_Trip_form).filter_by(deleted=False).all()
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema):
     try:
         if not employee_exist(db, [Form.employee_fk_id]):
-            return 404, "Target Employee Not Found"
+            return 400, "Bad Request"
 
         OBJ = dbm.Business_Trip_form()
 
@@ -55,23 +46,20 @@ def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def delete_business_trip_form(db: Session, form_id):
     try:
-        record = db.query(dbm.Business_Trip_form).filter_by(
-                business_trip_pk_id=form_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.Business_Trip_form).filter_by(business_trip_pk_id=form_id, deleted=False).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
         record.deleted = True
         db.commit()
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema):
@@ -81,10 +69,10 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
                 deleted=False
         ).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.employee_fk_id]):
-            return 404, "Target Employee Not Found"
+            return 400, "Bad Request"
 
         record.employee_fk_id = Form.employee_fk_id
         record.destination = Form.destination
@@ -96,4 +84,4 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()

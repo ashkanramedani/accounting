@@ -16,6 +16,7 @@ from router import routes
 Logger = log()
 
 try:
+    # models.Base.metadata.drop_all(engine)
     models.Base.metadata.create_all(bind=engine)
 except OperationalError as e:
     Logger.show_log(f"[ Could Not Create Engine ]: {e.__repr__()}", 'e')

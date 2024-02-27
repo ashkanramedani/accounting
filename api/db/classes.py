@@ -1,4 +1,4 @@
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 
 from loguru import logger
 from sqlalchemy.orm import Session
@@ -9,36 +9,27 @@ import schemas as sch
 
 def get_class(db: Session, class_id):
     try:
-        record = db.query(dbm.Class_form).filter_by(
-                classs_pk_id=class_id,
-                deleted=False
-        ).first()
-        if record:
-            return 200, record
-        return 404, "Not Found"
+        return 200, db.query(dbm.Class_form).filter_by(classs_pk_id=class_id,deleted=False).first()
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def get_all_class(db: Session):
     try:
-        data = db.query(dbm.Class_form).filter_by(deleted=False).all()
-        if data:
-            return 200, data
-        return 404, f"Not Found"
+        return 200, db.query(dbm.Class_form).filter_by(deleted=False).all()
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def post_class(db: Session, Form: sch.post_class_schema):
     try:
         OBJ = dbm.Class_form()
 
-        OBJ.starting_time = Form.starting_time
-        OBJ.duration = timedelta(minutes=Form.duration)
-        OBJ.class_date = Form.class_date
+        class_time = str(Form.class_time) if isinstance(Form.class_time, datetime) else Form.class_time
+        OBJ.class_time = datetime.strptime(class_time, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0)
+        OBJ.duration = Form.duration
 
         db.add(OBJ)
         db.commit()
@@ -46,23 +37,20 @@ def post_class(db: Session, Form: sch.post_class_schema):
         return 200, "class Added"
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def delete_class(db: Session, class_id):
     try:
-        record = db.query(dbm.Class_form).filter_by(
-                class_id=class_id,
-                deleted=False
-        ).first()
-        if not record or record.deleted:
-            return 404, "Not Found"
+        record = db.query(dbm.Class_form).filter_by(class_id=class_id,deleted=False).first()
+        if not record:
+            return 404, "Record Not Found"
         record.deleted = True
         db.commit()
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def update_class(db: Session, Form: sch.update_class_schema):
@@ -72,16 +60,15 @@ def update_class(db: Session, Form: sch.update_class_schema):
                 deleted=True
         ).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
 
-        record.starting_time = Form.starting_time
-        record.duration = timedelta(minutes=Form.duration)
-        record.class_date = Form.class_date
-        record.update_date = datetime.now(timezone.utc).astimezone()
+        class_time = str(Form.class_time) if isinstance(Form.class_time, datetime) else Form.class_time
+        record.class_time = datetime.strptime(class_time, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0)
+        record.duration = timedelta(minutes=Form.duration, microseconds=0)
 
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
         logger.warning(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()

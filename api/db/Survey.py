@@ -10,29 +10,20 @@ import schemas as sch
 # question
 def get_question(db: Session, question_id):
     try:
-        record = db.query(dbm.Questions_form).filter_by(
-                question_pk_id=question_id,
-                deleted=False
-        ).first()
-        if record:
-            return 200, record
-        return 404, "Not Found"
+        return 200, db.query(dbm.Questions_form).filter_by(question_pk_id=question_id, deleted=False).first()
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def get_all_question(db: Session):
     try:
-        data = db.query(dbm.Questions_form).filter_by(deleted=False).all()
-        if data:
-            return 200, data
-        return 404, "Not Found"
+        return 200, db.query(dbm.Questions_form).filter_by(deleted=False).all()
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def post_question(db: Session, Form: sch.post_questions_schema):
@@ -47,33 +38,27 @@ def post_question(db: Session, Form: sch.post_questions_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def delete_question(db: Session, question_id):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(
-                question_id_pk_id=question_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.Remote_Request_form).filter_by(question_id_pk_id=question_id,deleted=False).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
         record.deleted = True
         db.commit()
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def update_question(db: Session, Form: sch.update_questions_schema):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(
-                question_pk_id=Form.question_pk_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.Remote_Request_form).filter_by(question_pk_id=Form.question_pk_id,deleted=False).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
 
         record.text = Form.text
         record.update_date = datetime.now(timezone.utc).astimezone()
@@ -83,45 +68,46 @@ def update_question(db: Session, Form: sch.update_questions_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 # survey
 def get_survey(db: Session, survey_id):
     try:
-        record = db.query(dbm.survey_form).filter_by(
-                survey_pk_id=survey_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.survey_form).filter_by(survey_pk_id=survey_id,deleted=False).first()
         if record:
-            record["questions"] = [db.query(dbm.survey_questions_form).filter_by(form_fk_id=record.form_pk_id).all]
-            return 200, record
-        return 404, "Not Found"
+            res = {k: v for k, v in record.__dict__.items()}
+            res["questions"] = [db.query(dbm.survey_questions_form).filter_by(survey_fk_id=record.survey_pk_id).all]
+            return 200, res
+        return 200, []
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def get_all_survey(db: Session):
     try:
+        result = []
         data = db.query(dbm.survey_form).filter_by(deleted=False).all()
         if data:
             for record in data:
-                record["questions"] = [db.query(dbm.survey_questions_form).filter_by(form_fk_id=record.form_pk_id).all]
-            return 200, data
-        return 404, "Not Found"
+                res = {k: v for k, v in record.__dict__.items()}
+                print(f'{db.query(dbm.survey_questions_form).filter_by(survey_fk_id=record.survey_pk_id).all = }')
+                res["questions"] = [db.query(dbm.survey_questions_form).filter_by(survey_fk_id=record.survey_pk_id).all]
+                result.append(res)
+            return 200, result
+        return 200, []
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def post_survey(db: Session, Form: sch.post_survey_schema):
     try:
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
-            return 404, "Target class Not Found"
-
+            return 400, "Bad Request"
 
         OBJ = dbm.survey_form()
         OBJ.title = Form.title
@@ -131,14 +117,12 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
         db.commit()
         db.refresh(OBJ)
 
-        form_uuid = OBJ.form_pk_id
+        form_uuid = OBJ.survey_pk_id
 
-        if not form_uuid:
-            return 404, form_uuid
         for uuid in Form.questions:
             Q_OBJ = dbm.survey_questions_form()
-            Q_OBJ.form_fk_id = form_uuid
             Q_OBJ.question_fk_id = uuid
+            Q_OBJ.survey_fk_id = form_uuid
             db.add(Q_OBJ)
             db.commit()
             db.refresh(Q_OBJ)
@@ -146,37 +130,31 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def delete_survey(db: Session, survey_id):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(
-                survey_id_pk_id=survey_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.Remote_Request_form).filter_by(survey_id_pk_id=survey_id,deleted=False).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
         record.deleted = True
 
         db.commit()
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def update_survey(db: Session, Form: sch.update_survey_schema):
     try:
-        record = db.query(dbm.survey_form).filter_by(
-                form_pk_id=Form.form_pk_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.survey_form).filter_by(survey_pk_id=Form.survey_pk_id, deleted=False).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
 
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
-            return 404, "Target class Not Found"
+            return 400, "Bad Request"
 
         record.class_fk_id = Form.class_fk_id
         record.title = Form.title
@@ -187,4 +165,4 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()

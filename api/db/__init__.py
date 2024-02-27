@@ -104,7 +104,7 @@ __all__ = [
     "get_all_fingerprint_scanner",
     "post_fingerprint_scanner",
     "delete_fingerprint_scanner",
-    "update_fingerprint_scanner"
+    "update_fingerprint_scanner",
 
     # db_files.py
     # db_user.py
@@ -134,4 +134,3 @@ __all__ = [
     # db_library.py
     "get_libraries_by_library_type"
 ]
-

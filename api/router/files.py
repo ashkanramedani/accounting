@@ -51,7 +51,7 @@ async def download_file(file: Annotated[bytes, File(description="A file read as 
 @router.post('/downloadfile')
 def download_files(bucket_name: str, file_path: str):
     _obClientMinio = MinioClient(endpoint=config['minio']['endpoint'], access_key=config['minio']['access_key'], secret_key=config['minio']['secret_key'], bucket_name=bucket_name)
-    _obClientMinio.download_file(file=file, file_size=81921)
+    _obClientMinio.download_file(file=file_path, file_size=81921)
 
 
 @router.post('/geturl')

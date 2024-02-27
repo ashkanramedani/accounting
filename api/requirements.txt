@@ -1,7 +1,8 @@
 uvicorn
 fastapi
 fastapi_utils
-pydantic
+fastapi-limiter
+# pydantic
 sqlalchemy
 passlib
 python-multipart
@@ -14,8 +15,6 @@ requests
 pytz
 redis
 loguru
-fastapi-limiter
-pydantic[dotenv]
 minio
 khayyam
 httpx
@@ -23,3 +22,4 @@ pandas
 xlrd
 Pyarrow
 asyncpg
+python-dotenv

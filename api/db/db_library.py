@@ -9,6 +9,7 @@ from fastapi.encoders import jsonable_encoder
 from uuid import UUID
 from typing import Optional, List, Dict, Any
 
+
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 

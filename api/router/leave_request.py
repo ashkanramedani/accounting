@@ -5,7 +5,7 @@ import db as dbf
 import schemas as sch
 from db.database import get_db
 
-router = APIRouter(prefix='/api/v1/form/leave_request', tags=['Form Leave Forms'])
+router = APIRouter(prefix='/api/v1/form/leave_request', tags=['Leave Forms'])
 
 
 # leave forms

@@ -5,7 +5,7 @@ import db as dbf
 import schemas as sch
 from db.database import get_db
 
-router = APIRouter(prefix='/api/v1/form/remote_request', tags=['Form Remote Request'])
+router = APIRouter(prefix='/api/v1/form/remote_request', tags=['Remote Request'])
 
 
 # remote_request

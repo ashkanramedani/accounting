@@ -5,41 +5,32 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from .Exist import employee_exist
+from .Extra import *
 
 
 # remote_request
 def get_remote_request_form(db: Session, form_id):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(
-                remote_request_pk_id=form_id,
-                deleted=False
-        ).first()
-        if record:
-            return 200, record
-        return 404, "Not Found"
+        return 200, db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def get_all_remote_request_form(db: Session):
     try:
-        data = db.query(dbm.Remote_Request_form).filter_by(deleted=False).all()
-        if data:
-            return 200, data
-        return 404, "Not Found"
+        return 200, db.query(dbm.Remote_Request_form).filter_by(deleted=False).all()
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
     try:
         if not employee_exist(db, [Form.employee_fk_id]):
-            return 404, "Target Employee Not Found"
+            return 400, "Bad Request"
 
         OBJ = dbm.Remote_Request_form()
 
@@ -56,7 +47,7 @@ def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def delete_remote_request_form(db: Session, form_id):
@@ -66,26 +57,23 @@ def delete_remote_request_form(db: Session, form_id):
                 deleted=False
         ).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
         record.deleted = True
         db.commit()
         return 200, "Deleted"
     except Exception as e:
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()
 
 
 def update_remote_request_form(db: Session, Form: sch.update_remote_request_schema):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(
-                remote_request_pk_id=Form.remote_request_pk_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=Form.remote_request_pk_id, deleted=False).first()
         if not record:
-            return 404, "Not Found"
+            return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.employee_fk_id]):
-            return 404, "Target Employee Not Found"
+            return 400, "Bad Request"
 
         record.employee_fk_id = Form.employee_fk_id,
         record.start_date = Form.start_date,
@@ -99,4 +87,4 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
     except Exception as e:
         logging.error(e)
         db.rollback()
-        return 500, e.args[0]
+        return 500, e.__repr__()

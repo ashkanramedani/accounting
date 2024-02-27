@@ -9,11 +9,12 @@ from fastapi.encoders import jsonable_encoder
 from uuid import UUID
 from typing import Optional, List, Dict, Any
 
+
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 # read
-def read_all_posts_for_admin_panel(db:Session, topic:str, start_id:int, page_number:int, limit:int):
+def read_all_posts_for_admin_panel(db: Session, topic: str, start_id: int, page_number: int, limit: int):
     try:
         data = db.query(dbm.Posts).filter(sse.and_(dbm.Posts.post_type == topic, dbm.Posts.deleted == False, dbm.Posts.post_pk_id >= start_id)).order_by(dbm.Posts.post_pk_id.desc()).limit(limit).all()
         if data is None:
@@ -24,7 +25,8 @@ def read_all_posts_for_admin_panel(db:Session, topic:str, start_id:int, page_num
         db.rollback()
         return -1
 
-def get_post_with_pid(db:Session, pid:str):
+
+def get_post_with_pid(db: Session, pid: str):
     try:
         data = db.query(dbm.Posts).filter(sse.and_(dbm.Posts.post_pk_id == pid, dbm.Posts.deleted == False)).first()
         if data is None:
@@ -35,15 +37,16 @@ def get_post_with_pid(db:Session, pid:str):
         db.rollback()
         return -1
 
+
 # delete
-def delete_posts(db:Session, topic:str, pid:int):
+def delete_posts(db: Session, topic: str, pid: int):
     try:
         record = db.query(dbm.Posts).filter(sse.and_(dbm.Posts.deleted == False, dbm.Posts.post_pk_id == pid, dbm.Posts.can_deleted == True)).first()
         if record is not None:
             record.deleted = True
             record.delete_date = datetime.utcnow()
             db.commit()
-            return 1        
+            return 1
         else:
             return 0
     except Exception as e:
@@ -51,56 +54,58 @@ def delete_posts(db:Session, topic:str, pid:int):
         db.rollback()
         return -1
 
+
 # update
-def update_posts(db:Session, topic:str, pid:int, update:dbm.Posts):
+def update_posts(db: Session, topic: str, pid: int, update: dbm.Posts):
     try:
         record = db.query(dbm.Posts).filter(sse.and_(dbm.Posts.deleted == False, dbm.Posts.post_pk_id == pid, dbm.Posts.can_update == True)).first()
         if record is not None:
             record.post_status = update.post_status
             db.commit()
-            return 1        
+            return 1
         else:
-            return 0        
+            return 0
 
     except Exception as e:
         logging.error(e)
         db.rollback()
         return -1
 
+
 # insert
-def create_post(db:Session, new:sch.PostCreate):
-    try:    
-    # category: Optional[List[str]]=[]
-    # tag: Optional[List[str]]=[]
-    # users_post_speaker: Optional[List[str]]=[] 
-    # users_post_writer: Optional[List[str]]=[]
-    # users_post_actor: Optional[List[str]]=[]
-    # validation post_type
+def create_post(db: Session, new: sch.PostCreate):
+    try:
+        # category: Optional[List[str]]=[]
+        # tag: Optional[List[str]]=[]
+        # users_post_speaker: Optional[List[str]]=[]
+        # users_post_writer: Optional[List[str]]=[]
+        # users_post_actor: Optional[List[str]]=[]
+        # validation post_type
 
         data = dbm.Posts(
-            post_title = new.post_title,
-            visible = new.visible,
-            post_summary = new.post_summary,
-            post_type = new.post_type,
-            expier_date = new.expier_date,
-            post_direction = new.post_direction,
-            priority = new.priority,
-            post_content = new.post_content,
-            post_image = new.post_image,
-            user_creator_fk_id = new.user_creator_fk_id,
-            post_data_file_path = new.post_data_file_path,
-            post_data_file_link = new.post_data_file_link,
-            post_video_file_path = new.post_video_file_path,
-            post_video_file_link = new.post_video_file_link,
-            post_aparat_video_code = new.post_aparat_video_code,
-            post_aparat_video_id = new.post_aparat_video_id,
-            post_audio_file_path = new.post_audio_file_path,
-            post_audio_file_link = new.post_audio_file_link
+                post_title=new.post_title,
+                visible=new.visible,
+                post_summary=new.post_summary,
+                post_type=new.post_type,
+                expier_date=new.expier_date,
+                post_direction=new.post_direction,
+                priority=new.priority,
+                post_content=new.post_content,
+                post_image=new.post_image,
+                user_creator_fk_id=new.user_creator_fk_id,
+                post_data_file_path=new.post_data_file_path,
+                post_data_file_link=new.post_data_file_link,
+                post_video_file_path=new.post_video_file_path,
+                post_video_file_link=new.post_video_file_link,
+                post_aparat_video_code=new.post_aparat_video_code,
+                post_aparat_video_id=new.post_aparat_video_id,
+                post_audio_file_path=new.post_audio_file_path,
+                post_audio_file_link=new.post_audio_file_link
         )
         db.add(data)
         db.commit()
         db.refresh(data)
-        return  data
+        return data
     except Exception as e:
         logging.error(e)
         db.rollback()

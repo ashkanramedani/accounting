@@ -9,12 +9,12 @@ from fastapi.encoders import jsonable_encoder
 from uuid import UUID
 from typing import Optional, List, Dict, Any
 
+
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000):
- 
-    return db.query(dbm.Users).filter(sse.and_(dbm.Users.deleted == False, dbm.Users.visible == True, dbm.Users.employed==True)).offset(skip).limit(limit).all()
+    return db.query(dbm.Users).filter(sse.and_(dbm.Users.deleted == False, dbm.Users.visible == True, dbm.Users.employed == True)).offset(skip).limit(limit).all()
 
 # def get_users_withfilter_not_employes(db: Session, skip: int = 0, limit: int = 100):
 #     data = db.query(dbm.Users).filter(sse.and_(dbm.Users.deleted == False, dbm.Users.visible == True, dbm.Users.employed==False)).offset(skip).limit(limit).all()
@@ -57,7 +57,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         db.refresh(assoc)
 
 #     return user
-    
+
 # def put_user(db: Session, new: sch.UserCreate, branch_fk_id:int, gender_fk_id:int, role:sch.RoleForUser, educational_institution:sch.EducationalInstitution):  
 #     try:
 #         user_created = dbm.Users(
@@ -119,7 +119,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #             record_rel = db.query(dbm.UserRole).filter(sse.and_(dbm.UserRole.user_fk_id == record.user_pk_id)).first()
 #             db.delete(record_rel)
 #             db.commit()
-            
+
 #             record_auth = db.query(dbm.Authentications).filter(sse.and_(dbm.Authentications.authentication_pk_id == record.authentication_fk_id)).first()
 #             db.delete(record_auth)
 #             db.commit()
@@ -129,7 +129,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #             record.employed = False
 #             record.delete_date = datetime.utcnow()            
 #             db.commit()
-            
+
 #             return 1   
 #         else:
 #             return 0
@@ -194,7 +194,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 # #         logging.error(e)
 # #         db.rollback()
 # #         return -1 
-    
+
 
 # # # select
 
@@ -203,7 +203,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 
 # # def get_all_just_employees(db:Session):
 # #     return db.query(Users).filter(sse.and_(Users.deleted==False, Users.employed==True)).order_by(Users.id.desc()).all()
-    
+
 # # def get_user_by_username(username, db:Session):
 # #     au = db.query(Authentications).filter(Authentications.username == username).first()
 # #     user = db.query(Users).filter(sse.and_(Users.id == au.user_id, Users.deleted == False)).first()

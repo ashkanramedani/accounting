@@ -5,7 +5,7 @@ import db as dbf
 import schemas as sch
 from db.database import get_db
 
-router = APIRouter(prefix='/api/v1/form/class_cancellation', tags=['Form Class Cancellation'])
+router = APIRouter(prefix='/api/v1/form/class_cancellation', tags=['Class Cancellation'])
 
 
 # Class cancellation
