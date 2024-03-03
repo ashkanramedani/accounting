@@ -56,12 +56,13 @@ def delete_question(db: Session, question_id):
 
 def update_question(db: Session, Form: sch.update_questions_schema):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(question_pk_id=Form.question_pk_id,deleted=False).first()
-        if not record:
+        record = db.query(dbm.Remote_Request_form).filter_by(question_pk_id=Form.question_pk_id,deleted=False)
+        if not record.first():
             return 404, "Record Not Found"
 
-        record.text = Form.text
-        record.update_date = datetime.now(timezone.utc).astimezone()
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"
@@ -149,8 +150,8 @@ def delete_survey(db: Session, survey_id):
 
 def update_survey(db: Session, Form: sch.update_survey_schema):
     try:
-        record = db.query(dbm.survey_form).filter_by(survey_pk_id=Form.survey_pk_id, deleted=False).first()
-        if not record:
+        record = db.query(dbm.survey_form).filter_by(survey_pk_id=Form.survey_pk_id, deleted=False)
+        if not record.first():
             return 404, "Record Not Found"
 
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():

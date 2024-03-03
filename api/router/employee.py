@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -16,7 +18,7 @@ async def add_employee(Form: sch.post_employee_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.employee_response)
 async def search_employee(employee_id, db=Depends(get_db)):
     status_code, result = dbf.get_employee(db, employee_id)
     if status_code != 200:
@@ -24,7 +26,7 @@ async def search_employee(employee_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.employee_response])
 async def search_all_employee(db=Depends(get_db)):
     status_code, result = dbf.get_all_employee(db)
     if status_code != 200:

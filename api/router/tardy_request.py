@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -17,7 +19,7 @@ async def add_tardy_request(Form: sch.post_teacher_tardy_reports_schema, db=Depe
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.teacher_tardy_reports_response)
 async def search_tardy_request(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_teacher_replacement(db, form_id)
     if status_code != 200:
@@ -25,7 +27,7 @@ async def search_tardy_request(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.teacher_tardy_reports_response])
 async def search_all_tardy_request(db=Depends(get_db)):
     status_code, result = dbf.get_all_leave_request(db)
     if status_code != 200:

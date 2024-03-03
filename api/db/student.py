@@ -57,14 +57,13 @@ def delete_student(db: Session, student_id):
 
 def update_student(db: Session, Form: sch.update_student_schema):
     try:
-        record = db.query(dbm.Student_form).filter(dbm.Student_form.student_pk_id == Form.student_pk_id).first()
-        if not record:
+        record = db.query(dbm.Student_form).filter(dbm.Student_form.student_pk_id == Form.student_pk_id)
+        if not record.first():
             return 404, "Record Not Found"
-        record.student_name = Form.student_name
-        record.student_last_name = Form.student_last_name
-        record.student_level = Form.student_level
-        record.student_age = Form.student_age
-        record.update_date = datetime.now(timezone.utc).astimezone()
+
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

@@ -1,16 +1,18 @@
-from .Survey import *
 from .business_trip import *
 from .class_cancellation import *
 from .classes import *
 from .employee import *
-from .fingerprint_scanner import *
 from .leave_request import *
 from .payment import *
 from .remote_request import *
-from .response import *
-from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
+
+# from .response import *
+# from .student import *
+# from .Survey import *
+# from .fingerprint_scanner import *
+
 
 from .db_user import *
 from .db_post import *
@@ -100,11 +102,11 @@ __all__ = [
     "delete_payment_method",
     "update_payment_method",
     # finger_print.py
-    "get_fingerprint_scanner",
-    "get_all_fingerprint_scanner",
-    "post_fingerprint_scanner",
-    "delete_fingerprint_scanner",
-    "update_fingerprint_scanner",
+    # "get_fingerprint_scanner",
+    # "get_all_fingerprint_scanner",
+    # "post_fingerprint_scanner",
+    # "delete_fingerprint_scanner",
+    # "update_fingerprint_scanner",
 
     # db_files.py
     # db_user.py

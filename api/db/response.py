@@ -66,9 +66,9 @@ def delete_response(db: Session, response_id):
 
 def update_response(db: Session, Form: sch.update_response_schema):
     try:
-        record = db.query(dbm.response_form).filter_by(response_pk_id=Form.response_pk_id, delete=False).first()
+        record = db.query(dbm.response_form).filter_by(response_pk_id=Form.response_pk_id, delete=False)
 
-        if not record:
+        if not record.first():
             return 404, "Record Not Found"
 
         if not db.query(dbm.Student_form).filter_by(student_pk_id=Form.student_fk_id, deleted=False).first():
@@ -80,12 +80,9 @@ def update_response(db: Session, Form: sch.update_response_schema):
         if not db.query(dbm.survey_form).filter_by(survey_pk_id=Form.survey_fk_id, deleted=False).first():
             return 400, "Bad Request"
 
-        record.student_fk_id = Form.student_fk_id
-        record.question_fk_id = Form.question_fk_id
-        record.survey_fk_id = Form.survey_fk_id
-        record.answer = Form.answer
-        record.update_date = datetime.now(timezone.utc).astimezone()
-
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
         db.commit()
         return 200, "Record Updated"
     except Exception as e:

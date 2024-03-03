@@ -36,12 +36,7 @@ def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_sch
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 400, "Bad Request"
 
-        OBJ = dbm.Teacher_Replacement_form()
-
-        OBJ.created_fk_by = Form.created_fk_by
-        OBJ.teacher_fk_id = Form.teacher_fk_id
-        OBJ.replacement_teacher_fk_id = Form.replacement_teacher_fk_id
-        OBJ.class_fk_id = Form.class_fk_id
+        OBJ = dbm.Teacher_Replacement_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -68,8 +63,8 @@ def delete_teacher_replacement(db: Session, form_id):
 
 def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement_schema):
     try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_replacement_pk_id,deleted=False).first()
-        if not record:
+        record = db.query(dbm.Teacher_Replacement_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_replacement_pk_id,deleted=False)
+        if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
@@ -77,11 +72,10 @@ def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 400, "Bad Request"
 
-        record.created_fk_by = Form.created_fk_by
-        record.teacher_fk_id = Form.teacher_fk_id
-        record.replacement_teacher_fk_id = Form.replacement_teacher_fk_id
-        record.class_fk_id = Form.class_fk_id
-        record.update_date = datetime.now(timezone.utc).astimezone()
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
+
 
         db.commit()
         return 200, "Form Updated"
@@ -89,3 +83,4 @@ def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement
         logging.error(e)
         db.rollback()
         return 500, e.__repr__()
+

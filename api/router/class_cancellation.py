@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -17,7 +19,7 @@ async def add_class_cancellation(Form: sch.post_class_cancellation_schema, db=De
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.class_cancellation_response)
 async def search_class_cancellation(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_class_cancellation_form(db, form_id)
     if status_code != 200:
@@ -25,7 +27,7 @@ async def search_class_cancellation(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.class_cancellation_response])
 async def search_all_class_cancellation(db=Depends(get_db)):
     status_code, result = dbf.get_all_class_cancellation_form(db)
     if status_code != 200:

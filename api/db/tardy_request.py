@@ -34,13 +34,8 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
             return 400, "Bad Request"
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 400, "Bad Request"
-        OBJ = dbm.Teacher_tardy_reports_form()
 
-        print(f'{Form.created_fk_by}')
-        OBJ.created_fk_by = Form.created_fk_by
-        OBJ.teacher_fk_id = Form.teacher_fk_id
-        OBJ.class_fk_id = Form.class_fk_id
-        OBJ.delay = Form.delay
+        OBJ = dbm.Teacher_tardy_reports_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -67,20 +62,21 @@ def delete_tardy_request(db: Session, form_id):
 
 def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_schema):
     try:
-        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id,deleted=False).first()
+        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id,deleted=False)
+
+        if not record.first():
+            return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 400, "Bad Request"
 
-        if not record:
-            return 404, "Record Not Found"
-        record.created_fk_by = Form.created_fk_by
-        record.teacher_fk_id = Form.teacher_fk_id
-        record.class_fk_id = Form.class_fk_id
-        record.delay = Form.delay
-        record.update_date = datetime.now(timezone.utc).astimezone()
+
+
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"

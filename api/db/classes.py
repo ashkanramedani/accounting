@@ -25,11 +25,7 @@ def get_all_class(db: Session):
 
 def post_class(db: Session, Form: sch.post_class_schema):
     try:
-        OBJ = dbm.Class_form()
-
-        class_time = str(Form.class_time) if isinstance(Form.class_time, datetime) else Form.class_time
-        OBJ.class_time = datetime.strptime(class_time, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0)
-        OBJ.duration = Form.duration
+        OBJ = dbm.Class_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -58,13 +54,13 @@ def update_class(db: Session, Form: sch.update_class_schema):
         record = db.query(dbm.Class_form).filter_by(
                 classs_pk_id=Form.class_pk_id,
                 deleted=True
-        ).first()
-        if not record:
+        )
+        if not record.first():
             return 404, "Record Not Found"
 
-        class_time = str(Form.class_time) if isinstance(Form.class_time, datetime) else Form.class_time
-        record.class_time = datetime.strptime(class_time, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0)
-        record.duration = timedelta(minutes=Form.duration, microseconds=0)
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

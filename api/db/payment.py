@@ -26,10 +26,11 @@ def get_all_payment_method(db: Session):
 
 def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
     try:
-        OBJ = dbm.payment_method_form()
-        OBJ.employee_fk_id = Form.employee_fk_id
-        OBJ.shaba = Form.shaba
-        OBJ.card_number = Form.card_number
+
+        if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
+            return 400, "Bad Request"
+
+        OBJ = dbm.payment_method_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -55,17 +56,16 @@ def delete_payment_method(db: Session, payment_method_id):
 
 def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
     try:
-        record = db.query(dbm.payment_method_form).filter_by(payment_method_pk_id=Form.payment_method_pk_id).first()
-        if not record:
+        record = db.query(dbm.payment_method_form).filter_by(payment_method_pk_id=Form.payment_method_pk_id)
+        if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        record.employee_fk_id = Form.employee_fk_id
-        record.shaba = Form.shaba
-        record.card_number = Form.card_number
-        record.update_date = datetime.now(timezone.utc).astimezone()
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

@@ -22,6 +22,7 @@ def get_business_trip_form(db: Session, form_id):
 def get_all_business_trip_form(db: Session):
     try:
         return 200, db.query(dbm.Business_Trip_form).filter_by(deleted=False).all()
+
     except Exception as e:
         logging.error(e)
         db.rollback()
@@ -33,11 +34,7 @@ def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema):
         if not employee_exist(db, [Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Business_Trip_form()
-
-        OBJ.employee_fk_id = Form.employee_fk_id
-        OBJ.destination = Form.destination
-        OBJ.description = Form.description
+        OBJ = dbm.Business_Trip_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -67,17 +64,16 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         record = db.query(dbm.Business_Trip_form).filter_by(
                 business_trip_pk_id=Form.business_trip_pk_id,
                 deleted=False
-        ).first()
-        if not record:
+        )
+        if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        record.employee_fk_id = Form.employee_fk_id
-        record.destination = Form.destination
-        record.description = Form.description
-        record.update_date = datetime.now(timezone.utc).astimezone()
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"

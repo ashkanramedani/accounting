@@ -101,20 +101,16 @@ def delete_fingerprint_scanner(db: Session, form_id):
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
     try:
-        record = db.query(dbm.fingerprint_scanner_form).filter_by(teacher_tardy_reports_pk_id=Form.fingerprint_scanner_pk_id, deleted=False).first()
-        if not record:
+        record = db.query(dbm.fingerprint_scanner_form).filter_by(teacher_tardy_reports_pk_id=Form.fingerprint_scanner_pk_id, deleted=False)
+        if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        record.employee_fk_id = Form.employee_fk_id
-        record.created_fk_by = Form.created_fk_by
-        record.In_Out = Form.In_Out
-        record.Antipass = Form.Antipass
-        record.ProxyWork = Form.ProxyWork
-        record.DateTime = Form.DateTime
-        record.update_date = datetime.now(timezone.utc).astimezone()
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"

@@ -29,16 +29,10 @@ def get_all_remote_request_form(db: Session):
 
 def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
     try:
-        if not employee_exist(db, [Form.employee_fk_id]):
+        if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Remote_Request_form()
-
-        OBJ.employee_fk_id = Form.employee_fk_id
-        OBJ.start_date = Form.start_date
-        OBJ.end_date = Form.end_date
-        OBJ.working_location = Form.working_location
-        OBJ.description = Form.description
+        OBJ = dbm.Remote_Request_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -68,19 +62,16 @@ def delete_remote_request_form(db: Session, form_id):
 
 def update_remote_request_form(db: Session, Form: sch.update_remote_request_schema):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=Form.remote_request_pk_id, deleted=False).first()
-        if not record:
+        record = db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=Form.remote_request_pk_id, deleted=False)
+        if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.employee_fk_id]):
+        if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
 
-        record.employee_fk_id = Form.employee_fk_id,
-        record.start_date = Form.start_date,
-        record.end_date = Form.end_date,
-        record.working_location = Form.working_location,
-        record.description = Form.description
-        record.update_date = datetime.now(timezone.utc).astimezone()
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"

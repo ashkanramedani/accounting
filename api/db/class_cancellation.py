@@ -11,7 +11,7 @@ from .Extra import *
 # class_cancellation
 def get_class_cancellation_form(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Class_Cancellation_form).filter_by(class_cancellation_pk_id=form_id,deleted=False).first()
+        return 200, db.query(dbm.Class_Cancellation_form).filter_by(class_cancellation_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logging.error(e)
         db.rollback()
@@ -35,15 +35,7 @@ def post_class_cancellation_form(db: Session, Form: sch.post_class_cancellation_
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 400, "Bad Request"
 
-        OBJ = dbm.Class_Cancellation_form()
-
-        OBJ.created_fk_by = Form.created_fk_by
-        OBJ.class_fk_id = Form.class_fk_id
-        OBJ.teacher_fk_id = Form.teacher_fk_id
-        OBJ.replacement = Form.replacement
-        OBJ.class_duration = Form.class_duration
-        OBJ.class_location = Form.class_location
-        OBJ.description = Form.description
+        OBJ = dbm.Class_Cancellation_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -58,10 +50,7 @@ def post_class_cancellation_form(db: Session, Form: sch.post_class_cancellation_
 
 def delete_class_cancellation_form(db: Session, form_id):
     try:
-        record = db.query(dbm.Class_Cancellation_form).filter_by(
-                class_cancellation_pk_id=form_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.Class_Cancellation_form).filter_by(class_cancellation_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -74,11 +63,8 @@ def delete_class_cancellation_form(db: Session, form_id):
 
 def update_class_cancellation_form(db: Session, Form: sch.update_class_cancellation_schema):
     try:
-        record = db.query(dbm.Class_Cancellation_form).filter_by(
-                class_cancellation_pk_id=Form.class_cancellation_pk_id,
-                deleted=False
-        ).first()
-        if not record:
+        record = db.query(dbm.Class_Cancellation_form).filter_by(class_cancellation_pk_id=Form.class_cancellation_pk_id, deleted=False)
+        if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.teacher_fk_id, Form.created_fk_by]):
@@ -87,15 +73,9 @@ def update_class_cancellation_form(db: Session, Form: sch.update_class_cancellat
         if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
             return 400, "Bad Request"
 
-        record.created_fk_by = Form.created_fk_by
-        record.class_fk_id = Form.class_fk_id
-        record.teacher_fk_id = Form.teacher_fk_id
-        record.replacement = Form.replacement
-        record.class_duration = Form.class_duration
-        record.class_location = Form.class_location
-        record.description = Form.description
-        record.update_date = datetime.now(timezone.utc).astimezone()
-
+        data = Form.dict()
+        data["update_date"] = datetime.now(timezone.utc).astimezone()
+        record.update(data, synchronize_session=False)
         db.commit()
         return 200, "Form Updated"
     except Exception as e:

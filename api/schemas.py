@@ -386,6 +386,8 @@ class Library(LibraryBase):
 
 
 # --------------------------------------   Sahebkar   --------------------------------------
+
+# ENUM
 class fingerprint_scanner_Mode(str, Enum):
     normal = "normal"
 
@@ -395,165 +397,6 @@ class job_title_Enum(str, Enum):
     office = "office"
     rd = "rd"
     supervisor = "supervisor"
-
-
-
-class post_employee_schema(BaseModel):
-    name: str
-    last_name: str
-    job_title: job_title_Enum
-    priority: int | None
-    user_ID: str | None
-
-
-class update_employee_schema(BaseModel):
-    employees_pk_id: UUID
-    name: str
-    last_name: str
-    job_title: job_title_Enum
-    priority: int | None
-    user_ID: str | None
-
-
-class post_leave_request_schema(BaseModel):
-    created_by: UUID
-    created_for: UUID
-    start_date: str
-    end_date: str
-    description: str
-
-
-class update_leave_request_schema(BaseModel):
-    leave_request_id: UUID
-    created_by: UUID
-    created_for: UUID
-    start_date: str
-    end_date: str
-    description: str
-
-
-class post_student_schema(BaseModel):
-    name: str
-    last_name: str
-    level: str
-    age: int
-
-
-class update_student_schema(BaseModel):
-    student_pk_id: UUID
-    name: str
-    last_name: str
-    level: str
-    age: int
-
-
-class post_class_schema(BaseModel):
-    class_time: str
-    duration: int
-
-class update_class_schema(BaseModel):
-    class_pk_id: UUID
-    class_time: str
-    duration: int
-
-
-class post_remote_request_schema(BaseModel):
-    employee_fk_id: UUID
-    start_date: str
-    end_date: str
-    working_location: str
-    description: str
-
-
-class update_remote_request_schema(BaseModel):
-    remote_request_pk_id: UUID
-    employee_fk_id: UUID
-    start_date: str
-    end_date: str
-    working_location: str
-    description: str
-
-
-class post_teacher_tardy_reports_schema(BaseModel):
-    created_fk_by: UUID
-    teacher_fk_id: UUID
-    class_fk_id: UUID
-    delay: int
-
-
-class update_teacher_tardy_reports_schema(BaseModel):
-    teacher_tardy_reports_pk_id: UUID
-    created_fk_by: UUID
-    teacher_fk_id: UUID
-    class_fk_id: UUID
-    delay: int
-
-
-class post_class_cancellation_schema(BaseModel):
-    created_fk_by: UUID
-    class_fk_id: UUID
-    teacher_fk_id: UUID
-    replacement: str
-    class_duration: int
-    class_location: str
-    description: str
-
-
-class update_class_cancellation_schema(BaseModel):
-    class_cancellation_pk_id: UUID
-    created_fk_by: UUID
-    class_fk_id: UUID
-    teacher_fk_id: UUID
-    replacement: str
-    class_duration: int
-    class_location: str
-    description: str
-
-
-class post_teacher_replacement_schema(BaseModel):
-    created_fk_by: UUID
-    teacher_fk_id: UUID
-    replacement_teacher_fk_id: UUID
-    class_fk_id: UUID
-
-
-class update_teacher_replacement_schema(BaseModel):
-    teacher_replacement_pk_id: UUID
-    created_fk_by: UUID
-    teacher_fk_id: UUID
-    replacement_teacher_fk_id: UUID
-    class_fk_id: UUID
-
-
-class post_business_trip_schema(BaseModel):
-    employee_fk_id: UUID
-    destination: str
-    description: str
-
-
-class update_business_trip_schema(BaseModel):
-    business_trip_pk_id: UUID
-    employee_fk_id: UUID
-    destination: str
-    description: str
-
-
-class post_day_schema(BaseModel):
-    date: str
-    day_of_week: WeekdayEnum
-    entry_time: str
-    exit_time: str
-    duration: int
-
-
-class update_day_schema(BaseModel):
-    day_pk_id: UUID
-    date: str
-    day_of_week: WeekdayEnum
-    entry_time: str
-    exit_time: str
-    duration: int
-
 
 class post_questions_schema(BaseModel):
     text: str
@@ -592,18 +435,6 @@ class update_response_schema(BaseModel):
     answer: str
 
 
-class post_payment_method_schema(BaseModel):
-    employee_fk_id: UUID
-    shaba: str
-    card_number: str
-
-
-class update_payment_method_schema(BaseModel):
-    payment_method_pk_id: UUID
-    employee_fk_id: UUID
-    shaba: str
-    card_number: str
-
 
 class post_fingerprint_scanner_schema(BaseModel):
     created_fk_by: UUID
@@ -635,3 +466,301 @@ class update_fingerprint_scanner_schema(BaseModel):
     Antipass: str
     ProxyWork: str
     DateTime: str
+
+
+# ===================== ENTITY =====================
+
+# ---------------------- User ----------------------
+class User(BaseModel):
+    name: str
+    last_name: str
+    day_of_birth: str | datetime = datetime.now()
+    email: str | None
+    mobile_number: str | None
+    id_card_number: str | None
+    address: str | None
+
+
+# ---------------------- Employee ----------------------
+
+class Employee(User):
+    job_title: job_title_Enum
+    priority: int | None
+    fingerprint_scanner_user_id: str | None
+
+
+class post_employee_schema(Employee):
+    pass
+
+
+class update_employee_schema(Employee):
+    employees_pk_id: UUID
+
+
+class employee_response(update_employee_schema):
+    job_title: Any
+
+    class Config:
+        orm_mode = True
+
+
+class export_employee(BaseModel):
+    name: str
+    last_name: str
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------------- student ----------------------
+class Student(User):
+    level: str
+
+
+class post_student_schema(Student):
+    pass
+
+
+class update_student_schema(Student):
+    student_pk_id: UUID
+
+
+class student_response(update_student_schema):
+    pass
+
+    class Config:
+        orm_mode = True
+
+
+class export_student(BaseModel):
+    name: str
+    last_name: str
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------------- classes ----------------------
+class classes(BaseModel):
+    name: str
+    class_time: str | datetime = datetime.now()
+    duration: int
+
+
+class post_class_schema(classes):
+    pass
+
+
+class update_class_schema(classes):
+    class_pk_id: UUID
+
+class classes_response(update_class_schema):
+    pass
+
+    class Config:
+        orm_mode = True
+
+
+class export_classes(BaseModel):
+    name: str
+    class_time: str | datetime = datetime.now()
+    duration: int | Any
+
+    class Config:
+        orm_mode = True
+
+
+# ====================== Forms ========================
+
+class Base_form(BaseModel):
+    created_fk_by: UUID
+    description: str | None
+
+
+# ---------------------- business_trip ----------------------
+
+class business_trip(Base_form):
+    employee_fk_id: UUID
+    destination: str
+    start_date: str | datetime = datetime.now()
+    end_date: str | datetime = datetime.now()
+
+class post_business_trip_schema(business_trip):
+    pass
+
+
+class update_business_trip_schema(business_trip):
+    business_trip_pk_id: UUID
+
+
+class business_trip_response(BaseModel):
+    business_trip_pk_id: UUID
+    destination: str
+    description: str
+    created: export_employee
+    employee: export_employee
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------------- leave_request ----------------------
+
+class leave_request(Base_form):
+    employee_fk_id: UUID
+    start_date: str | datetime = datetime.now()
+    end_date: str | datetime = datetime.now()
+
+
+class post_leave_request_schema(leave_request):
+    pass
+
+
+class update_leave_request_schema(leave_request):
+    leave_request_pk_id: UUID
+
+
+class leave_request_response(BaseModel):
+    leave_request_pk_id: UUID
+    start_date: str | datetime = datetime.now()
+    end_date: str | datetime = datetime.now()
+    description: str
+    created: export_employee
+    employee: export_employee
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------------- remote_request ----------------------
+class remote_request(Base_form, BaseModel):
+    employee_fk_id: UUID
+    start_date: str | datetime = datetime.now()
+    end_date: str | datetime = datetime.now()
+    working_location: str
+
+
+class post_remote_request_schema(remote_request):
+    pass
+
+
+class update_remote_request_schema(remote_request):
+    remote_request_pk_id: UUID
+
+
+class remote_request_response(BaseModel):
+    remote_request_pk_id: UUID
+    start_date: str | datetime = datetime.now()
+    end_date: str | datetime = datetime.now()
+    description: str
+    created: export_employee
+    employee: export_employee
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------------- class_cancellation ----------------------
+class class_cancellation(Base_form):
+    class_fk_id: UUID
+    teacher_fk_id: UUID
+    replacement_date: str | datetime = datetime.now()
+    class_duration: int
+    class_location: str
+
+
+class post_class_cancellation_schema(class_cancellation):
+    pass
+
+
+class update_class_cancellation_schema(class_cancellation):
+    class_cancellation_pk_id: UUID
+
+
+class class_cancellation_response(BaseModel):
+    class_cancellation_pk_id: UUID
+    replacement_date: str | datetime = datetime.now()
+    class_duration: int
+    class_location: str
+    created: export_employee
+    employee: export_employee
+    classes: export_classes
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------------- teacher_tardy_reports ----------------------
+class teacher_tardy_reports(Base_form):
+    teacher_fk_id: UUID
+    class_fk_id: UUID
+    delay: int
+
+
+class post_teacher_tardy_reports_schema(teacher_tardy_reports):
+    pass
+
+
+class update_teacher_tardy_reports_schema(teacher_tardy_reports):
+    teacher_tardy_reports_pk_id: UUID
+
+
+class teacher_tardy_reports_response(BaseModel):
+    created: export_employee
+    employee: export_employee
+    classes: export_classes
+    delay: int
+
+    class Config:
+        orm_mode = True
+
+# ---------------------- teacher_replacement ----------------------
+
+class teacher_replacement(Base_form):
+    created_fk_by: UUID
+    teacher_fk_id: UUID
+    replacement_teacher_fk_id: UUID
+    class_fk_id: UUID
+
+class post_teacher_replacement_schema(teacher_replacement):
+    pass
+
+
+class update_teacher_replacement_schema(teacher_replacement):
+    teacher_replacement_pk_id: UUID
+
+
+class teacher_replacement_response(BaseModel):
+    teacher_replacement_pk_id: UUID
+
+    created: export_employee
+    main_teacher: export_employee
+    replacement_teacher: export_employee
+    classes: export_classes
+
+    class Config:
+        orm_mode = True
+
+# ---------------------- payment_method ----------------------
+
+class payment_method(Base_form):
+    employee_fk_id: UUID
+    shaba: str
+    card_number: str
+
+class post_payment_method_schema(payment_method):
+    pass
+
+
+class update_payment_method_schema(payment_method):
+    payment_method_pk_id: UUID
+
+
+class payment_method_response(BaseModel):
+    payment_method_pk_id: UUID
+
+    created: export_employee
+    employee: export_employee
+
+    class Config:
+        orm_mode = True
