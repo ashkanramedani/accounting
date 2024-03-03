@@ -158,3 +158,6 @@ cython_debug/
 /api/configs/config copy.json
 /api/Test/
 
+api/.DS_Store
+api/configs/.DS_Store
+api/logs.csv
