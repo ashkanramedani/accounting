@@ -293,6 +293,8 @@ class Libraries(Base):
 
     library_data_file_link = Column(String)
     library_data_file_path = Column(String)
+    
+    library_status = Column(Integer, default=5, nullable=False)
 
     library_download_count = Column(Integer, default=0, nullable=False)
 

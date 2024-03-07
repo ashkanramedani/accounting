@@ -116,6 +116,29 @@ def get_library_topic() -> List:
     ]
     return topics
 
+@router.get('/{topic}/read', response_model=List[sch.Library], status_code=status.HTTP_200_OK)
+def get_all_library_with_limit(topic:str, start_id:Optional[int]=0, page_number:Optional[int]=0, limit:Optional[int]=1000, db=Depends(get_db)) -> Any:
+    data = db_library.read_all_library_for_admin_panel(db, topic, start_id, page_number, limit)
+
+    if data == -1:
+        return Response(status_code=500, content="خطایی رخ داده است")
+
+    if not data or data is None or data == [] or data is False:
+        return Response(status_code=404, content="هیچ داده‌ای یافت نشد")
+
+    return data
+
+@router.get('/{topic}/{pid}', response_model=sch.Library)
+def get_library_with_pid(topic:str, pid:str, db=Depends(get_db)):
+    data = db_library.get_library_with_pid(db, pid)
+
+    if data == -1:
+        return Response(status_code=500, content="خطایی رخ داده است")
+
+    if not data or data is None or data == [] or data is False:
+        return Response(status_code=404, content="هیچ داده‌ای یافت نشد")
+
+    return data
 
 # create libraries
 @router.post('', status_code=201)
@@ -136,10 +159,25 @@ def group_status_modifications_in_group_library(db=Depends(get_db)):
     pass
 
 # delete libraries
-@router.delete('/delete/{lid}')
+@router.delete('/delete/{lid}', status_code=status.HTTP_200_OK)
 def delete_library(lid:str, db=Depends(get_db)):
-    pass
+    res = db_library.delete_posts(db, topic, pid)
+    if res == 1:
+        return Response(status_code=200, content="داده با موفقیت حذف شد")
 
-@router.delete('/group-delete')
-def delete_group_library(db=Depends(get_db)):
-    pass
+    elif res == 0:
+        return Response(status_code=404, content="هیچ داده‌ای یافت نشد")
+
+    elif res == -1:
+        return Response(status_code=500, content="خطایی رخ داده است")
+
+@router.delete('/group-delete', status_code=status.HTTP_200_OK)
+def delete_group_library(list_post:List[sch.LibraryDelete], db=Depends(get_db)) -> Any:
+    res = None
+    for i in list_pid:
+        if res is None:
+            res = {}
+        if i not in res:
+            res[i] = db_library.delete_libraries(db, topic, i)
+    
+    return res

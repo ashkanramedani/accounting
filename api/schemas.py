@@ -301,22 +301,17 @@ class PostDelete(BaseModel):
 # -------------------------------   Tag  -------------------------------
 class TagBase(BaseModel):
     tag_name: str
-
-
 class TagCreate(TagBase):
     user_creator_tag_fk_id: int
     priority: Optional[int] = None
 
     class Config:
         orm_mode = True
-
-
 class Tag(TagBase):
     tag_pk_id: UUID
 
     class Config:
         orm_mode = True
-
 
 # -------------------   Categories  -------------------
 class CategoryBase(BaseModel):
@@ -345,6 +340,8 @@ class LibraryBase(BaseModel):
     library_description: Optional[str] = ""
     library_summer: Optional[str] = ""
 
+    library_status: Optional[int] = 0
+
     library_audio_file_link: Optional[str] = None
     library_audio_file_path: Optional[str] = None
     library_aparat_video_id: Optional[str] = None
@@ -355,7 +352,7 @@ class LibraryBase(BaseModel):
     library_data_file_path: Optional[str] = None
 
     priority: Optional[int] = None
-
+    create_date: datetime
 
 class LibraryCreate(LibraryBase):
     library_name: str
@@ -376,7 +373,6 @@ class LibraryCreate(LibraryBase):
     class Config:
         orm_mode = True
 
-
 class Library(LibraryBase):
     library_pk_id: int
     download_count: Optional[int] = 0
@@ -384,6 +380,11 @@ class Library(LibraryBase):
     class Config:
         orm_mode = True
 
+class LibraryDelete(BaseModel):
+    library_pk_id: int
+
+    class Config:
+        orm_mode = True
 
 # --------------------------------------   Sahebkar   --------------------------------------
 
