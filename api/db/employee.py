@@ -15,9 +15,9 @@ def get_employee(db: Session, employee_id):
         return 500, e.__repr__()
 
 
-def get_all_employee(db: Session):
+def get_all_employee(db: Session, page: int, limit: int):
     try:
-        return 200, db.query(dbm.Employees_form).filter_by(deleted=False).all()
+        return 200, db.query(dbm.Employees_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
     except Exception as e:
         logger.error(e)
         db.rollback()

@@ -28,8 +28,8 @@ async def search_class(form_id, db=Depends(get_db)):
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])#, response_model=List[sch.classes_response])
-async def search_all_class(db=Depends(get_db)):
-    status_code, result = dbf.get_all_class(db)
+async def search_all_class(db=Depends(get_db), page: int = 1, limit: int = 10):
+    status_code, result = dbf.get_all_class(db, page, limit)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
