@@ -1,13 +1,13 @@
-from sqlalchemy.orm import Session
 from datetime import datetime
+
 import sqlalchemy.sql.expression as sse
-import logging
+from sqlalchemy.orm import Session
+
+from lib import log
+
+logger = log()
 import schemas as sch
 import db.models as dbm
-from sqlalchemy import desc, asc
-from fastapi.encoders import jsonable_encoder
-from uuid import UUID
-from typing import Optional, List, Dict, Any
 
 
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
@@ -21,7 +21,7 @@ def read_all_posts_for_admin_panel(db: Session, topic: str, start_id: int, page_
             return False
         return data
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -33,7 +33,7 @@ def get_post_with_pid(db: Session, pid: str):
             return False
         return data
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -50,7 +50,7 @@ def delete_posts(db: Session, topic: str, pid: int):
         else:
             return 0
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -67,7 +67,7 @@ def update_posts(db: Session, topic: str, pid: int, update: dbm.Posts):
             return 0
 
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -107,7 +107,7 @@ def create_post(db: Session, new: sch.PostCreate):
         db.refresh(data)
         return data
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return False
 
@@ -155,6 +155,6 @@ def create_post(db: Session, new: sch.PostCreate):
 #         db.refresh(data)
 #         return  data
 #     except Exception as e:
-#         logging.error(e)
+#         logger.error(e)
 #         db.rollback()
 #         return False

@@ -1,13 +1,10 @@
-from sqlalchemy.orm import Session
-from datetime import datetime
 import sqlalchemy.sql.expression as sse
-import logging
-import schemas as sch
+from sqlalchemy.orm import Session
+
+from lib import log
+
+logger = log()
 import db.models as dbm
-from sqlalchemy import desc, asc
-from fastapi.encoders import jsonable_encoder
-from uuid import UUID
-from typing import Optional, List, Dict, Any
 
 
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
@@ -42,7 +39,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 
 # def get_user_by_mobile_number(db: Session, mobile_number: str):
 #     data = db.query(dbm.Users).filter(sse.and_(dbm.Users.mobile_number == mobile_number, dbm.Users.deleted == False)).first()
-#     logging.error(data)
+#     logger.error(data)
 #     if data is None:
 #         return False
 #     return data
@@ -80,7 +77,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         db.refresh(assoc)
 #         return user_created
 #     except ValueError as e:
-#         logging.error(e)
+#         logger.error(e)
 #         db.rollback()
 #         return -1 
 
@@ -107,7 +104,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         db.refresh(assoc)
 #         return user_created
 #     except ValueError as e:
-#         logging.error(e)
+#         logger.error(e)
 #         db.rollback()
 #         return -1 
 
@@ -134,7 +131,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         else:
 #             return 0
 #     except Exception as e:
-#         logging.error(e)
+#         logger.error(e)
 #         db.rollback()
 #         return -1 
 
@@ -178,7 +175,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 # #                     db.commit()
 # #                     db.refresh(role_rel_user)
 # #                 except Exception as e:
-# #                     logging.error(e)
+# #                     logger.error(e)
 
 # #             au = Authentications(
 # #                 password=Hash._bcrypt(new_obj.password),
@@ -191,7 +188,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 # #         return user.id
 
 # #     except Exception as e:
-# #         logging.error(e)
+# #         logger.error(e)
 # #         db.rollback()
 # #         return -1 
 

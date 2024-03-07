@@ -21,7 +21,7 @@ async def add_tardy_request(Form: sch.post_teacher_tardy_reports_schema, db=Depe
 
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.teacher_tardy_reports_response)
 async def search_tardy_request(form_id, db=Depends(get_db)):
-    status_code, result = dbf.get_teacher_replacement(db, form_id)
+    status_code, result = dbf.get_tardy_request(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -29,7 +29,7 @@ async def search_tardy_request(form_id, db=Depends(get_db)):
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.teacher_tardy_reports_response])
 async def search_all_tardy_request(db=Depends(get_db)):
-    status_code, result = dbf.get_all_leave_request(db)
+    status_code, result = dbf.get_all_tardy_request(db)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

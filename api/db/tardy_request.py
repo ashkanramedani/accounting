@@ -1,6 +1,6 @@
-import logging
-from datetime import datetime, timezone
-from uuid import UUID
+from lib import log
+
+logger = log()
 
 from sqlalchemy.orm import Session
 
@@ -12,9 +12,9 @@ from .Extra import *
 # Tardy Form - get_tardy_request
 def get_tardy_request(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=form_id,deleted=False).first()
+        return 200, db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -23,7 +23,7 @@ def get_all_tardy_request(db: Session):
     try:
         return 200, db.query(dbm.Teacher_tardy_reports_form).filter_by(deleted=False).all()
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -32,7 +32,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
-        if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
+        if not class_exist(db, Form.class_fk_id):
             return 400, "Bad Request"
 
         OBJ = dbm.Teacher_tardy_reports_form(**Form.dict())
@@ -42,7 +42,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -56,31 +56,28 @@ def delete_tardy_request(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
 def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_schema):
     try:
-        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id,deleted=False)
+        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id, deleted=False)
 
         if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
-        if not db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_fk_id).first():
+        if not class_exist(db, Form.class_fk_id):
             return 400, "Bad Request"
 
-
-
-        data = Form.dict()
-        data["update_date"] = datetime.now(timezone.utc).astimezone()
-        record.update(data, synchronize_session=False)
+        record.update(Form.dict(), synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()

@@ -1,5 +1,7 @@
-import logging
-from datetime import datetime, timezone
+from lib import log
+
+logger = log()
+from datetime import datetime
 
 from sqlalchemy.orm import Session
 
@@ -16,7 +18,7 @@ def get_fingerprint_scanner(db: Session, user_id):
             return 400, "Bad Request"
         return 200, db.query(dbm.fingerprint_scanner_form).filter_by(user_ID=user.fingerprint_scanner_user_id, deleted=False).all()
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -25,7 +27,7 @@ def get_all_fingerprint_scanner(db: Session):
     try:
         return 200, db.query(dbm.fingerprint_scanner_form).filter_by(deleted=False).all()
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -49,7 +51,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -81,7 +83,7 @@ def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_s
                 return 500, e.__repr__()
         return 200, result
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -95,6 +97,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -108,13 +111,11 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        data = Form.dict()
-        data["update_date"] = datetime.now(timezone.utc).astimezone()
-        record.update(data, synchronize_session=False)
+        record.update(Form.dict(), synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()

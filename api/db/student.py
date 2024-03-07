@@ -1,6 +1,5 @@
-from datetime import datetime, timezone
-
-from loguru import logger
+from lib import log
+logger = log()
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -10,8 +9,9 @@ import schemas as sch
 # Student
 def get_student(db: Session, student_id):
     try:
-        return 200, db.query(dbm.Student_form).filter_by(student_pk_id=student_id,deleted=False).first()
+        return 200, db.query(dbm.Student_form).filter_by(student_pk_id=student_id, deleted=False).first()
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -20,24 +20,21 @@ def get_all_student(db: Session):
     try:
         return 200, db.query(dbm.Student_form).filter_by(deleted=False).all()
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
 def post_student(db: Session, Form: sch.post_student_schema):
     try:
-        OBJ = dbm.Student_form()
-
-        OBJ.name = Form.name
-        OBJ.last_name = Form.last_name
-        OBJ.level = Form.level
-        OBJ.age = Form.age
+        OBJ = dbm.Student_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
         return 200, "Student Added"
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -51,6 +48,7 @@ def delete_student(db: Session, student_id):
         db.commit()
         return 200, "employee Deleted"
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -61,9 +59,7 @@ def update_student(db: Session, Form: sch.update_student_schema):
         if not record.first():
             return 404, "Record Not Found"
 
-        data = Form.dict()
-        data["update_date"] = datetime.now(timezone.utc).astimezone()
-        record.update(data, synchronize_session=False)
+        record.update(Form.dict(), synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

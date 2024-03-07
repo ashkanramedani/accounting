@@ -1,20 +1,11 @@
-import datetime
-import email
 # from enum import unique
 # from unicodedata import category
 # from click import style
-from typing import List, Union
-from .database import Base
-from sqlalchemy import Enum, Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, Date, Time, UniqueConstraint, Index, MetaData, Float, Interval
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship, Mapped
-from sqlalchemy.sql import expression, func
-from email.policy import default
-from uuid import UUID
-from typing import Optional, List, Dict, Any
-
-from enum import Enum as PythonEnum
 from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import expression, func
 
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
@@ -141,7 +132,7 @@ class Categories(Base):
     def __repr__(self):
         return f'<Category "{self.category_pk_id}">'
 
-    # class Authentications(Base, BaseTable):
+    # class Authentications(Base, Base_form):
 
 
 #     __tablename__ = "tbl_authentications"
@@ -327,35 +318,13 @@ class Libraries(Base):
         return f'<Library "{self.library_pk_id}">'
 
 
-# Enums
-class WeekdayEnum(PythonEnum):
-    MONDAY = "0"
-    TUESDAY = "1"
-    WEDNESDAY = "2"
-    THURSDAY = "3"
-    FRIDAY = "4"
-    SATURDAY = "5"
-    SUNDAY = "6"
-
-
-class fingerprint_scanner_Mode(PythonEnum):
-    normal = "normal"
-
-
-class job_title_Enum(PythonEnum):
-    teacher = "teacher"
-    office = "office"
-    rd = "rd"
-    supervisor = "supervisor"
-
-
 # functions
 
 IDs = {
     "employees": "employees.employees_pk_id",
     "classes": "classes.class_pk_id",
     "days": "days.day_pk_id",
-    "survey_form": "survey_form.survey_pk_id",
+    "survey": "survey.survey_pk_id",
     "question": "question.question_pk_id",
     "student": "student.student_pk_id",
     "payment_method": "payment_method.payment_method_pk_id"
@@ -388,12 +357,17 @@ class BaseTable:
     delete_date = Column(DateTime(timezone=True), default=None)
     expire_date = Column(DateTime(timezone=True), default=None)
 
+
+class InstitutionsBase(BaseTable):
+    pass
+
+
+class Base_form(BaseTable):
     description = Column(String, nullable=True, default="")
+    status = Column(Integer, nullable=False, default=0)
 
 
-# Entity
-
-class User:
+class UserBase(BaseTable):
     name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     day_of_birth = Column(DateTime, nullable=True)
@@ -403,42 +377,49 @@ class User:
     address = Column(String(5000), default=None)
 
 
-class Employees_form(Base, BaseTable, User):
+# ========================== Entity ===========================
+
+# ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
+class Employees_form(Base, UserBase):
     __tablename__ = "employees"
     employees_pk_id = create_Unique_ID()
-    job_title = Column(Enum(job_title_Enum), nullable=False)
+    job_title = Column(String, nullable=False)
     fingerprint_scanner_user_id = Column(String, nullable=False, default="Not Specified")
 
+    Survey_Relation = relationship("Survey_form", back_populates="created", foreign_keys="Survey_form.created_fk_by")
+    Questions_Relation = relationship("Questions_form", back_populates="created", foreign_keys="Questions_form.created_fk_by")
     Business_Trip_Relation = relationship("Business_Trip_form", back_populates="created", foreign_keys="Business_Trip_form.created_fk_by")
     Leave_request_Relation = relationship("Leave_request_form", back_populates="created", foreign_keys="Leave_request_form.created_fk_by")
     Remote_Request_Relation = relationship("Remote_Request_form", back_populates="created", foreign_keys="Remote_Request_form.created_fk_by")
-    payment_method_Relation = relationship("payment_method_form", back_populates="created", foreign_keys="payment_method_form.created_fk_by")
+    payment_method_Relation = relationship("Payment_method_form", back_populates="created", foreign_keys="Payment_method_form.created_fk_by")
     Class_Cancellation_Relation = relationship("Class_Cancellation_form", back_populates="created", foreign_keys="Class_Cancellation_form.created_fk_by")
     Teacher_Replacement_Relation = relationship("Teacher_Replacement_form", back_populates="created", foreign_keys="Teacher_Replacement_form.created_fk_by")
     Teacher_tardy_reports_Relation = relationship("Teacher_tardy_reports_form", back_populates="created", foreign_keys="Teacher_tardy_reports_form.created_fk_by")
 
 
-class Student_form(Base, BaseTable, User):
+class Student_form(Base, UserBase):
     __tablename__ = "student"
     student_pk_id = create_Unique_ID()
     level = Column(String, index=True)
 
+    student_Relation = relationship("Response_form", back_populates="student", foreign_keys="Response_form.student_fk_id")
 
-class Class_form(Base, BaseTable):
+
+# +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
+class Class_form(Base, InstitutionsBase):
     __tablename__ = "classes"
     class_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("employees")
     name = Column(String)
     class_time = Column(DateTime, nullable=False)
     duration = Column(Integer)
 
-    # Teacher_tardy_reports_Relation_C = relationship("Teacher_tardy_reports_form", back_populates="classes", foreign_keys="Teacher_tardy_reports_form.class_fk_id")
-    # Class_Cancellation_Relation_C = relationship("Remote_Request_form", back_populates="classes", foreign_keys="Teacher_tardy_reports_form.class_fk_id")
 
+# ======================== Forms =============================
 
-# Forms
+# ++++++++++++++++++++++++++ EmployeeBase +++++++++++++++++++++++++++
 
-## Employee
-class Leave_request_form(Base, BaseTable):
+class Leave_request_form(Base, Base_form):
     __tablename__ = "leave_request"
     leave_request_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
@@ -451,7 +432,7 @@ class Leave_request_form(Base, BaseTable):
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
 
-class Business_Trip_form(Base, BaseTable):
+class Business_Trip_form(Base, Base_form):
     __tablename__ = "business_trip"
     business_trip_pk_id = create_Unique_ID()
     employee_fk_id = create_forenKey("employees")
@@ -465,7 +446,7 @@ class Business_Trip_form(Base, BaseTable):
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
 
-class Remote_Request_form(Base, BaseTable):
+class Remote_Request_form(Base, Base_form):
     __tablename__ = "remote_requests"
     remote_request_pk_id = create_Unique_ID()
     employee_fk_id = create_forenKey("employees")
@@ -473,28 +454,50 @@ class Remote_Request_form(Base, BaseTable):
     start_date = Column(DateTime, nullable=False)
     end_date = Column(DateTime, nullable=False)
     working_location = Column(String, nullable=False)
-    
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Remote_Request_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
 
-## Teacher
+class Payment_method_form(Base, Base_form):
+    __tablename__ = "payment_method"
+    payment_method_pk_id = create_Unique_ID()
+    employee_fk_id = create_forenKey("employees")
+    created_fk_by = create_forenKey("employees")
+    shaba = Column(String, nullable=False)
+    card_number = Column(String, nullable=True)
+    active = Column(Boolean, default=False)
 
-class Teacher_tardy_reports_form(Base, BaseTable):
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="payment_method_Relation")
+    employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
+
+
+class fingerprint_scanner_form(Base, Base_form):
+    __tablename__ = "fingerprint_scanner"
+    fingerprint_scanner_pk_id = create_Unique_ID()
+    user_ID = Column(String, nullable=False)
+    In_Out = Column(String, nullable=True)
+    Antipass = Column(Integer, default=0)
+    ProxyWork = Column(Integer, default=0)
+    DateTime = Column(DateTime)
+
+
+# ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++
+
+class Teacher_tardy_reports_form(Base, Base_form):
     __tablename__ = "teacher_tardy_reports"
     teacher_tardy_reports_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
     delay = Column(Integer, nullable=False)
-    
+
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Teacher_tardy_reports_Relation")
     teacher = relationship("Employees_form", foreign_keys=[teacher_fk_id])
     classes = relationship("Class_form", foreign_keys=[class_fk_id])
 
 
-class Class_Cancellation_form(Base, BaseTable):
+class Class_Cancellation_form(Base, Base_form):
     __tablename__ = "class_cancellation"
     class_cancellation_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
@@ -502,7 +505,7 @@ class Class_Cancellation_form(Base, BaseTable):
     class_fk_id = create_forenKey("classes")
     class_duration = Column(Integer, nullable=False)
     class_location = Column(String, nullable=False)
-    
+
     replacement_date = Column(DateTime, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Class_Cancellation_Relation")
@@ -510,38 +513,21 @@ class Class_Cancellation_form(Base, BaseTable):
     classes = relationship("Class_form", foreign_keys=[class_fk_id])
 
 
-class Teacher_Replacement_form(Base, BaseTable):
+class Teacher_Replacement_form(Base, Base_form):
     __tablename__ = "teacher_replacement"
     teacher_replacement_pk_id = create_Unique_ID()
     replacement_teacher_fk_id = create_forenKey("employees")
     created_fk_by = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
     class_fk_id = create_forenKey("classes")
-    
+
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Teacher_Replacement_Relation")
     main_teacher = relationship("Employees_form", foreign_keys=[teacher_fk_id])
     replacement_teacher = relationship("Employees_form", foreign_keys=[replacement_teacher_fk_id])
     classes = relationship("Class_form", foreign_keys=[class_fk_id])
 
 
-class payment_method_form(Base, BaseTable):
-    __tablename__ = "payment_method"
-    payment_method_pk_id = create_Unique_ID()
-    employee_fk_id = create_forenKey("employees")
-    created_fk_by = create_forenKey("employees")
-    shaba = Column(String, nullable=False)
-    card_number = Column(String, nullable=True)
-    active = Column(Boolean, default=False)
-    
-    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="payment_method_Relation")
-    employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
-
-
-"""
-
-
-
-class Teachers_Report_form(Base, BaseTable):
+class Teachers_Report_form(Base, Base_form):
     __tablename__ = "teachers_report"
     teachers_report_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
@@ -556,260 +542,45 @@ class Teachers_Report_form(Base, BaseTable):
     teacher_sheet_score = Column(Float, nullable=True)
 
 
-class survey_form(Base, BaseTable):
-    __tablename__ = "survey_form"
+# ++++++++++++++++++++++++++ Survey +++++++++++++++++++++++++++
+
+survey_questions = Table(
+        "survey_questions",
+        Base.metadata,
+        Column("survey_fk_id", ForeignKey("survey.survey_pk_id")),
+        Column("question_fk_id", ForeignKey("question.question_pk_id")))
+
+
+class Survey_form(Base, Base_form):
+    __tablename__ = "survey"
     survey_pk_id = create_Unique_ID()
     class_fk_id = create_forenKey("classes")
+    created_fk_by = create_forenKey("employees")
     title = Column(String, index=True)
 
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Survey_Relation")
+    classes = relationship("Class_form", foreign_keys=[class_fk_id])
+    questions = relationship('Questions_form', secondary=survey_questions, backref='surveys')
 
-class Questions_form(Base, BaseTable):
+
+class Questions_form(Base, InstitutionsBase):
     __tablename__ = "question"
     question_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("employees")
     text = Column(String, unique=True)
+    language = Column(String, index=True)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Questions_Relation")
 
 
-class survey_questions_form(Base, BaseTable):
-    __tablename__ = 'survey_form_questions'
-    survey_questions = create_Unique_ID()
-    survey_fk_id = create_forenKey("survey_form")
-    question_fk_id = create_forenKey("question")
-
-
-class response_form(Base, BaseTable):
+class Response_form(Base, Base_form):
     __tablename__ = "response"
     response_pk_id = create_Unique_ID()
     student_fk_id = create_forenKey("student")
     question_fk_id = create_forenKey("question")
-    survey_fk_id = create_forenKey("survey_form")
-    answer = Column(String)
+    survey_fk_id = create_forenKey("survey")
+    answer = Column(String, nullable=False)
 
-
-
-
-
-class fingerprint_scanner_form(Base, BaseTable):
-    __tablename__ = "fingerprint_scanner"
-    fingerprint_scanner_pk_id = create_Unique_ID()
-    user_ID = Column(String, nullable=False)
-    In_Out = Column(Enum(fingerprint_scanner_Mode), nullable=True)
-    Antipass = Column(Integer, default=0)
-    ProxyWork = Column(Integer, default=0)
-    DateTime = Column(DateTime)
-
-
-"""
-
-
-
-"""
-
-IDs = {
-    "employees": "employees.employees_pk_id",
-    "classes": "classes.class_pk_id",
-    "days": "days.day_pk_id",
-    "survey_form": "survey_form.survey_pk_id",
-    "question": "question.question_pk_id",
-    "student": "student.student_pk_id",
-    "payment_method": "payment_method.payment_method_pk_id"
-}
-
-
-class WeekdayEnum(PythonEnum):
-    MONDAY = "0"
-    TUESDAY = "1"
-    WEDNESDAY = "2"
-    THURSDAY = "3"
-    FRIDAY = "4"
-    SATURDAY = "5"
-    SUNDAY = "6"
-
-
-class fingerprint_scanner_Mode(PythonEnum):
-    normal = "normal"
-
-
-class job_title_Enum(PythonEnum):
-    teacher = "teacher"
-    office = "office"
-    rd = "rd"
-    supervisor = "supervisor"
-
-
-def create_Unique_ID():
-    return Column(GUID,
-                  server_default=GUID_SERVER_DEFAULT_POSTGRESQL,
-                  primary_key=True,
-                  nullable=False,
-                  unique=True,
-                  index=True)
-
-
-def create_forenKey(table: str, nullable=False):
-    return Column(GUID,
-                  ForeignKey(IDs[table], ondelete='SET NULL'), nullable=nullable)
-
-
-class BaseTable:
-    visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-    priority = Column(Integer, default=5, nullable=True)
-    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
-
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    delete_date = Column(DateTime(timezone=True), default=None)
-    expire_date = Column(DateTime(timezone=True), default=None)
-
-
-class Leave_request_form(Base, BaseTable):
-    __tablename__ = "leave_request"
-    leave_request_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("employees")
-    employee_fk_id = create_forenKey("employees")
-    start_date = Column(DateTime, index=True)
-    end_date = Column(DateTime, index=True)
-    description = Column(String)
-
-
-class Student_form(Base, BaseTable):
-    __tablename__ = "student"
-    student_pk_id = create_Unique_ID()
-    name = Column(String, nullable=False)
-    last_name = Column(String, index=True)
-    level = Column(String, index=True)
-    age = Column(Integer)
-
-    __table_args__ = (UniqueConstraint('name', 'last_name', name='_student_unique_name_last_name'),)
-
-
-class Class_form(Base, BaseTable):
-    __tablename__ = "classes"
-    class_pk_id = create_Unique_ID()
-    class_time = Column(DateTime, nullable=False)
-    duration = Column(Integer)
-
-
-class Employees_form(Base, BaseTable):
-    __tablename__ = "employees"
-    employees_pk_id = create_Unique_ID()
-    name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
-    job_title = Column(Enum(job_title_Enum), nullable=False)
-    fingerprint_scanner_user_id = Column(String, nullable=True, default="Not Specified")
-
-    __table_args__ = (UniqueConstraint('name', 'last_name', name='_employees_unique_name_last_name'),)
-
-
-class Remote_Request_form(Base, BaseTable):
-    __tablename__ = "remote_requests"
-    remote_request_pk_id = create_Unique_ID()
-    employee_fk_id = create_forenKey("employees")
-    start_date = Column(DateTime)
-    end_date = Column(DateTime)
-    working_location = Column(String)
-    description = Column(String)
-
-
-class Teacher_tardy_reports_form(Base, BaseTable):
-    __tablename__ = "teacher_tardy_reports"
-    teacher_tardy_reports_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("employees")
-    teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
-    delay = Column(Integer)
-
-
-class Class_Cancellation_form(Base, BaseTable):
-    __tablename__ = "class_cancellation"
-    class_cancellation_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("employees")
-    teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
-    class_duration = Column(Integer)
-    class_location = Column(String)
-    replacement = Column(DateTime)
-    description = Column(String)
-
-
-class Teacher_Replacement_form(Base, BaseTable):
-    __tablename__ = "teacher_replacement"
-    teacher_replacement_pk_id = create_Unique_ID()
-    replacement_teacher_fk_id = create_forenKey("employees")
-    created_fk_by = create_forenKey("employees")
-    teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
-
-
-class Business_Trip_form(Base, BaseTable):
-    __tablename__ = "business_trip"
-    business_trip_pk_id = create_Unique_ID()
-    employee_fk_id = create_forenKey("employees")
-    destination = Column(String)
-    description = Column(String)
-
-
-class Teachers_Report_form(Base, BaseTable):
-    __tablename__ = "teachers_report"
-    teachers_report_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("employees")
-    teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
-    score = Column(Float)
-    number_of_student = Column(Integer)
-    canceled_classes = Column(Integer, default=0)
-    replaced_classes = Column(Integer, default=0)
-    starts_at = Column(DateTime)
-    ends_at = Column(DateTime)
-    teacher_sheet_score = Column(Float, nullable=True)
-
-
-class survey_form(Base, BaseTable):
-    __tablename__ = "survey_form"
-    survey_pk_id = create_Unique_ID()
-    class_fk_id = create_forenKey("classes")
-    title = Column(String, index=True)
-
-
-class Questions_form(Base, BaseTable):
-    __tablename__ = "question"
-    question_pk_id = create_Unique_ID()
-    text = Column(String, unique=True)
-
-
-class survey_questions_form(Base, BaseTable):
-    __tablename__ = 'survey_form_questions'
-    survey_questions = create_Unique_ID()
-    survey_fk_id = create_forenKey("survey_form")
-    question_fk_id = create_forenKey("question")
-
-
-class response_form(Base, BaseTable):
-    __tablename__ = "response"
-    response_pk_id = create_Unique_ID()
-    student_fk_id = create_forenKey("student")
-    question_fk_id = create_forenKey("question")
-    survey_fk_id = create_forenKey("survey_form")
-    answer = Column(String)
-
-
-class payment_method_form(Base, BaseTable):
-    __tablename__ = "payment_method"
-    payment_method_pk_id = create_Unique_ID()
-    employee_fk_id = create_forenKey("employees")
-    shaba = Column(String, nullable=False)
-    card_number = Column(String, nullable=True)
-    active = Column(Boolean, default=False)
-
-
-class fingerprint_scanner_form(Base, BaseTable):
-    __tablename__ = "fingerprint_scanner"
-    fingerprint_scanner_pk_id = create_Unique_ID()
-    user_ID = Column(String, nullable=False)
-    In_Out = Column(Enum(fingerprint_scanner_Mode), nullable=True)
-    Antipass = Column(Integer, default=0)
-    ProxyWork = Column(Integer, default=0)
-    DateTime = Column(DateTime)
-
-"""
+    student = relationship("Student_form", foreign_keys=[student_fk_id], back_populates="student_Relation")
+    question = relationship("Questions_form", foreign_keys=[question_fk_id])
+    survey = relationship("Survey_form", foreign_keys=[survey_fk_id])

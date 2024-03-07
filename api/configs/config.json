@@ -4,10 +4,10 @@
     "versions": "v 3.0.0", 
     "logger": {
         "format": "<level>{time:HH:mm:ss}</level> | <cyan>{name}:{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-        "file": {
-          "path": "../log/Log.log",
-          "size": "10 MB"
-        }
+        "sink": "log/Log.log",
+        "rotation": "10 MB",
+        "level": "INFO"
+
     },
     "db": {
         "database_type": "postgresql",

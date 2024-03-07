@@ -1,13 +1,13 @@
-from sqlalchemy.orm import Session
 from datetime import datetime
+
 import sqlalchemy.sql.expression as sse
-import logging
+from sqlalchemy.orm import Session
+
+from lib import log
+
+logger = log()
 import schemas as sch
 import db.models as dbm
-from sqlalchemy import desc, asc
-from fastapi.encoders import jsonable_encoder
-from uuid import UUID
-from typing import Optional, List, Dict, Any
 
 
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
@@ -69,7 +69,7 @@ def update_tag(db: Session, id: int, new: sch.Tag):
         else:
             return 0
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -88,6 +88,6 @@ def delete_tag(db: Session, id: int):
         else:
             return 0
     except Exception as e:
-        logging.error(e)
+        logger.error(e)
         db.rollback()
         return -1

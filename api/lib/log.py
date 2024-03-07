@@ -1,14 +1,22 @@
-from loguru import logger
-from lib.requester import requester
-from lib.json_handler import json_handler
+from os.path import normpath, dirname, join
 
-class log():
-    def __init__(self, config={}):
-        if config == {}:
-            # self._obj_json_handler = json_handler(FilePath="config.json")     
-            self.developer = True #self._obj_json_handler.Data['developer_log']
+from loguru import logger as L
+from lib.requester import requester
+from json import load
+
+
+class log:
+    def __init__(self, config: dict = None):
+        self.logger = L
+        if not config:
+            self.developer = True
+            PRJ_path = normpath(f'{dirname(__file__)}/../')
+            config = load(open(join(PRJ_path, "configs/config.json"), 'r'))["logger"]
+            config["sink"] = join(PRJ_path, config["sink"])
+
         else:
             self.developer = config['developer_log']
+
 
     def keep_log(self, msg, type_log, user_id, location):
         try:
@@ -29,18 +37,31 @@ class log():
 
     def show_log(self, msg, type_log):
         if self.developer and type_log == 'w':
-            logger.warning(msg)
+            self.logger.opt(depth=1).warning(msg)
         if self.developer and type_log == 'd':
-            logger.debug(msg)
+            self.logger.opt(depth=1).debug(msg)
         if type_log == 'e':
-            logger.error(msg)
+            self.logger.opt(depth=1).error(msg)
         if type_log == 's':
-            logger.success(msg)
+            self.logger.opt(depth=1).success(msg)
         if  self.developer and type_log == 'i':
-            logger.info(msg)
+            self.logger.opt(depth=1).info(msg)
    
     def log(self, msg, type_log, user, location, keep=False):
         self.show_log(msg, type_log)
         if keep:
             self.keep_log(msg, type_log, user, location)
-       
+
+    def info(self, msg):
+        self.logger.opt(depth=1).info(msg)
+    def warning(self, msg):
+        self.logger.opt(depth=1).warning(msg)
+
+    def error(self, msg):
+        self.logger.opt(depth=1).error(msg)
+
+if __name__ == '__main__':
+    Logger = log()
+    Logger.info("INFO")
+    Logger.error("ERROR")
+    Logger.warning("WARNING")
