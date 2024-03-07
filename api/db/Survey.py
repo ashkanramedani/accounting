@@ -22,9 +22,9 @@ def get_question(db: Session, question_id):
         return 500, e.__repr__()
 
 
-def get_all_question(db: Session):
+def get_all_question(db: Session, page: int, limit: int):
     try:
-        return 200, db.query(dbm.Questions_form).filter_by(deleted=False).all()
+        return 200, db.query(dbm.Questions_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -85,11 +85,9 @@ def get_survey(db: Session, survey_id):
         return 500, e.__repr__()
 
 
-def get_all_survey(db: Session):
+def get_all_survey(db: Session, page: int, limit: int):
     try:
-        logger.warning(db.query(dbm.Survey_form).options(joinedload(dbm.Survey_form.questions)))
-        return 200, db.query(dbm.Survey_form).options(joinedload(dbm.Survey_form.questions)).all()
-        # return 200, db.query(dbm.Survey_form).filter_by(deleted=False).all()
+        return 200, db.query(dbm.Survey_form).options(joinedload(dbm.Survey_form.questions)).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
 
     except Exception as e:
         logger.error(e)

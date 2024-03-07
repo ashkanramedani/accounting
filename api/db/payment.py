@@ -16,9 +16,9 @@ def get_payment_method(db: Session, payment_method_id):
         return 500, e.__repr__()
 
 
-def get_all_payment_method(db: Session):
+def get_all_payment_method(db: Session, page: int, limit: int):
     try:
-        return 200, db.query(dbm.Payment_method_form).filter_by(deleted=False).all()
+        return 200, db.query(dbm.Payment_method_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
     except Exception as e:
         logger.error(e)
         db.rollback()
