@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 
+__all__ = ["employee_exist", "class_exist"]
 
-__all__ = ["employee_exist", 'Fix_UUID']
 
 def employee_exist(db: Session, FK_fields: List[UUID]):
     for FK_field in FK_fields:
@@ -14,8 +14,8 @@ def employee_exist(db: Session, FK_fields: List[UUID]):
             return False
     return True
 
-def Fix_UUID(hex_string):
-    if isinstance(hex_string, UUID):
-        return hex_string
-    return UUID(hex_string)
 
+def class_exist(db: Session, FK_field: UUID):
+    if not db.query(dbm.Class_form).filter_by(class_pk_id=FK_field, deleted=False).first():
+        return False
+    return True

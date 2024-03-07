@@ -1,7 +1,10 @@
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
+
 import schemas as sch
 from db.database import get_db
 
@@ -17,7 +20,7 @@ async def add_response(Form: sch.post_response_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.response_response)
 async def search_response(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_response(db, form_id)
     if status_code != 200:
@@ -25,7 +28,7 @@ async def search_response(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.response_response])
 async def search_all_response(db=Depends(get_db)):
     status_code, result = dbf.get_all_response(db)
     if status_code != 200:
@@ -43,7 +46,8 @@ async def delete_response(response_id, db=Depends(get_db)):
 
 @router.put("/update", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def update_response(Form: sch.update_response_schema, db=Depends(get_db)):
-    status_code, result = dbf.update_response(db, Form)
-    if status_code != 200:
-        raise HTTPException(status_code=status_code, detail=result)
-    return result
+    raise HTTPException(status_code=404, detail="Not Found")
+    # status_code, result = dbf.update_response(db, Form)
+    # if status_code != 200:
+    #     raise HTTPException(status_code=status_code, detail=result)
+    # return result

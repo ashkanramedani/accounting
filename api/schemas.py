@@ -398,79 +398,20 @@ class job_title_Enum(str, Enum):
     rd = "rd"
     supervisor = "supervisor"
 
-class post_questions_schema(BaseModel):
-    text: str
 
-
-class update_questions_schema(BaseModel):
-    question_pk_id: UUID
-    text: str
-
-
-class post_survey_schema(BaseModel):
-    class_fk_id: UUID
-    questions: List[UUID]
-    title: str
-
-
-class update_survey_schema(BaseModel):
-    survey_pk_id: UUID
-    class_fk_id: UUID
-    questions: List[UUID]
-    title: str
-
-
-class post_response_schema(BaseModel):
-    student_fk_id: UUID
-    question_fk_id: UUID
-    survey_fk_id: UUID
-    answer: str
-
-
-class update_response_schema(BaseModel):
-    response_pk_id: UUID
-    student_fk_id: UUID
-    question_fk_id: UUID
-    survey_fk_id: UUID
-    answer: str
-
-
-
-class post_fingerprint_scanner_schema(BaseModel):
+# --------------------------------------   Sahebkar   --------------------------------------
+class Base_form(BaseModel):
     created_fk_by: UUID
-    In_Out: fingerprint_scanner_Mode
-    Antipass: bool
-    ProxyWork: bool
-    DateTime: str
-    user_ID: str
+    description: str | None
+    status: int = 0
 
+class StudentBase(BaseModel):
+    description: str | None
+    status: int = 0
 
-class FingerPrint_Record(BaseModel):
-    user_ID: str
-    In_Out: str
-    Antipass: str
-    ProxyWork: str
-    DateTime: str
-
-
-class post_bulk_fingerprint_scanner_schema(BaseModel):
+class InstitutionsBase(BaseModel):
     created_fk_by: UUID
-    Records: List[FingerPrint_Record]
 
-
-class update_fingerprint_scanner_schema(BaseModel):
-    fingerprint_scanner_pk_id: UUID
-    employee_fk_id: UUID
-    created_fk_by: UUID
-    In_Out: fingerprint_scanner_Mode
-    Antipass: str
-    ProxyWork: str
-    DateTime: str
-
-
-# ===================== ENTITY =====================
-
-# ---------------------- User ----------------------
 class User(BaseModel):
     name: str
     last_name: str
@@ -481,6 +422,8 @@ class User(BaseModel):
     address: str | None
 
 
+# ========================== Entity ===========================
+# ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
 # ---------------------- Employee ----------------------
 
 class Employee(User):
@@ -540,8 +483,9 @@ class export_student(BaseModel):
         orm_mode = True
 
 
+# +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
 # ---------------------- classes ----------------------
-class classes(BaseModel):
+class classes(InstitutionsBase):
     name: str
     class_time: str | datetime = datetime.now()
     duration: int
@@ -554,8 +498,10 @@ class post_class_schema(classes):
 class update_class_schema(classes):
     class_pk_id: UUID
 
-class classes_response(update_class_schema):
-    pass
+
+class classes_response(Base_form):
+    classes: Any
+    delay: int
 
     class Config:
         orm_mode = True
@@ -570,20 +516,47 @@ class export_classes(BaseModel):
         orm_mode = True
 
 
-# ====================== Forms ========================
+# ---------------------- question ----------------------
+class Question(InstitutionsBase):
+    text: str
+    language: str
 
-class Base_form(BaseModel):
-    created_fk_by: UUID
-    description: str | None
+
+class post_questions_schema(Question):
+    pass
 
 
+class update_questions_schema(Question):
+    question_pk_id: UUID
+
+
+class Question_response(BaseModel):
+    question_pk_id: UUID
+    text: str
+    language: str
+
+    class Config:
+        orm_mode = True
+
+
+class export_question(BaseModel):
+    question_pk_id: UUID
+    text: str
+    language: str
+
+    class Config:
+        orm_mode = True
+
+
+# ======================== Forms =============================
+# ++++++++++++++++++++++++++ EmployeeBase +++++++++++++++++++++++++++
 # ---------------------- business_trip ----------------------
-
 class business_trip(Base_form):
     employee_fk_id: UUID
     destination: str
     start_date: str | datetime = datetime.now()
     end_date: str | datetime = datetime.now()
+
 
 class post_business_trip_schema(business_trip):
     pass
@@ -660,7 +633,7 @@ class remote_request_response(BaseModel):
         orm_mode = True
 
 
-# ---------------------- class_cancellation ----------------------
+# ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++
 class class_cancellation(Base_form):
     class_fk_id: UUID
     teacher_fk_id: UUID
@@ -683,7 +656,7 @@ class class_cancellation_response(BaseModel):
     class_duration: int
     class_location: str
     created: export_employee
-    employee: export_employee
+    teacher: export_employee
     classes: export_classes
 
     class Config:
@@ -706,13 +679,15 @@ class update_teacher_tardy_reports_schema(teacher_tardy_reports):
 
 
 class teacher_tardy_reports_response(BaseModel):
+    teacher_tardy_reports_pk_id: UUID
     created: export_employee
-    employee: export_employee
+    teacher: export_employee
     classes: export_classes
     delay: int
 
     class Config:
         orm_mode = True
+
 
 # ---------------------- teacher_replacement ----------------------
 
@@ -721,6 +696,7 @@ class teacher_replacement(Base_form):
     teacher_fk_id: UUID
     replacement_teacher_fk_id: UUID
     class_fk_id: UUID
+
 
 class post_teacher_replacement_schema(teacher_replacement):
     pass
@@ -741,12 +717,13 @@ class teacher_replacement_response(BaseModel):
     class Config:
         orm_mode = True
 
-# ---------------------- payment_method ----------------------
 
+# ---------------------- payment_method ----------------------
 class payment_method(Base_form):
     employee_fk_id: UUID
     shaba: str
     card_number: str
+
 
 class post_payment_method_schema(payment_method):
     pass
@@ -764,3 +741,125 @@ class payment_method_response(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+# ++++++++++++++++++++++++++ Survey +++++++++++++++++++++++++++
+# ---------------------- Survey_form ----------------------
+
+class Survey(Base_form):
+    questions: List[UUID]
+    class_fk_id: UUID
+    title: str
+
+
+class post_survey_schema(Survey):
+    pass
+
+
+class update_survey_schema(Survey):
+    survey_pk_id: UUID
+    class_fk_id: UUID
+
+
+class survey_response(BaseModel):
+    survey_pk_id: UUID
+    title: str
+
+    created: export_employee
+    classes: export_classes
+    questions: List[export_question]
+
+    class Config:
+        orm_mode = True
+
+
+class export_survey(BaseModel):
+    title: str
+
+    class Config:
+        orm_mode = True
+
+# ++++++++++++++++++++++++++ StudentBase +++++++++++++++++++++++++++
+# ---------------------- response ----------------------
+class Response(StudentBase):
+    student_fk_id: UUID
+    question_fk_id: UUID
+    survey_fk_id: UUID
+    answer: str
+
+
+class post_response_schema(Response):
+    pass
+
+
+class update_response_schema(Response):
+    response_pk_id: UUID
+
+
+class response_response(BaseModel):
+    response_pk_id: UUID
+    answer: str
+
+    student: export_student
+    question: export_question
+    survey: export_survey
+
+    class Config:
+        orm_mode = True
+
+
+####### Has to be change  to new format
+class post_fingerprint_scanner_schema(BaseModel):
+    created_fk_by: UUID
+    In_Out: fingerprint_scanner_Mode
+    Antipass: bool
+    ProxyWork: bool
+    DateTime: str
+    user_ID: str
+
+
+class FingerPrint_Record(BaseModel):
+    user_ID: str
+    In_Out: str
+    Antipass: str
+    ProxyWork: str
+    DateTime: str
+
+
+class post_bulk_fingerprint_scanner_schema(BaseModel):
+    created_fk_by: UUID
+    Records: List[FingerPrint_Record]
+
+
+class update_fingerprint_scanner_schema(BaseModel):
+    fingerprint_scanner_pk_id: UUID
+    employee_fk_id: UUID
+    created_fk_by: UUID
+    In_Out: fingerprint_scanner_Mode
+    Antipass: str
+    ProxyWork: str
+    DateTime: str
+
+
+#####
+# ---------------------- Question-Survey ----------------------
+# class Question_Survey(Base_form):
+#     survey_fk_id: UUID
+#     question_fk_id: UUID
+#
+#
+# class post_Question_Survey_schema(Question_Survey):
+#     pass
+#
+#
+# class update_Question_Survey_schema(Question_Survey):
+#     survey_questions_pk_id: UUID
+#
+#
+# class export_Question_Survey(BaseModel):
+#     survey_questions_pk_id: UUID
+#     question_fk_id: UUID
+#     questions: export_question
+#
+#     class Config:
+#         orm_mode = True

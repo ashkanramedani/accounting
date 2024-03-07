@@ -1,6 +1,5 @@
-from datetime import datetime, timezone
-
-from loguru import logger
+from lib import log
+logger = log()
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -10,16 +9,18 @@ from .Extra import *
 
 def get_payment_method(db: Session, payment_method_id):
     try:
-        return 200, db.query(dbm.payment_method_form).filter_by(payment_method_pk_id=payment_method_id, deleted=False).first()
+        return 200, db.query(dbm.Payment_method_form).filter_by(payment_method_pk_id=payment_method_id, deleted=False).first()
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
 def get_all_payment_method(db: Session):
     try:
-        return 200, db.query(dbm.payment_method_form).filter_by(deleted=False).all()
+        return 200, db.query(dbm.Payment_method_form).filter_by(deleted=False).all()
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
@@ -30,42 +31,42 @@ def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
         if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        OBJ = dbm.payment_method_form(**Form.dict())
+        OBJ = dbm.Payment_method_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
         return 200, "payment_method Added"
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
 def delete_payment_method(db: Session, payment_method_id):
     try:
-        record = db.query(dbm.payment_method_form).filter_by(payment_method_pk_id=payment_method_id, deleted=False).first()
+        record = db.query(dbm.Payment_method_form).filter_by(payment_method_pk_id=payment_method_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
         db.commit()
         return 200, "Deleted"
     except Exception as e:
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
 def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
     try:
-        record = db.query(dbm.payment_method_form).filter_by(payment_method_pk_id=Form.payment_method_pk_id)
+        record = db.query(dbm.Payment_method_form).filter_by(payment_method_pk_id=Form.payment_method_pk_id)
         if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        data = Form.dict()
-        data["update_date"] = datetime.now(timezone.utc).astimezone()
-        record.update(data, synchronize_session=False)
+        record.update(Form.dict(), synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

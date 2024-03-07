@@ -1,3 +1,5 @@
+import os
+
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
@@ -36,7 +38,13 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def startup():
-    r = redis.from_url("redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0", encoding="utf8")
+    if os.getenv('LOCAL_POSTGRES'):
+        Redis_url = os.getenv('LOCAL_REDIS')
+    else:
+        Redis_url = "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
+
+    r = redis.from_url(Redis_url, encoding="utf8")
+
     await FastAPILimiter.init(r)
 
 @app.on_event("shutdown")

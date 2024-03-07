@@ -1,4 +1,5 @@
-import logging
+from lib import log
+logger = log()
 import schemas as sch
 import db.models as dbm
 import sqlalchemy.sql.expression as sse
