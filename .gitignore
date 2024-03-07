@@ -159,3 +159,15 @@ api/.DS_Store
 /api/Test/
 
 .DS_Store
+.idea
+__pycache__
+__pycache__/main.cpython-310.pyc
+configs/.DS_Store
+configs/config.json
+db/__pycache__
+db/__pycache__/teacher_replacement.cpython-311.pyc
+ignore
+lib/__pycache__/
+log/Log.log
+router/.DS_Store
+router/__pycache__
