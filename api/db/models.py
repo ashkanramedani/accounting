@@ -2,7 +2,7 @@
 # from unicodedata import category
 # from click import style
 from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
@@ -472,16 +472,20 @@ class Payment_method_form(Base, Base_form):
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="payment_method_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
-
-
-class fingerprint_scanner_form(Base, Base_form):
+class fingerprint_scanner_form(Base):
     __tablename__ = "fingerprint_scanner"
-    fingerprint_scanner_pk_id = create_Unique_ID()
-    user_ID = Column(String, nullable=False)
-    In_Out = Column(String, nullable=True)
-    Antipass = Column(Integer, default=0)
-    ProxyWork = Column(Integer, default=0)
+    FingerPrintScanner_pk_id = Column(Integer, primary_key=True)
+    TMNo = Column(Integer)
+    EnNo = Column(Integer)
+    Name = Column(String)
+    GMNo = Column(Integer)
+    Mode = Column(String)
+    In_Out = Column(String)
+    Antipass = Column(Integer)
+    ProxyWork = Column(Integer)
     DateTime = Column(DateTime)
+
+    __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
 
 
 # ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++

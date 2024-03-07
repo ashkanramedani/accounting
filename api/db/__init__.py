@@ -16,7 +16,7 @@ from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
 
-# from .fingerprint_scanner import *
+from .fingerprint_scanner import *
 
 __all__ = [
     # employee.py
@@ -100,11 +100,11 @@ __all__ = [
     "delete_payment_method",
     "update_payment_method",
     # finger_print.py
-    # "get_fingerprint_scanner",
-    # "get_all_fingerprint_scanner",
-    # "post_fingerprint_scanner",
-    # "delete_fingerprint_scanner",
-    # "update_fingerprint_scanner",
+    "get_fingerprint_scanner",
+    "get_all_fingerprint_scanner",
+    "post_fingerprint_scanner",
+    "delete_fingerprint_scanner",
+    "update_fingerprint_scanner",
 
     # db_files.py
     # db_user.py

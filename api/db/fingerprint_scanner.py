@@ -2,13 +2,13 @@ from lib import log
 
 logger = log()
 from datetime import datetime
-
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
-
+import pandas as pd
 import db.models as dbm
 import schemas as sch
 from .Extra import *
-
+from fastapi import FastAPI, File, UploadFile, HTTPException
 
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, user_id):
@@ -34,17 +34,10 @@ def get_all_fingerprint_scanner(db: Session, page: int, limit: int):
 
 def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_schema):
     try:
-        if not employee_exist(db, [Form.created_fk_by]):
-            return 400, "Bad Request"
+        # if not employee_exist(db, [Form.created_fk_by]):
+        #     return 400, "Bad Request"
 
-        OBJ = dbm.fingerprint_scanner_form()
-
-        OBJ.created_fk_by = Form.created_fk_by
-        OBJ.In_Out = Form.In_Out
-        OBJ.Antipass = Form.Antipass
-        OBJ.ProxyWork = Form.ProxyWork
-        OBJ.DateTime = Form.DateTime
-        OBJ.user_ID = Form.user_ID
+        OBJ = dbm.fingerprint_scanner_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -56,36 +49,34 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         return 500, e.__repr__()
 
 
-def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_scanner_schema):
+def post_bulk_fingerprint_scanner(db: Session, file: UploadFile = File(...)):
     try:
 
-        if not employee_exist(db, [Form.created_fk_by]):
-            return 400, "Bad Request"
+        # if not employee_exist(db, [Form.created_fk_by]):
+        #     return 400, "Bad Request"
+        with open(f"./{file.filename}", "wb") as csv_file:
+            csv_file.write(file.file.read())
+        Data = pd.read_csv(f"./{file.filename}").to_dict(orient="records")
+        OBJs = []
+        for record in Data:
+            del record["No"]
+            record["In_Out"] = record.pop("In/Out")
+            OBJs.append(dbm.fingerprint_scanner_form(**record))
 
-        result = {}
 
-        for record in Form.Records:
-            try:
-                OBJ = dbm.fingerprint_scanner_form()
+        db.add_all(OBJs)
+        db.commit()
+        return 200, "File added"
 
-                OBJ.created_fk_by = Form.created_fk_by
-                OBJ.user_ID = record.user_ID
-                OBJ.In_Out = record.In_Out
-                OBJ.Antipass = record.Antipass
-                OBJ.ProxyWork = record.ProxyWork
-                OBJ.DateTime = datetime.strptime(record.DateTime, "%Y-%m-%d %H:%M:%S")
+    except IntegrityError:
+        db.rollback()
+        return 409, "UniqueViolation"
 
-                db.add(OBJ)
-                db.commit()
-                db.refresh(OBJ)
-            except Exception as e:
-                db.rollback()
-                return 500, e.__repr__()
-        return 200, result
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
+
 
 
 def delete_fingerprint_scanner(db: Session, form_id):

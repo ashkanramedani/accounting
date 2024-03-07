@@ -1,5 +1,10 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
+from sqlalchemy import create_engine, Column, Integer, String, Sequence, UniqueConstraint
+from sqlalchemy.exc import IntegrityError
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker
 
 import db as dbf
 import schemas as sch
@@ -18,8 +23,8 @@ async def add_fingerprint_scanner(Form: sch.post_fingerprint_scanner_schema, db=
 
 
 @router.post("/bulk_add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def add_fingerprint_scanner(Form: sch.post_bulk_fingerprint_scanner_schema, db=Depends(get_db)):
-    status_code, result = dbf.post_bulk_fingerprint_scanner(db, Form)
+async def add_fingerprint_scanner(file: UploadFile = File(...), db=Depends(get_db)):
+    status_code, result = dbf.post_bulk_fingerprint_scanner(db, file)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

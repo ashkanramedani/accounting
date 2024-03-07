@@ -9,7 +9,7 @@ from .remote_request import router as remote_request_route
 from .response import router as response_route
 from .student import router as student_route
 from .survey import router as survey_route
-# from .fingerScanner import router as finger_scanner_router
+from .fingerScanner import router as finger_scanner_router
 from .tardy_request import router as tardy_request_route
 from .teacher_replacement import router as teacher_replacement_route
 
@@ -34,7 +34,7 @@ routes = [
     tardy_request_route,
     teacher_replacement_route,
     route_payment,
-    # fingerscanner_router,
+    finger_scanner_router,
 
     files,
     user,
