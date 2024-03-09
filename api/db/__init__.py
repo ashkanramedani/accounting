@@ -1,3 +1,4 @@
+from .Roles import *
 from .Survey import *
 from .business_trip import *
 from .class_cancellation import *
@@ -8,6 +9,7 @@ from .db_post import *
 from .db_tag import *
 from .db_user import *
 from .employee import *
+from .fingerprint_scanner import *
 from .leave_request import *
 from .payment import *
 from .remote_request import *
@@ -16,9 +18,14 @@ from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
 
-from .fingerprint_scanner import *
-
 __all__ = [
+    # Roles.py
+    "get_role",
+    "get_all_role",
+    "post_role",
+    "delete_role",
+    "update_role",
+
     # employee.py
     "get_employee",
     "get_all_employee",

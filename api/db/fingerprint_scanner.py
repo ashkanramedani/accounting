@@ -1,14 +1,13 @@
 from lib import log
 
 logger = log()
-from datetime import datetime
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 import pandas as pd
 import db.models as dbm
 import schemas as sch
 from .Extra import *
-from fastapi import FastAPI, File, UploadFile, HTTPException
+
 
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, user_id):
@@ -16,16 +15,16 @@ def get_fingerprint_scanner(db: Session, user_id):
         user = db.query(dbm.Employees_form).filter_by(employees_pk_id=user_id, deleted=False).first()
         if not user:
             return 400, "Bad Request"
-        return 200, db.query(dbm.fingerprint_scanner_form).filter_by(user_ID=user.fingerprint_scanner_user_id, deleted=False).all()
+        return 200, db.query(dbm.Fingerprint_scanner_form).filter_by(user_ID=user.fingerprint_scanner_user_id, deleted=False).all()
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def get_all_fingerprint_scanner(db: Session, page: int, limit: int):
+def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, db.query(dbm.fingerprint_scanner_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
+        return 200, record_order_by(db, dbm.Fingerprint_scanner_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -34,10 +33,10 @@ def get_all_fingerprint_scanner(db: Session, page: int, limit: int):
 
 def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_schema):
     try:
-        # if not employee_exist(db, [Form.created_fk_by]):
-        #     return 400, "Bad Request"
+        if not employee_exist(db, [Form.created_fk_by]):
+            return 400, "Bad Request"
 
-        OBJ = dbm.fingerprint_scanner_form(**Form.dict())
+        OBJ = dbm.Fingerprint_scanner_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
@@ -49,20 +48,19 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         return 500, e.__repr__()
 
 
-def post_bulk_fingerprint_scanner(db: Session, file: UploadFile = File(...)):
+def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_scanner_schema):
     try:
 
-        # if not employee_exist(db, [Form.created_fk_by]):
-        #     return 400, "Bad Request"
-        with open(f"./{file.filename}", "wb") as csv_file:
-            csv_file.write(file.file.read())
-        Data = pd.read_csv(f"./{file.filename}").to_dict(orient="records")
+        if not employee_exist(db, [Form.created_fk_by]):
+            return 400, "Bad Request"
+        with open(f"./{Form.file.filename}", "wb") as csv_file:
+            csv_file.write(Form.file.file.read())
+        Data = pd.read_csv(f"./{Form.file.filename}").to_dict(orient="records")
         OBJs = []
         for record in Data:
             del record["No"]
             record["In_Out"] = record.pop("In/Out")
-            OBJs.append(dbm.fingerprint_scanner_form(**record))
-
+            OBJs.append(dbm.Fingerprint_scanner_form(**record))
 
         db.add_all(OBJs)
         db.commit()
@@ -78,10 +76,9 @@ def post_bulk_fingerprint_scanner(db: Session, file: UploadFile = File(...)):
         return 500, e.__repr__()
 
 
-
 def delete_fingerprint_scanner(db: Session, form_id):
     try:
-        record = db.query(dbm.fingerprint_scanner_form).filter_by(fingerprint_scanner_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Fingerprint_scanner_form).filter_by(fingerprint_scanner_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -95,7 +92,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
     try:
-        record = db.query(dbm.fingerprint_scanner_form).filter_by(teacher_tardy_reports_pk_id=Form.fingerprint_scanner_pk_id, deleted=False)
+        record = db.query(dbm.Fingerprint_scanner_form).filter_by(teacher_tardy_reports_pk_id=Form.fingerprint_scanner_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

@@ -26,8 +26,8 @@ async def search_student(form_id, db=Depends(get_db)):
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def search_all_student(db=Depends(get_db), page: int = 1, limit: int = 10):
-    status_code, result = dbf.get_all_student(db, page, limit)
+async def search_all_student(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+    status_code, result = dbf.get_all_student(db, page, limit, order)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

@@ -35,7 +35,7 @@ def get_categoryes(db: Session, skip: int = 0, limit: int = 100):
     return data
 
 
-def get_all_categoryes(db: Session, page: int, limit: int):
+def get_all_categoryes(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     data = db.query(dbm.Categories).filter(sse.and_(dbm.Categories.visible == True, dbm.Categories.deleted == False)).all()
     if data is None:
         return False

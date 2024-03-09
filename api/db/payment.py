@@ -1,4 +1,5 @@
 from lib import log
+
 logger = log()
 from sqlalchemy.orm import Session
 
@@ -16,9 +17,9 @@ def get_payment_method(db: Session, payment_method_id):
         return 500, e.__repr__()
 
 
-def get_all_payment_method(db: Session, page: int, limit: int):
+def get_all_payment_method(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, db.query(dbm.Payment_method_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
+        return 200, record_order_by(db, dbm.Payment_method_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()

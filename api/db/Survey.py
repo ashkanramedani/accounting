@@ -1,13 +1,12 @@
 from typing import List
 from uuid import UUID
 
-
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from .Extra import *
 from lib import log
+from .Extra import *
 
 logger = log()
 
@@ -22,7 +21,7 @@ def get_question(db: Session, question_id):
         return 500, e.__repr__()
 
 
-def get_all_question(db: Session, page: int, limit: int):
+def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, db.query(dbm.Questions_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
     except Exception as e:
@@ -85,9 +84,9 @@ def get_survey(db: Session, survey_id):
         return 500, e.__repr__()
 
 
-def get_all_survey(db: Session, page: int, limit: int):
+def get_all_survey(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, db.query(dbm.Survey_form).options(joinedload(dbm.Survey_form.questions)).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
+        return 200, record_order_by(db, dbm.Survey_form, page, limit, order)
 
     except Exception as e:
         logger.error(e)
@@ -158,7 +157,6 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
         #         return 400, "Bad Request"
         #     record.questions.remove(db.query(dbm.Questions_form).filter_by(question_pk_id=q_id, deleted=False).first())
         #     record.questions.append(db.query(dbm.Questions_form).filter_by(question_pk_id=q_id, deleted=False).first())
-
 
         db.commit()
         return 200, "Form Updated"

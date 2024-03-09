@@ -21,9 +21,9 @@ def get_teacher_replacement(db: Session, form_id):
         return 500, e.__repr__()
 
 
-def get_all_teacher_replacement(db: Session, page: int, limit: int):
+def get_all_teacher_replacement(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, db.query(dbm.Teacher_Replacement_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
+        return 200, record_order_by(db, dbm.Teacher_Replacement_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()

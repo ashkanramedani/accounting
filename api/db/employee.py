@@ -1,9 +1,14 @@
+from typing import List
+from uuid import UUID
+
 from lib import log
+
 logger = log()
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from .Extra import *
 
 
 def get_employee(db: Session, employee_id):
@@ -15,9 +20,9 @@ def get_employee(db: Session, employee_id):
         return 500, e.__repr__()
 
 
-def get_all_employee(db: Session, page: int, limit: int):
+def get_all_employee(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, db.query(dbm.Employees_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
+        return 200, record_order_by(db, dbm.Employees_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -26,11 +31,26 @@ def get_all_employee(db: Session, page: int, limit: int):
 
 def post_employee(db: Session, Form: sch.post_employee_schema):
     try:
-        OBJ = dbm.Employees_form(**Form.dict())
+        data = Form.dict()
+        roles: List[UUID] = data.pop("roles")
+
+        OBJ = dbm.Employees_form(**data)
 
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
+
+        if not roles:
+            return 200, "Employee without any role added"
+
+        role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Roles_form).filter_by(deleted=False).all()]
+
+        for r_id in roles:
+            if r_id not in role_ID:
+                return 400, "Bad Request"
+            OBJ.roles.append(db.query(dbm.Roles_form).filter_by(role_pk_id=r_id, deleted=False).first())
+        db.commit()
+
         return 200, "Employee Added"
     except Exception as e:
         logger.error(e)

@@ -6,12 +6,13 @@ from datetime import datetime, time, timedelta, date
 from enum import Enum
 from uuid import UUID
 from typing import Optional, List, Dict, Any
+from fastapi import File, UploadFile
 
 # expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
 
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveInt
 
 
 class WeekdayEnum(str, Enum):
@@ -301,17 +302,22 @@ class PostDelete(BaseModel):
 # -------------------------------   Tag  -------------------------------
 class TagBase(BaseModel):
     tag_name: str
+
+
 class TagCreate(TagBase):
     user_creator_tag_fk_id: int
     priority: Optional[int] = None
 
     class Config:
         orm_mode = True
+
+
 class Tag(TagBase):
     tag_pk_id: UUID
 
     class Config:
         orm_mode = True
+
 
 # -------------------   Categories  -------------------
 class CategoryBase(BaseModel):
@@ -354,6 +360,7 @@ class LibraryBase(BaseModel):
     priority: Optional[int] = None
     create_date: datetime
 
+
 class LibraryCreate(LibraryBase):
     library_name: str
     library_image: str = "book2.jpg"
@@ -373,6 +380,7 @@ class LibraryCreate(LibraryBase):
     class Config:
         orm_mode = True
 
+
 class Library(LibraryBase):
     library_pk_id: int
     download_count: Optional[int] = 0
@@ -380,17 +388,19 @@ class Library(LibraryBase):
     class Config:
         orm_mode = True
 
+
 class LibraryDelete(BaseModel):
     library_pk_id: int
 
     class Config:
         orm_mode = True
 
+
 # --------------------------------------   Sahebkar   --------------------------------------
 
-# ENUM
-class fingerprint_scanner_Mode(str, Enum):
-    normal = "normal"
+class Sort_Order(str, Enum):
+    asc = "asc"
+    desc = "desc"
 
 
 class job_title_Enum(str, Enum):
@@ -403,17 +413,20 @@ class job_title_Enum(str, Enum):
 # --------------------------------------   Sahebkar   --------------------------------------
 class Base_form(BaseModel):
     created_fk_by: UUID
-    description: str | None
+    description: str | None = None
     status: int = 0
+
 
 class StudentBase(BaseModel):
     description: str | None
     status: int = 0
 
+
 class InstitutionsBase(BaseModel):
     created_fk_by: UUID
 
-class User(BaseModel):
+
+class Entity(BaseModel):
     name: str
     last_name: str
     day_of_birth: str | datetime = datetime.now()
@@ -425,12 +438,41 @@ class User(BaseModel):
 
 # ========================== Entity ===========================
 # ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
+
+
+class Role(Base_form):
+    name: str
+    cluster: str
+
+
+class post_role_schema(Role):
+    pass
+
+
+class update_role_schema(Role):
+    role_pk_id: UUID
+
+
+class role_response(update_role_schema):
+    pass
+
+    class Config:
+        orm_mode = True
+
+class export_role(BaseModel):
+    name: str
+    cluster: str
+
+    class Config:
+        orm_mode = True
+
+
 # ---------------------- Employee ----------------------
 
-class Employee(User):
-    job_title: job_title_Enum
+class Employee(Entity):
     priority: int | None
     fingerprint_scanner_user_id: str | None
+    roles: List[UUID] = []
 
 
 class post_employee_schema(Employee):
@@ -442,7 +484,7 @@ class update_employee_schema(Employee):
 
 
 class employee_response(update_employee_schema):
-    job_title: Any
+    roles: List[UUID] | None
 
     class Config:
         orm_mode = True
@@ -451,13 +493,14 @@ class employee_response(update_employee_schema):
 class export_employee(BaseModel):
     name: str
     last_name: str
+    roles: List[export_role] | None
 
     class Config:
         orm_mode = True
 
 
 # ---------------------- student ----------------------
-class Student(User):
+class Student(Entity):
     level: str
 
 
@@ -607,7 +650,7 @@ class leave_request_response(BaseModel):
 
 
 # ---------------------- remote_request ----------------------
-class remote_request(Base_form, BaseModel):
+class remote_request(Base_form):
     employee_fk_id: UUID
     start_date: str | datetime = datetime.now()
     end_date: str | datetime = datetime.now()
@@ -629,6 +672,39 @@ class remote_request_response(BaseModel):
     description: str
     created: export_employee
     employee: export_employee
+
+    class Config:
+        orm_mode = True
+
+
+# ---------------------- fingerprint_scanner ----------------------
+class fingerprint_scanner(Base_form):
+    TMNo: int
+    EnNo: int
+    Name: str
+    GMNo: int
+    Mode: str
+    In_Out: str
+    Antipass: int
+    ProxyWork: int
+    DateTime: str
+
+
+class post_fingerprint_scanner_schema(fingerprint_scanner):
+    pass
+
+
+class post_bulk_fingerprint_scanner_schema(Base_form):
+    file: UploadFile = File(...)
+
+
+class update_fingerprint_scanner_schema(fingerprint_scanner):
+    fingerprint_scanner_pk_id: UUID
+
+
+class fingerprint_scanner_response(update_fingerprint_scanner_schema):
+    fingerprint_scanner_pk_id: UUID
+    created: export_employee
 
     class Config:
         orm_mode = True
@@ -780,6 +856,7 @@ class export_survey(BaseModel):
     class Config:
         orm_mode = True
 
+
 # ++++++++++++++++++++++++++ StudentBase +++++++++++++++++++++++++++
 # ---------------------- response ----------------------
 class Response(StudentBase):
@@ -807,60 +884,3 @@ class response_response(BaseModel):
 
     class Config:
         orm_mode = True
-
-
-####### Has to be change  to new format
-class post_fingerprint_scanner_schema(BaseModel):
-    created_fk_by: UUID
-    In_Out: fingerprint_scanner_Mode
-    Antipass: bool
-    ProxyWork: bool
-    DateTime: str
-    user_ID: str
-
-
-class FingerPrint_Record(BaseModel):
-    user_ID: str
-    In_Out: str
-    Antipass: str
-    ProxyWork: str
-    DateTime: str
-
-
-class post_bulk_fingerprint_scanner_schema(BaseModel):
-    created_fk_by: UUID
-    Records: List[FingerPrint_Record]
-
-
-class update_fingerprint_scanner_schema(BaseModel):
-    fingerprint_scanner_pk_id: UUID
-    employee_fk_id: UUID
-    created_fk_by: UUID
-    In_Out: fingerprint_scanner_Mode
-    Antipass: str
-    ProxyWork: str
-    DateTime: str
-
-
-#####
-# ---------------------- Question-Survey ----------------------
-# class Question_Survey(Base_form):
-#     survey_fk_id: UUID
-#     question_fk_id: UUID
-#
-#
-# class post_Question_Survey_schema(Question_Survey):
-#     pass
-#
-#
-# class update_Question_Survey_schema(Question_Survey):
-#     survey_questions_pk_id: UUID
-#
-#
-# class export_Question_Survey(BaseModel):
-#     survey_questions_pk_id: UUID
-#     question_fk_id: UUID
-#     questions: export_question
-#
-#     class Config:
-#         orm_mode = True

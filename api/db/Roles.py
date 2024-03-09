@@ -1,71 +1,71 @@
-from lib import log
-
-logger = log()
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from lib import log
 from .Extra import *
 
+logger = log()
 
-# Student
-def get_student(db: Session, student_id):
+
+# role
+def get_role(db: Session, role_id):
     try:
-        return 200, db.query(dbm.Student_form).filter_by(student_pk_id=student_id, deleted=False).first()
+        return 200, db.query(dbm.Roles_form).filter_by(role_pk_id=role_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Student_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Roles_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def post_student(db: Session, Form: sch.post_student_schema):
+def post_role(db: Session, Form: sch.post_role_schema):
     try:
-        OBJ = dbm.Student_form(**Form.dict())
+        OBJ = dbm.Roles_form(**Form.dict())
 
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
-        return 200, "Student Added"
+        return 200, "Record has been Added"
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def delete_student(db: Session, student_id):
+def delete_role(db: Session, role_id):
     try:
-        record = db.query(dbm.Student_form).filter_by(student_pk_id=student_id, deleted=False).first()
+        record = db.query(dbm.Remote_Request_form).filter_by(role_id_pk_id=role_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
         db.commit()
-        return 200, "employee Deleted"
+        return 200, "Deleted"
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def update_student(db: Session, Form: sch.update_student_schema):
+def update_role(db: Session, Form: sch.update_role_schema):
     try:
-        record = db.query(dbm.Student_form).filter(dbm.Student_form.student_pk_id == Form.student_pk_id)
+        record = db.query(dbm.Roles_form).filter_by(role_pk_id=Form.role_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 
         record.update(Form.dict(), synchronize_session=False)
 
         db.commit()
-        return 200, "Record Updated"
+        return 200, "Form Updated"
     except Exception as e:
-        logger.warning(e)
+        logger.error(e)
         db.rollback()
         return 500, e.__repr__()

@@ -28,8 +28,8 @@ async def search_payment_method(form_id, db=Depends(get_db)):
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.payment_method_response])
-async def search_all_payment_method(db=Depends(get_db), page: int = 1, limit: int = 10):
-    status_code, result = dbf.get_all_payment_method(db, page, limit)
+async def search_all_payment_method(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+    status_code, result = dbf.get_all_payment_method(db, page, limit, order)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

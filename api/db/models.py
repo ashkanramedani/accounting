@@ -293,7 +293,7 @@ class Libraries(Base):
 
     library_data_file_link = Column(String)
     library_data_file_path = Column(String)
-    
+
     library_status = Column(Integer, default=5, nullable=False)
 
     library_download_count = Column(Integer, default=0, nullable=False)
@@ -379,24 +379,51 @@ class UserBase(BaseTable):
     address = Column(String(5000), default=None)
 
 
-# ========================== Entity ===========================
+Modes_relation = {
+    "created": "created_fk_by",
+    "student": "student_fk_id"
+}
 
+
+def relation(table: str, relation_title: str):
+    return relationship(table, back_populates=relation_title, foreign_keys=f"{table}.{Modes_relation[relation_title]}")
+
+
+# +++++++++++++++++++++++ association +++++++++++++++++++++++++++
+survey_questions = Table(
+        "survey_questions",
+        Base.metadata,
+        Column("survey_fk_id", ForeignKey("survey.survey_pk_id")),
+        Column("question_fk_id", ForeignKey("question.question_pk_id")))
+
+UserRole = Table(
+        "users_roles",
+        Base.metadata,
+        Column("employee_fk_id", ForeignKey("employees.employees_pk_id")),
+        Column("role_fk_id", ForeignKey("roles.role_pk_id")),
+        UniqueConstraint("employee_fk_id", "role_fk_id"), )
+
+
+# ========================== Entity ===========================
 # ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
 class Employees_form(Base, UserBase):
     __tablename__ = "employees"
     employees_pk_id = create_Unique_ID()
-    job_title = Column(String, nullable=False)
     fingerprint_scanner_user_id = Column(String, nullable=False, default="Not Specified")
 
-    Survey_Relation = relationship("Survey_form", back_populates="created", foreign_keys="Survey_form.created_fk_by")
-    Questions_Relation = relationship("Questions_form", back_populates="created", foreign_keys="Questions_form.created_fk_by")
-    Business_Trip_Relation = relationship("Business_Trip_form", back_populates="created", foreign_keys="Business_Trip_form.created_fk_by")
-    Leave_request_Relation = relationship("Leave_request_form", back_populates="created", foreign_keys="Leave_request_form.created_fk_by")
-    Remote_Request_Relation = relationship("Remote_Request_form", back_populates="created", foreign_keys="Remote_Request_form.created_fk_by")
-    payment_method_Relation = relationship("Payment_method_form", back_populates="created", foreign_keys="Payment_method_form.created_fk_by")
-    Class_Cancellation_Relation = relationship("Class_Cancellation_form", back_populates="created", foreign_keys="Class_Cancellation_form.created_fk_by")
-    Teacher_Replacement_Relation = relationship("Teacher_Replacement_form", back_populates="created", foreign_keys="Teacher_Replacement_form.created_fk_by")
-    Teacher_tardy_reports_Relation = relationship("Teacher_tardy_reports_form", back_populates="created", foreign_keys="Teacher_tardy_reports_form.created_fk_by")
+    Roles_Relation = relation("Roles_form", "created")
+    Survey_Relation = relation("Survey_form", "created")
+    Questions_Relation = relation("Questions_form", "created")
+    Business_Trip_Relation = relation("Business_Trip_form", "created")
+    Leave_request_Relation = relation("Leave_request_form", "created")
+    Remote_Request_Relation = relation("Remote_Request_form", "created")
+    payment_method_Relation = relation("Payment_method_form", "created")
+    Class_Cancellation_Relation = relation("Class_Cancellation_form", "created")
+    Teacher_Replacement_Relation = relation("Teacher_Replacement_form", "created")
+    fingerprint_scanner_Relation = relation("Fingerprint_scanner_form", "created")
+    Teacher_tardy_reports_Relation = relation("Teacher_tardy_reports_form", "created")
+
+    role = relationship('Roles_form', secondary=UserRole, backref='user_role')
 
 
 class Student_form(Base, UserBase):
@@ -404,7 +431,7 @@ class Student_form(Base, UserBase):
     student_pk_id = create_Unique_ID()
     level = Column(String, index=True)
 
-    student_Relation = relationship("Response_form", back_populates="student", foreign_keys="Response_form.student_fk_id")
+    student_Relation = relation("Response_form", "student")
 
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
@@ -472,9 +499,12 @@ class Payment_method_form(Base, Base_form):
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="payment_method_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
-class fingerprint_scanner_form(Base):
+
+
+class Fingerprint_scanner_form(Base):
     __tablename__ = "fingerprint_scanner"
     FingerPrintScanner_pk_id = Column(Integer, primary_key=True)
+    created_fk_by = create_forenKey("employees")
     TMNo = Column(Integer)
     EnNo = Column(Integer)
     Name = Column(String)
@@ -486,6 +516,8 @@ class fingerprint_scanner_form(Base):
     DateTime = Column(DateTime)
 
     __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_Relation")
 
 
 # ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++
@@ -550,12 +582,6 @@ class Teachers_Report_form(Base, Base_form):
 
 # ++++++++++++++++++++++++++ Survey +++++++++++++++++++++++++++
 
-survey_questions = Table(
-        "survey_questions",
-        Base.metadata,
-        Column("survey_fk_id", ForeignKey("survey.survey_pk_id")),
-        Column("question_fk_id", ForeignKey("question.question_pk_id")))
-
 
 class Survey_form(Base, Base_form):
     __tablename__ = "survey"
@@ -590,3 +616,34 @@ class Response_form(Base, Base_form):
     student = relationship("Student_form", foreign_keys=[student_fk_id], back_populates="student_Relation")
     question = relationship("Questions_form", foreign_keys=[question_fk_id])
     survey = relationship("Survey_form", foreign_keys=[survey_fk_id])
+
+
+# Roles
+
+class Roles_form(Base, Base_form):
+    __tablename__ = "roles"
+
+    role_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("employees")
+
+    name = Column(String, index=True, nullable=False)
+    cluster = Column(String, index=True, nullable=False)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Roles_Relation")
+
+
+"""
+    # Survey_Relation = relationship("Survey_form", back_populates="created", foreign_keys="Survey_form.created_fk_by")
+    Survey_Relation = relation("Survey_form", "created")
+    Questions_Relation = relationship("Questions_form", back_populates="created", foreign_keys="Questions_form.created_fk_by")
+    Business_Trip_Relation = relationship("Business_Trip_form", back_populates="created", foreign_keys="Business_Trip_form.created_fk_by")
+    Leave_request_Relation = relationship("Leave_request_form", back_populates="created", foreign_keys="Leave_request_form.created_fk_by")
+    Remote_Request_Relation = relationship("Remote_Request_form", back_populates="created", foreign_keys="Remote_Request_form.created_fk_by")
+    payment_method_Relation = relationship("Payment_method_form", back_populates="created", foreign_keys="Payment_method_form.created_fk_by")
+    Class_Cancellation_Relation = relationship("Class_Cancellation_form", back_populates="created", foreign_keys="Class_Cancellation_form.created_fk_by")
+    Teacher_Replacement_Relation = relationship("Teacher_Replacement_form", back_populates="created", foreign_keys="Teacher_Replacement_form.created_fk_by")
+    Teacher_tardy_reports_Relation = relationship("Teacher_tardy_reports_form", back_populates="created", foreign_keys="Teacher_tardy_reports_form.created_fk_by")
+    fingerprint_scanner_Relation = relationship("Fingerprint_scanner_form", back_populates="created", foreign_keys="Fingerprint_scanner_form.created_fk_by")
+    Roles_Relation = relationship("Roles_form", back_populates="created", foreign_keys="Roles_form.created_fk_by")
+
+"""

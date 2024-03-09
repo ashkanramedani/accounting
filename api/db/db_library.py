@@ -15,7 +15,8 @@ def get_libraries_by_library_type(db: Session, library_type: str, limit: int):
     if data is None:
         return False
     return data
-    
+
+
 def read_all_library_for_admin_panel(db: Session, topic: str, start_id: int, page_number: int, limit: int):
     try:
         data = db.query(dbm.Libraries).filter(sse.and_(dbm.Libraries.library_type == topic, dbm.Libraries.deleted == False, dbm.Libraries.library_pk_id >= start_id)).order_by(dbm.Libraries.library_pk_id.desc()).limit(limit).all()
@@ -38,6 +39,7 @@ def get_library_with_pid(db: Session, pid: str):
         logger.error(e)
         db.rollback()
         return -1
+
 
 # delete
 def delete_libraries(db: Session, topic: str, pid: int):

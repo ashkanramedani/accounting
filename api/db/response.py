@@ -1,9 +1,11 @@
 from lib import log
+
 logger = log()
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from .Extra import *
 
 
 # response
@@ -16,9 +18,9 @@ def get_response(db: Session, response_id):
         return 500, e.__repr__()
 
 
-def get_all_response(db: Session, page: int, limit: int):
+def get_all_response(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, db.query(dbm.Response_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
+        return 200, record_order_by(db, dbm.Response_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()

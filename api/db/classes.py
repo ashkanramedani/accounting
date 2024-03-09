@@ -1,9 +1,11 @@
-from lib import log
-logger = log()
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from lib import log
+from .Extra import *
+
+logger = log()
 
 
 def get_class(db: Session, class_id):
@@ -15,9 +17,9 @@ def get_class(db: Session, class_id):
         return 500, e.__repr__()
 
 
-def get_all_class(db: Session, page: int, limit: int):
+def get_all_class(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, db.query(dbm.Class_form).filter_by(deleted=False).offset((page - 1) * limit).limit(limit).all()
+        return 200, record_order_by(db, dbm.Class_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -54,7 +56,7 @@ def delete_class(db: Session, class_id):
 
 def update_class(db: Session, Form: sch.update_class_schema):
     try:
-        record = db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_pk_id,deleted=False)
+        record = db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

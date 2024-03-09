@@ -34,7 +34,7 @@ def get_tages(db: Session, skip: int = 0, limit: int = 100):
     return data
 
 
-def get_all_tages(db: Session, page: int, limit: int):
+def get_all_tages(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     data = db.query(dbm.Tags).filter(sse.and_(dbm.Tags.visible == True, dbm.Tags.deleted == False)).all()
     if data is None:
         return False
