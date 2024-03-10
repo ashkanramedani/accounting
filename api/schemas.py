@@ -1,28 +1,16 @@
-import pstats
-from fastapi import Query, Body
-from datetime import datetime, time, timedelta, date
-from typing import List, Union, Optional, Dict
-from datetime import datetime, time, timedelta, date
+
+from datetime import datetime, date
 from enum import Enum
+from typing import Optional, List, Any
 from uuid import UUID
-from typing import Optional, List, Dict, Any
+
 from fastapi import File, UploadFile
-
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
-#    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
-from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
-
 from pydantic import BaseModel, PositiveInt
 
 
-class WeekdayEnum(str, Enum):
-    MONDAY = "0"
-    TUESDAY = "1"
-    WEDNESDAY = "2"
-    THURSDAY = "3"
-    FRIDAY = "4"
-    SATURDAY = "5"
-    SUNDAY = "6"
+# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+#    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
+
 
 
 # -------------------   Authentications   -------------------
@@ -71,18 +59,18 @@ class UserBase(BaseModel):
     # mobile_number: str     
     # image: str    
     # employed: bool = True
-    # panel_image: str = None
-    # facebook_link: str = None
-    # linkedin_link: str = None
-    # twitter_link: str = None
-    # instagram_link: str = None
-    # telegram_link: str = None
-    # whatsapp_link: str = None
-    # self_introduction_video: str = None
-    # department: str = None
+    # panel_image: str | None = None
+    # facebook_link: str | None = None
+    # linkedin_link: str | None = None
+    # twitter_link: str | None = None
+    # instagram_link: str | None = None
+    # telegram_link: str | None = None
+    # whatsapp_link: str | None = None
+    # self_introduction_video: str | None = None
+    # department: str | None = None
     # teaching_start_date: datetime = None
     # teaching_languages: Dict = None
-    # bio: str = None    
+    # bio: str | None = None    
     # can_contact_to_me_from_site: bool = False    
     # about_me: Dict
     # meta_data: Dict = None   
@@ -168,8 +156,8 @@ class ProductUsers(BaseModel):
 # -------------------   Posts   -------------------
 class PostViwesBase(BaseModel):
     post_fk_id: int
-    ip: str = None
-    country: str = None
+    ip: str | None = None
+    country: str | None = None
     user_creator_fk_id: int = None
 
 
@@ -246,14 +234,14 @@ class PostUpdateData(BaseModel):
 
 class Post(PostBase):
     post_pk_id: int
-    post_aparat_video_id: str = None
-    post_aparat_video_code: str = None
-    post_audio_file_link: str = None
-    post_audio_file_path: str = None
-    post_video_file_link: str = None
-    post_video_file_path: str = None
-    post_data_file_link: str = None
-    post_data_file_path: str = None
+    post_aparat_video_id: str | None = None
+    post_aparat_video_code: str | None = None
+    post_audio_file_link: str | None = None
+    post_audio_file_path: str | None = None
+    post_video_file_link: str | None = None
+    post_video_file_path: str | None = None
+    post_data_file_link: str | None = None
+    post_data_file_path: str | None = None
     create_date: datetime
 
     class Config:
@@ -472,7 +460,7 @@ class export_role(BaseModel):
 class Employee(Entity):
     priority: int | None
     fingerprint_scanner_user_id: str | None
-    roles: List[UUID] = []
+    roles: List[UUID] | None
 
 
 class post_employee_schema(Employee):
@@ -483,8 +471,11 @@ class update_employee_schema(Employee):
     employees_pk_id: UUID
 
 
-class employee_response(update_employee_schema):
-    roles: List[UUID] | None
+class employee_response(BaseModel):
+    employees_pk_id: UUID
+    name: str
+    last_name: str
+    roles: List[export_role] | None
 
     class Config:
         orm_mode = True
@@ -532,7 +523,7 @@ class export_student(BaseModel):
 class classes(InstitutionsBase):
     name: str
     class_time: str | datetime = datetime.now()
-    duration: int
+    duration: PositiveInt
 
 
 class post_class_schema(classes):
@@ -545,7 +536,7 @@ class update_class_schema(classes):
 
 class classes_response(Base_form):
     classes: Any
-    delay: int
+    delay: PositiveInt
 
     class Config:
         orm_mode = True
@@ -554,7 +545,7 @@ class classes_response(Base_form):
 class export_classes(BaseModel):
     name: str
     class_time: str | datetime = datetime.now()
-    duration: int | Any
+    duration: PositiveInt | Any
 
     class Config:
         orm_mode = True
@@ -698,7 +689,7 @@ class post_bulk_fingerprint_scanner_schema(Base_form):
     file: UploadFile = File(...)
 
 
-class update_fingerprint_scanner_schema(fingerprint_scanner):
+class update_fingerprint_scanner_schema(Base_form):
     fingerprint_scanner_pk_id: UUID
 
 
@@ -715,7 +706,7 @@ class class_cancellation(Base_form):
     class_fk_id: UUID
     teacher_fk_id: UUID
     replacement_date: str | datetime = datetime.now()
-    class_duration: int
+    class_duration: PositiveInt
     class_location: str
 
 
@@ -730,7 +721,7 @@ class update_class_cancellation_schema(class_cancellation):
 class class_cancellation_response(BaseModel):
     class_cancellation_pk_id: UUID
     replacement_date: str | datetime = datetime.now()
-    class_duration: int
+    class_duration: PositiveInt
     class_location: str
     created: export_employee
     teacher: export_employee
@@ -744,7 +735,7 @@ class class_cancellation_response(BaseModel):
 class teacher_tardy_reports(Base_form):
     teacher_fk_id: UUID
     class_fk_id: UUID
-    delay: int
+    delay: PositiveInt
 
 
 class post_teacher_tardy_reports_schema(teacher_tardy_reports):
@@ -760,7 +751,7 @@ class teacher_tardy_reports_response(BaseModel):
     created: export_employee
     teacher: export_employee
     classes: export_classes
-    delay: int
+    delay: PositiveInt
 
     class Config:
         orm_mode = True

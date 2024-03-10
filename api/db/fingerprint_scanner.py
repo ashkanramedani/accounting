@@ -1,6 +1,6 @@
-from lib import log
+from lib import logger
 
-logger = log()
+
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 import pandas as pd
@@ -22,7 +22,7 @@ def get_fingerprint_scanner(db: Session, user_id):
         return 500, e.__repr__()
 
 
-def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
     try:
         return 200, record_order_by(db, dbm.Fingerprint_scanner_form, page, limit, order)
     except Exception as e:
@@ -36,7 +36,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Fingerprint_scanner_form(**Form.dict())
+        OBJ = dbm.Fingerprint_scanner_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -60,7 +60,7 @@ def post_bulk_fingerprint_scanner(db: Session, Form: sch.post_bulk_fingerprint_s
         for record in Data:
             del record["No"]
             record["In_Out"] = record.pop("In/Out")
-            OBJs.append(dbm.Fingerprint_scanner_form(**record))
+            OBJs.append(dbm.Fingerprint_scanner_form(**record))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()
@@ -96,7 +96,7 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
         record.update(Form.dict(), synchronize_session=False)

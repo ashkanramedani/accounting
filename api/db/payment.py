@@ -1,6 +1,6 @@
-from lib import log
+from lib import logger
 
-logger = log()
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -32,7 +32,7 @@ def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
         if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Payment_method_form(**Form.dict())
+        OBJ = dbm.Payment_method_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

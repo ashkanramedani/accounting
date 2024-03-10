@@ -1,6 +1,6 @@
-from lib import log
+from lib import logger
 
-logger = log()
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -38,7 +38,7 @@ def post_response(db: Session, Form: sch.post_response_schema):
         if not db.query(dbm.Survey_form).filter_by(survey_pk_id=Form.survey_fk_id, deleted=False).first():
             return 400, "Bad Request"
 
-        OBJ = dbm.Response_form(**Form.dict())
+        OBJ = dbm.Response_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

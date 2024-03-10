@@ -1,9 +1,9 @@
 from typing import List
 from uuid import UUID
 
-from lib import log
+from lib import logger
 
-logger = log()
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm

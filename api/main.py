@@ -1,27 +1,22 @@
 import os
+from typing import List
 
-from fastapi import Depends, FastAPI, HTTPException
+import redis.asyncio as redis
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
+from fastapi_limiter import FastAPILimiter
+from sqlalchemy.exc import OperationalError
+
 import db.models as models
 from db.database import engine
-import uvicorn
-import redis.asyncio as redis
-from fastapi_limiter import FastAPILimiter
-from fastapi_limiter.depends import RateLimiter
-from typing import List
-from sqlalchemy.exc import OperationalError
-from lib.log import log
-
+from lib.log import logger
 from router import routes
-
-Logger = log()
 
 try:
     # models.Base.metadata.drop_all(engine)
     models.Base.metadata.create_all(bind=engine)
 except OperationalError as e:
-    Logger.show_log(f"[ Could Not Create Engine ]: {e.__repr__()}", 'e')
+    logger.show_log(f"[ Could Not Create Engine ]: {e.__repr__()}", 'e')
     exit()
 
 # models.Base.metadata.create_all(bind=engine)
@@ -29,31 +24,29 @@ except OperationalError as e:
 app = FastAPI()
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=['*'],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=['*'],
+        allow_methods=["*"],
+        allow_headers=["*"],
 )
+
 
 @app.on_event("startup")
 async def startup():
-    if os.getenv('LOCAL_POSTGRES'):
-        Redis_url = os.getenv('LOCAL_REDIS')
-    else:
-        Redis_url = "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
+    Redis_url = os.getenv('LOCAL_REDIS') if os.getenv('LOCAL_POSTGRES') else "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
+    await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
 
-    r = redis.from_url(Redis_url, encoding="utf8")
-
-    await FastAPILimiter.init(r)
 
 @app.on_event("shutdown")
 async def shutdown():
     await FastAPILimiter.close()
 
+
 @app.get("/ping", tags=["Ping"])
 def ping():
     return "Pong"
+
 
 for route in routes:
     app.include_router(route)

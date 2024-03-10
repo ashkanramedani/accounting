@@ -1,12 +1,11 @@
-from lib import log
-
-logger = log()
-
+from lib import logger
 from sqlalchemy.orm import Session
-
 import db.models as dbm
 import schemas as sch
 from .Extra import *
+
+
+
 
 
 # class_cancellation
@@ -36,7 +35,7 @@ def post_class_cancellation_form(db: Session, Form: sch.post_class_cancellation_
         if not class_exist(db, Form.class_fk_id):
             return 400, "Bad Request"
 
-        OBJ = dbm.Class_Cancellation_form(**Form.dict())
+        OBJ = dbm.Class_Cancellation_form(**Form.dict())  # type: ignore[call-arg]  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

@@ -2,10 +2,10 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from lib import log
+from lib import logger
 from .Extra import *
 
-logger = log()
+
 
 
 def get_class(db: Session, class_id):
@@ -28,7 +28,7 @@ def get_all_class(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, or
 
 def post_class(db: Session, Form: sch.post_class_schema):
     try:
-        OBJ = dbm.Class_form(**Form.dict())
+        OBJ = dbm.Class_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

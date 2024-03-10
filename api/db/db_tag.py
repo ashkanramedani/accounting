@@ -3,9 +3,9 @@ from datetime import datetime
 import sqlalchemy.sql.expression as sse
 from sqlalchemy.orm import Session
 
-from lib import log
+from lib import logger
 
-logger = log()
+
 import schemas as sch
 import db.models as dbm
 

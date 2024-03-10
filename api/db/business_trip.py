@@ -2,10 +2,10 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from lib import log
+from lib import logger
 from .Extra import *
 
-logger = log()
+
 
 
 # business trip
@@ -20,7 +20,7 @@ def get_business_trip_form(db: Session, form_id):
 
 def get_all_business_trip_form(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return record_order_by(db, dbm.Business_Trip_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Business_Trip_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -30,9 +30,9 @@ def get_all_business_trip_form(db: Session, page: sch.PositiveInt, limit: sch.Po
 def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema):
     try:
         if not employee_exist(db, [Form.employee_fk_id]):
-            return 400, "Bad Request"
+            return 400, "Bad Request: Employee not found"
 
-        OBJ = dbm.Business_Trip_form(**Form.dict())
+        OBJ = dbm.Business_Trip_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

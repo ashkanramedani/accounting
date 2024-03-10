@@ -60,8 +60,5 @@ class log:
     def error(self, msg):
         self.logger.opt(depth=1).error(msg)
 
-if __name__ == '__main__':
-    Logger = log()
-    Logger.info("INFO")
-    Logger.error("ERROR")
-    Logger.warning("WARNING")
+
+logger = log()

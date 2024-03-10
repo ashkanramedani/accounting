@@ -27,23 +27,28 @@ _obj_json_handler_config = json_handler(FilePath=directory + "/configs/config.js
 config = _obj_json_handler_config.Data
 
 successCode = [200, 201]
+Default_headers = {'Content-Type': 'application/json'}
+
 
 def send_request(url: str, method: str, headers: dict = None, body: dict | None = ''):
-    if headers is None:
-        headers = {'Content-Type': 'application/json'}
+    headers = Default_headers if headers is None else headers
     return requests.request(method=method, url=url, json=body, headers=headers)
 
-def get(url, headers={'Content-Type': 'application/json'}):
+
+def get(url, headers=None):
+    headers = Default_headers if headers is None else headers
     _objLog.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
     return requests.request("GET", url, headers=headers)
 
 
-def put(url, body, headers={'Content-Type': 'application/json'}):
+def put(url, body, headers=None):
+    headers = Default_headers if headers is None else headers
     _objLog.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
     return requests.request("PUT", url, json=body, headers=headers)
 
 
-def post(url, body, headers={'Content-Type': 'application/json'}):
+def post(url, body, headers=None):
+    headers = Default_headers if headers is None else headers
     _objLog.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
     return requests.request("POST", url, json=body, headers=headers)
 

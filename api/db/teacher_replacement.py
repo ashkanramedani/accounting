@@ -1,6 +1,6 @@
-from lib import log
+from lib import logger
 
-logger = log()
+
 
 from sqlalchemy.orm import Session
 
@@ -37,7 +37,7 @@ def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_sch
         if not class_exist(db, Form.class_fk_id):
             return 400, "Bad Request"
 
-        OBJ = dbm.Teacher_Replacement_form(**Form.dict())
+        OBJ = dbm.Teacher_Replacement_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

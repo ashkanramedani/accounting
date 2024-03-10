@@ -1,6 +1,6 @@
-from lib import log
+from lib import logger
 
-logger = log()
+
 
 from sqlalchemy.orm import Session
 
@@ -33,7 +33,7 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
         if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Leave_request_form(**Form.dict())
+        OBJ = dbm.Leave_request_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

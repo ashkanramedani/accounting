@@ -2,10 +2,10 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from lib import log
+from lib import logger
 from .Extra import *
 
-logger = log()
+
 
 
 # role
@@ -29,7 +29,7 @@ def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, ord
 
 def post_role(db: Session, Form: sch.post_role_schema):
     try:
-        OBJ = dbm.Roles_form(**Form.dict())
+        OBJ = dbm.Roles_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

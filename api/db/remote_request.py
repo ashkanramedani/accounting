@@ -1,6 +1,6 @@
-from lib import log
+from lib import logger
 
-logger = log()
+
 
 from sqlalchemy.orm import Session
 
@@ -33,7 +33,7 @@ def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
         if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Remote_Request_form(**Form.dict())
+        OBJ = dbm.Remote_Request_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

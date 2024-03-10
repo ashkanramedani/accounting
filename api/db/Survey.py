@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from lib import log
+from lib import logger
 from .Extra import *
 
-logger = log()
+
 
 
 # question
@@ -32,7 +32,7 @@ def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 
 def post_question(db: Session, Form: sch.post_questions_schema):
     try:
-        OBJ = dbm.Questions_form(**Form.dict())
+        OBJ = dbm.Questions_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

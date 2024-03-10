@@ -22,7 +22,7 @@ def class_exist(db: Session, FK_field: UUID):
     return True
 
 
-def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.PositiveInt, order: str):
+def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     if order == "desc":
-        return 200, db.query(table).filter_by(deleted=False).order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
-    return 200, db.query(table).filter_by(deleted=False).order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()
+        return db.query(table).filter_by(deleted=False).order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
+    return db.query(table).filter_by(deleted=False).order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()

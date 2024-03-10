@@ -1,10 +1,8 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_limiter.depends import RateLimiter
-
 import db as dbf
-
 import schemas as sch
 from db.database import get_db
 
@@ -46,7 +44,7 @@ async def delete_response(response_id, db=Depends(get_db)):
 
 @router.put("/update", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def update_response(Form: sch.update_response_schema, db=Depends(get_db)):
-    raise HTTPException(status_code=404, detail="Not Found")
+    raise HTTPException(status_code=410, detail=status.HTTP_410_GONE)
     # status_code, result = dbf.update_response(db, Form)
     # if status_code != 200:
     #     raise HTTPException(status_code=status_code, detail=result)

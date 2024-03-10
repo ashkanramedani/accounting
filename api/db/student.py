@@ -1,6 +1,6 @@
-from lib import log
+from lib import logger
 
-logger = log()
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -29,7 +29,7 @@ def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, 
 
 def post_student(db: Session, Form: sch.post_student_schema):
     try:
-        OBJ = dbm.Student_form(**Form.dict())
+        OBJ = dbm.Student_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
