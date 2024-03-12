@@ -2,13 +2,13 @@ import os
 from typing import List
 
 import redis.asyncio as redis
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
 from sqlalchemy.exc import OperationalError
-
+import db as dbf
 import db.models as models
-from db.database import engine
+from db.database import engine, get_db
 from lib.log import logger
 from router import routes
 
@@ -46,6 +46,14 @@ async def shutdown():
 @app.get("/ping", tags=["Ping"])
 def ping():
     return "Pong"
+
+
+@app.get("/count", tags=["Ping"])
+async def count(table: str, db=Depends(get_db)):
+    status_code, result = dbf.count(db, table)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
 
 
 for route in routes:

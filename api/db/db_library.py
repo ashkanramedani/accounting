@@ -7,7 +7,7 @@ from lib import logger
 import db.models as dbm
 
 
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 def get_libraries_by_library_type(db: Session, library_type: str, limit: int):

@@ -26,7 +26,6 @@ routes = [
     business_trip_route,
     class_cancellation_route,
     class_route,
-    employee_route,
     leave_request_route,
     question_route,
     remote_request_route,
@@ -37,6 +36,7 @@ routes = [
     teacher_replacement_route,
     route_payment,
     finger_scanner_router,
+    employee_route,
 
     files,
     user,

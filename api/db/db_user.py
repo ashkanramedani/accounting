@@ -7,7 +7,7 @@ from lib import logger
 import db.models as dbm
 
 
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000):

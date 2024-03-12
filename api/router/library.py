@@ -15,7 +15,7 @@ from fastapi_limiter.depends import RateLimiter
 from lib.hash import Hash
 from lib.functions import Massenger, Tools
 
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 from db import db_library
@@ -67,7 +67,7 @@ router = APIRouter(prefix='/api/v1/library', tags=['Libraries'])
 #                 "data_file_link": i.data_file_link,
 #                 "data_file_path": i.data_file_path,
 #                 "create_date": i.create_date,
-#                 "expier_date": i.expier_date                    
+#                 "expire_date": i.expire_date
 #             }
 #         )
 #     return res
@@ -93,7 +93,7 @@ router = APIRouter(prefix='/api/v1/library', tags=['Libraries'])
 #         "data_file_link": i.data_file_link,
 #         "data_file_path": i.data_file_path,
 #         "create_date": i.create_date,
-#         "expier_date": i.expier_date                    
+#         "expire_date": i.expire_date
 #     }
 #     return res
 

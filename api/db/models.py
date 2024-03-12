@@ -1,13 +1,14 @@
 # from enum import unique
 # from unicodedata import category
 # from click import style
+
 from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
 
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 
@@ -421,6 +422,7 @@ class Employees_form(Base, UserBase):
     Class_Cancellation_Relation = relation("Class_Cancellation_form", "created")
     Teacher_Replacement_Relation = relation("Teacher_Replacement_form", "created")
     fingerprint_scanner_Relation = relation("Fingerprint_scanner_form", "created")
+    fingerprint_scanner_backup_Relation = relation("Fingerprint_scanner_backup_form", "created")
     Teacher_tardy_reports_Relation = relation("Teacher_tardy_reports_form", "created")
 
     roles = relationship('Roles_form', secondary=UserRole, backref='user_role')
@@ -501,8 +503,23 @@ class Payment_method_form(Base, Base_form):
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
 
+
 class Fingerprint_scanner_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner"
+    FingerPrintScanner_pk_id = Column(Integer, primary_key=True)
+    created_fk_by = create_forenKey("employees")
+    EnNo = Column(Integer, nullable=False)
+    Name = Column(String, nullable=False)
+    Date = Column(DATE, nullable=False)
+    Enter = Column(TIME, nullable=False)
+    Exit = Column(TIME, nullable=True)
+
+    __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),{"extend_existing": True},)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_Relation")
+
+class Fingerprint_scanner_backup_form(Base, Base_form):
+    __tablename__ = "fingerprint_scanner_backUp"
     FingerPrintScanner_pk_id = Column(Integer, primary_key=True)
     created_fk_by = create_forenKey("employees")
     TMNo = Column(Integer)
@@ -515,9 +532,9 @@ class Fingerprint_scanner_form(Base, Base_form):
     ProxyWork = Column(Integer)
     DateTime = Column(DateTime)
 
-    __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
+    __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),{"extend_existing": True},)
 
-    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_Relation")
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_backup_Relation")
 
 
 # ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++

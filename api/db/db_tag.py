@@ -10,7 +10,7 @@ import schemas as sch
 import db.models as dbm
 
 
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 def get_tag_by_name(db: Session, name: str):

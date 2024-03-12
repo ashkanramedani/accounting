@@ -15,7 +15,7 @@ from fastapi_limiter.depends import RateLimiter
 from lib.hash import Hash
 from lib.functions import Massenger, Tools
 
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 import time
