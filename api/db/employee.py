@@ -34,14 +34,14 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         data = Form.dict()
         roles: List[UUID] = data.pop("roles")
 
-        OBJ = dbm.Employees_form(**data)
+        OBJ = dbm.Employees_form(**data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
 
         if not roles:
-            return 200, "Employee without any role added"
+            return 200, f'Employee Added. ID: {OBJ.employees_pk_id}'
 
         role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Roles_form).filter_by(deleted=False).all()]
 
@@ -51,7 +51,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
             OBJ.roles.append(db.query(dbm.Roles_form).filter_by(role_pk_id=r_id, deleted=False).first())
         db.commit()
 
-        return 200, "Employee Added"
+        return 200, f'Employee Added. ID: {OBJ.employees_pk_id}'
     except Exception as e:
         logger.error(e)
         db.rollback()

@@ -18,7 +18,10 @@ from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
 
+from .Counter import count
+
 __all__ = [
+    "count",
     # Roles.py
     "get_role",
     "get_all_role",

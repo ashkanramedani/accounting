@@ -1,16 +1,12 @@
 
-from datetime import datetime, date
+from datetime import datetime, date, time
 from enum import Enum
 from typing import Optional, List, Any
 from uuid import UUID
-
-from fastapi import File, UploadFile
 from pydantic import BaseModel, PositiveInt
 
-
-# expier_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
+# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
-
 
 
 # -------------------   Authentications   -------------------
@@ -195,7 +191,7 @@ class PostBase(BaseModel):
     post_status: int = 0
     post_direction: Optional[str] = "RTL"
     post_type: str
-    expier_date: Optional[date] = None
+    expire_date: Optional[date] = None
 
     # tags: List[TagsInPost] = None
     # users_post_speaker: List[UserInPost] = None
@@ -460,7 +456,7 @@ class export_role(BaseModel):
 class Employee(Entity):
     priority: int | None
     fingerprint_scanner_user_id: str | None
-    roles: List[UUID] | None
+    roles: List[UUID] | None = []
 
 
 class post_employee_schema(Employee):
@@ -669,32 +665,29 @@ class remote_request_response(BaseModel):
 
 
 # ---------------------- fingerprint_scanner ----------------------
+
+
 class fingerprint_scanner(Base_form):
-    TMNo: int
-    EnNo: int
+    created_fk_by: UUID
+    EnNo: str
     Name: str
-    GMNo: int
-    Mode: str
-    In_Out: str
-    Antipass: int
-    ProxyWork: int
-    DateTime: str
+    Date: date
+    Enter: time
+    Exit: time
 
 
 class post_fingerprint_scanner_schema(fingerprint_scanner):
     pass
 
+#
+# class post_bulk_fingerprint_scanner_schema(BaseModel):
+#     created_fk_by: UUID
 
-class post_bulk_fingerprint_scanner_schema(Base_form):
-    file: UploadFile = File(...)
-
-
-class update_fingerprint_scanner_schema(Base_form):
+class update_fingerprint_scanner_schema(fingerprint_scanner):
     fingerprint_scanner_pk_id: UUID
 
 
 class fingerprint_scanner_response(update_fingerprint_scanner_schema):
-    fingerprint_scanner_pk_id: UUID
     created: export_employee
 
     class Config:

@@ -4,7 +4,7 @@ from os.path import dirname, normpath
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 
 from lib.json_handler import json_handler
 from lib.log import log
@@ -33,7 +33,7 @@ Base = declarative_base()
 
 
 # Dependency
-def get_db():
+def get_db() -> Session:
     db = SessionLocal()
     try:
         yield db
