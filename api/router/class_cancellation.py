@@ -19,7 +19,7 @@ async def add_class_cancellation(Form: sch.post_class_cancellation_schema, db=De
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.class_cancellation_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_class_cancellation(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_class_cancellation_form(db, form_id)
     if status_code != 200:

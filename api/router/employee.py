@@ -18,7 +18,7 @@ async def add_employee(Form: sch.post_employee_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.employee_response)
+@router.get("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_employee(employee_id, db=Depends(get_db)):
     status_code, result = dbf.get_employee(db, employee_id)
     if status_code != 200:

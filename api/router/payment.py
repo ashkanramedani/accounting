@@ -19,7 +19,7 @@ async def add_payment_method(Form: sch.post_payment_method_schema, db=Depends(ge
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.payment_method_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_payment_method(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_payment_method(db, form_id)
     if status_code != 200:

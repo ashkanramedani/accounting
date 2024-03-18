@@ -18,7 +18,7 @@ async def add_business_trip(Form: sch.post_business_trip_schema, db=Depends(get_
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.business_trip_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_business_trip(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_business_trip_form(db, form_id)
     if status_code != 200:

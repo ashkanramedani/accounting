@@ -19,7 +19,7 @@ async def add_tardy_request(Form: sch.post_teacher_tardy_reports_schema, db=Depe
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.teacher_tardy_reports_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_tardy_request(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_tardy_request(db, form_id)
     if status_code != 200:
