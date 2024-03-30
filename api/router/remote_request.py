@@ -19,12 +19,20 @@ async def add_remote_request(Form: sch.post_remote_request_schema, db=Depends(ge
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.remote_request_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_remote_request(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_remote_request_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
+
+# @router.post("/report", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+# async def report_remote_request(Form: sch.salary_report, db=Depends(get_db)):
+#     status_code, result = dbf.report_remote_request(db, Form)
+#     if status_code != 200:
+#         raise HTTPException(status_code=status_code, detail=result)
+#     return result
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.remote_request_response])

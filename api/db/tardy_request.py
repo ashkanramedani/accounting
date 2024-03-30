@@ -2,7 +2,7 @@ from lib import logger
 
 
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 import db.models as dbm
 import schemas as sch
@@ -22,6 +22,24 @@ def get_tardy_request(db: Session, form_id):
 def get_all_tardy_request(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Teacher_tardy_reports_form, page, limit, order)
+    except Exception as e:
+        logger.error(e)
+        db.rollback()
+        return 500, e.__repr__()
+
+
+def report_tardy_request(db: Session, Form: sch.teacher_report):
+    try:
+        result = (
+            db.query(dbm.Teacher_tardy_reports_form)
+            .join(dbm.Class_form, dbm.Class_form.class_pk_id == dbm.Teacher_tardy_reports_form.class_fk_id)
+            .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
+            .filter(dbm.Class_form.class_time.between(Form.start_date, Form.end_date))
+            .options(joinedload(dbm.Teacher_tardy_reports_form.classes))
+            .all()
+        )
+
+        return 200, sum(row.delay for row in result)
     except Exception as e:
         logger.error(e)
         db.rollback()

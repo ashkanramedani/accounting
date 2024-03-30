@@ -19,13 +19,19 @@ async def add_class_cancellation(Form: sch.post_class_cancellation_schema, db=De
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.class_cancellation_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_class_cancellation(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_class_cancellation_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+# @router.post("/report", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+# async def report_class_cancellation(Form: sch.teacher_report, db=Depends(get_db)):
+#     status_code, result = dbf.report_class_cancellation(db, Form)
+#     if status_code != 200:
+#         raise HTTPException(status_code=status_code, detail=result)
+#     return result
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.class_cancellation_response])
 async def search_all_class_cancellation(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):

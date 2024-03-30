@@ -19,7 +19,7 @@ async def add_role(Form: sch.post_role_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.role_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_role(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_role(db, form_id)
     if status_code != 200:

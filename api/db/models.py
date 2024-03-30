@@ -1,20 +1,23 @@
 # from enum import unique
 # from unicodedata import category
 # from click import style
+from datetime import datetime
 
-from fastapi_utils.guid_type import GUID, GUID_SERVER_DEFAULT_POSTGRESQL
+from fastapi_utils.guid_type import GUID as GUID_TYPE, GUID_SERVER_DEFAULT_POSTGRESQL
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
+from .database import Base
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
-
 metadata_obj = MetaData()
 
-from .database import Base
+
+class GUID(GUID_TYPE):
+    cache_ok = True
 
 
 class BaseTable:
@@ -361,13 +364,16 @@ class BaseTable:
     expire_date = Column(DateTime(timezone=True), default=None)
 
 
-class InstitutionsBase(BaseTable):
-    pass
 
 
 class Base_form(BaseTable):
     description = Column(String, nullable=True, default="")
     status = Column(Integer, nullable=False, default=0)
+
+
+
+class InstitutionsBase(Base_form):
+    pass
 
 
 class UserBase(BaseTable):
@@ -404,14 +410,21 @@ UserRole = Table(
         Column("role_fk_id", ForeignKey("roles.role_pk_id")),
         UniqueConstraint("employee_fk_id", "role_fk_id"), )
 
+TeacherClass = Table(
+        "teacher_class",
+        Base.metadata,
+        Column("employee_fk_id", ForeignKey("employees.employees_pk_id")),
+        Column("class_fk_id", ForeignKey("classes.class_pk_id")),
+        UniqueConstraint("employee_fk_id", "class_fk_id"), )
 
 # ========================== Entity ===========================
 # ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
 class Employees_form(Base, UserBase):
     __tablename__ = "employees"
     employees_pk_id = create_Unique_ID()
-    fingerprint_scanner_user_id = Column(String, nullable=True)
+    fingerprint_scanner_user_id = Column(String, nullable=True, unique=True)
 
+    Class_Relation = relation("Class_form", "created")
     Roles_Relation = relation("Roles_form", "created")
     Survey_Relation = relation("Survey_form", "created")
     Questions_Relation = relation("Questions_form", "created")
@@ -425,7 +438,11 @@ class Employees_form(Base, UserBase):
     fingerprint_scanner_backup_Relation = relation("Fingerprint_scanner_backup_form", "created")
     Teacher_tardy_reports_Relation = relation("Teacher_tardy_reports_form", "created")
 
+    SalaryPolicy_Relation = relation("SalaryPolicy_form", "created")
+
     roles = relationship('Roles_form', secondary=UserRole, backref='user_role')
+
+    __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name'),)
 
 
 class Student_form(Base, UserBase):
@@ -441,10 +458,16 @@ class Student_form(Base, UserBase):
 class Class_form(Base, InstitutionsBase):
     __tablename__ = "classes"
     class_pk_id = create_Unique_ID()
+
     created_fk_by = create_forenKey("employees")
+    teacher_fk_id = create_forenKey("employees")
+
     name = Column(String)
     class_time = Column(DateTime, nullable=False)
     duration = Column(Integer)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Class_Relation")
+    teachers = relationship("Employees_form", secondary=TeacherClass, backref="classes")
 
 
 # ======================== Forms =============================
@@ -455,9 +478,13 @@ class Leave_request_form(Base, Base_form):
     leave_request_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     employee_fk_id = create_forenKey("employees")
-    start_date = Column(DateTime, index=True)
-    end_date = Column(DateTime, index=True)
-    description = Column(String)
+
+    start_date = Column(TIME, index=True, nullable=True, default=None)
+    end_date = Column(TIME, index=True, nullable=True, default=None)
+    date = Column(DateTime, index=True)
+    duration = Column(Integer, nullable=False, default=0)
+
+    leave_type = Column(String, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Leave_request_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
@@ -468,10 +495,12 @@ class Business_Trip_form(Base, Base_form):
     business_trip_pk_id = create_Unique_ID()
     employee_fk_id = create_forenKey("employees")
     created_fk_by = create_forenKey("employees")
+
     start_date = Column(DateTime, index=True)
     end_date = Column(DateTime, index=True)
+    duration = Column(Integer, nullable=False, default=0)
+
     destination = Column(String)
-    description = Column(String)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Business_Trip_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
@@ -482,9 +511,11 @@ class Remote_Request_form(Base, Base_form):
     remote_request_pk_id = create_Unique_ID()
     employee_fk_id = create_forenKey("employees")
     created_fk_by = create_forenKey("employees")
-    start_date = Column(DateTime, nullable=False)
-    end_date = Column(DateTime, nullable=False)
     working_location = Column(String, nullable=False)
+
+    start_date = Column(DateTime, index=True)
+    end_date = Column(DateTime, index=True)
+    duration = Column(Integer, nullable=False, default=0)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Remote_Request_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
@@ -503,36 +534,36 @@ class Payment_method_form(Base, Base_form):
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
 
-
 class Fingerprint_scanner_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner"
-    FingerPrintScanner_pk_id = Column(Integer, primary_key=True)
+    FingerPrintScanner_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     EnNo = Column(Integer, nullable=False)
     Name = Column(String, nullable=False)
     Date = Column(DATE, nullable=False)
     Enter = Column(TIME, nullable=False)
     Exit = Column(TIME, nullable=True)
+    duration = Column(Integer, nullable=False, default=0)
 
-    __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),{"extend_existing": True},)
+    __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_Relation")
 
 class Fingerprint_scanner_backup_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner_backUp"
-    FingerPrintScanner_pk_id = Column(Integer, primary_key=True)
+    FingerPrintScanner_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
-    TMNo = Column(Integer)
-    EnNo = Column(Integer)
-    Name = Column(String)
-    GMNo = Column(Integer)
+    TMNo = Column(Integer, nullable=False)
+    EnNo = Column(Integer, nullable=False)
+    Name = Column(String, nullable=False)
+    GMNo = Column(Integer, nullable=False)
     Mode = Column(String)
     In_Out = Column(String)
     Antipass = Column(Integer)
     ProxyWork = Column(Integer)
     DateTime = Column(DateTime)
 
-    __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),{"extend_existing": True},)
+    __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_backup_Relation")
 
@@ -643,39 +674,56 @@ class Roles_form(Base, Base_form):
     role_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
 
-    name = Column(String, index=True, nullable=False)
+    name = Column(String, index=True, nullable=False, unique=True)
     cluster = Column(String, index=True, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Roles_Relation")
 
 
-"""
-    # Survey_Relation = relationship("Survey_form", back_populates="created", foreign_keys="Survey_form.created_fk_by")
-    Survey_Relation = relation("Survey_form", "created")
-    Questions_Relation = relationship("Questions_form", back_populates="created", foreign_keys="Questions_form.created_fk_by")
-    Business_Trip_Relation = relationship("Business_Trip_form", back_populates="created", foreign_keys="Business_Trip_form.created_fk_by")
-    Leave_request_Relation = relationship("Leave_request_form", back_populates="created", foreign_keys="Leave_request_form.created_fk_by")
-    Remote_Request_Relation = relationship("Remote_Request_form", back_populates="created", foreign_keys="Remote_Request_form.created_fk_by")
-    payment_method_Relation = relationship("Payment_method_form", back_populates="created", foreign_keys="Payment_method_form.created_fk_by")
-    Class_Cancellation_Relation = relationship("Class_Cancellation_form", back_populates="created", foreign_keys="Class_Cancellation_form.created_fk_by")
-    Teacher_Replacement_Relation = relationship("Teacher_Replacement_form", back_populates="created", foreign_keys="Teacher_Replacement_form.created_fk_by")
-    Teacher_tardy_reports_Relation = relationship("Teacher_tardy_reports_form", back_populates="created", foreign_keys="Teacher_tardy_reports_form.created_fk_by")
-    fingerprint_scanner_Relation = relationship("Fingerprint_scanner_form", back_populates="created", foreign_keys="Fingerprint_scanner_form.created_fk_by")
-    Roles_Relation = relationship("Roles_form", back_populates="created", foreign_keys="Roles_form.created_fk_by")
+# ++++++++++++++++++++++++++ SalaryPolicy_form +++++++++++++++++++++++++++
+class SalaryPolicy_form(Base, Base_form):
+    __tablename__ = "salary_policy_form"
+    SalaryPolicy_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("employees")
+    employee_fk_id = create_forenKey("employees")
 
-"""
+    is_Fixed = Column(Boolean, nullable=False)
+    day_starting_time = Column(TIME, nullable=True, default=None)
+    day_ending_time = Column(TIME, nullable=True, default=None)
 
-"""
-    Survey_Relation = relationship("Survey_form", back_populates="created", foreign_keys="Survey_form.created_fk_by")
-    Questions_Relation = relationship("Questions_form", back_populates="created", foreign_keys="Questions_form.created_fk_by")
-    Business_Trip_Relation = relationship("Business_Trip_form", back_populates="created", foreign_keys="Business_Trip_form.created_fk_by")
-    Leave_request_Relation = relationship("Leave_request_form", back_populates="created", foreign_keys="Leave_request_form.created_fk_by")
-    Remote_Request_Relation = relationship("Remote_Request_form", back_populates="created", foreign_keys="Remote_Request_form.created_fk_by")
-    payment_method_Relation = relationship("Payment_method_form", back_populates="created", foreign_keys="Payment_method_form.created_fk_by")
-    Class_Cancellation_Relation = relationship("Class_Cancellation_form", back_populates="created", foreign_keys="Class_Cancellation_form.created_fk_by")
-    Teacher_Replacement_Relation = relationship("Teacher_Replacement_form", back_populates="created", foreign_keys="Teacher_Replacement_form.created_fk_by")
-    Teacher_tardy_reports_Relation = relationship("Teacher_tardy_reports_form", back_populates="created", foreign_keys="Teacher_tardy_reports_form.created_fk_by")
-    fingerprint_scanner_Relation = relationship("Fingerprint_scanner_form", back_populates="created", foreign_keys="Fingerprint_scanner_form.created_fk_by")
-    Roles_Relation = relationship("Roles_form", back_populates="created", foreign_keys="Roles_form.created_fk_by")
+    # finger_print
+    Regular_hours_factor = Column(Float, nullable=False)
+    Regular_hours_cap = Column(Integer, nullable=False)
 
-"""
+    overtime_permission = Column(Boolean, nullable=False)
+    overtime_factor = Column(Float, nullable=False)
+    overtime_cap = Column(Integer, nullable=False)
+    overtime_threshold = Column(Integer, nullable=False)
+
+    undertime_factor = Column(Float, nullable=False)
+    undertime_threshold = Column(Integer, nullable=False)
+
+    # off day work
+    off_day_permission = Column(Boolean, nullable=False)
+    off_day_factor = Column(Float, nullable=False)
+    off_day_cap = Column(Integer, nullable=False)
+
+    #Remote
+    remote_permission = Column(Boolean, nullable=False)
+    remote_factor = Column(Float, nullable=False)
+    remote_cap = Column(Integer, nullable=False)
+
+    # Leave_form
+    medical_leave_factor = Column(Float, nullable=False)
+    medical_leave_cap = Column(Integer, nullable=False)
+
+    vacation_leave_factor = Column(Float, nullable=False)
+    vacation_leave_cap = Column(Integer, nullable=False)
+
+    # business_Trip
+    business_trip_permission = Column(Boolean, nullable=False)
+    business_trip_factor = Column(Float, nullable=False)
+    business_trip_cap = Column(Integer, nullable=False)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="SalaryPolicy_Relation")
+    employee = relationship("Employees_form", foreign_keys=[employee_fk_id])

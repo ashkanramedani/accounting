@@ -1,4 +1,5 @@
 from .Roles import *
+from .SalaryPolicy import *
 from .Survey import *
 from .business_trip import *
 from .class_cancellation import *
@@ -18,10 +19,16 @@ from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
 
-from .Counter import count
+from .Extra import count
 
 __all__ = [
     "count",
+    # SalaryPolicy_form.py
+    "get_SalaryPolicy",
+    "get_all_SalaryPolicy",
+    "post_SalaryPolicy",
+    "delete_SalaryPolicy",
+    "update_SalaryPolicy",
     # Roles.py
     "get_role",
     "get_all_role",

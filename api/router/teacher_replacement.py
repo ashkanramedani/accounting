@@ -20,13 +20,20 @@ async def add_teacher_replacement(Form: sch.post_teacher_replacement_schema, db=
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.teacher_replacement_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_teacher_replacement(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_teacher_replacement(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
+# @router.post("/report", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+# async def report_teacher_replacement(Form: sch.teacher_report, db=Depends(get_db)):
+#     status_code, result = dbf.report_teacher_replacement(db, Form)
+#     if status_code != 200:
+#         raise HTTPException(status_code=status_code, detail=result)
+#     return result
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.teacher_replacement_response])
 async def search_all_teacher_replacement(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):

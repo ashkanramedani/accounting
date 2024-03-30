@@ -19,7 +19,7 @@ async def add_class(Form: sch.post_class_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])#, response_model=sch.classes_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def search_class(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_class(db, form_id)
     if status_code != 200:
@@ -27,7 +27,7 @@ async def search_class(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])#, response_model=List[sch.classes_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.classes_response])
 async def search_all_class(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_class(db, page, limit, order)
     if status_code != 200:

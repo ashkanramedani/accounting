@@ -1,6 +1,5 @@
 import os
 from typing import List
-
 import redis.asyncio as redis
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -19,7 +18,6 @@ except OperationalError as e:
     logger.show_log(f"[ Could Not Create Engine ]: {e.__repr__()}", 'e')
     exit()
 
-# models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 WHITELISTED_IPS: List[str] = []
@@ -49,8 +47,8 @@ def ping():
 
 
 @app.get("/count", tags=["Ping"])
-async def count(table: str, db=Depends(get_db)):
-    status_code, result = dbf.count(db, table)
+async def count(field: str, db=Depends(get_db)):
+    status_code, result = dbf.count(db, field)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
