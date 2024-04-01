@@ -1,3 +1,6 @@
+from datetime import timedelta
+from typing import Tuple
+
 from lib import logger
 
 
@@ -28,12 +31,34 @@ def get_all_remote_request_form(db: Session, page: sch.PositiveInt, limit: sch.P
         return 500, e.__repr__()
 
 
+def report_remote_request(db: Session, salary_rate, employee_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
+    if not salary_rate.remote_permission:
+        return 200, {"remote": 0, "remote_earning": 0}
+
+    Remote_Request_report = (
+        db.query(dbm.Remote_Request_form)
+        .filter_by(deleted=False, employee_fk_id=employee_fk_id)
+        .filter(dbm.Remote_Request_form.end_date.between(start_date, end_date))
+        .all()
+    )
+
+    total_remote = sum(row.duration for row in Remote_Request_report)
+    remote = min(total_remote, salary_rate.remote_cap)
+    return 200, {"remote": remote, "remote_earning": remote * salary_rate.remote_factor}
+
 def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
     try:
         if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Remote_Request_form(**Form.dict())  # type: ignore[call-arg]
+        data = Form.dict()
+
+        Start, End = Fix_datetime(data["start_date"]), Fix_datetime(data["end_date"])
+
+        if End < Start:
+            return 400, "Bad Request: End Date must be greater than Start Date"
+
+        OBJ = dbm.Remote_Request_form(duration=(End - Start).total_seconds() // 60, **data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

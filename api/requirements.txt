@@ -23,4 +23,5 @@ xlrd
 Pyarrow
 asyncpg
 python-dotenv
-pandas
+jalali
+bs4

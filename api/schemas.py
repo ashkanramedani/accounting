@@ -1,9 +1,9 @@
-
-from datetime import datetime, date, time
+from datetime import datetime, date, time, timedelta
 from enum import Enum
 from typing import Optional, List, Any
 from uuid import UUID
 from pydantic import BaseModel, PositiveInt
+
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
@@ -387,6 +387,11 @@ class Sort_Order(str, Enum):
     desc = "desc"
 
 
+class Leave_type(str, Enum):
+    vacation = "vacation"
+    medical = "medical"
+
+
 class job_title_Enum(str, Enum):
     teacher = "teacher"
     office = "office"
@@ -438,12 +443,16 @@ class update_role_schema(Role):
 
 
 class role_response(update_role_schema):
-    pass
+    role_pk_id: UUID
+    name: str
+    cluster: str
 
     class Config:
         orm_mode = True
 
+
 class export_role(BaseModel):
+    role_pk_id: UUID
     name: str
     cluster: str
 
@@ -455,7 +464,7 @@ class export_role(BaseModel):
 
 class Employee(Entity):
     priority: int | None
-    fingerprint_scanner_user_id: str | None
+    fingerprint_scanner_user_id: int | None = None
     roles: List[UUID] | None = []
 
 
@@ -478,6 +487,7 @@ class employee_response(BaseModel):
 
 
 class export_employee(BaseModel):
+    employees_pk_id: UUID
     name: str
     last_name: str
     roles: List[export_role] | None
@@ -507,6 +517,7 @@ class student_response(update_student_schema):
 
 
 class export_student(BaseModel):
+    student_pk_id: UUID
     name: str
     last_name: str
 
@@ -518,6 +529,7 @@ class export_student(BaseModel):
 # ---------------------- classes ----------------------
 class classes(InstitutionsBase):
     name: str
+    teachers: List[UUID] = []
     class_time: str | datetime = datetime.now()
     duration: PositiveInt
 
@@ -530,15 +542,15 @@ class update_class_schema(classes):
     class_pk_id: UUID
 
 
-class classes_response(Base_form):
-    classes: Any
-    delay: PositiveInt
+class classes_response(update_class_schema):
+    class_pk_id: UUID
 
     class Config:
         orm_mode = True
 
 
 class export_classes(BaseModel):
+    class_pk_id: UUID
     name: str
     class_time: str | datetime = datetime.now()
     duration: PositiveInt | Any
@@ -548,7 +560,7 @@ class export_classes(BaseModel):
 
 
 # ---------------------- question ----------------------
-class Question(InstitutionsBase):
+class Question(Base_form):
     text: str
     language: str
 
@@ -561,10 +573,8 @@ class update_questions_schema(Question):
     question_pk_id: UUID
 
 
-class Question_response(BaseModel):
-    question_pk_id: UUID
-    text: str
-    language: str
+class Question_response(update_questions_schema):
+    created: export_employee
 
     class Config:
         orm_mode = True
@@ -597,7 +607,7 @@ class update_business_trip_schema(business_trip):
     business_trip_pk_id: UUID
 
 
-class business_trip_response(BaseModel):
+class business_trip_response(update_business_trip_schema):
     business_trip_pk_id: UUID
     destination: str
     description: str
@@ -610,10 +620,12 @@ class business_trip_response(BaseModel):
 
 # ---------------------- leave_request ----------------------
 
+
 class leave_request(Base_form):
     employee_fk_id: UUID
+    leave_type: Leave_type = "vacation"
     start_date: str | datetime = datetime.now()
-    end_date: str | datetime = datetime.now()
+    end_date: str | datetime = datetime.now() + timedelta(days=1)
 
 
 class post_leave_request_schema(leave_request):
@@ -624,11 +636,7 @@ class update_leave_request_schema(leave_request):
     leave_request_pk_id: UUID
 
 
-class leave_request_response(BaseModel):
-    leave_request_pk_id: UUID
-    start_date: str | datetime = datetime.now()
-    end_date: str | datetime = datetime.now()
-    description: str
+class leave_request_response(update_leave_request_schema):
     created: export_employee
     employee: export_employee
 
@@ -641,7 +649,7 @@ class remote_request(Base_form):
     employee_fk_id: UUID
     start_date: str | datetime = datetime.now()
     end_date: str | datetime = datetime.now()
-    working_location: str
+    working_location: str = ""
 
 
 class post_remote_request_schema(remote_request):
@@ -652,11 +660,7 @@ class update_remote_request_schema(remote_request):
     remote_request_pk_id: UUID
 
 
-class remote_request_response(BaseModel):
-    remote_request_pk_id: UUID
-    start_date: str | datetime = datetime.now()
-    end_date: str | datetime = datetime.now()
-    description: str
+class remote_request_response(update_remote_request_schema):
     created: export_employee
     employee: export_employee
 
@@ -669,7 +673,7 @@ class remote_request_response(BaseModel):
 
 class fingerprint_scanner(Base_form):
     created_fk_by: UUID
-    EnNo: str
+    EnNo: int
     Name: str
     Date: date
     Enter: time
@@ -679,15 +683,17 @@ class fingerprint_scanner(Base_form):
 class post_fingerprint_scanner_schema(fingerprint_scanner):
     pass
 
-#
-# class post_bulk_fingerprint_scanner_schema(BaseModel):
-#     created_fk_by: UUID
 
 class update_fingerprint_scanner_schema(fingerprint_scanner):
     fingerprint_scanner_pk_id: UUID
 
 
-class fingerprint_scanner_response(update_fingerprint_scanner_schema):
+class fingerprint_scanner_response(BaseModel):
+    fingerprint_scanner_pk_id: UUID
+    Date: date
+    Enter: time
+    Exit: time
+    EnNo: int
     created: export_employee
 
     class Config:
@@ -711,11 +717,7 @@ class update_class_cancellation_schema(class_cancellation):
     class_cancellation_pk_id: UUID
 
 
-class class_cancellation_response(BaseModel):
-    class_cancellation_pk_id: UUID
-    replacement_date: str | datetime = datetime.now()
-    class_duration: PositiveInt
-    class_location: str
+class class_cancellation_response(update_class_cancellation_schema):
     created: export_employee
     teacher: export_employee
     classes: export_classes
@@ -739,12 +741,10 @@ class update_teacher_tardy_reports_schema(teacher_tardy_reports):
     teacher_tardy_reports_pk_id: UUID
 
 
-class teacher_tardy_reports_response(BaseModel):
-    teacher_tardy_reports_pk_id: UUID
+class teacher_tardy_reports_response(update_teacher_tardy_reports_schema):
     created: export_employee
     teacher: export_employee
     classes: export_classes
-    delay: PositiveInt
 
     class Config:
         orm_mode = True
@@ -753,7 +753,6 @@ class teacher_tardy_reports_response(BaseModel):
 # ---------------------- teacher_replacement ----------------------
 
 class teacher_replacement(Base_form):
-    created_fk_by: UUID
     teacher_fk_id: UUID
     replacement_teacher_fk_id: UUID
     class_fk_id: UUID
@@ -767,9 +766,7 @@ class update_teacher_replacement_schema(teacher_replacement):
     teacher_replacement_pk_id: UUID
 
 
-class teacher_replacement_response(BaseModel):
-    teacher_replacement_pk_id: UUID
-
+class teacher_replacement_response(update_teacher_replacement_schema):
     created: export_employee
     main_teacher: export_employee
     replacement_teacher: export_employee
@@ -794,9 +791,7 @@ class update_payment_method_schema(payment_method):
     payment_method_pk_id: UUID
 
 
-class payment_method_response(BaseModel):
-    payment_method_pk_id: UUID
-
+class payment_method_response(update_payment_method_schema):
     created: export_employee
     employee: export_employee
 
@@ -822,10 +817,7 @@ class update_survey_schema(Survey):
     class_fk_id: UUID
 
 
-class survey_response(BaseModel):
-    survey_pk_id: UUID
-    title: str
-
+class survey_response(update_survey_schema):
     created: export_employee
     classes: export_classes
     questions: List[export_question]
@@ -835,6 +827,7 @@ class survey_response(BaseModel):
 
 
 class export_survey(BaseModel):
+    survey_pk_id: UUID
     title: str
 
     class Config:
@@ -858,13 +851,87 @@ class update_response_schema(Response):
     response_pk_id: UUID
 
 
-class response_response(BaseModel):
-    response_pk_id: UUID
-    answer: str
-
+class response_response(update_response_schema):
     student: export_student
     question: export_question
     survey: export_survey
 
     class Config:
         orm_mode = True
+
+
+# ---------------------- Salary ----------------------
+class SalaryPolicy(BaseModel):
+    created_fk_by: UUID
+    employee_fk_id: UUID
+
+    day_starting_time: Optional[time] = None
+    day_ending_time: Optional[time] = None
+
+    # finger_print
+    Regular_hours_factor: float
+    Regular_hours_cap: Optional[int] = None
+
+    overtime_permission: bool
+    overtime_factor: float
+    overtime_cap: int
+    overtime_threshold: int
+
+    undertime_factor: float
+    undertime_threshold: int
+
+    # off_Day
+    off_day_permission: bool
+    off_day_factor: float
+    off_day_cap: int
+
+    # Remote
+    remote_permission: bool
+    remote_factor: float
+    remote_cap: int
+
+    # Leave_form
+    medical_leave_factor: float
+    medical_leave_cap: int
+
+    vacation_leave_factor: float
+    vacation_leave_cap: int
+
+    # business_Trip
+    business_trip_permission: bool
+    business_trip_factor: float
+    business_trip_cap: int
+
+
+class post_SalaryPolicy_schema(SalaryPolicy):
+    pass
+
+
+class update_SalaryPolicy_schema(SalaryPolicy):
+    salary_pk_id: UUID
+
+
+class SalaryPolicy_response(update_SalaryPolicy_schema):
+    created: export_employee
+    employee: export_employee
+
+    class Config:
+        orm_mode = True
+
+
+# ++++++++++++++++++++++++++ Reports +++++++++++++++++++++++++++
+class salary_report(BaseModel):
+    employee_fk_id: UUID
+    year: PositiveInt
+    month: PositiveInt
+
+class teacher_report(BaseModel):
+    teacher_fk_id: UUID
+    start_date: Any
+    end_date: Any
+
+class employee_report(BaseModel):
+    employee_fk_id: UUID
+    start_date: datetime
+    end_date: datetime
+

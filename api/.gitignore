@@ -156,3 +156,4 @@ cython_debug/
 /api/router/.DS_Stor/
 /*.log/
 /*.csv/
+/test.py/

@@ -13,6 +13,7 @@ from .fingerScanner import router as finger_scanner_router
 from .tardy_request import router as tardy_request_route
 from .teacher_replacement import router as teacher_replacement_route
 from .roles import router as roles_route
+from .SalaryPolicy import router as salary_route
 
 from .files import router as files
 from .user import router as user
@@ -27,6 +28,7 @@ routes = [
     class_cancellation_route,
     class_route,
     leave_request_route,
+    salary_route,
     question_route,
     remote_request_route,
     response_route,

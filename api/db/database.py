@@ -32,6 +32,7 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+
 # Dependency
 def get_db() -> Session:
     db = SessionLocal()
@@ -39,3 +40,4 @@ def get_db() -> Session:
         yield db
     finally:
         db.close()
+

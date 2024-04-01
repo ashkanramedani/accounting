@@ -126,7 +126,7 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
 
 def delete_survey(db: Session, survey_id):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(survey_id_pk_id=survey_id, deleted=False).first()
+        record = db.query(dbm.Survey_form).filter_by(survey_id_pk_id=survey_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True

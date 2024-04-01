@@ -1,3 +1,4 @@
+from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -7,8 +8,7 @@ from fastapi_limiter.depends import RateLimiter
 import db as dbf
 import schemas as sch
 from db.database import get_db
-from typing import Annotated
-from fastapi import File, UploadFile, Body
+from fastapi import File, UploadFile
 
 
 router = APIRouter(prefix='/api/v1/form/fingerprint_scanner', tags=['fingerprint_scanner'])
@@ -31,7 +31,7 @@ async def bulk_add_fingerprint_scanner(created_by: UUID, db=Depends(get_db), fil
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=sch.fingerprint_scanner_response)
 async def search_fingerprint_scanner(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_fingerprint_scanner(db, form_id)
     if status_code != 200:
@@ -39,7 +39,7 @@ async def search_fingerprint_scanner(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.fingerprint_scanner_response])
 async def search_all_fingerprint_scanner(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_fingerprint_scanner(db, page, limit, order)
     if status_code != 200:

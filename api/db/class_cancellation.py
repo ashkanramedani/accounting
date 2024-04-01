@@ -27,6 +27,22 @@ def get_all_class_cancellation_form(db: Session, page: sch.PositiveInt, limit: s
         return 500, e.__repr__()
 
 
+
+def report_class_cancellation(db: Session, Form: sch.teacher_report):
+    try:
+        result = (
+            db.query(dbm.Class_Cancellation_form)
+            .filter_by(deleted=False, employee_fk_id= Form.teacher_fk_id)
+            .filter(dbm.Class_Cancellation_form.end_date.between(Form.start_date, Form.end_date))
+            .count()
+        )
+
+        return 200, result
+    except Exception as e:
+        logger.error(e)
+        db.rollback()
+        return 500, e.__repr__()
+
 def post_class_cancellation_form(db: Session, Form: sch.post_class_cancellation_schema):
     try:
         if not employee_exist(db, [Form.teacher_fk_id, Form.created_fk_by]):
