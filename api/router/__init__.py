@@ -14,6 +14,7 @@ from .tardy_request import router as tardy_request_route
 from .teacher_replacement import router as teacher_replacement_route
 from .roles import router as roles_route
 from .SalaryPolicy import router as salary_route
+from .report import router as report_route
 
 from .files import router as files
 from .user import router as user
@@ -23,6 +24,7 @@ from .category import router as category
 from .library import router as library
 
 routes = [
+    report_route,
     roles_route,
     business_trip_route,
     class_cancellation_route,
