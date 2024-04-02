@@ -357,12 +357,14 @@ def to_international(year, month, day):
     return date(year, month, day)
 
 
-def generate_month_interval(year, month) -> tuple[date, date]:
+def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
     end_year = year + 1 if month == 12 else year
     end_month = 1 if month == 12 else month + 1
 
     start_date = to_international(year, month, 1)
     end_date = to_international(end_year, end_month, 1)
+    if not include_nex_month_fist_day:
+        end_date = end_date - timedelta(days=1)
     return start_date, end_date
 
 
@@ -372,4 +374,6 @@ def same_month(date_1: datetime, date_2: datetime):
     return date_1.year == date_2.year and date_1.month == date_2.month
 
 if __name__ == '__main__':
-    pass
+    for i in range(1, 13):
+        a = generate_month_interval(1402, i)
+        print(1402, i, a)

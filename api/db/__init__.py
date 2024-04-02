@@ -18,11 +18,14 @@ from .response import *
 from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
+from .report import *
 
 from .Extra import count
 
 __all__ = [
     "count",
+    # report.py
+    "get_report",
     # SalaryPolicy_form.py
     "get_SalaryPolicy",
     "get_all_SalaryPolicy",

@@ -1,5 +1,6 @@
 import uuid
 from datetime import timedelta, date, time, datetime
+from typing import List, Tuple
 
 import pandas as pd
 from fastapi import File, UploadFile
@@ -22,19 +23,34 @@ def Date_constructor(Date_obj: str | date | datetime):
     return f'{M_Date}  {P_Date}'
 
 
+def add_missing_day(seq: list) -> List[Tuple]:
+    if len(seq) < 2:
+        return []
+    missing_day = []
+    currentDay: date = seq[0]["Date"]
+    while currentDay < seq[1]["Date"]:
+        currentDay += timedelta(days=1)
+        missing_day.append((str(currentDay), {"Total_Work": 0, "EnterExit": [], "IsValid": True, "msg": "Not Present"}))
+    return missing_day
+
+
 def preprocess_report(report):
     preprocess_Days = {}
-    for record in report:
-        Key = str(record["Date"])
-        if record["Enter"] is None or record["Exit"] is None:
-            preprocess_Days[Key] = {"TotalWork": 0, "EnterExit": [record["Enter"], record["Exit"]], "IsValid": False, "msg": 'invalid Enter/exit time'}
+    for i in range(len(report) - 1):
+        Key = str(report[i]["Date"])
+        if report[i]["Enter"] is None or report[i]["Exit"] is None:
+            preprocess_Days[Key] = {"Total_Work": 0, "EnterExit": [report[i]["Enter"], report[i]["Exit"]], "IsValid": False, "msg": 'invalid Enter/exit time'}
             continue
-        if record["Date"] not in preprocess_Days:
-            preprocess_Days[Key] = {"TotalWork": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
+        if report[i]["Date"] not in preprocess_Days:
+            preprocess_Days[Key] = {"Total_Work": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
 
-        preprocess_Days[Key]["TotalWork"] += _sub(record["Enter"], record["Exit"])
-        preprocess_Days[Key]["EnterExit"].append(record["Enter"])
-        preprocess_Days[Key]["EnterExit"].append(record["Exit"])
+        preprocess_Days[Key]["Total_Work"] += _sub(report[i]["Enter"], report[i]["Exit"])
+        preprocess_Days[Key]["EnterExit"].append(report[i]["Enter"])
+        preprocess_Days[Key]["EnterExit"].append(report[i]["Exit"])
+
+        for Date, Date_data in add_missing_day(report[i: i + 2]):
+            preprocess_Days[Date] = Date_data
+
     return preprocess_Days
 
 
@@ -44,12 +60,12 @@ def Fixed_schedule(EMP_Salary: dbm.SalaryPolicy_form, report):
     for Date, day in preprocess_Days.items():
         Holiday = is_off_day(Fix_date(Date))
 
-        Overtime, Undertime, Regular_hours, off_day_overtime, TotalWork = 0, 0, 0, 0, 0
+        Overtime, Undertime, Regular_hours, off_day_overtime, Total_Work = 0, 0, 0, 0, 0
         if not day["IsValid"]:
             Days.append({
                 "Date": Date_constructor(Date),
                 "Holiday": Holiday,
-                "Total Work": 0,
+                "Total_Work": 0,
                 "Regular_hours": 0,
                 "Overtime": 0,
                 "Undertime": 0,
@@ -61,7 +77,11 @@ def Fixed_schedule(EMP_Salary: dbm.SalaryPolicy_form, report):
 
         if Holiday:
             if EMP_Salary.off_day_permission:
-                off_day_overtime = day["TotalWork"]
+                off_day_overtime = day["Total_Work"]
+
+        elif not day["EnterExit"]:
+            Overtime = 0
+            Undertime = EMP_Salary.Regular_hours_cap
 
         else:
             first_enter: time = max(min(day["EnterExit"]), EMP_Salary.day_starting_time)  # type: ignore
@@ -76,7 +96,6 @@ def Fixed_schedule(EMP_Salary: dbm.SalaryPolicy_form, report):
             else:
                 tmp_overtime = _sub(EMP_Salary.day_ending_time, last_exit)
                 Overtime = tmp_overtime if tmp_overtime > EMP_Salary.overtime_threshold else 0
-                # Overtime = min(Overtime, EMP_Salary.overtime_cap) # Cap has been moved to total (Monthly)
 
             EnterExit = day["EnterExit"]
             EnterExit.sort()
@@ -90,8 +109,8 @@ def Fixed_schedule(EMP_Salary: dbm.SalaryPolicy_form, report):
         Days.append({
             "Date": Date_constructor(Date),
             "Holiday": Holiday,
-            "TotalWork": day["TotalWork"],
-            "Regular_hours": min(day["TotalWork"] - Overtime, EMP_Salary.Regular_hours_cap),
+            "Total_Work": day["Total_Work"],
+            "Regular_hours": min(day["Total_Work"] - Overtime, EMP_Salary.Regular_hours_cap) if not off_day_overtime else 0,
             "Overtime": Overtime,
             "Undertime": Undertime,
             "off_Day_Overtime": off_day_overtime,
@@ -112,36 +131,35 @@ def Split_schedule(EMP_Salary, reports):
             Days.append({
                 "Date": Date_constructor(Date),
                 "Holiday": Holiday,
-                "Total Work": 0,
+                "Total_Work": 0,
                 "Regular_hours": 0,
                 "Overtime": 0,
                 "Undertime": 0,
                 "off_Day_Overtime": 0,
                 "IsValid": False,
-                "EnterExit": '-'.join([str(t) for t in day["EnterExit"]]),
+                "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]),
                 "msg": day["msg"]})
             continue
 
         if Holiday:
             if EMP_Salary.off_day_permission:
-                off_day_overtime = day["TotalWork"]
+                off_day_overtime = day["Total_Work"]
         else:
-            TotalWork = day["TotalWork"]
+            Total_Work = day["Total_Work"]
 
-            if TotalWork >= EMP_Salary.Regular_hours_cap:
-                posible_Overtime = TotalWork - EMP_Salary.Regular_hours_cap
+            if Total_Work >= EMP_Salary.Regular_hours_cap:
+                posible_Overtime = Total_Work - EMP_Salary.Regular_hours_cap
                 Overtime = posible_Overtime if posible_Overtime >= EMP_Salary.overtime_threshold else 0
-                # Overtime = min(Overtime, EMP_Salary.overtime_cap) # Cap has been moved to total (Monthly)
 
             else:
-                posible_undertime = EMP_Salary.Regular_hours_cap - TotalWork
+                posible_undertime = EMP_Salary.Regular_hours_cap - Total_Work
                 Undertime = posible_undertime if posible_undertime >= EMP_Salary.undertime_threshold else 0
 
         Days.append({
             "Date": Date_constructor(Date),
             "Holiday": Holiday,
-            "Total Work": day["TotalWork"],
-            "Regular_hours": min(EMP_Salary.Regular_hours_cap, day["TotalWork"]),
+            "Total_Work": day["Total_Work"],
+            "Regular_hours": min(EMP_Salary.Regular_hours_cap, day["Total_Work"]),
             "Overtime": Overtime,
             "Undertime": Undertime,
             "off_Day_Overtime": off_day_overtime,
@@ -190,10 +208,11 @@ def report_fingerprint_scanner(db: Session, salary, EnNo, start_date, end_date) 
     else:
         final_result["Days"] = Split_schedule(salary, report_dicts)
 
+    final_result["Total_Work"] = sum(day["Total_Work"] for day in final_result["Days"])
     final_result["total_Regular_hours"] = sum(day["Regular_hours"] for day in final_result["Days"])
-    final_result["total_Overtime_hours"] = sum(day["Overtime"] for day in final_result["Days"])
+    final_result["total_Overtime_hours"] = min(sum(day["Overtime"] for day in final_result["Days"]), salary.overtime_cap)
     final_result["total_Undertime_hours"] = sum(day["Undertime"] for day in final_result["Days"])
-    final_result["off_Day_Overtime"] = sum(day["off_Day_Overtime"] for day in final_result["Days"])
+    final_result["off_Day_Overtime"] = min(sum(day["off_Day_Overtime"] for day in final_result["Days"]), salary.off_day_cap)
     return 200, final_result
 
 
