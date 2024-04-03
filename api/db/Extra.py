@@ -1,7 +1,7 @@
 import json
 from functools import wraps
 
-from faker import Faker
+# from faker import Faker
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta, time, date
 from typing import List, Dict
@@ -158,26 +158,26 @@ __all__ = [
     'same_month',
     "_sub",
     "is_off_day",
-    'Person',
+    # 'Person',
     'JSONEncoder',
     'safe_run']
 
-class Person:
-    def __init__(self):
-        self.unique_names = []
-        self.fake = Faker()
-
-    def iterate(self):
-        return f'{self.fake.first_name()}-{self.fake.last_name()}'
-
-    def generate_name(self, unique: bool = True):
-        if not unique and self.unique_names:
-            return r_ch(self.unique_names).split('-')
-        tmp = self.iterate()
-        while tmp in self.unique_names:
-            tmp = self.iterate()
-        self.unique_names.append(tmp)
-        return tmp.split('-')
+# class Person:
+#     def __init__(self):
+#         self.unique_names = []
+#         self.fake = Faker()
+#
+#     def iterate(self):
+#         return f'{self.fake.first_name()}-{self.fake.last_name()}'
+#
+#     def generate_name(self, unique: bool = True):
+#         if not unique and self.unique_names:
+#             return r_ch(self.unique_names).split('-')
+#         tmp = self.iterate()
+#         while tmp in self.unique_names:
+#             tmp = self.iterate()
+#         self.unique_names.append(tmp)
+#         return tmp.split('-')
 
 class JSONEncoder(json.JSONEncoder):
     """
