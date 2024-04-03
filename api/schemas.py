@@ -245,7 +245,7 @@ class Post(PostBase):
 
 
 class Posts(PostBase):
-    create_date: datetime
+    create_date: datetime | str
     post_pk_id: int
     category: Optional[List[str]] = []
     tag: Optional[List[str]] = []
@@ -342,7 +342,7 @@ class LibraryBase(BaseModel):
     library_data_file_path: Optional[str] = None
 
     priority: Optional[int] = None
-    create_date: datetime
+    create_date: datetime | str
 
 
 class LibraryCreate(LibraryBase):
@@ -526,34 +526,35 @@ class export_student(BaseModel):
 
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
-# ---------------------- classes ----------------------
-class classes(InstitutionsBase):
+# ---------------------- course ----------------------
+class course(InstitutionsBase):
     name: str
     teachers: List[UUID] = []
     class_time: str | datetime = datetime.now()
     duration: PositiveInt
 
 
-class post_class_schema(classes):
+class post_class_schema(course):
     pass
 
 
-class update_class_schema(classes):
+class update_class_schema(course):
     class_pk_id: UUID
 
 
-class classes_response(update_class_schema):
+class course_response(update_class_schema):
     class_pk_id: UUID
 
     class Config:
         orm_mode = True
 
 
-class export_classes(BaseModel):
+class export_course(BaseModel):
     class_pk_id: UUID
     name: str
     class_time: str | datetime = datetime.now()
     duration: PositiveInt | Any
+    teachers: export_employee
 
     class Config:
         orm_mode = True
@@ -672,12 +673,11 @@ class remote_request_response(update_remote_request_schema):
 
 
 class fingerprint_scanner(Base_form):
-    created_fk_by: UUID
     EnNo: int
     Name: str
-    Date: date
-    Enter: time
-    Exit: time
+    Date: date | str
+    Enter: time | str
+    Exit: time | str
 
 
 class post_fingerprint_scanner_schema(fingerprint_scanner):
@@ -690,9 +690,9 @@ class update_fingerprint_scanner_schema(fingerprint_scanner):
 
 class fingerprint_scanner_response(BaseModel):
     fingerprint_scanner_pk_id: UUID
-    Date: date
-    Enter: time
-    Exit: time
+    Date: date | str
+    Enter: time | str
+    Exit: time | str
     EnNo: int
     created: export_employee
 
@@ -720,7 +720,7 @@ class update_class_cancellation_schema(class_cancellation):
 class class_cancellation_response(update_class_cancellation_schema):
     created: export_employee
     teacher: export_employee
-    classes: export_classes
+    course: export_course
 
     class Config:
         orm_mode = True
@@ -744,7 +744,7 @@ class update_teacher_tardy_reports_schema(teacher_tardy_reports):
 class teacher_tardy_reports_response(update_teacher_tardy_reports_schema):
     created: export_employee
     teacher: export_employee
-    classes: export_classes
+    course: export_course
 
     class Config:
         orm_mode = True
@@ -770,7 +770,7 @@ class teacher_replacement_response(update_teacher_replacement_schema):
     created: export_employee
     main_teacher: export_employee
     replacement_teacher: export_employee
-    classes: export_classes
+    course: export_course
 
     class Config:
         orm_mode = True
@@ -819,7 +819,7 @@ class update_survey_schema(Survey):
 
 class survey_response(update_survey_schema):
     created: export_employee
-    classes: export_classes
+    course: export_course
     questions: List[export_question]
 
     class Config:
@@ -932,6 +932,6 @@ class teacher_report(BaseModel):
 
 class employee_report(BaseModel):
     employee_fk_id: UUID
-    start_date: datetime
-    end_date: datetime
+    start_date: datetime | str
+    end_date: datetime | str
 

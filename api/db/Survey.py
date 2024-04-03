@@ -102,7 +102,7 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
         data = Form.dict()
         questions: List[UUID] = data.pop("questions")
 
-        OBJ = dbm.Survey_form(**data)
+        OBJ = dbm.Survey_form(**data)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)

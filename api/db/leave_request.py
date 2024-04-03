@@ -71,10 +71,11 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
         if not same_month(Start, End):
             return 400, "Bad Request: End Date must be in the same month as Start Date"
 
+
         # this part check if leave request is daily or hourly
         if End.date() == Start.date():
             if not is_off_day(Start):
-                OBJ = dbm.Leave_request_form(start=Start.time(), end=End.time(), duration=(End - Start).total_seconds() // 60, date=Start.replace(hour=0, minute=0, second=0, microsecond=0), **data)  # type: ignore[call-arg]
+                OBJ = dbm.Leave_request_form(start_date=Start.time(), end_date=End.time(), duration=(End - Start).total_seconds() // 60, date=Start.replace(hour=0, minute=0, second=0, microsecond=0), **data)  # type: ignore[call-arg]
                 db.add(OBJ)
         else:
             OBJ = []

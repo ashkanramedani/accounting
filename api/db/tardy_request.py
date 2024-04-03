@@ -35,7 +35,7 @@ def report_tardy_request(db: Session, Form: sch.teacher_report):
             .join(dbm.Class_form, dbm.Class_form.class_pk_id == dbm.Teacher_tardy_reports_form.class_fk_id)
             .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
             .filter(dbm.Class_form.class_time.between(Form.start_date, Form.end_date))
-            .options(joinedload(dbm.Teacher_tardy_reports_form.classes))
+            .options(joinedload(dbm.Teacher_tardy_reports_form.course))
             .all()
         )
 

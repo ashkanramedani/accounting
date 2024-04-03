@@ -328,7 +328,7 @@ class Libraries(Base):
 
 IDs = {
     "employees": "employees.employees_pk_id",
-    "classes": "classes.class_pk_id",
+    "course": "course.class_pk_id",
     "days": "days.day_pk_id",
     "survey": "survey.survey_pk_id",
     "question": "question.question_pk_id",
@@ -414,7 +414,7 @@ TeacherClass = Table(
         "teacher_class",
         Base.metadata,
         Column("employee_fk_id", ForeignKey("employees.employees_pk_id")),
-        Column("class_fk_id", ForeignKey("classes.class_pk_id")),
+        Column("class_fk_id", ForeignKey("course.class_pk_id")),
         UniqueConstraint("employee_fk_id", "class_fk_id"), )
 
 # ========================== Entity ===========================
@@ -456,18 +456,16 @@ class Student_form(Base, UserBase):
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
 class Class_form(Base, InstitutionsBase):
-    __tablename__ = "classes"
+    __tablename__ = "course"
     class_pk_id = create_Unique_ID()
-
     created_fk_by = create_forenKey("employees")
-    teacher_fk_id = create_forenKey("employees")
 
     name = Column(String)
     class_time = Column(DateTime, nullable=False)
     duration = Column(Integer)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Class_Relation")
-    teachers = relationship("Employees_form", secondary=TeacherClass, backref="classes")
+    teachers = relationship("Employees_form", secondary=TeacherClass, backref="course")
 
 
 # ======================== Forms =============================
@@ -575,12 +573,12 @@ class Teacher_tardy_reports_form(Base, Base_form):
     teacher_tardy_reports_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
+    class_fk_id = create_forenKey("course")
     delay = Column(Integer, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Teacher_tardy_reports_Relation")
     teacher = relationship("Employees_form", foreign_keys=[teacher_fk_id])
-    classes = relationship("Class_form", foreign_keys=[class_fk_id])
+    course = relationship("Class_form", foreign_keys=[class_fk_id])
 
 
 class Class_Cancellation_form(Base, Base_form):
@@ -588,7 +586,7 @@ class Class_Cancellation_form(Base, Base_form):
     class_cancellation_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
+    class_fk_id = create_forenKey("course")
     class_duration = Column(Integer, nullable=False)
     class_location = Column(String, nullable=False)
 
@@ -596,7 +594,7 @@ class Class_Cancellation_form(Base, Base_form):
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Class_Cancellation_Relation")
     teacher = relationship("Employees_form", foreign_keys=[teacher_fk_id])
-    classes = relationship("Class_form", foreign_keys=[class_fk_id])
+    course = relationship("Class_form", foreign_keys=[class_fk_id])
 
 
 class Teacher_Replacement_form(Base, Base_form):
@@ -605,12 +603,12 @@ class Teacher_Replacement_form(Base, Base_form):
     replacement_teacher_fk_id = create_forenKey("employees")
     created_fk_by = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
+    class_fk_id = create_forenKey("course")
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Teacher_Replacement_Relation")
     main_teacher = relationship("Employees_form", foreign_keys=[teacher_fk_id])
     replacement_teacher = relationship("Employees_form", foreign_keys=[replacement_teacher_fk_id])
-    classes = relationship("Class_form", foreign_keys=[class_fk_id])
+    course = relationship("Class_form", foreign_keys=[class_fk_id])
 
 
 class Teachers_Report_form(Base, Base_form):
@@ -618,11 +616,11 @@ class Teachers_Report_form(Base, Base_form):
     teachers_report_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     teacher_fk_id = create_forenKey("employees")
-    class_fk_id = create_forenKey("classes")
+    class_fk_id = create_forenKey("course")
     score = Column(Float)
     number_of_student = Column(Integer)
-    canceled_classes = Column(Integer, default=0)
-    replaced_classes = Column(Integer, default=0)
+    canceled_course = Column(Integer, default=0)
+    replaced_course = Column(Integer, default=0)
     starts_at = Column(DateTime)
     ends_at = Column(DateTime)
     teacher_sheet_score = Column(Float, nullable=True)
@@ -634,12 +632,12 @@ class Teachers_Report_form(Base, Base_form):
 class Survey_form(Base, Base_form):
     __tablename__ = "survey"
     survey_pk_id = create_Unique_ID()
-    class_fk_id = create_forenKey("classes")
+    class_fk_id = create_forenKey("course")
     created_fk_by = create_forenKey("employees")
     title = Column(String, index=True)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Survey_Relation")
-    classes = relationship("Class_form", foreign_keys=[class_fk_id])
+    course = relationship("Class_form", foreign_keys=[class_fk_id])
     questions = relationship('Questions_form', secondary=survey_questions, backref='surveys')
 
 

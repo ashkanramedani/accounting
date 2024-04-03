@@ -11,6 +11,7 @@ from db.database import engine, get_db
 from lib.log import logger
 from router import routes
 
+
 try:
     models.Base.metadata.drop_all(engine)
     models.Base.metadata.create_all(bind=engine)

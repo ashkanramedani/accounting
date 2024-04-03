@@ -1,6 +1,6 @@
 from .business_trip import router as business_trip_route
 from .class_cancellation import router as class_cancellation_route
-from .classes import router as class_route
+from .course import router as class_route
 from .employee import router as employee_route
 from .leave_request import router as leave_request_route
 from .payment import router as route_payment

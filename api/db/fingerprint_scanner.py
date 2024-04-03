@@ -265,9 +265,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
             del record["No"]
             record["In_Out"] = record.pop("In/Out")
             Signature = (record["EnNo"], record["DateTime"])
-            logger.warning(f'{Signature}, {history}')
             if Signature in history:
-                logger.warning(f'Exist: {Signature}')
                 continue
 
             OBJs.append(dbm.Fingerprint_scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]

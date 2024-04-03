@@ -3,7 +3,7 @@ from .SalaryPolicy import *
 from .Survey import *
 from .business_trip import *
 from .class_cancellation import *
-from .classes import *
+from .course import *
 from .db_category import *
 from .db_library import *
 from .db_post import *

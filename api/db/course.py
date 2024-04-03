@@ -1,3 +1,6 @@
+from typing import List
+from uuid import UUID
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -28,7 +31,23 @@ def get_all_class(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, or
 
 def post_class(db: Session, Form: sch.post_class_schema):
     try:
-        OBJ = dbm.Class_form(**Form.dict())  # type: ignore[call-arg]
+        data = Form.dict()
+        teachers = data.pop("teachers")
+
+        if not teachers:
+            return 200, "Class with no teacher added"
+
+        OBJ = dbm.Class_form(**data)  # type: ignore[call-arg]
+        db.add(OBJ)
+        db.commit()
+        db.refresh(OBJ)
+
+        teacher_ID: List[UUID] = [ID.employees_pk_id for ID in db.query(dbm.Employees_form).filter_by(deleted=False).all()]
+
+        for teacher_id in teachers:
+            if teacher_id not in teacher_ID:
+                return 400, "Bad Request: teacher not found"
+            OBJ.teachers.append(db.query(dbm.Employees_form).filter_by(employees_pk_id=teacher_id, deleted=False).first())
 
         db.add(OBJ)
         db.commit()
