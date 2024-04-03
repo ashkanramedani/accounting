@@ -226,6 +226,7 @@ def Fix_time(time_obj: str | datetime | time):
     if isinstance(time_obj, datetime):
         return time_obj.time()
     time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
+    time_obj = time_obj.replace("Z", " ") if "Z" in time_obj else time_obj
     try:
         if "." in time_obj:
             return datetime.strptime(time_obj, "%H:%M:%S.%f").replace(microsecond=0)
@@ -240,6 +241,7 @@ def Fix_date(time_obj: str | datetime | date):
     if isinstance(time_obj, datetime):
         return time_obj.date()
     time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
+    time_obj = time_obj.replace("Z", " ") if "Z" in time_obj else time_obj
     try:
         if " " in time_obj:
             if "." in time_obj:
@@ -249,16 +251,17 @@ def Fix_date(time_obj: str | datetime | date):
     except ValueError:
         raise ValueError(f"Incorrect data format, should be HH:MM:SS or HH:MM:SS.MMM, received: {time_obj}")
 
-def Fix_datetime(time: str | datetime):
-    if isinstance(time, datetime):
-        return time
-    time = time.replace("T", " ") if "T" in time else time
+def Fix_datetime(time_obj: str | datetime):
+    if isinstance(time_obj, datetime):
+        return time_obj
+    time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
+    time_obj = time_obj.replace("Z", " ") if "Z" in time_obj else time_obj
     try:
         if "." in time:
-            return datetime.strptime(time, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0)
-        return datetime.strptime(time, "%Y-%m-%d %H:%M:%S")
+            return datetime.strptime(time_obj, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0)
+        return datetime.strptime(time_obj, "%Y-%m-%d %H:%M:%S")
     except ValueError:
-        raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.MMM, received: {time}")
+        raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.MMM, received: {time_obj}")
 
 
 def is_off_day(day: date | datetime) -> bool:
@@ -374,6 +377,5 @@ def same_month(date_1: datetime, date_2: datetime):
     return date_1.year == date_2.year and date_1.month == date_2.month
 
 if __name__ == '__main__':
-    for i in range(1, 13):
-        a = generate_month_interval(1402, i)
-        print(1402, i, a)
+    # print(datetime.strptime("14:14:14.555", "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0))
+    print(Fix_time("17:31:49.775Z"))

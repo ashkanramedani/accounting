@@ -9,8 +9,6 @@ from lib import logger
 from .Extra import *
 
 
-
-
 def get_class(db: Session, class_id):
     try:
         return 200, db.query(dbm.Class_form).filter_by(class_pk_id=class_id, deleted=False).first()

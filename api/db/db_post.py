@@ -87,7 +87,7 @@ def create_post(db: Session, new: sch.PostCreate):
                 visible=new.visible,
                 post_summary=new.post_summary,
                 post_type=new.post_type,
-                expier_date=new.expier_date,
+                expire_date=new.expire_date,
                 post_direction=new.post_direction,
                 priority=new.priority,
                 post_content=new.post_content,

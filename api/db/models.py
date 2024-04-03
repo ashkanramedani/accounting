@@ -23,7 +23,7 @@ class GUID(GUID_TYPE):
 class BaseTable:
     priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expier_date = Column(DateTime(timezone=True), default=None)
+    expire_date = Column(DateTime(timezone=True), default=None)
 
     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     # user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False)
@@ -93,7 +93,7 @@ class Tags(Base):
 
     priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expier_date = Column(DateTime(timezone=True), default=None)
+    expire_date = Column(DateTime(timezone=True), default=None)
 
     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
@@ -119,7 +119,7 @@ class Categories(Base):
 
     priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expier_date = Column(DateTime(timezone=True), default=None)
+    expire_date = Column(DateTime(timezone=True), default=None)
 
     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
@@ -306,7 +306,7 @@ class Libraries(Base):
 
     priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expier_date = Column(DateTime(timezone=True), default=None)
+    expire_date = Column(DateTime(timezone=True), default=None)
 
     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
@@ -364,12 +364,9 @@ class BaseTable:
     expire_date = Column(DateTime(timezone=True), default=None)
 
 
-
-
 class Base_form(BaseTable):
     description = Column(String, nullable=True, default="")
     status = Column(Integer, nullable=False, default=0)
-
 
 
 class InstitutionsBase(Base_form):
@@ -416,6 +413,7 @@ TeacherClass = Table(
         Column("employee_fk_id", ForeignKey("employees.employees_pk_id")),
         Column("class_fk_id", ForeignKey("course.class_pk_id")),
         UniqueConstraint("employee_fk_id", "class_fk_id"), )
+
 
 # ========================== Entity ===========================
 # ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
@@ -546,6 +544,7 @@ class Fingerprint_scanner_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_Relation")
+
 
 class Fingerprint_scanner_backup_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner_backUp"
@@ -706,7 +705,7 @@ class SalaryPolicy_form(Base, Base_form):
     off_day_factor = Column(Float, nullable=False)
     off_day_cap = Column(Integer, nullable=False)
 
-    #Remote
+    # Remote
     remote_permission = Column(Boolean, nullable=False)
     remote_factor = Column(Float, nullable=False)
     remote_cap = Column(Integer, nullable=False)
