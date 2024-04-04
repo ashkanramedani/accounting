@@ -11,6 +11,7 @@ import schemas as sch
 import db.models as dbm
 from lib import logger
 
+import re
 
 Tables = {
     "survey": dbm.Survey_form,
@@ -32,115 +33,115 @@ Tables = {
 }
 
 holidays = [
-        "1402-01-01",
-        "1402-01-02",
-        "1402-01-03",
-        "1402-01-04",
-        "1402-01-12",
-        "1402-01-13",
-        "1402-01-23",
-        "1402-02-02",
-        "1402-02-03",
-        "1402-02-26",
-        "1402-03-14",
-        "1402-03-15",
-        "1402-04-08",
-        "1402-04-16",
-        "1402-05-05",
-        "1402-05-06",
-        "1402-06-15",
-        "1402-06-23",
-        "1402-06-25",
-        "1402-07-02",
-        "1402-07-11",
-        "1402-08-26",
-        "1402-11-05",
-        "1402-11-19",
-        "1402-11-22",
-        "1402-12-06",
-        "1402-12-29",
-        "2023-03-21",
-        "2023-03-22",
-        "2023-03-23",
-        "2023-03-24",
-        "2023-04-01",
-        "2023-04-02",
-        "2023-04-12",
-        "2023-04-22",
-        "2023-04-23",
-        "2023-05-16",
-        "2023-06-04",
-        "2023-06-05",
-        "2023-06-29",
-        "2023-07-07",
-        "2023-07-27",
-        "2023-07-28",
-        "2023-09-06",
-        "2023-09-14",
-        "2023-09-16",
-        "2023-09-24",
-        "2023-10-03",
-        "2023-11-17",
-        "2024-01-25",
-        "2024-02-08",
-        "2024-02-11",
-        "2024-02-25",
-        "2024-03-19",
-        "1403-01-01",
-        "2024-03-20",
-        "1403-01-02",
-        "2024-03-21",
-        "1403-01-03",
-        "2024-03-22",
-        "1403-01-04",
-        "2024-03-23",
-        "1403-01-12",
-        "2024-03-31",
-        "1403-01-13",
-        "2024-04-01",
-        "1403-01-22",
-        "2024-04-10",
-        "1403-01-23",
-        "2024-04-11",
-        "1403-02-15",
-        "2024-05-04",
-        "1403-03-14",
-        "2024-06-03",
-        "1403-03-15",
-        "2024-06-04",
-        "1403-03-28",
-        "2024-06-17",
-        "1403-04-05",
-        "2024-06-25",
-        "1403-04-25",
-        "2024-07-15",
-        "1403-04-26",
-        "2024-07-16",
-        "1403-05-04",
-        "2024-07-25",
-        "1403-06-12",
-        "2024-09-02",
-        "1403-06-14",
-        "2024-09-04",
-        "1403-06-22",
-        "2024-09-12",
-        "1403-07-31",
-        "2024-10-22",
-        "1403-09-15",
-        "2024-12-05",
-        "1403-10-25",
-        "2025-01-14",
-        "1403-11-09",
-        "2025-01-28",
-        "1403-11-22",
-        "2025-02-10",
-        "1403-11-26",
-        "2025-02-14",
-        "1403-12-29",
-        "2025-03-19",
-        "1403-12-30",
-        "2025-03-20"
-    ]
+    "1402-01-01",
+    "1402-01-02",
+    "1402-01-03",
+    "1402-01-04",
+    "1402-01-12",
+    "1402-01-13",
+    "1402-01-23",
+    "1402-02-02",
+    "1402-02-03",
+    "1402-02-26",
+    "1402-03-14",
+    "1402-03-15",
+    "1402-04-08",
+    "1402-04-16",
+    "1402-05-05",
+    "1402-05-06",
+    "1402-06-15",
+    "1402-06-23",
+    "1402-06-25",
+    "1402-07-02",
+    "1402-07-11",
+    "1402-08-26",
+    "1402-11-05",
+    "1402-11-19",
+    "1402-11-22",
+    "1402-12-06",
+    "1402-12-29",
+    "2023-03-21",
+    "2023-03-22",
+    "2023-03-23",
+    "2023-03-24",
+    "2023-04-01",
+    "2023-04-02",
+    "2023-04-12",
+    "2023-04-22",
+    "2023-04-23",
+    "2023-05-16",
+    "2023-06-04",
+    "2023-06-05",
+    "2023-06-29",
+    "2023-07-07",
+    "2023-07-27",
+    "2023-07-28",
+    "2023-09-06",
+    "2023-09-14",
+    "2023-09-16",
+    "2023-09-24",
+    "2023-10-03",
+    "2023-11-17",
+    "2024-01-25",
+    "2024-02-08",
+    "2024-02-11",
+    "2024-02-25",
+    "2024-03-19",
+    "1403-01-01",
+    "2024-03-20",
+    "1403-01-02",
+    "2024-03-21",
+    "1403-01-03",
+    "2024-03-22",
+    "1403-01-04",
+    "2024-03-23",
+    "1403-01-12",
+    "2024-03-31",
+    "1403-01-13",
+    "2024-04-01",
+    "1403-01-22",
+    "2024-04-10",
+    "1403-01-23",
+    "2024-04-11",
+    "1403-02-15",
+    "2024-05-04",
+    "1403-03-14",
+    "2024-06-03",
+    "1403-03-15",
+    "2024-06-04",
+    "1403-03-28",
+    "2024-06-17",
+    "1403-04-05",
+    "2024-06-25",
+    "1403-04-25",
+    "2024-07-15",
+    "1403-04-26",
+    "2024-07-16",
+    "1403-05-04",
+    "2024-07-25",
+    "1403-06-12",
+    "2024-09-02",
+    "1403-06-14",
+    "2024-09-04",
+    "1403-06-22",
+    "2024-09-12",
+    "1403-07-31",
+    "2024-10-22",
+    "1403-09-15",
+    "2024-12-05",
+    "1403-10-25",
+    "2025-01-14",
+    "1403-11-09",
+    "2025-01-28",
+    "1403-11-22",
+    "2025-02-10",
+    "1403-11-26",
+    "2025-02-14",
+    "1403-12-29",
+    "2025-03-19",
+    "1403-12-30",
+    "2025-03-20"
+]
 
 __all__ = [
     "to_persian",
@@ -161,6 +162,7 @@ __all__ = [
     # 'Person',
     'JSONEncoder',
     'safe_run']
+
 
 # class Person:
 #     def __init__(self):
@@ -183,6 +185,7 @@ class JSONEncoder(json.JSONEncoder):
     """
     Handles Not Json compatible types by attempting to create string version
     """
+
     def default(self, obj):
         try:
             return json.JSONEncoder.default(self, obj)
@@ -200,6 +203,7 @@ def safe_run(func):
         return func(*args, **kwargs)
 
     return wrapper
+
 
 def employee_exist(db: Session, FK_fields: List[UUID]):
     for FK_field in FK_fields:
@@ -220,19 +224,26 @@ def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.Positi
     return db.query(table).filter_by(deleted=False).order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()
 
 
+datetime_pattern = re.compile(r'(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})')
+date_pattern = re.compile(r'(\d{4})\D(\d{2})\D(\d{2})')
+time_pattern = re.compile(r'(\d{2})\D(\d{2})\D(\d{2})')
+
+
 def Fix_time(time_obj: str | datetime | time):
     if isinstance(time_obj, time):
         return time_obj
     if isinstance(time_obj, datetime):
         return time_obj.time()
     time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
-    time_obj = time_obj.replace("Z", " ") if "Z" in time_obj else time_obj
-    try:
-        if "." in time_obj:
-            return datetime.strptime(time_obj, "%H:%M:%S.%f").replace(microsecond=0)
-        return datetime.strptime(time_obj, "%H:%M:%S")
-    except ValueError:
+    if " " in time_obj:
+        time_obj = time_pattern.match(time_obj)
+    else:
+        time_obj = time_pattern.match(time_obj)
+
+    if not time_obj:
         raise ValueError(f"Incorrect data format, should be HH:MM:SS or HH:MM:SS.MMM, received: {time_obj}")
+    time_obj = time_obj.groups()
+    return time(hour=int(time_obj[-3]), minute=int(time_obj[-2]), second=int(time_obj[-1]))
 
 
 def Fix_date(time_obj: str | datetime | date):
@@ -241,27 +252,27 @@ def Fix_date(time_obj: str | datetime | date):
     if isinstance(time_obj, datetime):
         return time_obj.date()
     time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
-    time_obj = time_obj.replace("Z", " ") if "Z" in time_obj else time_obj
-    try:
-        if " " in time_obj:
-            if "." in time_obj:
-                return datetime.strptime(time_obj, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0).date()
-            return datetime.strptime(time_obj, "%Y-%m-%d %H:%M:%S").date()
-        return datetime.strptime(time_obj, "%Y-%m-%d").date()
-    except ValueError:
-        raise ValueError(f"Incorrect data format, should be HH:MM:SS or HH:MM:SS.MMM, received: {time_obj}")
+
+    if " " in time_obj:
+        time_obj = date_pattern.match(time_obj)
+    else:
+        time_obj = date_pattern.match(time_obj)
+
+    if not time_obj:
+        raise ValueError(f"Incorrect data format, should be YYYY:MM:DD, received: {time_obj}")
+    time_obj = time_obj.groups()
+    return date(year=int(time_obj[0]), month=int(time_obj[1]), day=int(time_obj[2]))
+
 
 def Fix_datetime(time_obj: str | datetime):
     if isinstance(time_obj, datetime):
         return time_obj
     time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
-    time_obj = time_obj.replace("Z", " ") if "Z" in time_obj else time_obj
-    try:
-        if "." in time:
-            return datetime.strptime(time_obj, "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0)
-        return datetime.strptime(time_obj, "%Y-%m-%d %H:%M:%S")
-    except ValueError:
+    time_obj = datetime_pattern.match(time_obj)
+    if not time_obj:
         raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.MMM, received: {time_obj}")
+    time_obj = time_obj.groups()
+    return datetime(year=int(time_obj[0]), month=int(time_obj[1]), day=int(time_obj[2]), hour=int(time_obj[3]), minute=int(time_obj[4]), second=int(time_obj[5]))
 
 
 def is_off_day(day: date | datetime) -> bool:
@@ -272,6 +283,7 @@ def is_off_day(day: date | datetime) -> bool:
         return True
     return False
 
+
 def count(db, field: str):
     if field not in Tables:
         return 404, "field Not Found"
@@ -279,10 +291,10 @@ def count(db, field: str):
     return 200, len(db.query(Tables[field]).filter_by(deleted=False).all())
 
 
-def _sub(start: time, end: time):
+def _sub(start: time, end: time) -> int:
     start = datetime.combine(datetime.today(), start)
     end = datetime.combine(datetime.today(), end)
-    return (end - start).total_seconds() // 60
+    return int((end - start).total_seconds() // 60)
 
 
 def Separate_days_by_Time(start, end, day_starting_time: time, day_ending_time: time):
@@ -296,7 +308,6 @@ def Separate_days_by_Time(start, end, day_starting_time: time, day_ending_time: 
 
     daily.append({"Date": start.date(), "is_holiday": is_off_day(start.date()), "start": start.time(), "end": end.time(), "duration": _sub(start.time(), min(end.time(), day_ending_time))})
     return daily
-
 
 
 def Separate_days_by_DayCap(start, end, Working_cap: int) -> List[Dict]:
@@ -375,6 +386,7 @@ def same_month(date_1: datetime, date_2: datetime):
     date_1 = to_persian(date_1.year, date_1.month, date_1.day)
     date_2 = to_persian(date_2.year, date_2.month, date_2.day)
     return date_1.year == date_2.year and date_1.month == date_2.month
+
 
 if __name__ == '__main__':
     # print(datetime.strptime("14:14:14.555", "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0))

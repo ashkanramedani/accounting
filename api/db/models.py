@@ -4,7 +4,7 @@
 from datetime import datetime
 
 from fastapi_utils.guid_type import GUID as GUID_TYPE, GUID_SERVER_DEFAULT_POSTGRESQL
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, JSON
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
@@ -346,8 +346,8 @@ def create_Unique_ID():
                   index=True)
 
 
-def create_forenKey(table: str):
-    return Column(GUID, ForeignKey(IDs[table]), nullable=False)
+def create_forenKey(table: str, unique: bool = False):
+    return Column(GUID, ForeignKey(IDs[table]), nullable=False, unique=unique)
 
 
 # Base
@@ -682,7 +682,7 @@ class SalaryPolicy_form(Base, Base_form):
     __tablename__ = "salary_policy_form"
     SalaryPolicy_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
-    employee_fk_id = create_forenKey("employees")
+    employee_fk_id = create_forenKey("employees", unique=True)
 
     is_Fixed = Column(Boolean, nullable=False)
     day_starting_time = Column(TIME, nullable=True, default=None)
@@ -724,3 +724,56 @@ class SalaryPolicy_form(Base, Base_form):
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="SalaryPolicy_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
+
+    def summery(self):
+        return {
+            "is_Fixed": self.is_Fixed,
+            "day_starting_time": self.day_starting_time,
+            "day_ending_time": self.day_ending_time,
+            "Regular_hours_factor": self.Regular_hours_factor,
+            "Regular_hours_cap": self.Regular_hours_cap,
+            "overtime_permission": self.overtime_permission,
+            "overtime_factor": self.overtime_factor,
+            "overtime_cap": self.overtime_cap,
+            "overtime_threshold": self.overtime_threshold,
+            "undertime_factor": self.undertime_factor,
+            "undertime_threshold": self.undertime_threshold,
+            "off_day_permission": self.off_day_permission,
+            "off_day_factor": self.off_day_factor,
+            "off_day_cap": self.off_day_cap,
+            "remote_permission": self.remote_permission,
+            "remote_factor": self.remote_factor,
+            "remote_cap": self.remote_cap,
+            "medical_leave_factor": self.medical_leave_factor,
+            "medical_leave_cap": self.medical_leave_cap,
+            "vacation_leave_factor": self.vacation_leave_factor,
+            "vacation_leave_cap": self.vacation_leave_cap,
+            "business_trip_permission": self.business_trip_permission,
+            "business_trip_factor": self.business_trip_factor,
+            "business_trip_cap": self.business_trip_cap
+        }
+
+
+class Salary(Base, Base_form):
+    __tablename__ = "salary"
+    salary_pk_id = create_Unique_ID()
+    employee_fk_id = create_forenKey("employees")
+
+    total_Regular_hours = Column(Integer, nullable=False)
+    total_Overtime_hours = Column(Integer, nullable=False)
+    total_Undertime_hours = Column(Integer, nullable=False)
+    off_Day_Overtime = Column(Integer, nullable=False)
+    Total_Work = Column(Integer, nullable=False)
+    remote = Column(Integer, nullable=False)
+    remote_earning = Column(Float, nullable=False)
+    vacation_leave = Column(Integer, nullable=False)
+    vacation_leave_earning = Column(Integer, nullable=False)
+    medical_leave = Column(Integer, nullable=False)
+    medical_leave_earning = Column(Float, nullable=False)
+    business_trip = Column(Integer, nullable=False)
+    business_trip_earning = Column(Float, nullable=False)
+
+    salary_policy_summery = Column(JSON, nullable=False)
+    day_report_summery = Column(JSON, nullable=False)
+
+    created = relationship("Employees_form", foreign_keys=[employee_fk_id])

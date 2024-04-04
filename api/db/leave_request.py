@@ -52,8 +52,8 @@ def report_leave_request(db: Session, salary_rate, employee_fk_id, start_date, e
     return 200, {
         "vacation_leave": vacation_leave,
         "vacation_leave_earning": vacation_leave * salary_rate.vacation_leave_factor,
-        "medical": medical_leave,
-        "medical_earning": medical_leave * salary_rate.medical_leave_factor}
+        "medical_leave": medical_leave,
+        "medical_leave_earning": medical_leave * salary_rate.medical_leave_factor}
 
 
 def post_leave_request(db: Session, Form: sch.post_leave_request_schema):

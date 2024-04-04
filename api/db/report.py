@@ -34,10 +34,16 @@ def get_report(db: Session, employee_fk_id, year, month):
             if s == 200:
                 tmp |= i
             else:
-                print(i)
+                logger.warning(i)
                 return s, i
 
-            return 200, tmp
+        days_metadata = tmp.pop('Days')
+        salary_obj = dbm.Salary(employee_fk_id=employee_fk_id, day_report_summery=days_metadata, salary_policy_summery=salary.summery(), **tmp)  # type: ignore[call-arg]
+        db.add(salary_obj)
+        db.commit()
+
+        return 200, tmp
     except Exception as e:
         logger.error(e)
+        db.rollback()
         return 500, e.__repr__()

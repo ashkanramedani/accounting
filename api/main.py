@@ -13,7 +13,7 @@ from router import routes
 
 
 try:
-    models.Base.metadata.drop_all(engine)
+    # models.Base.metadata.drop_all(engine)
     models.Base.metadata.create_all(bind=engine)
 except OperationalError as e:
     logger.show_log(f"[ Could Not Create Engine ]: {e.__repr__()}", 'e')

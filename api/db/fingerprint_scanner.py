@@ -288,8 +288,8 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
                     if hour[H] == hour[H + 1] or hour[H + 1] is None:
                         OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
                     else:
-                        duration = 0 if hour[H] == hour[H + 1] else Fix_time(hour[H + 1]) - Fix_time(hour[H])
-                        OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration.total_seconds() // 60))  # type: ignore[call-arg]
+                        duration = 0 if hour[H] == hour[H + 1] else _sub(Fix_time(hour[H]), Fix_time(hour[H + 1]))
+                        OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()
