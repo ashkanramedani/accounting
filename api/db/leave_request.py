@@ -69,7 +69,7 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
             return 400, "Bad Request: End Date must be greater than Start Date"
 
         if not same_month(Start, End):
-            return 400, "Bad Request: End Date must be in the same month as Start Date"
+            return 400, f"Bad Request: End Date must be in the same month as Start Date: {Start}, {End}"
 
 
         # this part check if leave request is daily or hourly

@@ -43,7 +43,7 @@ async def search_all_teacher_replacement(db=Depends(get_db), page: sch.PositiveI
     return result
 
 
-@router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def delete_tardy_request(form_id, db=Depends(get_db)):
     status_code, result = dbf.delete_teacher_replacement(db, form_id)
     if status_code != 200:

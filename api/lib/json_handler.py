@@ -1,5 +1,5 @@
 """
-    Class Name : json_handler
+    class Name : json_handler
     Version Code : 1.0.0
     Last Update : 2019-10-23 15:20:00
     Python Version : 3.7.0
@@ -10,7 +10,7 @@ import json
 
 class json_handler:
     def __init__(self, FilePath="", ShowJsonErrors=True):
-        self.VERSION = "1.4.0 build:9705301047"  # Version of class
+        self.VERSION = "1.4.0 build:9705301047"  # Version of course
         self.Data = {}
         self.filePath = ""
         self.Separator = ":"

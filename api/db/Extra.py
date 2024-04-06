@@ -21,12 +21,12 @@ Tables = {
     "question": dbm.Questions_form,
     "response": dbm.Response_form,
     "Business Trip": dbm.Business_Trip_form,
-    "Class Cancellation": dbm.Class_Cancellation_form,
+    "course Cancellation": dbm.course_Cancellation_form,
     "Employee": dbm.Employees_form,
     "Tardy Request": dbm.Teacher_tardy_reports_form,
     "Student": dbm.Student_form,
     "Teacher Replacement": dbm.Teacher_Replacement_form,
-    "class": dbm.Class_form,
+    "course": dbm.course_form,
     "fingerprint_scanner": dbm.Fingerprint_scanner_form,
     "payment_method": dbm.Payment_method_form,
     "Leave Forms": dbm.Leave_request_form
@@ -147,7 +147,7 @@ __all__ = [
     "to_persian",
     "to_international",
     "employee_exist",
-    "class_exist",
+    "course_exist",
     'record_order_by',
     'Fix_time',
     'count',
@@ -164,7 +164,7 @@ __all__ = [
     'safe_run']
 
 
-# class Person:
+# course Person:
 #     def __init__(self):
 #         self.unique_names = []
 #         self.fake = Faker()
@@ -212,8 +212,8 @@ def employee_exist(db: Session, FK_fields: List[UUID]):
     return True
 
 
-def class_exist(db: Session, FK_field: UUID):
-    if not db.query(dbm.Class_form).filter_by(class_pk_id=FK_field, deleted=False).first():
+def course_exist(db: Session, FK_field: UUID):
+    if not db.query(dbm.course_form).filter_by(course_pk_id=FK_field, deleted=False).first():
         return False
     return True
 

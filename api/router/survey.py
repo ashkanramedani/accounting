@@ -36,9 +36,9 @@ async def search_all_survey(db=Depends(get_db), page: sch.PositiveInt = 1, limit
     return result
 
 
-@router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_survey(survey_id, db=Depends(get_db)):
-    status_code, result = dbf.delete_survey(db, survey_id)
+@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def delete_survey(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_survey(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

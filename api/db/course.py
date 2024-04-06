@@ -9,33 +9,33 @@ from lib import logger
 from .Extra import *
 
 
-def get_class(db: Session, class_id):
+def get_course(db: Session, course_id):
     try:
-        return 200, db.query(dbm.Class_form).filter_by(class_pk_id=class_id, deleted=False).first()
+        return 200, db.query(dbm.course_form).filter_by(course_pk_id=course_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def get_all_class(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_course(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Class_form, page, limit, order)
+        return 200, record_order_by(db, dbm.course_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def post_class(db: Session, Form: sch.post_class_schema):
+def post_course(db: Session, Form: sch.post_course_schema):
     try:
         data = Form.dict()
         teachers = data.pop("teachers")
 
         if not teachers:
-            return 200, "Class with no teacher added"
+            return 200, "course with no teacher added"
 
-        OBJ = dbm.Class_form(**data)  # type: ignore[call-arg]
+        OBJ = dbm.course_form(**data)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -50,16 +50,16 @@ def post_class(db: Session, Form: sch.post_class_schema):
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
-        return 200, "class Added"
+        return 200, "course Added"
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, e.__repr__()
 
 
-def delete_class(db: Session, class_id):
+def delete_course(db: Session, course_id):
     try:
-        record = db.query(dbm.Class_form).filter_by(class_id=class_id, deleted=False).first()
+        record = db.query(dbm.course_form).filter_by(course_pk_id=course_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -71,9 +71,9 @@ def delete_class(db: Session, class_id):
         return 500, e.__repr__()
 
 
-def update_class(db: Session, Form: sch.update_class_schema):
+def update_course(db: Session, Form: sch.update_course_schema):
     try:
-        record = db.query(dbm.Class_form).filter_by(class_pk_id=Form.class_pk_id, deleted=False)
+        record = db.query(dbm.course_form).filter_by(course_pk_id=Form.course_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

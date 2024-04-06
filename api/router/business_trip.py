@@ -44,7 +44,7 @@ async def search_all_business_trip(db=Depends(get_db), page: sch.PositiveInt = 1
     return result
 
 
-@router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
 async def delete_business_trip(form_id, db=Depends(get_db)):
     status_code, result = dbf.delete_business_trip_form(db, form_id)
     if status_code != 200:

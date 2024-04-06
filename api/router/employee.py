@@ -34,9 +34,9 @@ async def search_all_employee(db=Depends(get_db), page: sch.PositiveInt = 1, lim
     return result
 
 
-@router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_employee(employee_id, db=Depends(get_db)):
-    status_code, result = dbf.delete_employee(db, employee_id)
+@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def delete_employee(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_employee(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

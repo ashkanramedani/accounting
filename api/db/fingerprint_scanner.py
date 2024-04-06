@@ -170,12 +170,9 @@ def Split_schedule(EMP_Salary, reports):
 
 
 # Teacher Replacement
-def get_fingerprint_scanner(db: Session, user_id):
+def get_fingerprint_scanner(db: Session, form_id):
     try:
-        user = db.query(dbm.Employees_form).filter_by(employees_pk_id=user_id, deleted=False).first()
-        if not user:
-            return 400, "Bad Request"
-        return 200, db.query(dbm.Fingerprint_scanner_form).filter_by(user_ID=user.fingerprint_scanner_user_id, deleted=False).all()
+        return 200, db.query(dbm.Fingerprint_scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -303,7 +300,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
 
 def delete_fingerprint_scanner(db: Session, form_id):
     try:
-        record = db.query(dbm.Fingerprint_scanner_form).filter_by(fingerprint_scanner_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Fingerprint_scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -317,14 +314,19 @@ def delete_fingerprint_scanner(db: Session, form_id):
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
     try:
-        record = db.query(dbm.Fingerprint_scanner_form).filter_by(teacher_tardy_reports_pk_id=Form.fingerprint_scanner_pk_id, deleted=False)
+        record = db.query(dbm.Fingerprint_scanner_form).filter_by(FingerPrintScanner_pk_id=Form.FingerPrintScanner_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
-        record.update(Form.dict(), synchronize_session=False)
+        data = Form.dict()
+
+        s, e = data["Enter"], data["Exit"]
+        data["duration"] = 0 if s == e else _sub(Fix_time(s), Fix_time(s))
+
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"
