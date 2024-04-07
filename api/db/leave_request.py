@@ -52,8 +52,8 @@ def report_leave_request(db: Session, salary_rate, employee_fk_id, start_date, e
     return 200, {
         "vacation_leave": vacation_leave,
         "vacation_leave_earning": vacation_leave * salary_rate.vacation_leave_factor,
-        "medical": medical_leave,
-        "medical_earning": medical_leave * salary_rate.medical_leave_factor}
+        "medical_leave": medical_leave,
+        "medical_leave_earning": medical_leave * salary_rate.medical_leave_factor}
 
 
 def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
@@ -69,12 +69,13 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
             return 400, "Bad Request: End Date must be greater than Start Date"
 
         if not same_month(Start, End):
-            return 400, "Bad Request: End Date must be in the same month as Start Date"
+            return 400, f"Bad Request: End Date must be in the same month as Start Date: {Start}, {End}"
+
 
         # this part check if leave request is daily or hourly
         if End.date() == Start.date():
             if not is_off_day(Start):
-                OBJ = dbm.Leave_request_form(start=Start.time(), end=End.time(), duration=(End - Start).total_seconds() // 60, date=Start.replace(hour=0, minute=0, second=0, microsecond=0), **data)  # type: ignore[call-arg]
+                OBJ = dbm.Leave_request_form(start_date=Start.time(), end_date=End.time(), duration=(End - Start).total_seconds() // 60, date=Start.replace(hour=0, minute=0, second=0, microsecond=0), **data)  # type: ignore[call-arg]
                 db.add(OBJ)
         else:
             OBJ = []

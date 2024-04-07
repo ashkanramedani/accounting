@@ -31,9 +31,9 @@ async def search_all_SalaryPolicy(db=Depends(get_db), page: sch.PositiveInt = 1,
     return result
 
 
-@router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_SalaryPolicy(SalaryPolicy_id, db=Depends(get_db)):
-    status_code, result = dbf.delete_SalaryPolicy(db, SalaryPolicy_id)
+@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def delete_SalaryPolicy(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_SalaryPolicy(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

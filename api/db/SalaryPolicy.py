@@ -91,7 +91,7 @@ def delete_SalaryPolicy(db: Session, form_id):
 
 def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
     try:
-        record = db.query(dbm.SalaryPolicy_form).filter_by(SalaryPolicy_pk_id=Form.salary_pk_id, deleted=False)
+        record = db.query(dbm.SalaryPolicy_form).filter_by(SalaryPolicy_pk_id=Form.SalaryPolicy_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

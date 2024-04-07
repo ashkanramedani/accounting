@@ -2,8 +2,8 @@ from .Roles import *
 from .SalaryPolicy import *
 from .Survey import *
 from .business_trip import *
-from .class_cancellation import *
-from .classes import *
+from .course_cancellation import *
+from .course import *
 from .db_category import *
 from .db_library import *
 from .db_post import *
@@ -18,11 +18,14 @@ from .response import *
 from .student import *
 from .tardy_request import *
 from .teacher_replacement import *
+from .report import *
 
 from .Extra import count
 
 __all__ = [
     "count",
+    # report.py
+    "get_report",
     # SalaryPolicy_form.py
     "get_SalaryPolicy",
     "get_all_SalaryPolicy",
@@ -72,12 +75,12 @@ __all__ = [
     "post_business_trip_form",
     "delete_business_trip_form",
     "update_business_trip_form",
-    # class_cancellation.py
-    "get_class_cancellation_form",
-    "get_all_class_cancellation_form",
-    "post_class_cancellation_form",
-    "delete_class_cancellation_form",
-    "update_class_cancellation_form",
+    # course_cancellation.py
+    "get_course_cancellation_form",
+    "get_all_course_cancellation_form",
+    "post_course_cancellation_form",
+    "delete_course_cancellation_form",
+    "update_course_cancellation_form",
     # remote_request.py
     "get_remote_request_form",
     "get_all_remote_request_form",
@@ -104,12 +107,12 @@ __all__ = [
     "post_response",
     "delete_response",
     "update_response",
-    # class.py
-    "get_class",
-    "get_all_class",
-    "post_class",
-    "delete_class",
-    "update_class",
+    # course.py
+    "get_course",
+    "get_all_course",
+    "post_course",
+    "delete_course",
+    "update_course",
     # payment.py
     "get_payment_method",
     "get_all_payment_method",

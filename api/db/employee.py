@@ -60,7 +60,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
 
 def delete_employee(db: Session, employee_id):
     try:
-        record = db.query(dbm.Employees_form).filter_by(employee_id=employee_id, deleted=False).first()
+        record = db.query(dbm.Employees_form).filter_by(employees_pk_id=employee_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True

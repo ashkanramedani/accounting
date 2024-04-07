@@ -34,10 +34,10 @@ def report_teacher_replacement(db: Session, Form: sch.teacher_report):
     try:
         result = (
             db.query(dbm.Teacher_Replacement_form)
-            .join(dbm.Class_form, dbm.Class_form.class_pk_id == dbm.Teacher_Replacement_form.class_fk_id)
+            .join(dbm.course_form, dbm.course_form.course_pk_id == dbm.Teacher_Replacement_form.course_fk_id)
             .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
-            .filter(dbm.Class_form.class_time.between(Form.start_date, Form.end_date))
-            .options(joinedload(dbm.Teacher_Replacement_form.classes))
+            .filter(dbm.course_form.course_time.between(Form.start_date, Form.end_date))
+            .options(joinedload(dbm.Teacher_Replacement_form.course))
             .count()
         )
 
@@ -52,7 +52,7 @@ def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_sch
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
             return 400, "Bad Request"
-        if not class_exist(db, Form.class_fk_id):
+        if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
         OBJ = dbm.Teacher_Replacement_form(**Form.dict())  # type: ignore[call-arg]
@@ -89,7 +89,7 @@ def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement
 
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
             return 400, "Bad Request"
-        if not class_exist(db, Form.class_fk_id):
+        if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
         record.update(Form.dict(), synchronize_session=False)

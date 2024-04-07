@@ -1,6 +1,6 @@
 from .business_trip import router as business_trip_route
-from .class_cancellation import router as class_cancellation_route
-from .classes import router as class_route
+from .course_cancellation import router as course_cancellation_route
+from .course import router as course_route
 from .employee import router as employee_route
 from .leave_request import router as leave_request_route
 from .payment import router as route_payment
@@ -14,6 +14,7 @@ from .tardy_request import router as tardy_request_route
 from .teacher_replacement import router as teacher_replacement_route
 from .roles import router as roles_route
 from .SalaryPolicy import router as salary_route
+from .report import router as report_route
 
 from .files import router as files
 from .user import router as user
@@ -23,10 +24,11 @@ from .category import router as category
 from .library import router as library
 
 routes = [
+    report_route,
     roles_route,
     business_trip_route,
-    class_cancellation_route,
-    class_route,
+    course_cancellation_route,
+    course_route,
     leave_request_route,
     salary_route,
     question_route,

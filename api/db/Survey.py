@@ -46,7 +46,7 @@ def post_question(db: Session, Form: sch.post_questions_schema):
 
 def delete_question(db: Session, question_id):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(question_id_pk_id=question_id, deleted=False).first()
+        record = db.query(dbm.Questions_form).filter_by(question_pk_id=question_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -96,13 +96,13 @@ def get_all_survey(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, o
 
 def post_survey(db: Session, Form: sch.post_survey_schema):
     try:
-        if not class_exist(db, Form.class_fk_id):
+        if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
         data = Form.dict()
         questions: List[UUID] = data.pop("questions")
 
-        OBJ = dbm.Survey_form(**data)
+        OBJ = dbm.Survey_form(**data)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -145,7 +145,7 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
         if not record.first():
             return 404, "Record Not Found"
 
-        if not class_exist(db, Form.class_fk_id):
+        if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
         data = Form.dict()

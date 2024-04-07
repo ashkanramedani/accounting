@@ -48,7 +48,7 @@ def delete_student(db: Session, student_id):
             return 404, "Record Not Found"
         record.deleted = True
         db.commit()
-        return 200, "employee Deleted"
+        return 200, "Student Deleted"
     except Exception as e:
         logger.error(e)
         db.rollback()

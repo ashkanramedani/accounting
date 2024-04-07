@@ -35,9 +35,9 @@ async def search_all_payment_method(db=Depends(get_db), page: sch.PositiveInt = 
     return result
 
 
-@router.delete("/delete", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
-async def delete_payment_method(payment_method_id, db=Depends(get_db)):
-    status_code, result = dbf.delete_payment_method(db, payment_method_id)
+@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def delete_payment_method(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_payment_method(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

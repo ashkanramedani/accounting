@@ -32,10 +32,10 @@ def report_tardy_request(db: Session, Form: sch.teacher_report):
     try:
         result = (
             db.query(dbm.Teacher_tardy_reports_form)
-            .join(dbm.Class_form, dbm.Class_form.class_pk_id == dbm.Teacher_tardy_reports_form.class_fk_id)
+            .join(dbm.course_form, dbm.course_form.course_pk_id == dbm.Teacher_tardy_reports_form.course_fk_id)
             .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
-            .filter(dbm.Class_form.class_time.between(Form.start_date, Form.end_date))
-            .options(joinedload(dbm.Teacher_tardy_reports_form.classes))
+            .filter(dbm.course_form.course_time.between(Form.start_date, Form.end_date))
+            .options(joinedload(dbm.Teacher_tardy_reports_form.course))
             .all()
         )
 
@@ -50,7 +50,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
-        if not class_exist(db, Form.class_fk_id):
+        if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
         OBJ = dbm.Teacher_tardy_reports_form(**Form.dict())  # type: ignore[call-arg]
@@ -88,7 +88,7 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
 
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
-        if not class_exist(db, Form.class_fk_id):
+        if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
         record.update(Form.dict(), synchronize_session=False)

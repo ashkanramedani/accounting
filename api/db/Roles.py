@@ -43,7 +43,7 @@ def post_role(db: Session, Form: sch.post_role_schema):
 
 def delete_role(db: Session, role_id):
     try:
-        record = db.query(dbm.Remote_Request_form).filter_by(role_id_pk_id=role_id, deleted=False).first()
+        record = db.query(dbm.Roles_form).filter_by(role_pk_id=role_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
