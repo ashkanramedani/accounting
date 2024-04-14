@@ -24,7 +24,7 @@ def read_all_library_for_admin_panel(db: Session, topic: str, start_id: int, pag
             return False
         return data
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
         return -1
 
@@ -36,7 +36,7 @@ def get_library_with_pid(db: Session, pid: str):
             return False
         return data
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
         return -1
 
@@ -53,7 +53,7 @@ def delete_libraries(db: Session, topic: str, pid: int):
         else:
             return 0
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
         return -1
 

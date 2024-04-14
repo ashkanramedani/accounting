@@ -3,33 +3,30 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import logger
-from .Extra import *
+from .Extra import record_order_by
 
-
-
-
-# role
-def get_role(db: Session, role_id):
+# question
+def get_question(db: Session, question_id):
     try:
-        return 200, db.query(dbm.Roles_form).filter_by(role_pk_id=role_id, deleted=False).first()
+        return 200, db.query(dbm.Questions_form).filter_by(question_pk_id=question_id, deleted=False).first()
     except Exception as e:
         logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Roles_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Questions_form, page, limit, order)
     except Exception as e:
         logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def post_role(db: Session, Form: sch.post_role_schema):
+def post_question(db: Session, Form: sch.post_questions_schema):
     try:
-        OBJ = dbm.Roles_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.Questions_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -41,9 +38,9 @@ def post_role(db: Session, Form: sch.post_role_schema):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def delete_role(db: Session, role_id):
+def delete_question(db: Session, question_id):
     try:
-        record = db.query(dbm.Roles_form).filter_by(role_pk_id=role_id, deleted=False).first()
+        record = db.query(dbm.Questions_form).filter_by(question_pk_id=question_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -55,9 +52,9 @@ def delete_role(db: Session, role_id):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def update_role(db: Session, Form: sch.update_role_schema):
+def update_question(db: Session, Form: sch.update_questions_schema):
     try:
-        record = db.query(dbm.Roles_form).filter_by(role_pk_id=Form.role_pk_id, deleted=False)
+        record = db.query(dbm.Questions_form).filter_by(question_pk_id=Form.question_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 
@@ -65,6 +62,16 @@ def update_role(db: Session, Form: sch.update_role_schema):
 
         db.commit()
         return 200, "Form Updated"
+    except Exception as e:
+        logger.error(f'{e.__class__.__name__}: {e.args}')
+        db.rollback()
+        return 500, f'{e.__class__.__name__}: {e.args}'
+
+
+# survey
+def get_survey(db: Session, survey_id):
+    try:
+        return 200, db.query(dbm.Survey_form).filter_by(survey_pk_id=survey_id, deleted=False).first()
     except Exception as e:
         logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()

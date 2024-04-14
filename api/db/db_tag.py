@@ -69,7 +69,7 @@ def update_tag(db: Session, id: int, new: sch.Tag):
         else:
             return 0
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
         return -1
 
@@ -88,6 +88,6 @@ def delete_tag(db: Session, id: int):
         else:
             return 0
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
         return -1

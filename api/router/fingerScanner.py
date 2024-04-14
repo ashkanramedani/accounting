@@ -2,6 +2,7 @@ from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
+from lib import API_Exception
 from fastapi import HTTPException
 from fastapi_limiter.depends import RateLimiter
 

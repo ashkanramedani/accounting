@@ -16,18 +16,18 @@ def get_teacher_replacement(db: Session, form_id):
     try:
         return 200, db.query(dbm.Teacher_Replacement_form).filter_by(teacher_replacement_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def get_all_teacher_replacement(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Teacher_Replacement_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def report_teacher_replacement(db: Session, Form: sch.teacher_report):
@@ -43,9 +43,9 @@ def report_teacher_replacement(db: Session, Form: sch.teacher_report):
 
         return 200, result
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_schema):
@@ -62,9 +62,9 @@ def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_sch
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def delete_teacher_replacement(db: Session, form_id):
@@ -76,9 +76,9 @@ def delete_teacher_replacement(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement_schema):
@@ -97,6 +97,6 @@ def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'

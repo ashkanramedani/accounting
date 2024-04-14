@@ -1,5 +1,6 @@
 from typing import List
 
+from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_limiter.depends import RateLimiter
 import db as dbf

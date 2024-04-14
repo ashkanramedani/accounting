@@ -398,21 +398,27 @@ survey_questions = Table(
         "survey_questions",
         Base.metadata,
         Column("survey_fk_id", ForeignKey("survey.survey_pk_id")),
-        Column("question_fk_id", ForeignKey("question.question_pk_id")))
+        Column("question_fk_id", ForeignKey("question.question_pk_id")),
+        Column("deleted", Boolean, default=False, nullable=False),
+        UniqueConstraint("survey_fk_id", "question_fk_id", "deleted"), )
+
+deleted = Column(Boolean, server_default=expression.false(), nullable=False)
 
 UserRole = Table(
         "users_roles",
         Base.metadata,
         Column("employee_fk_id", ForeignKey("employees.employees_pk_id")),
         Column("role_fk_id", ForeignKey("roles.role_pk_id")),
-        UniqueConstraint("employee_fk_id", "role_fk_id"), )
+        Column("deleted", Boolean, default=False, nullable=False),
+        UniqueConstraint("employee_fk_id", "role_fk_id", "deleted"), )
 
 TeacherCourse = Table(
         "teacher_course",
         Base.metadata,
         Column("employee_fk_id", ForeignKey("employees.employees_pk_id")),
         Column("course_fk_id", ForeignKey("course.course_pk_id")),
-        UniqueConstraint("employee_fk_id", "course_fk_id"), )
+        Column("deleted", Boolean, default=False, nullable=False),
+        UniqueConstraint("employee_fk_id", "course_fk_id", "deleted"), )
 
 
 # ========================== Entity ===========================
@@ -455,6 +461,7 @@ class Student_form(Base, UserBase):
 
     __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name'),)
 
+
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
 class course_form(Base, InstitutionsBase):
     __tablename__ = "course"
@@ -464,6 +471,13 @@ class course_form(Base, InstitutionsBase):
     name = Column(String)
     course_time = Column(DateTime, nullable=False)
     duration = Column(Integer)
+
+    # starting_date = Column(Date, nullable=False)
+    # ending_date = Column(Date, nullable=False)
+    # course_capacity = Column(Integer, nullable=False, default=0)
+    # course_type = Column(String, nullable=False)
+    # course_language = Column(String, nullable=False)
+    # course_level = Column(String, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="course_Relation")
     teachers = relationship("Employees_form", secondary=TeacherCourse, backref="course")

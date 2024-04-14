@@ -1,6 +1,7 @@
+import uuid
 from datetime import datetime, date, time, timedelta
 from enum import Enum
-from typing import Optional, List, Any
+from typing import Optional, List, Any, Tuple
 from uuid import UUID
 from pydantic import BaseModel, PositiveInt
 
@@ -150,26 +151,26 @@ class ProductUsers(BaseModel):
 #         orm_mode = True
 
 # -------------------   Posts   -------------------
-class  PostViwesBase(BaseModel):
+class PostViwesBase(BaseModel):
     post_fk_id: int
     ip: str | None = None
     country: str | None = None
     user_creator_fk_id: int = None
 
 
-class  PostViwesCreate(PostViwesBase):
-    class  Config:
+class PostViwesCreate(PostViwesBase):
+    class Config:
         orm_mode = True
 
 
-class  PostViwes(PostViwesBase):
+class PostViwes(PostViwesBase):
     post_viwe_pk_id: int
 
-    class  Config:
+    class Config:
         orm_mode = True
 
 
-class  UserInPost(BaseModel):
+class UserInPost(BaseModel):
     user_pk_id: int
     fname: str
     lname: str
@@ -177,11 +178,11 @@ class  UserInPost(BaseModel):
     # gender: str
     deleted: bool
 
-    class  Config:
+    class Config:
         orm_mode = True
 
 
-class  PostBase(BaseModel):
+class PostBase(BaseModel):
     post_title: str
     post_summary: Optional[str] = ""
     post_discribtion: Optional[str] = ""
@@ -219,12 +220,12 @@ class PostCreate(PostBase):
     users_post_actor: Optional[List[str]] = []
     user_creator_fk_id: Optional[int] = 1
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
 class PostUpdateData(BaseModel):
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -240,7 +241,7 @@ class Post(PostBase):
     post_data_file_path: str | None = None
     create_date: datetime
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -253,7 +254,7 @@ class Posts(PostBase):
     users_post_writer: Optional[List[str]] = []
     users_post_actor: Optional[List[str]] = []
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -261,14 +262,14 @@ class PostStatus(BaseModel):
     post_pk_id: int
     post_status: int
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
 class PostDelete(BaseModel):
     post_pk_id: int
 
-    class Config: 
+    class Config:
         orm_mode = True
         # users_post = relationship("Users", secondary=users_posts_association, backref="posts_user")
 
@@ -292,14 +293,14 @@ class TagCreate(TagBase):
     user_creator_tag_fk_id: int
     priority: Optional[int] = None
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
 class Tag(TagBase):
     tag_pk_id: UUID
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -311,14 +312,14 @@ class CategoryBase(BaseModel):
 class CategoryCreate(CategoryBase):
     priority: Optional[int] = None
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
 class Category(CategoryBase):
     category_pk_id: UUID
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -361,7 +362,7 @@ class LibraryCreate(LibraryBase):
     library_data_file_link: Optional[str] = None
     library_data_file_path: Optional[str] = None
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -369,14 +370,14 @@ class Library(LibraryBase):
     library_pk_id: int
     download_count: Optional[int] = 0
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
 class LibraryDelete(BaseModel):
     library_pk_id: int
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -404,13 +405,6 @@ class Base_form(BaseModel):
     created_fk_by: UUID
     description: str | None = None
     status: int = 0
-
-
-class StudentBase(BaseModel):
-    created_fk_by: UUID
-    description: str | None
-    status: int = 0
-
 
 class InstitutionsBase(BaseModel):
     created_fk_by: UUID
@@ -448,7 +442,7 @@ class export_role(BaseModel):
     name: str
     cluster: str
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -470,14 +464,13 @@ class update_employee_schema(Entity):
     fingerprint_scanner_user_id: int | None = None
 
 
-
 class employee_response(BaseModel):
     employees_pk_id: UUID
     name: str
     last_name: str
     roles: List[export_role] | None
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -487,14 +480,16 @@ class export_employee(BaseModel):
     last_name: str
     roles: List[export_role] | None
 
-    class Config: 
+    class Config:
         orm_mode = True
+
 
 class role_response(update_role_schema):
     created: export_employee
 
     class Config:
         orm_mode = True
+
 
 # ---------------------- student ----------------------
 class Student(Entity):
@@ -511,9 +506,9 @@ class update_student_schema(Student):
 
 
 class student_response(update_student_schema):
-    pass
+    created: export_employee
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -522,7 +517,7 @@ class export_student(BaseModel):
     name: str
     last_name: str
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -553,7 +548,7 @@ class course_response(InstitutionsBase):
     duration: PositiveInt
     teachers: List[export_employee]
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -562,9 +557,9 @@ class export_course(BaseModel):
     name: str
     course_time: str | datetime = datetime.now()
     duration: PositiveInt | Any
-    teachers: export_employee
+    teachers: List[export_employee]
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -585,7 +580,7 @@ class update_questions_schema(Question):
 class Question_response(update_questions_schema):
     created: export_employee
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -594,11 +589,16 @@ class export_question(BaseModel):
     text: str
     language: str
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
-# ======================== Forms =============================
+# ======================== Forms ============================
+class Base_response(BaseModel):
+    created: export_employee
+    description: str | None = None
+    status: int = 0
+
 # ++++++++++++++++++++++++++ EmployeeBase +++++++++++++++++++++++++++
 # ---------------------- business_trip ----------------------
 class business_trip(Base_form):
@@ -616,14 +616,10 @@ class update_business_trip_schema(business_trip):
     business_trip_pk_id: UUID
 
 
-class business_trip_response(update_business_trip_schema):
-    business_trip_pk_id: UUID
-    destination: str
-    description: str
-    created: export_employee
+class business_trip_response(update_business_trip_schema, Base_response):
     employee: export_employee
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -637,7 +633,6 @@ class leave_request(Base_form):
     end_date: str | datetime = datetime.now() + timedelta(days=1)
 
 
-
 class post_leave_request_schema(leave_request):
     pass
 
@@ -646,9 +641,8 @@ class update_leave_request_schema(leave_request):
     leave_request_pk_id: UUID
 
 
-class leave_request_response(Base_form):
+class leave_request_response(Base_form, Base_response):
     leave_request_pk_id: UUID
-    created: export_employee
     employee: export_employee
 
     start_date: time | None
@@ -658,7 +652,7 @@ class leave_request_response(Base_form):
 
     leave_type: str
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -678,11 +672,10 @@ class update_remote_request_schema(remote_request):
     remote_request_pk_id: UUID
 
 
-class remote_request_response(update_remote_request_schema):
-    created: export_employee
+class remote_request_response(update_remote_request_schema, Base_response):
     employee: export_employee
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -705,7 +698,7 @@ class update_fingerprint_scanner_schema(fingerprint_scanner):
     FingerPrintScanner_pk_id: UUID
 
 
-class fingerprint_scanner_response(BaseModel):
+class fingerprint_scanner_response(Base_response):
     FingerPrintScanner_pk_id: UUID
     Date: date | str
     Enter: time | str
@@ -713,7 +706,7 @@ class fingerprint_scanner_response(BaseModel):
     EnNo: int
     created: export_employee
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -734,12 +727,11 @@ class update_course_cancellation_schema(course_cancellation):
     course_cancellation_pk_id: UUID
 
 
-class course_cancellation_response(update_course_cancellation_schema):
-    created: export_employee
+class course_cancellation_response(Base_response, update_course_cancellation_schema):
     teacher: export_employee
     course: export_course
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -758,12 +750,11 @@ class update_teacher_tardy_reports_schema(teacher_tardy_reports):
     teacher_tardy_reports_pk_id: UUID
 
 
-class teacher_tardy_reports_response(update_teacher_tardy_reports_schema):
-    created: export_employee
+class teacher_tardy_reports_response(Base_response, update_teacher_tardy_reports_schema):
     teacher: export_employee
     course: export_course
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -783,13 +774,12 @@ class update_teacher_replacement_schema(teacher_replacement):
     teacher_replacement_pk_id: UUID
 
 
-class teacher_replacement_response(update_teacher_replacement_schema):
-    created: export_employee
+class teacher_replacement_response(Base_response, update_teacher_replacement_schema):
     main_teacher: export_employee
     replacement_teacher: export_employee
     course: export_course
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -808,11 +798,10 @@ class update_payment_method_schema(payment_method):
     payment_method_pk_id: UUID
 
 
-class payment_method_response(update_payment_method_schema):
-    created: export_employee
+class payment_method_response(Base_response, update_payment_method_schema):
     employee: export_employee
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -834,12 +823,11 @@ class update_survey_schema(Survey):
     course_fk_id: UUID
 
 
-class survey_response(update_survey_schema):
-    created: export_employee
+class survey_response(Base_response, update_survey_schema):
     course: export_course
     questions: List[export_question]
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -847,33 +835,35 @@ class export_survey(BaseModel):
     survey_pk_id: UUID
     title: str
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
 # ++++++++++++++++++++++++++ StudentBase +++++++++++++++++++++++++++
 # ---------------------- response ----------------------
-class Response(StudentBase):
+class Response(Base_form):
     student_fk_id: UUID
-    question_fk_id: UUID
     survey_fk_id: UUID
-    answer: str
-
+    answers: List[Tuple[UUID, str]] = [(uuid.uuid4(), "Answer_1"), (uuid.uuid4(), "Answer_2")]
 
 class post_response_schema(Response):
     pass
 
 
-class update_response_schema(Response):
+class update_response_schema(Base_form):
     response_pk_id: UUID
+    student_fk_id: UUID
+    survey_fk_id: UUID
+    question: UUID
+    answer: str
 
-
-class response_response(update_response_schema):
+class response_response(Base_response):
     student: export_student
-    question: export_question
     survey: export_survey
+    question: export_question
+    answer: str
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
@@ -928,27 +918,42 @@ class update_SalaryPolicy_schema(SalaryPolicy):
     SalaryPolicy_pk_id: UUID
 
 
-class SalaryPolicy_response(update_SalaryPolicy_schema):
-    created: export_employee
+class SalaryPolicy_response(Base_response, update_SalaryPolicy_schema):
     employee: export_employee
 
-    class Config: 
+    class Config:
         orm_mode = True
 
 
-# ++++++++++++++++++++++++++ Reports +++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++ Salary +++++++++++++++++++++++++++
 class salary_report(BaseModel):
     employee_fk_id: UUID
     year: PositiveInt
     month: PositiveInt
+
 
 class teacher_report(BaseModel):
     teacher_fk_id: UUID
     start_date: Any
     end_date: Any
 
+
 class employee_report(BaseModel):
     employee_fk_id: UUID
     start_date: datetime | str
     end_date: datetime | str
 
+
+class teacher_salary_report(BaseModel):
+    Base_salary: int | float
+    teacher_level: int | float
+    course_cap: int | float
+    StudentAssignFeedback: int | float
+    course_level: int | float
+    course_type: int | float
+    survey_score: int | float
+    LP_submission: int | float
+    result_submission_to_FD: int | float
+    course_cancellation: int | float
+    ReportToStudent: int | float
+    time_management: int | float

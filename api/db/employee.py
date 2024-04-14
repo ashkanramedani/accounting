@@ -15,18 +15,18 @@ def get_employee(db: Session, employee_id):
     try:
         return 200, db.query(dbm.Employees_form).filter_by(employees_pk_id=employee_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def get_all_employee(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Employees_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def post_employee(db: Session, Form: sch.post_employee_schema):
@@ -53,9 +53,9 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
 
         return 200, f'Employee Added. ID: {OBJ.employees_pk_id}'
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def delete_employee(db: Session, employee_id):
@@ -67,9 +67,9 @@ def delete_employee(db: Session, employee_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def update_employee(db: Session, Form: sch.update_employee_schema):
@@ -83,6 +83,6 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.warning(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'

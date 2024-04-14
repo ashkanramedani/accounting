@@ -199,7 +199,7 @@ def safe_run(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logger.error(e)
+            logger.error(f'{e.__class__.__name__}: {e.args}')
         return func(*args, **kwargs)
 
     return wrapper
@@ -265,15 +265,21 @@ def Fix_date(time_obj: str | datetime | date):
 
 
 def Fix_datetime(time_obj: str | datetime):
-    if isinstance(time_obj, datetime):
-        return time_obj
-    time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
-    time_obj = datetime_pattern.match(time_obj)
-    if not time_obj:
-        raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.MMM, received: {time_obj}")
-    time_obj = time_obj.groups()
-    return datetime(year=int(time_obj[0]), month=int(time_obj[1]), day=int(time_obj[2]), hour=int(time_obj[3]), minute=int(time_obj[4]), second=int(time_obj[5]))
+    print(time_obj, datetime_pattern, sep="\n")
+    try:
+        if isinstance(time_obj, datetime):
+            return time_obj
+        time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
+        time_str = datetime_pattern.match(time_obj)
+        if time_str is None:
+            print("Pattern Not Found")
+            return
 
+        print(time_str)
+        time_str = time_str.groups()
+        return datetime(year=int(time_str[0]), month=int(time_str[1]), day=int(time_str[2]), hour=int(time_str[3]), minute=int(time_str[4]), second=int(time_str[5]))
+    except Exception as e:
+        raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.MMM, received: {time_obj}\n{e}")
 
 def is_off_day(day: date | datetime) -> bool:
     day = day if isinstance(day, date) else day.date()
@@ -390,4 +396,6 @@ def same_month(date_1: datetime, date_2: datetime):
 
 if __name__ == '__main__':
     # print(datetime.strptime("14:14:14.555", "%Y-%m-%d %H:%M:%S.%f").replace(microsecond=0))
-    print(Fix_time("17:31:49.775Z"))
+    print(Fix_datetime("2022-01-01T17:31:49.775"))
+    pattern = "2022-01-01T17:31:49.775"
+    print(datetime_pattern.match(pattern).groups())

@@ -12,18 +12,18 @@ def get_payment_method(db: Session, payment_method_id):
     try:
         return 200, db.query(dbm.Payment_method_form).filter_by(payment_method_pk_id=payment_method_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def get_all_payment_method(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Payment_method_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
@@ -39,9 +39,9 @@ def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
         db.refresh(OBJ)
         return 200, "payment_method Added"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def delete_payment_method(db: Session, payment_method_id):
@@ -53,9 +53,9 @@ def delete_payment_method(db: Session, payment_method_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
@@ -72,6 +72,6 @@ def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.warning(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'

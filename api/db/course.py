@@ -13,18 +13,18 @@ def get_course(db: Session, course_id):
     try:
         return 200, db.query(dbm.course_form).filter_by(course_pk_id=course_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def get_all_course(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.course_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def post_course(db: Session, Form: sch.post_course_schema):
@@ -52,9 +52,9 @@ def post_course(db: Session, Form: sch.post_course_schema):
         db.refresh(OBJ)
         return 200, "course Added"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def delete_course(db: Session, course_id):
@@ -66,9 +66,9 @@ def delete_course(db: Session, course_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def update_course(db: Session, Form: sch.update_course_schema):
@@ -82,6 +82,6 @@ def update_course(db: Session, Form: sch.update_course_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.warning(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'

@@ -2,21 +2,30 @@ from os.path import normpath, dirname, join
 
 from loguru import logger as L
 from lib.requester import requester
-from json import load
+from json import load, dump
+
+def empty_sink(logger_obj: L, remove_std: bool=False):
+    i = 0 if remove_std else remove_std
+    while True:
+        try:
+            logger_obj.remove(i)
+            i += 1
+        except ValueError:
+            return logger_obj
 
 
 class log:
     def __init__(self, config: dict = None):
-        self.logger = L
+
         if not config:
             self.developer = True
             PRJ_path = normpath(f'{dirname(__file__)}/../')
             config = load(open(join(PRJ_path, "configs/config.json"), 'r'))["logger"]
-            config["sink"] = join(PRJ_path, config["sink"])
 
+            self.logger = L
+            self.logger.add(sink=config["abs_sink"], level=config["level"], format=config["format"])
         else:
             self.developer = config['developer_log']
-
 
     def keep_log(self, msg, type_log, user_id, location):
         try:
@@ -28,7 +37,7 @@ class log:
                 "typ": type_log
             }
             _obj_requester = requester()
-            _obj_requester.post( _url=url, payload=payload)
+            _obj_requester.post(_url=url, payload=payload)
 
             self.show_log('keep_log', 's')
 
@@ -44,9 +53,9 @@ class log:
             self.logger.opt(depth=1).error(msg)
         if type_log == 's':
             self.logger.opt(depth=1).success(msg)
-        if  self.developer and type_log == 'i':
+        if self.developer and type_log == 'i':
             self.logger.opt(depth=1).info(msg)
-   
+
     def log(self, msg, type_log, user, location, keep=False):
         self.show_log(msg, type_log)
         if keep:
@@ -54,6 +63,7 @@ class log:
 
     def info(self, msg):
         self.logger.opt(depth=1).info(msg)
+
     def warning(self, msg):
         self.logger.opt(depth=1).warning(msg)
 
@@ -62,3 +72,6 @@ class log:
 
 
 logger = log()
+
+if __name__ == '__main__':
+    logger.info('test')

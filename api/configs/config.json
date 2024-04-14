@@ -1,13 +1,13 @@
 {
     "developer": true,
     "developer_log": true,
-    "versions": "v 3.0.0", 
+    "versions": "v 3.0.0",
     "logger": {
-        "format": "<level>{time:HH:mm:ss}</level> | <cyan>{name}:{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
-        "sink": "log/Log.log",
+        "format": "{time:YYYY-MM-DD HH:mm:ss},{name},{function}:{line},{message}",
+        "sink": "log/Log.csv",
         "rotation": "10 MB",
-        "level": "INFO"
-
+        "level": "INFO",
+        "abs_sink": ""
     },
     "db": {
         "database_type": "postgresql",
@@ -35,13 +35,13 @@
         "connection_id": -1
     },
     "minio": {
-        "endpoint":"apiminio2.ieltsdaily.ir",
-        "url":"https://minio2.ieltsdaily.ir/api/v1/service-account-credentials",
-        "accessKey":"sx7z0DGLaJAnvCmCHIP7",
-        "secretKey":"FGsGAh5Ol6N5ZA9LduYJqUBWPXJRofQiilptmoaa",
-        "api":"s3v4",
-        "path":"auto",
-        "bucket_name":""
+        "endpoint": "apiminio2.ieltsdaily.ir",
+        "url": "https://minio2.ieltsdaily.ir/api/v1/service-account-credentials",
+        "accessKey": "sx7z0DGLaJAnvCmCHIP7",
+        "secretKey": "FGsGAh5Ol6N5ZA9LduYJqUBWPXJRofQiilptmoaa",
+        "api": "s3v4",
+        "path": "auto",
+        "bucket_name": ""
     },
     "sms": {
         "url": "https://sms.ieltsdaily.ir/api/v1/UltraFastSend"

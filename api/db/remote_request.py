@@ -17,18 +17,18 @@ def get_remote_request_form(db: Session, form_id):
     try:
         return 200, db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def get_all_remote_request_form(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Remote_Request_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def report_remote_request(db: Session, salary_rate, employee_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
@@ -65,9 +65,9 @@ def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def delete_remote_request_form(db: Session, form_id):
@@ -82,9 +82,9 @@ def delete_remote_request_form(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 def update_remote_request_form(db: Session, Form: sch.update_remote_request_schema):
@@ -100,6 +100,6 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'

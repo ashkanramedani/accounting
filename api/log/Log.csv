@@ -1,0 +1,1044 @@
+2024-04-13 15:22:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:22:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:22:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:22:45,main,startup:45,Starting FastAPI - 2024-04-13 15:22:45.404923+00:00
+2024-04-13 15:22:45,main,startup:45,Starting FastAPI - 2024-04-13 15:22:45.404923+00:00
+2024-04-13 15:22:45,main,startup:45,Starting FastAPI - 2024-04-13 15:22:45.404923+00:00
+2024-04-13 15:25:13,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:25:13.668604+00:00
+2024-04-13 15:25:13,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:25:13.668604+00:00
+2024-04-13 15:25:13,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:25:13.668604+00:00
+2024-04-13 15:27:27,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:27:27,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:27:27,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:27:29,main,startup:45,Starting FastAPI - 2024-04-13 15:27:29.127429+00:00
+2024-04-13 15:27:29,main,startup:45,Starting FastAPI - 2024-04-13 15:27:29.127429+00:00
+2024-04-13 15:27:29,main,startup:45,Starting FastAPI - 2024-04-13 15:27:29.127429+00:00
+2024-04-13 15:29:26,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:29:26.995272+00:00
+2024-04-13 15:29:26,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:29:26.995272+00:00
+2024-04-13 15:29:26,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:29:26.995272+00:00
+2024-04-13 15:29:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:29:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:29:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:29:33,main,startup:45,Starting FastAPI - 2024-04-13 15:29:33.433853+00:00
+2024-04-13 15:29:33,main,startup:45,Starting FastAPI - 2024-04-13 15:29:33.433853+00:00
+2024-04-13 15:29:33,main,startup:45,Starting FastAPI - 2024-04-13 15:29:33.433853+00:00
+2024-04-13 15:29:40,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:29:40.272232+00:00
+2024-04-13 15:29:40,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:29:40.272232+00:00
+2024-04-13 15:29:40,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:29:40.272232+00:00
+2024-04-13 15:29:42,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:29:42,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:29:42,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:29:43,main,startup:45,Starting FastAPI - 2024-04-13 15:29:43.363194+00:00
+2024-04-13 15:29:43,main,startup:45,Starting FastAPI - 2024-04-13 15:29:43.363194+00:00
+2024-04-13 15:29:43,main,startup:45,Starting FastAPI - 2024-04-13 15:29:43.363194+00:00
+2024-04-13 15:31:01,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:31:01.342674+00:00
+2024-04-13 15:31:01,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:31:01.342674+00:00
+2024-04-13 15:31:01,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:31:01.342674+00:00
+2024-04-13 15:31:22,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:31:22,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:31:22,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:31:23,main,startup:45,Starting FastAPI - 2024-04-13 15:31:23.799584+00:00
+2024-04-13 15:31:23,main,startup:45,Starting FastAPI - 2024-04-13 15:31:23.799584+00:00
+2024-04-13 15:31:23,main,startup:45,Starting FastAPI - 2024-04-13 15:31:23.799584+00:00
+2024-04-13 15:35:58,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:35:58.271509+00:00
+2024-04-13 15:35:58,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:35:58.271509+00:00
+2024-04-13 15:35:58,main,shutdown:61,Shutting FastAPI - 2024-04-13 15:35:58.271509+00:00
+2024-04-13 15:36:03,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:36:03,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:36:03,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:36:14,main,<module>:29,
+2024-04-13 15:36:14,main,<module>:29,
+2024-04-13 15:36:14,main,<module>:29,
+2024-04-13 15:36:15,main,startup:47,Starting FastAPI - 2024-04-13 15:36:15.628699+00:00
+2024-04-13 15:36:15,main,startup:47,Starting FastAPI - 2024-04-13 15:36:15.628699+00:00
+2024-04-13 15:36:15,main,startup:47,Starting FastAPI - 2024-04-13 15:36:15.628699+00:00
+2024-04-13 15:36:24,main,shutdown:63,Shutting FastAPI - 2024-04-13 15:36:24.961752+00:00
+2024-04-13 15:36:24,main,shutdown:63,Shutting FastAPI - 2024-04-13 15:36:24.961752+00:00
+2024-04-13 15:36:24,main,shutdown:63,Shutting FastAPI - 2024-04-13 15:36:24.961752+00:00
+2024-04-13 15:36:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:36:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:36:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:36:35,main,<module>:29,Logger Configured
+2024-04-13 15:36:35,main,<module>:29,Logger Configured
+2024-04-13 15:36:35,main,<module>:29,Logger Configured
+2024-04-13 15:36:35,main,startup:47,Starting FastAPI - 2024-04-13 15:36:35.651928+00:00
+2024-04-13 15:36:35,main,startup:47,Starting FastAPI - 2024-04-13 15:36:35.651928+00:00
+2024-04-13 15:36:35,main,startup:47,Starting FastAPI - 2024-04-13 15:36:35.651928+00:00
+2024-04-13 15:37:14,main,shutdown:63,Shutting FastAPI - 2024-04-13 15:37:14.313465+00:00
+2024-04-13 15:37:14,main,shutdown:63,Shutting FastAPI - 2024-04-13 15:37:14.313465+00:00
+2024-04-13 15:37:14,main,shutdown:63,Shutting FastAPI - 2024-04-13 15:37:14.313465+00:00
+2024-04-13 15:37:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:37:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:37:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:37:24,main,<module>:29,Logger Configured
+2024-04-13 15:37:24,main,<module>:29,Logger Configured
+2024-04-13 15:37:24,main,<module>:29,Logger Configured
+2024-04-13 15:37:24,main,startup:48,Starting FastAPI - 2024-04-13 15:37:24.787633+00:00
+2024-04-13 15:37:24,main,startup:48,Starting FastAPI - 2024-04-13 15:37:24.787633+00:00
+2024-04-13 15:37:24,main,startup:48,Starting FastAPI - 2024-04-13 15:37:24.787633+00:00
+2024-04-13 15:38:15,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:38:15.205068+00:00
+2024-04-13 15:38:15,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:38:15.205068+00:00
+2024-04-13 15:38:15,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:38:15.205068+00:00
+2024-04-13 15:38:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:38:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:38:23,main,<module>:29,Logger Configured
+2024-04-13 15:38:23,main,<module>:29,Logger Configured
+2024-04-13 15:38:23,main,startup:48,Starting FastAPI - 2024-04-13 15:38:23.294829+00:00
+2024-04-13 15:38:23,main,startup:48,Starting FastAPI - 2024-04-13 15:38:23.294829+00:00
+2024-04-13 15:38:29,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:38:29.380400+00:00
+2024-04-13 15:38:29,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:38:29.380400+00:00
+2024-04-13 15:38:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:38:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:38:38,main,<module>:29,Logger Configured
+2024-04-13 15:38:38,main,<module>:29,Logger Configured
+2024-04-13 15:38:39,main,startup:48,Starting FastAPI - 2024-04-13 15:38:39.125042+00:00
+2024-04-13 15:38:39,main,startup:48,Starting FastAPI - 2024-04-13 15:38:39.125042+00:00
+2024-04-13 15:39:15,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:39:15.436988+00:00
+2024-04-13 15:39:15,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:39:15.436988+00:00
+2024-04-13 15:39:18,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:39:18,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:39:18,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:39:22,main,<module>:29,Logger Configured
+2024-04-13 15:39:22,main,<module>:29,Logger Configured
+2024-04-13 15:39:22,main,<module>:29,Logger Configured
+2024-04-13 15:39:23,main,startup:48,Starting FastAPI - 2024-04-13 15:39:23.122868+00:00
+2024-04-13 15:39:23,main,startup:48,Starting FastAPI - 2024-04-13 15:39:23.122868+00:00
+2024-04-13 15:39:23,main,startup:48,Starting FastAPI - 2024-04-13 15:39:23.122868+00:00
+2024-04-13 15:39:42,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:39:42.218388+00:00
+2024-04-13 15:39:42,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:39:42.218388+00:00
+2024-04-13 15:39:42,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:39:42.218388+00:00
+2024-04-13 15:39:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:39:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:39:48,main,<module>:29,Logger Configured
+2024-04-13 15:39:48,main,<module>:29,Logger Configured
+2024-04-13 15:39:48,main,startup:48,Starting FastAPI - 2024-04-13 15:39:48.489171+00:00
+2024-04-13 15:39:48,main,startup:48,Starting FastAPI - 2024-04-13 15:39:48.489171+00:00
+2024-04-13 15:40:10,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:40:10.193785+00:00
+2024-04-13 15:40:10,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:40:10.193785+00:00
+2024-04-13 15:40:13,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:40:13,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:40:13,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:40:15,main,<module>:29,Logger Configured
+2024-04-13 15:40:15,main,<module>:29,Logger Configured
+2024-04-13 15:40:15,main,<module>:29,Logger Configured
+2024-04-13 15:40:15,main,startup:48,Starting FastAPI - 2024-04-13 15:40:15.930229+00:00
+2024-04-13 15:40:15,main,startup:48,Starting FastAPI - 2024-04-13 15:40:15.930229+00:00
+2024-04-13 15:40:15,main,startup:48,Starting FastAPI - 2024-04-13 15:40:15.930229+00:00
+2024-04-13 15:41:04,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:41:04.718266+00:00
+2024-04-13 15:41:04,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:41:04.718266+00:00
+2024-04-13 15:41:04,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:41:04.718266+00:00
+2024-04-13 15:47:17,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:47:17,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:47:17,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:47:21,main,<module>:29,Logger Configured
+2024-04-13 15:47:21,main,<module>:29,Logger Configured
+2024-04-13 15:47:21,main,<module>:29,Logger Configured
+2024-04-13 15:47:21,main,startup:48,Starting FastAPI - 2024-04-13 15:47:21.197918+00:00
+2024-04-13 15:47:21,main,startup:48,Starting FastAPI - 2024-04-13 15:47:21.197918+00:00
+2024-04-13 15:47:21,main,startup:48,Starting FastAPI - 2024-04-13 15:47:21.197918+00:00
+2024-04-13 15:50:27,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:50:27.208989+00:00
+2024-04-13 15:50:27,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:50:27.208989+00:00
+2024-04-13 15:50:27,main,shutdown:64,Shutting FastAPI - 2024-04-13 15:50:27.208989+00:00
+2024-04-13 15:50:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:50:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:50:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:50:30,main,<module>:30,Logger Configured
+2024-04-13 15:50:30,main,<module>:30,Logger Configured
+2024-04-13 15:50:30,main,<module>:30,Logger Configured
+2024-04-13 15:50:30,main,startup:49,Starting FastAPI - 2024-04-13 15:50:30.381595+00:00
+2024-04-13 15:50:30,main,startup:49,Starting FastAPI - 2024-04-13 15:50:30.381595+00:00
+2024-04-13 15:50:30,main,startup:49,Starting FastAPI - 2024-04-13 15:50:30.381595+00:00
+2024-04-13 15:52:53,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:52:53.294901+00:00
+2024-04-13 15:52:53,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:52:53.294901+00:00
+2024-04-13 15:52:53,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:52:53.294901+00:00
+2024-04-13 15:52:55,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:52:55,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:52:55,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:52:57,main,<module>:30,Logger Configured
+2024-04-13 15:52:57,main,<module>:30,Logger Configured
+2024-04-13 15:52:57,main,<module>:30,Logger Configured
+2024-04-13 15:52:57,main,startup:49,Starting FastAPI - 2024-04-13 15:52:57.164219+00:00
+2024-04-13 15:52:57,main,startup:49,Starting FastAPI - 2024-04-13 15:52:57.164219+00:00
+2024-04-13 15:52:57,main,startup:49,Starting FastAPI - 2024-04-13 15:52:57.164219+00:00
+2024-04-13 15:53:28,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:53:28.125647+00:00
+2024-04-13 15:53:28,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:53:28.125647+00:00
+2024-04-13 15:53:28,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:53:28.125647+00:00
+2024-04-13 15:53:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:53:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:53:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:53:33,main,<module>:30,Logger Configured
+2024-04-13 15:53:33,main,<module>:30,Logger Configured
+2024-04-13 15:53:33,main,<module>:30,Logger Configured
+2024-04-13 15:53:34,main,startup:49,Starting FastAPI - 2024-04-13 15:53:34.063104+00:00
+2024-04-13 15:53:34,main,startup:49,Starting FastAPI - 2024-04-13 15:53:34.063104+00:00
+2024-04-13 15:53:34,main,startup:49,Starting FastAPI - 2024-04-13 15:53:34.063104+00:00
+2024-04-13 15:54:29,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:54:29.225671+00:00
+2024-04-13 15:54:29,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:54:29.225671+00:00
+2024-04-13 15:54:29,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:54:29.225671+00:00
+2024-04-13 15:54:37,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:54:37,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:54:37,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:54:46,main,<module>:30,Logger Configured
+2024-04-13 15:54:46,main,<module>:30,Logger Configured
+2024-04-13 15:54:46,main,<module>:30,Logger Configured
+2024-04-13 15:54:46,main,startup:49,Starting FastAPI - 2024-04-13 15:54:46.962065+00:00
+2024-04-13 15:54:46,main,startup:49,Starting FastAPI - 2024-04-13 15:54:46.962065+00:00
+2024-04-13 15:54:46,main,startup:49,Starting FastAPI - 2024-04-13 15:54:46.962065+00:00
+2024-04-13 15:56:07,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:56:07.840941+00:00
+2024-04-13 15:56:07,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:56:07.840941+00:00
+2024-04-13 15:56:07,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:56:07.840941+00:00
+2024-04-13 15:56:14,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:56:14,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:56:14,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:56:19,main,<module>:30,Logger Configured
+2024-04-13 15:56:19,main,<module>:30,Logger Configured
+2024-04-13 15:56:19,main,<module>:30,Logger Configured
+2024-04-13 15:56:19,main,startup:49,Starting FastAPI - 2024-04-13 15:56:19.467614+00:00
+2024-04-13 15:56:19,main,startup:49,Starting FastAPI - 2024-04-13 15:56:19.467614+00:00
+2024-04-13 15:56:19,main,startup:49,Starting FastAPI - 2024-04-13 15:56:19.467614+00:00
+2024-04-13 15:57:05,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:57:05.744586+00:00
+2024-04-13 15:57:05,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:57:05.744586+00:00
+2024-04-13 15:57:05,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:57:05.744586+00:00
+2024-04-13 15:57:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:57:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:57:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:57:24,main,<module>:30,Logger Configured
+2024-04-13 15:57:24,main,<module>:30,Logger Configured
+2024-04-13 15:57:24,main,<module>:30,Logger Configured
+2024-04-13 15:57:24,main,startup:49,Starting FastAPI - 2024-04-13 15:57:24.815744+00:00
+2024-04-13 15:57:24,main,startup:49,Starting FastAPI - 2024-04-13 15:57:24.815744+00:00
+2024-04-13 15:57:24,main,startup:49,Starting FastAPI - 2024-04-13 15:57:24.815744+00:00
+2024-04-13 15:57:46,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:57:46.982303+00:00
+2024-04-13 15:57:46,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:57:46.982303+00:00
+2024-04-13 15:57:46,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:57:46.982303+00:00
+2024-04-13 15:57:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:57:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:57:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:58:04,main,<module>:30,Logger Configured
+2024-04-13 15:58:04,main,<module>:30,Logger Configured
+2024-04-13 15:58:04,main,<module>:30,Logger Configured
+2024-04-13 15:58:04,main,startup:49,Starting FastAPI - 2024-04-13 15:58:04.613349+00:00
+2024-04-13 15:58:04,main,startup:49,Starting FastAPI - 2024-04-13 15:58:04.613349+00:00
+2024-04-13 15:58:04,main,startup:49,Starting FastAPI - 2024-04-13 15:58:04.613349+00:00
+2024-04-13 15:58:22,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:58:22.686444+00:00
+2024-04-13 15:58:22,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:58:22.686444+00:00
+2024-04-13 15:58:22,main,shutdown:65,Shutting FastAPI - 2024-04-13 15:58:22.686444+00:00
+2024-04-13 15:58:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:58:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:58:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 15:58:33,main,<module>:30,Logger Configured
+2024-04-13 15:58:33,main,<module>:30,Logger Configured
+2024-04-13 15:58:33,main,<module>:30,Logger Configured
+2024-04-13 15:58:34,main,startup:49,Starting FastAPI - 2024-04-13 15:58:34.019939+00:00
+2024-04-13 15:58:34,main,startup:49,Starting FastAPI - 2024-04-13 15:58:34.019939+00:00
+2024-04-13 15:58:34,main,startup:49,Starting FastAPI - 2024-04-13 15:58:34.019939+00:00
+2024-04-13 16:06:25,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:06:25.815758+00:00
+2024-04-13 16:06:25,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:06:25.815758+00:00
+2024-04-13 16:06:25,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:06:25.815758+00:00
+2024-04-13 16:06:40,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:06:40,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:06:40,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:12:41,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:12:41,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:12:41,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:12:44,main,<module>:30,Logger Configured
+2024-04-13 16:12:44,main,<module>:30,Logger Configured
+2024-04-13 16:12:44,main,<module>:30,Logger Configured
+2024-04-13 16:12:44,main,startup:49,Starting FastAPI - 2024-04-13 16:12:44.800933+00:00
+2024-04-13 16:12:44,main,startup:49,Starting FastAPI - 2024-04-13 16:12:44.800933+00:00
+2024-04-13 16:12:44,main,startup:49,Starting FastAPI - 2024-04-13 16:12:44.800933+00:00
+2024-04-13 16:15:08,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:15:08.471446+00:00
+2024-04-13 16:15:08,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:15:08.471446+00:00
+2024-04-13 16:15:08,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:15:08.471446+00:00
+2024-04-13 16:15:10,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:15:10,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:15:10,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:15:12,main,<module>:30,Logger Configured
+2024-04-13 16:15:12,main,<module>:30,Logger Configured
+2024-04-13 16:15:12,main,<module>:30,Logger Configured
+2024-04-13 16:15:12,main,startup:49,Starting FastAPI - 2024-04-13 16:15:12.664961+00:00
+2024-04-13 16:15:12,main,startup:49,Starting FastAPI - 2024-04-13 16:15:12.664961+00:00
+2024-04-13 16:15:12,main,startup:49,Starting FastAPI - 2024-04-13 16:15:12.664961+00:00
+2024-04-13 16:16:12,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:16:12.611558+00:00
+2024-04-13 16:16:12,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:16:12.611558+00:00
+2024-04-13 16:16:12,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:16:12.611558+00:00
+2024-04-13 16:16:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:16:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:16:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:16:20,main,<module>:30,Logger Configured
+2024-04-13 16:16:20,main,<module>:30,Logger Configured
+2024-04-13 16:16:20,main,<module>:30,Logger Configured
+2024-04-13 16:16:20,main,startup:49,Starting FastAPI - 2024-04-13 16:16:20.506411+00:00
+2024-04-13 16:16:20,main,startup:49,Starting FastAPI - 2024-04-13 16:16:20.506411+00:00
+2024-04-13 16:16:20,main,startup:49,Starting FastAPI - 2024-04-13 16:16:20.506411+00:00
+2024-04-13 16:16:58,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:16:58.298828+00:00
+2024-04-13 16:16:58,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:16:58.298828+00:00
+2024-04-13 16:16:58,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:16:58.298828+00:00
+2024-04-13 16:17:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:17:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:17:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:17:02,main,<module>:30,Logger Configured
+2024-04-13 16:17:02,main,<module>:30,Logger Configured
+2024-04-13 16:17:02,main,<module>:30,Logger Configured
+2024-04-13 16:17:02,main,startup:49,Starting FastAPI - 2024-04-13 16:17:02.249215+00:00
+2024-04-13 16:17:02,main,startup:49,Starting FastAPI - 2024-04-13 16:17:02.249215+00:00
+2024-04-13 16:17:02,main,startup:49,Starting FastAPI - 2024-04-13 16:17:02.249215+00:00
+2024-04-13 16:17:13,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:17:13.877900+00:00
+2024-04-13 16:17:13,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:17:13.877900+00:00
+2024-04-13 16:17:13,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:17:13.877900+00:00
+2024-04-13 16:17:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:17:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:17:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:17:17,main,<module>:30,Logger Configured
+2024-04-13 16:17:17,main,<module>:30,Logger Configured
+2024-04-13 16:17:17,main,<module>:30,Logger Configured
+2024-04-13 16:17:17,main,startup:49,Starting FastAPI - 2024-04-13 16:17:17.272964+00:00
+2024-04-13 16:17:17,main,startup:49,Starting FastAPI - 2024-04-13 16:17:17.272964+00:00
+2024-04-13 16:17:17,main,startup:49,Starting FastAPI - 2024-04-13 16:17:17.272964+00:00
+2024-04-13 16:18:14,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:18:14.106518+00:00
+2024-04-13 16:18:14,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:18:14.106518+00:00
+2024-04-13 16:18:14,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:18:14.106518+00:00
+2024-04-13 16:18:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:18:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:18:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:18:45,main,<module>:30,Logger Configured
+2024-04-13 16:18:45,main,<module>:30,Logger Configured
+2024-04-13 16:18:45,main,<module>:30,Logger Configured
+2024-04-13 16:18:45,main,startup:49,Starting FastAPI - 2024-04-13 16:18:45.820477+00:00
+2024-04-13 16:18:45,main,startup:49,Starting FastAPI - 2024-04-13 16:18:45.820477+00:00
+2024-04-13 16:18:45,main,startup:49,Starting FastAPI - 2024-04-13 16:18:45.820477+00:00
+2024-04-13 16:21:52,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:21:52.748629+00:00
+2024-04-13 16:21:52,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:21:52.748629+00:00
+2024-04-13 16:21:52,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:21:52.748629+00:00
+2024-04-13 16:22:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:22:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:22:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:24:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:24:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:24:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:24:07,main,<module>:30,Logger Configured
+2024-04-13 16:24:07,main,<module>:30,Logger Configured
+2024-04-13 16:24:07,main,<module>:30,Logger Configured
+2024-04-13 16:24:07,main,startup:49,Starting FastAPI - 2024-04-13 16:24:07.209160+00:00
+2024-04-13 16:24:07,main,startup:49,Starting FastAPI - 2024-04-13 16:24:07.209160+00:00
+2024-04-13 16:24:07,main,startup:49,Starting FastAPI - 2024-04-13 16:24:07.209160+00:00
+2024-04-13 16:25:40,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:25:40.843817+00:00
+2024-04-13 16:25:40,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:25:40.843817+00:00
+2024-04-13 16:25:40,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:25:40.843817+00:00
+2024-04-13 16:25:52,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:25:52,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:25:52,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:26:01,main,<module>:30,Logger Configured
+2024-04-13 16:26:01,main,<module>:30,Logger Configured
+2024-04-13 16:26:01,main,<module>:30,Logger Configured
+2024-04-13 16:26:01,main,startup:49,Starting FastAPI - 2024-04-13 16:26:01.685341+00:00
+2024-04-13 16:26:01,main,startup:49,Starting FastAPI - 2024-04-13 16:26:01.685341+00:00
+2024-04-13 16:26:01,main,startup:49,Starting FastAPI - 2024-04-13 16:26:01.685341+00:00
+2024-04-13 16:27:48,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:27:48.404665+00:00
+2024-04-13 16:27:48,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:27:48.404665+00:00
+2024-04-13 16:27:48,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:27:48.404665+00:00
+2024-04-13 16:27:56,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:27:56,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:27:56,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:28:02,main,<module>:30,Logger Configured
+2024-04-13 16:28:02,main,<module>:30,Logger Configured
+2024-04-13 16:28:02,main,<module>:30,Logger Configured
+2024-04-13 16:28:03,main,startup:49,Starting FastAPI - 2024-04-13 16:28:03.070263+00:00
+2024-04-13 16:28:03,main,startup:49,Starting FastAPI - 2024-04-13 16:28:03.070263+00:00
+2024-04-13 16:28:03,main,startup:49,Starting FastAPI - 2024-04-13 16:28:03.070263+00:00
+2024-04-13 16:28:06,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:28:06.352059+00:00
+2024-04-13 16:28:06,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:28:06.352059+00:00
+2024-04-13 16:28:06,main,shutdown:65,Shutting FastAPI - 2024-04-13 16:28:06.352059+00:00
+2024-04-13 16:28:11,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:28:11,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:28:11,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-13 16:28:14,main,<module>:30,Logger Configured
+2024-04-13 16:28:14,main,<module>:30,Logger Configured
+2024-04-13 16:28:14,main,<module>:30,Logger Configured
+2024-04-13 16:28:14,main,startup:49,Starting FastAPI - 2024-04-13 16:28:14.832953+00:00
+2024-04-13 16:28:14,main,startup:49,Starting FastAPI - 2024-04-13 16:28:14.832953+00:00
+2024-04-13 16:28:14,main,startup:49,Starting FastAPI - 2024-04-13 16:28:14.832953+00:00
+2024-04-13 18:18:26,main,shutdown:65,Shutting FastAPI - 2024-04-13 18:18:26.045962+00:00
+2024-04-13 18:18:26,main,shutdown:65,Shutting FastAPI - 2024-04-13 18:18:26.045962+00:00
+2024-04-13 18:18:26,main,shutdown:65,Shutting FastAPI - 2024-04-13 18:18:26.045962+00:00
+2024-04-14 13:20:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:20:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:20:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:21:00,main,<module>:30,Logger Configured
+2024-04-14 13:21:00,main,<module>:30,Logger Configured
+2024-04-14 13:21:00,main,<module>:30,Logger Configured
+2024-04-14 13:21:00,main,startup:49,Starting FastAPI - 2024-04-14 13:21:00.778171+00:00
+2024-04-14 13:21:00,main,startup:49,Starting FastAPI - 2024-04-14 13:21:00.778171+00:00
+2024-04-14 13:21:00,main,startup:49,Starting FastAPI - 2024-04-14 13:21:00.778171+00:00
+2024-04-14 13:21:00,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:00,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:00,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:10,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:10,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:10,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:20,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:20,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:20,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:30,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:30,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:30,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:40,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:40,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:40,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:50,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:50,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:21:50,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\nconnection to server at "localhost" (127.0.0.1), port 5432 failed: Connection refused\n\tIs the server running on that host and accepting TCP/IP connections?\n')
+2024-04-14 13:22:01,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: server closed the connection unexpectedly\n\tThis probably means the server terminated abnormally\n\tbefore or while processing the request.\n')
+2024-04-14 13:22:01,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: server closed the connection unexpectedly\n\tThis probably means the server terminated abnormally\n\tbefore or while processing the request.\n')
+2024-04-14 13:22:01,main,startup:56,[ Could Not Create Engine ]: OperationalError('(psycopg2.OperationalError) connection to server at "localhost" (::1), port 5432 failed: server closed the connection unexpectedly\n\tThis probably means the server terminated abnormally\n\tbefore or while processing the request.\n')
+2024-04-14 13:29:35,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:29:35.358642+00:00
+2024-04-14 13:29:35,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:29:35.358642+00:00
+2024-04-14 13:29:35,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:29:35.358642+00:00
+2024-04-14 13:29:37,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:29:37,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:29:37,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:29:40,main,<module>:30,Logger Configured
+2024-04-14 13:29:40,main,<module>:30,Logger Configured
+2024-04-14 13:29:40,main,<module>:30,Logger Configured
+2024-04-14 13:29:40,main,startup:49,Starting FastAPI - 2024-04-14 13:29:40.088254+00:00
+2024-04-14 13:29:40,main,startup:49,Starting FastAPI - 2024-04-14 13:29:40.088254+00:00
+2024-04-14 13:29:40,main,startup:49,Starting FastAPI - 2024-04-14 13:29:40.088254+00:00
+2024-04-14 13:30:52,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:30:52.209430+00:00
+2024-04-14 13:30:52,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:30:52.209430+00:00
+2024-04-14 13:30:52,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:30:52.209430+00:00
+2024-04-14 13:30:55,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:30:55,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:30:55,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:30:57,main,<module>:30,Logger Configured
+2024-04-14 13:30:57,main,<module>:30,Logger Configured
+2024-04-14 13:30:57,main,<module>:30,Logger Configured
+2024-04-14 13:30:57,main,startup:49,Starting FastAPI - 2024-04-14 13:30:57.881627+00:00
+2024-04-14 13:30:57,main,startup:49,Starting FastAPI - 2024-04-14 13:30:57.881627+00:00
+2024-04-14 13:30:57,main,startup:49,Starting FastAPI - 2024-04-14 13:30:57.881627+00:00
+2024-04-14 13:33:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:33:59.763480+00:00
+2024-04-14 13:33:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:33:59.763480+00:00
+2024-04-14 13:33:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:33:59.763480+00:00
+2024-04-14 13:34:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:34:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:34:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:34:04,main,<module>:30,Logger Configured
+2024-04-14 13:34:04,main,<module>:30,Logger Configured
+2024-04-14 13:34:04,main,<module>:30,Logger Configured
+2024-04-14 13:34:04,main,startup:49,Starting FastAPI - 2024-04-14 13:34:04.549040+00:00
+2024-04-14 13:34:04,main,startup:49,Starting FastAPI - 2024-04-14 13:34:04.549040+00:00
+2024-04-14 13:34:04,main,startup:49,Starting FastAPI - 2024-04-14 13:34:04.549040+00:00
+2024-04-14 13:34:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:34:49.519204+00:00
+2024-04-14 13:34:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:34:49.519204+00:00
+2024-04-14 13:34:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:34:49.519204+00:00
+2024-04-14 13:34:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:34:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:34:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:34:52,main,<module>:30,Logger Configured
+2024-04-14 13:34:52,main,<module>:30,Logger Configured
+2024-04-14 13:34:52,main,<module>:30,Logger Configured
+2024-04-14 13:34:52,main,startup:49,Starting FastAPI - 2024-04-14 13:34:52.745841+00:00
+2024-04-14 13:34:52,main,startup:49,Starting FastAPI - 2024-04-14 13:34:52.745841+00:00
+2024-04-14 13:34:52,main,startup:49,Starting FastAPI - 2024-04-14 13:34:52.745841+00:00
+2024-04-14 13:36:20,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:36:20.534426+00:00
+2024-04-14 13:36:20,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:36:20.534426+00:00
+2024-04-14 13:36:20,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:36:20.534426+00:00
+2024-04-14 13:36:23,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:36:23,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:36:23,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:36:25,main,<module>:30,Logger Configured
+2024-04-14 13:36:25,main,<module>:30,Logger Configured
+2024-04-14 13:36:25,main,<module>:30,Logger Configured
+2024-04-14 13:36:25,main,startup:49,Starting FastAPI - 2024-04-14 13:36:25.422233+00:00
+2024-04-14 13:36:25,main,startup:49,Starting FastAPI - 2024-04-14 13:36:25.422233+00:00
+2024-04-14 13:36:25,main,startup:49,Starting FastAPI - 2024-04-14 13:36:25.422233+00:00
+2024-04-14 13:39:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:39:55.471995+00:00
+2024-04-14 13:39:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:39:55.471995+00:00
+2024-04-14 13:39:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:39:55.471995+00:00
+2024-04-14 13:39:57,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:39:57,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:39:57,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:40:27,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:40:27,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:40:27,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:40:35,main,<module>:30,Logger Configured
+2024-04-14 13:40:35,main,<module>:30,Logger Configured
+2024-04-14 13:40:35,main,<module>:30,Logger Configured
+2024-04-14 13:40:35,main,startup:49,Starting FastAPI - 2024-04-14 13:40:35.634349+00:00
+2024-04-14 13:40:35,main,startup:49,Starting FastAPI - 2024-04-14 13:40:35.634349+00:00
+2024-04-14 13:40:35,main,startup:49,Starting FastAPI - 2024-04-14 13:40:35.634349+00:00
+2024-04-14 13:41:13,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:41:13.449965+00:00
+2024-04-14 13:41:13,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:41:13.449965+00:00
+2024-04-14 13:41:13,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:41:13.449965+00:00
+2024-04-14 13:41:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:41:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:41:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:41:18,main,<module>:30,Logger Configured
+2024-04-14 13:41:18,main,<module>:30,Logger Configured
+2024-04-14 13:41:18,main,<module>:30,Logger Configured
+2024-04-14 13:41:18,main,startup:49,Starting FastAPI - 2024-04-14 13:41:18.195083+00:00
+2024-04-14 13:41:18,main,startup:49,Starting FastAPI - 2024-04-14 13:41:18.195083+00:00
+2024-04-14 13:41:18,main,startup:49,Starting FastAPI - 2024-04-14 13:41:18.195083+00:00
+2024-04-14 13:41:23,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:41:23.200883+00:00
+2024-04-14 13:41:23,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:41:23.200883+00:00
+2024-04-14 13:41:23,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:41:23.200883+00:00
+2024-04-14 13:41:24,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:41:24,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:41:24,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:43:04,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:43:04,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:43:04,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:43:06,main,<module>:30,Logger Configured
+2024-04-14 13:43:06,main,<module>:30,Logger Configured
+2024-04-14 13:43:06,main,<module>:30,Logger Configured
+2024-04-14 13:43:06,main,startup:49,Starting FastAPI - 2024-04-14 13:43:06.908433+00:00
+2024-04-14 13:43:06,main,startup:49,Starting FastAPI - 2024-04-14 13:43:06.908433+00:00
+2024-04-14 13:43:06,main,startup:49,Starting FastAPI - 2024-04-14 13:43:06.908433+00:00
+2024-04-14 13:45:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:45:55.076671+00:00
+2024-04-14 13:45:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:45:55.076671+00:00
+2024-04-14 13:45:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:45:55.076671+00:00
+2024-04-14 13:45:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:45:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:45:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:46:00,main,<module>:30,Logger Configured
+2024-04-14 13:46:00,main,<module>:30,Logger Configured
+2024-04-14 13:46:00,main,<module>:30,Logger Configured
+2024-04-14 13:46:00,main,startup:49,Starting FastAPI - 2024-04-14 13:46:00.318762+00:00
+2024-04-14 13:46:00,main,startup:49,Starting FastAPI - 2024-04-14 13:46:00.318762+00:00
+2024-04-14 13:46:00,main,startup:49,Starting FastAPI - 2024-04-14 13:46:00.318762+00:00
+2024-04-14 13:46:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:46:49.971598+00:00
+2024-04-14 13:46:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:46:49.971598+00:00
+2024-04-14 13:46:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:46:49.971598+00:00
+2024-04-14 13:46:52,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:46:52,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:46:52,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:46:56,main,<module>:30,Logger Configured
+2024-04-14 13:46:56,main,<module>:30,Logger Configured
+2024-04-14 13:46:56,main,<module>:30,Logger Configured
+2024-04-14 13:46:56,main,startup:49,Starting FastAPI - 2024-04-14 13:46:56.447101+00:00
+2024-04-14 13:46:56,main,startup:49,Starting FastAPI - 2024-04-14 13:46:56.447101+00:00
+2024-04-14 13:46:56,main,startup:49,Starting FastAPI - 2024-04-14 13:46:56.447101+00:00
+2024-04-14 13:51:31,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:51:31.530970+00:00
+2024-04-14 13:51:31,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:51:31.530970+00:00
+2024-04-14 13:51:31,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:51:31.530970+00:00
+2024-04-14 13:51:33,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:51:33,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:51:33,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:51:35,main,<module>:30,Logger Configured
+2024-04-14 13:51:35,main,<module>:30,Logger Configured
+2024-04-14 13:51:35,main,<module>:30,Logger Configured
+2024-04-14 13:51:35,main,startup:49,Starting FastAPI - 2024-04-14 13:51:35.072332+00:00
+2024-04-14 13:51:35,main,startup:49,Starting FastAPI - 2024-04-14 13:51:35.072332+00:00
+2024-04-14 13:51:35,main,startup:49,Starting FastAPI - 2024-04-14 13:51:35.072332+00:00
+2024-04-14 13:51:50,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:51:50.349494+00:00
+2024-04-14 13:51:50,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:51:50.349494+00:00
+2024-04-14 13:51:50,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:51:50.349494+00:00
+2024-04-14 13:51:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:51:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:51:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:51:52,main,<module>:30,Logger Configured
+2024-04-14 13:51:52,main,<module>:30,Logger Configured
+2024-04-14 13:51:52,main,<module>:30,Logger Configured
+2024-04-14 13:51:53,main,startup:49,Starting FastAPI - 2024-04-14 13:51:53.033617+00:00
+2024-04-14 13:51:53,main,startup:49,Starting FastAPI - 2024-04-14 13:51:53.033617+00:00
+2024-04-14 13:51:53,main,startup:49,Starting FastAPI - 2024-04-14 13:51:53.033617+00:00
+2024-04-14 13:53:15,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:53:15.223452+00:00
+2024-04-14 13:53:15,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:53:15.223452+00:00
+2024-04-14 13:53:15,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:53:15.223452+00:00
+2024-04-14 13:53:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:53:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:53:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:53:18,main,<module>:30,Logger Configured
+2024-04-14 13:53:18,main,<module>:30,Logger Configured
+2024-04-14 13:53:18,main,<module>:30,Logger Configured
+2024-04-14 13:53:18,main,startup:49,Starting FastAPI - 2024-04-14 13:53:18.141542+00:00
+2024-04-14 13:53:18,main,startup:49,Starting FastAPI - 2024-04-14 13:53:18.141542+00:00
+2024-04-14 13:53:18,main,startup:49,Starting FastAPI - 2024-04-14 13:53:18.141542+00:00
+2024-04-14 13:54:06,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:54:06.276346+00:00
+2024-04-14 13:54:06,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:54:06.276346+00:00
+2024-04-14 13:54:06,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:54:06.276346+00:00
+2024-04-14 13:54:07,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:54:07,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:54:07,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:54:10,main,<module>:30,Logger Configured
+2024-04-14 13:54:10,main,<module>:30,Logger Configured
+2024-04-14 13:54:10,main,<module>:30,Logger Configured
+2024-04-14 13:54:10,main,startup:49,Starting FastAPI - 2024-04-14 13:54:10.296307+00:00
+2024-04-14 13:54:10,main,startup:49,Starting FastAPI - 2024-04-14 13:54:10.296307+00:00
+2024-04-14 13:54:10,main,startup:49,Starting FastAPI - 2024-04-14 13:54:10.296307+00:00
+2024-04-14 13:56:52,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:56:52.126532+00:00
+2024-04-14 13:56:52,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:56:52.126532+00:00
+2024-04-14 13:56:52,main,shutdown:65,Shutting FastAPI - 2024-04-14 13:56:52.126532+00:00
+2024-04-14 13:58:10,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:58:10,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:58:10,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 13:58:12,main,<module>:30,Logger Configured
+2024-04-14 13:58:12,main,<module>:30,Logger Configured
+2024-04-14 13:58:12,main,<module>:30,Logger Configured
+2024-04-14 13:58:12,main,startup:49,Starting FastAPI - 2024-04-14 13:58:12.798503+00:00
+2024-04-14 13:58:12,main,startup:49,Starting FastAPI - 2024-04-14 13:58:12.798503+00:00
+2024-04-14 13:58:12,main,startup:49,Starting FastAPI - 2024-04-14 13:58:12.798503+00:00
+2024-04-14 14:09:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:09:56.882617+00:00
+2024-04-14 14:09:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:09:56.882617+00:00
+2024-04-14 14:09:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:09:56.882617+00:00
+2024-04-14 14:10:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:10:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:10:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:10:02,main,<module>:30,Logger Configured
+2024-04-14 14:10:02,main,<module>:30,Logger Configured
+2024-04-14 14:10:02,main,<module>:30,Logger Configured
+2024-04-14 14:10:02,main,startup:49,Starting FastAPI - 2024-04-14 14:10:02.472128+00:00
+2024-04-14 14:10:02,main,startup:49,Starting FastAPI - 2024-04-14 14:10:02.472128+00:00
+2024-04-14 14:10:02,main,startup:49,Starting FastAPI - 2024-04-14 14:10:02.472128+00:00
+2024-04-14 14:10:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:10:33.013842+00:00
+2024-04-14 14:10:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:10:33.013842+00:00
+2024-04-14 14:10:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:10:33.013842+00:00
+2024-04-14 14:10:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:10:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:10:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:10:35,main,<module>:30,Logger Configured
+2024-04-14 14:10:35,main,<module>:30,Logger Configured
+2024-04-14 14:10:35,main,<module>:30,Logger Configured
+2024-04-14 14:10:35,main,startup:49,Starting FastAPI - 2024-04-14 14:10:35.987256+00:00
+2024-04-14 14:10:35,main,startup:49,Starting FastAPI - 2024-04-14 14:10:35.987256+00:00
+2024-04-14 14:10:35,main,startup:49,Starting FastAPI - 2024-04-14 14:10:35.987256+00:00
+2024-04-14 14:34:31,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:34:31.517484+00:00
+2024-04-14 14:34:31,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:34:31.517484+00:00
+2024-04-14 14:34:31,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:34:31.517484+00:00
+2024-04-14 14:34:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:34:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:34:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:37:05,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:37:05,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:37:05,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:37:08,main,<module>:30,Logger Configured
+2024-04-14 14:37:08,main,<module>:30,Logger Configured
+2024-04-14 14:37:08,main,<module>:30,Logger Configured
+2024-04-14 14:37:08,main,startup:49,Starting FastAPI - 2024-04-14 14:37:08.099673+00:00
+2024-04-14 14:37:08,main,startup:49,Starting FastAPI - 2024-04-14 14:37:08.099673+00:00
+2024-04-14 14:37:08,main,startup:49,Starting FastAPI - 2024-04-14 14:37:08.099673+00:00
+2024-04-14 14:38:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:38:56.476012+00:00
+2024-04-14 14:38:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:38:56.476012+00:00
+2024-04-14 14:38:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:38:56.476012+00:00
+2024-04-14 14:38:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:38:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:38:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:39:00,main,<module>:30,Logger Configured
+2024-04-14 14:39:00,main,<module>:30,Logger Configured
+2024-04-14 14:39:00,main,<module>:30,Logger Configured
+2024-04-14 14:39:00,main,startup:49,Starting FastAPI - 2024-04-14 14:39:00.547854+00:00
+2024-04-14 14:39:00,main,startup:49,Starting FastAPI - 2024-04-14 14:39:00.547854+00:00
+2024-04-14 14:39:00,main,startup:49,Starting FastAPI - 2024-04-14 14:39:00.547854+00:00
+2024-04-14 14:39:07,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:39:07.504774+00:00
+2024-04-14 14:39:07,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:39:07.504774+00:00
+2024-04-14 14:39:07,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:39:07.504774+00:00
+2024-04-14 14:39:08,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:39:08,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:39:08,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:39:09,main,<module>:30,Logger Configured
+2024-04-14 14:39:09,main,<module>:30,Logger Configured
+2024-04-14 14:39:09,main,<module>:30,Logger Configured
+2024-04-14 14:39:09,main,startup:49,Starting FastAPI - 2024-04-14 14:39:09.816445+00:00
+2024-04-14 14:39:09,main,startup:49,Starting FastAPI - 2024-04-14 14:39:09.816445+00:00
+2024-04-14 14:39:09,main,startup:49,Starting FastAPI - 2024-04-14 14:39:09.816445+00:00
+2024-04-14 14:40:32,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:40:32.450496+00:00
+2024-04-14 14:40:32,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:40:32.450496+00:00
+2024-04-14 14:40:32,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:40:32.450496+00:00
+2024-04-14 14:40:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:40:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:40:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:40:36,main,<module>:30,Logger Configured
+2024-04-14 14:40:36,main,<module>:30,Logger Configured
+2024-04-14 14:40:36,main,<module>:30,Logger Configured
+2024-04-14 14:40:36,main,startup:49,Starting FastAPI - 2024-04-14 14:40:36.167725+00:00
+2024-04-14 14:40:36,main,startup:49,Starting FastAPI - 2024-04-14 14:40:36.167725+00:00
+2024-04-14 14:40:36,main,startup:49,Starting FastAPI - 2024-04-14 14:40:36.167725+00:00
+2024-04-14 14:41:21,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:41:21.891244+00:00
+2024-04-14 14:41:21,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:41:21.891244+00:00
+2024-04-14 14:41:21,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:41:21.891244+00:00
+2024-04-14 14:41:23,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:41:23,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:41:23,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:41:24,main,<module>:30,Logger Configured
+2024-04-14 14:41:24,main,<module>:30,Logger Configured
+2024-04-14 14:41:24,main,<module>:30,Logger Configured
+2024-04-14 14:41:24,main,startup:49,Starting FastAPI - 2024-04-14 14:41:24.953540+00:00
+2024-04-14 14:41:24,main,startup:49,Starting FastAPI - 2024-04-14 14:41:24.953540+00:00
+2024-04-14 14:41:24,main,startup:49,Starting FastAPI - 2024-04-14 14:41:24.953540+00:00
+2024-04-14 14:42:11,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:42:11.992494+00:00
+2024-04-14 14:42:11,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:42:11.992494+00:00
+2024-04-14 14:42:11,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:42:11.992494+00:00
+2024-04-14 14:42:13,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:42:13,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:42:13,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:42:15,main,<module>:30,Logger Configured
+2024-04-14 14:42:15,main,<module>:30,Logger Configured
+2024-04-14 14:42:15,main,<module>:30,Logger Configured
+2024-04-14 14:42:15,main,startup:49,Starting FastAPI - 2024-04-14 14:42:15.590056+00:00
+2024-04-14 14:42:15,main,startup:49,Starting FastAPI - 2024-04-14 14:42:15.590056+00:00
+2024-04-14 14:42:15,main,startup:49,Starting FastAPI - 2024-04-14 14:42:15.590056+00:00
+2024-04-14 14:42:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:42:33.852534+00:00
+2024-04-14 14:42:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:42:33.852534+00:00
+2024-04-14 14:42:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:42:33.852534+00:00
+2024-04-14 14:42:35,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:42:35,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:42:35,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:42:37,main,<module>:30,Logger Configured
+2024-04-14 14:42:37,main,<module>:30,Logger Configured
+2024-04-14 14:42:37,main,<module>:30,Logger Configured
+2024-04-14 14:42:37,main,startup:49,Starting FastAPI - 2024-04-14 14:42:37.541782+00:00
+2024-04-14 14:42:37,main,startup:49,Starting FastAPI - 2024-04-14 14:42:37.541782+00:00
+2024-04-14 14:42:37,main,startup:49,Starting FastAPI - 2024-04-14 14:42:37.541782+00:00
+2024-04-14 14:43:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:43:56.549548+00:00
+2024-04-14 14:43:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:43:56.549548+00:00
+2024-04-14 14:43:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:43:56.549548+00:00
+2024-04-14 14:43:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:43:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:43:58,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:43:59,main,<module>:30,Logger Configured
+2024-04-14 14:43:59,main,<module>:30,Logger Configured
+2024-04-14 14:43:59,main,<module>:30,Logger Configured
+2024-04-14 14:43:59,main,startup:49,Starting FastAPI - 2024-04-14 14:43:59.900966+00:00
+2024-04-14 14:43:59,main,startup:49,Starting FastAPI - 2024-04-14 14:43:59.900966+00:00
+2024-04-14 14:43:59,main,startup:49,Starting FastAPI - 2024-04-14 14:43:59.900966+00:00
+2024-04-14 14:44:18,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:44:18.087339+00:00
+2024-04-14 14:44:18,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:44:18.087339+00:00
+2024-04-14 14:44:18,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:44:18.087339+00:00
+2024-04-14 14:44:19,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:44:19,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:44:19,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:44:21,main,<module>:30,Logger Configured
+2024-04-14 14:44:21,main,<module>:30,Logger Configured
+2024-04-14 14:44:21,main,<module>:30,Logger Configured
+2024-04-14 14:44:21,main,startup:49,Starting FastAPI - 2024-04-14 14:44:21.492837+00:00
+2024-04-14 14:44:21,main,startup:49,Starting FastAPI - 2024-04-14 14:44:21.492837+00:00
+2024-04-14 14:44:21,main,startup:49,Starting FastAPI - 2024-04-14 14:44:21.492837+00:00
+2024-04-14 14:44:29,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:44:29.066813+00:00
+2024-04-14 14:44:29,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:44:29.066813+00:00
+2024-04-14 14:44:29,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:44:29.066813+00:00
+2024-04-14 14:44:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:44:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:44:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:44:33,main,<module>:30,Logger Configured
+2024-04-14 14:44:33,main,<module>:30,Logger Configured
+2024-04-14 14:44:33,main,<module>:30,Logger Configured
+2024-04-14 14:44:34,main,startup:49,Starting FastAPI - 2024-04-14 14:44:34.093100+00:00
+2024-04-14 14:44:34,main,startup:49,Starting FastAPI - 2024-04-14 14:44:34.093100+00:00
+2024-04-14 14:44:34,main,startup:49,Starting FastAPI - 2024-04-14 14:44:34.093100+00:00
+2024-04-14 14:45:22,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:22.524761+00:00
+2024-04-14 14:45:22,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:22.524761+00:00
+2024-04-14 14:45:22,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:22.524761+00:00
+2024-04-14 14:45:24,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:45:24,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:45:24,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:45:26,main,<module>:30,Logger Configured
+2024-04-14 14:45:26,main,<module>:30,Logger Configured
+2024-04-14 14:45:26,main,<module>:30,Logger Configured
+2024-04-14 14:45:26,main,startup:49,Starting FastAPI - 2024-04-14 14:45:26.330637+00:00
+2024-04-14 14:45:26,main,startup:49,Starting FastAPI - 2024-04-14 14:45:26.330637+00:00
+2024-04-14 14:45:26,main,startup:49,Starting FastAPI - 2024-04-14 14:45:26.330637+00:00
+2024-04-14 14:45:43,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:43.863627+00:00
+2024-04-14 14:45:43,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:43.863627+00:00
+2024-04-14 14:45:43,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:43.863627+00:00
+2024-04-14 14:45:45,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:45:45,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:45:45,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:45:46,main,<module>:30,Logger Configured
+2024-04-14 14:45:46,main,<module>:30,Logger Configured
+2024-04-14 14:45:46,main,<module>:30,Logger Configured
+2024-04-14 14:45:46,main,startup:49,Starting FastAPI - 2024-04-14 14:45:46.949297+00:00
+2024-04-14 14:45:46,main,startup:49,Starting FastAPI - 2024-04-14 14:45:46.949297+00:00
+2024-04-14 14:45:46,main,startup:49,Starting FastAPI - 2024-04-14 14:45:46.949297+00:00
+2024-04-14 14:45:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:59.676901+00:00
+2024-04-14 14:45:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:59.676901+00:00
+2024-04-14 14:45:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:45:59.676901+00:00
+2024-04-14 14:46:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:46:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:46:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:46:02,main,<module>:30,Logger Configured
+2024-04-14 14:46:02,main,<module>:30,Logger Configured
+2024-04-14 14:46:02,main,<module>:30,Logger Configured
+2024-04-14 14:46:02,main,startup:49,Starting FastAPI - 2024-04-14 14:46:02.781553+00:00
+2024-04-14 14:46:02,main,startup:49,Starting FastAPI - 2024-04-14 14:46:02.781553+00:00
+2024-04-14 14:46:02,main,startup:49,Starting FastAPI - 2024-04-14 14:46:02.781553+00:00
+2024-04-14 14:46:28,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:46:28.337061+00:00
+2024-04-14 14:46:28,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:46:28.337061+00:00
+2024-04-14 14:46:28,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:46:28.337061+00:00
+2024-04-14 14:46:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:46:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:46:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:46:31,main,<module>:30,Logger Configured
+2024-04-14 14:46:31,main,<module>:30,Logger Configured
+2024-04-14 14:46:31,main,<module>:30,Logger Configured
+2024-04-14 14:46:31,main,startup:49,Starting FastAPI - 2024-04-14 14:46:31.698272+00:00
+2024-04-14 14:46:31,main,startup:49,Starting FastAPI - 2024-04-14 14:46:31.698272+00:00
+2024-04-14 14:46:31,main,startup:49,Starting FastAPI - 2024-04-14 14:46:31.698272+00:00
+2024-04-14 14:47:12,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:47:12.311806+00:00
+2024-04-14 14:47:12,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:47:12.311806+00:00
+2024-04-14 14:47:12,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:47:12.311806+00:00
+2024-04-14 14:47:14,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:47:14,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:47:14,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:47:16,main,<module>:30,Logger Configured
+2024-04-14 14:47:16,main,<module>:30,Logger Configured
+2024-04-14 14:47:16,main,<module>:30,Logger Configured
+2024-04-14 14:47:16,main,startup:49,Starting FastAPI - 2024-04-14 14:47:16.816645+00:00
+2024-04-14 14:47:16,main,startup:49,Starting FastAPI - 2024-04-14 14:47:16.816645+00:00
+2024-04-14 14:47:16,main,startup:49,Starting FastAPI - 2024-04-14 14:47:16.816645+00:00
+2024-04-14 14:47:19,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:47:19.209481+00:00
+2024-04-14 14:47:19,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:47:19.209481+00:00
+2024-04-14 14:47:19,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:47:19.209481+00:00
+2024-04-14 14:47:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:47:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:47:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:47:22,main,<module>:30,Logger Configured
+2024-04-14 14:47:22,main,<module>:30,Logger Configured
+2024-04-14 14:47:22,main,<module>:30,Logger Configured
+2024-04-14 14:47:22,main,startup:49,Starting FastAPI - 2024-04-14 14:47:22.425785+00:00
+2024-04-14 14:47:22,main,startup:49,Starting FastAPI - 2024-04-14 14:47:22.425785+00:00
+2024-04-14 14:47:22,main,startup:49,Starting FastAPI - 2024-04-14 14:47:22.425785+00:00
+2024-04-14 14:48:42,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:48:42.043752+00:00
+2024-04-14 14:48:42,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:48:42.043752+00:00
+2024-04-14 14:48:42,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:48:42.043752+00:00
+2024-04-14 14:48:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:48:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:48:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:48:45,main,<module>:30,Logger Configured
+2024-04-14 14:48:45,main,<module>:30,Logger Configured
+2024-04-14 14:48:45,main,<module>:30,Logger Configured
+2024-04-14 14:48:45,main,startup:49,Starting FastAPI - 2024-04-14 14:48:45.592178+00:00
+2024-04-14 14:48:45,main,startup:49,Starting FastAPI - 2024-04-14 14:48:45.592178+00:00
+2024-04-14 14:48:45,main,startup:49,Starting FastAPI - 2024-04-14 14:48:45.592178+00:00
+2024-04-14 14:50:11,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:50:11.467385+00:00
+2024-04-14 14:50:11,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:50:11.467385+00:00
+2024-04-14 14:50:11,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:50:11.467385+00:00
+2024-04-14 14:50:12,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:50:12,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:50:12,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:50:14,main,<module>:30,Logger Configured
+2024-04-14 14:50:14,main,<module>:30,Logger Configured
+2024-04-14 14:50:14,main,<module>:30,Logger Configured
+2024-04-14 14:50:14,main,startup:49,Starting FastAPI - 2024-04-14 14:50:14.916626+00:00
+2024-04-14 14:50:14,main,startup:49,Starting FastAPI - 2024-04-14 14:50:14.916626+00:00
+2024-04-14 14:50:14,main,startup:49,Starting FastAPI - 2024-04-14 14:50:14.916626+00:00
+2024-04-14 14:51:00,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:51:00.663083+00:00
+2024-04-14 14:51:00,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:51:00.663083+00:00
+2024-04-14 14:51:00,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:51:00.663083+00:00
+2024-04-14 14:51:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:51:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:51:02,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:51:04,main,<module>:30,Logger Configured
+2024-04-14 14:51:04,main,<module>:30,Logger Configured
+2024-04-14 14:51:04,main,<module>:30,Logger Configured
+2024-04-14 14:51:04,main,startup:49,Starting FastAPI - 2024-04-14 14:51:04.183747+00:00
+2024-04-14 14:51:04,main,startup:49,Starting FastAPI - 2024-04-14 14:51:04.183747+00:00
+2024-04-14 14:51:04,main,startup:49,Starting FastAPI - 2024-04-14 14:51:04.183747+00:00
+2024-04-14 14:51:19,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:51:19.889912+00:00
+2024-04-14 14:51:19,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:51:19.889912+00:00
+2024-04-14 14:51:19,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:51:19.889912+00:00
+2024-04-14 14:51:21,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:51:21,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:51:21,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:51:22,main,<module>:30,Logger Configured
+2024-04-14 14:51:22,main,<module>:30,Logger Configured
+2024-04-14 14:51:22,main,<module>:30,Logger Configured
+2024-04-14 14:51:22,main,startup:49,Starting FastAPI - 2024-04-14 14:51:22.871938+00:00
+2024-04-14 14:51:22,main,startup:49,Starting FastAPI - 2024-04-14 14:51:22.871938+00:00
+2024-04-14 14:51:22,main,startup:49,Starting FastAPI - 2024-04-14 14:51:22.871938+00:00
+2024-04-14 14:52:27,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:52:27.515769+00:00
+2024-04-14 14:52:27,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:52:27.515769+00:00
+2024-04-14 14:52:27,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:52:27.515769+00:00
+2024-04-14 14:52:28,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:52:28,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:52:28,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:52:30,main,<module>:30,Logger Configured
+2024-04-14 14:52:30,main,<module>:30,Logger Configured
+2024-04-14 14:52:30,main,<module>:30,Logger Configured
+2024-04-14 14:52:30,main,startup:49,Starting FastAPI - 2024-04-14 14:52:30.259437+00:00
+2024-04-14 14:52:30,main,startup:49,Starting FastAPI - 2024-04-14 14:52:30.259437+00:00
+2024-04-14 14:52:30,main,startup:49,Starting FastAPI - 2024-04-14 14:52:30.259437+00:00
+2024-04-14 14:53:18,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:53:18.644712+00:00
+2024-04-14 14:53:18,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:53:18.644712+00:00
+2024-04-14 14:53:18,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:53:18.644712+00:00
+2024-04-14 14:53:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:20,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:29,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:31,main,<module>:30,Logger Configured
+2024-04-14 14:53:31,main,<module>:30,Logger Configured
+2024-04-14 14:53:31,main,<module>:30,Logger Configured
+2024-04-14 14:53:31,main,startup:49,Starting FastAPI - 2024-04-14 14:53:31.649773+00:00
+2024-04-14 14:53:31,main,startup:49,Starting FastAPI - 2024-04-14 14:53:31.649773+00:00
+2024-04-14 14:53:31,main,startup:49,Starting FastAPI - 2024-04-14 14:53:31.649773+00:00
+2024-04-14 14:53:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:53:49.431387+00:00
+2024-04-14 14:53:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:53:49.431387+00:00
+2024-04-14 14:53:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:53:49.431387+00:00
+2024-04-14 14:53:50,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:50,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:50,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:53:52,main,<module>:30,Logger Configured
+2024-04-14 14:53:52,main,<module>:30,Logger Configured
+2024-04-14 14:53:52,main,<module>:30,Logger Configured
+2024-04-14 14:53:52,main,startup:49,Starting FastAPI - 2024-04-14 14:53:52.565602+00:00
+2024-04-14 14:53:52,main,startup:49,Starting FastAPI - 2024-04-14 14:53:52.565602+00:00
+2024-04-14 14:53:52,main,startup:49,Starting FastAPI - 2024-04-14 14:53:52.565602+00:00
+2024-04-14 14:56:32,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:56:32.454118+00:00
+2024-04-14 14:56:32,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:56:32.454118+00:00
+2024-04-14 14:56:32,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:56:32.454118+00:00
+2024-04-14 14:56:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:56:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:56:34,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:56:36,main,<module>:30,Logger Configured
+2024-04-14 14:56:36,main,<module>:30,Logger Configured
+2024-04-14 14:56:36,main,<module>:30,Logger Configured
+2024-04-14 14:56:36,main,startup:49,Starting FastAPI - 2024-04-14 14:56:36.346772+00:00
+2024-04-14 14:56:36,main,startup:49,Starting FastAPI - 2024-04-14 14:56:36.346772+00:00
+2024-04-14 14:56:36,main,startup:49,Starting FastAPI - 2024-04-14 14:56:36.346772+00:00
+2024-04-14 14:58:42,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:58:42.708473+00:00
+2024-04-14 14:58:42,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:58:42.708473+00:00
+2024-04-14 14:58:42,main,shutdown:65,Shutting FastAPI - 2024-04-14 14:58:42.708473+00:00
+2024-04-14 14:58:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:58:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:58:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 14:58:46,main,<module>:30,Logger Configured
+2024-04-14 14:58:46,main,<module>:30,Logger Configured
+2024-04-14 14:58:46,main,<module>:30,Logger Configured
+2024-04-14 14:58:46,main,startup:49,Starting FastAPI - 2024-04-14 14:58:46.075977+00:00
+2024-04-14 14:58:46,main,startup:49,Starting FastAPI - 2024-04-14 14:58:46.075977+00:00
+2024-04-14 14:58:46,main,startup:49,Starting FastAPI - 2024-04-14 14:58:46.075977+00:00
+2024-04-14 15:05:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:05:59.255340+00:00
+2024-04-14 15:05:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:05:59.255340+00:00
+2024-04-14 15:05:59,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:05:59.255340+00:00
+2024-04-14 15:06:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:06:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:06:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:06:02,main,<module>:30,Logger Configured
+2024-04-14 15:06:02,main,<module>:30,Logger Configured
+2024-04-14 15:06:02,main,<module>:30,Logger Configured
+2024-04-14 15:06:02,main,startup:49,Starting FastAPI - 2024-04-14 15:06:02.517170+00:00
+2024-04-14 15:06:02,main,startup:49,Starting FastAPI - 2024-04-14 15:06:02.517170+00:00
+2024-04-14 15:06:02,main,startup:49,Starting FastAPI - 2024-04-14 15:06:02.517170+00:00
+2024-04-14 15:36:34,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:36:34.158010+00:00
+2024-04-14 15:36:34,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:36:34.158010+00:00
+2024-04-14 15:36:34,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:36:34.158010+00:00
+2024-04-14 15:36:36,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:36:36,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:36:36,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:36:37,main,<module>:30,Logger Configured
+2024-04-14 15:36:37,main,<module>:30,Logger Configured
+2024-04-14 15:36:37,main,<module>:30,Logger Configured
+2024-04-14 15:36:37,main,startup:49,Starting FastAPI - 2024-04-14 15:36:37.693629+00:00
+2024-04-14 15:36:37,main,startup:49,Starting FastAPI - 2024-04-14 15:36:37.693629+00:00
+2024-04-14 15:36:37,main,startup:49,Starting FastAPI - 2024-04-14 15:36:37.693629+00:00
+2024-04-14 15:37:30,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:37:30.540033+00:00
+2024-04-14 15:37:30,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:37:30.540033+00:00
+2024-04-14 15:37:30,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:37:30.540033+00:00
+2024-04-14 15:37:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:37:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:37:31,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:37:33,main,<module>:30,Logger Configured
+2024-04-14 15:37:33,main,<module>:30,Logger Configured
+2024-04-14 15:37:33,main,<module>:30,Logger Configured
+2024-04-14 15:37:33,main,startup:49,Starting FastAPI - 2024-04-14 15:37:33.514030+00:00
+2024-04-14 15:37:33,main,startup:49,Starting FastAPI - 2024-04-14 15:37:33.514030+00:00
+2024-04-14 15:37:33,main,startup:49,Starting FastAPI - 2024-04-14 15:37:33.514030+00:00
+2024-04-14 15:37:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:37:55.898084+00:00
+2024-04-14 15:37:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:37:55.898084+00:00
+2024-04-14 15:37:55,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:37:55.898084+00:00
+2024-04-14 15:37:57,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:37:57,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:37:57,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:37:59,main,<module>:30,Logger Configured
+2024-04-14 15:37:59,main,<module>:30,Logger Configured
+2024-04-14 15:37:59,main,<module>:30,Logger Configured
+2024-04-14 15:37:59,main,startup:49,Starting FastAPI - 2024-04-14 15:37:59.386172+00:00
+2024-04-14 15:37:59,main,startup:49,Starting FastAPI - 2024-04-14 15:37:59.386172+00:00
+2024-04-14 15:37:59,main,startup:49,Starting FastAPI - 2024-04-14 15:37:59.386172+00:00
+2024-04-14 15:38:05,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:38:05.706607+00:00
+2024-04-14 15:38:05,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:38:05.706607+00:00
+2024-04-14 15:38:05,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:38:05.706607+00:00
+2024-04-14 15:38:06,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:38:06,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:38:06,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:38:07,main,<module>:30,Logger Configured
+2024-04-14 15:38:07,main,<module>:30,Logger Configured
+2024-04-14 15:38:07,main,<module>:30,Logger Configured
+2024-04-14 15:38:07,main,startup:49,Starting FastAPI - 2024-04-14 15:38:07.846211+00:00
+2024-04-14 15:38:07,main,startup:49,Starting FastAPI - 2024-04-14 15:38:07.846211+00:00
+2024-04-14 15:38:07,main,startup:49,Starting FastAPI - 2024-04-14 15:38:07.846211+00:00
+2024-04-14 15:38:29,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:38:29.505319+00:00
+2024-04-14 15:38:29,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:38:29.505319+00:00
+2024-04-14 15:38:29,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:38:29.505319+00:00
+2024-04-14 15:38:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:38:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:38:30,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:38:32,main,<module>:30,Logger Configured
+2024-04-14 15:38:32,main,<module>:30,Logger Configured
+2024-04-14 15:38:32,main,<module>:30,Logger Configured
+2024-04-14 15:38:32,main,startup:49,Starting FastAPI - 2024-04-14 15:38:32.568011+00:00
+2024-04-14 15:38:32,main,startup:49,Starting FastAPI - 2024-04-14 15:38:32.568011+00:00
+2024-04-14 15:38:32,main,startup:49,Starting FastAPI - 2024-04-14 15:38:32.568011+00:00
+2024-04-14 15:39:14,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:39:14.459538+00:00
+2024-04-14 15:39:14,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:39:14.459538+00:00
+2024-04-14 15:39:14,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:39:14.459538+00:00
+2024-04-14 15:39:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:39:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:39:15,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:39:17,main,<module>:30,Logger Configured
+2024-04-14 15:39:17,main,<module>:30,Logger Configured
+2024-04-14 15:39:17,main,<module>:30,Logger Configured
+2024-04-14 15:39:17,main,startup:49,Starting FastAPI - 2024-04-14 15:39:17.475654+00:00
+2024-04-14 15:39:17,main,startup:49,Starting FastAPI - 2024-04-14 15:39:17.475654+00:00
+2024-04-14 15:39:17,main,startup:49,Starting FastAPI - 2024-04-14 15:39:17.475654+00:00
+2024-04-14 15:39:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:39:33.823827+00:00
+2024-04-14 15:39:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:39:33.823827+00:00
+2024-04-14 15:39:33,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:39:33.823827+00:00
+2024-04-14 15:39:35,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:39:35,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:39:35,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:39:36,main,<module>:30,Logger Configured
+2024-04-14 15:39:36,main,<module>:30,Logger Configured
+2024-04-14 15:39:36,main,<module>:30,Logger Configured
+2024-04-14 15:39:36,main,startup:49,Starting FastAPI - 2024-04-14 15:39:36.767490+00:00
+2024-04-14 15:39:36,main,startup:49,Starting FastAPI - 2024-04-14 15:39:36.767490+00:00
+2024-04-14 15:39:36,main,startup:49,Starting FastAPI - 2024-04-14 15:39:36.767490+00:00
+2024-04-14 15:40:02,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:40:02.974489+00:00
+2024-04-14 15:40:02,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:40:02.974489+00:00
+2024-04-14 15:40:02,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:40:02.974489+00:00
+2024-04-14 15:40:04,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:40:04,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:40:04,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:40:05,main,<module>:30,Logger Configured
+2024-04-14 15:40:05,main,<module>:30,Logger Configured
+2024-04-14 15:40:05,main,<module>:30,Logger Configured
+2024-04-14 15:40:05,main,startup:49,Starting FastAPI - 2024-04-14 15:40:05.086211+00:00
+2024-04-14 15:40:05,main,startup:49,Starting FastAPI - 2024-04-14 15:40:05.086211+00:00
+2024-04-14 15:40:05,main,startup:49,Starting FastAPI - 2024-04-14 15:40:05.086211+00:00
+2024-04-14 15:40:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:40:49.337288+00:00
+2024-04-14 15:40:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:40:49.337288+00:00
+2024-04-14 15:40:49,main,shutdown:65,Shutting FastAPI - 2024-04-14 15:40:49.337288+00:00
+2024-04-14 15:40:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:40:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:40:51,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 15:40:52,main,<module>:30,Logger Configured
+2024-04-14 15:40:52,main,<module>:30,Logger Configured
+2024-04-14 15:40:52,main,<module>:30,Logger Configured
+2024-04-14 15:40:52,main,startup:49,Starting FastAPI - 2024-04-14 15:40:52.929028+00:00
+2024-04-14 15:40:52,main,startup:49,Starting FastAPI - 2024-04-14 15:40:52.929028+00:00
+2024-04-14 15:40:52,main,startup:49,Starting FastAPI - 2024-04-14 15:40:52.929028+00:00
+2024-04-14 16:17:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 16:17:56.353926+00:00
+2024-04-14 16:17:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 16:17:56.353926+00:00
+2024-04-14 16:17:56,main,shutdown:65,Shutting FastAPI - 2024-04-14 16:17:56.353926+00:00
+2024-04-14 16:18:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 16:18:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 16:18:00,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-14 16:18:03,main,<module>:30,Logger Configured
+2024-04-14 16:18:03,main,<module>:30,Logger Configured
+2024-04-14 16:18:03,main,<module>:30,Logger Configured
+2024-04-14 16:18:03,main,startup:49,Starting FastAPI - 2024-04-14 16:18:03.340721+00:00
+2024-04-14 16:18:03,main,startup:49,Starting FastAPI - 2024-04-14 16:18:03.340721+00:00
+2024-04-14 16:18:03,main,startup:49,Starting FastAPI - 2024-04-14 16:18:03.340721+00:00
+2024-04-14 17:34:39,main,shutdown:65,Shutting FastAPI - 2024-04-14 17:34:39.816553+00:00
+2024-04-14 17:34:39,main,shutdown:65,Shutting FastAPI - 2024-04-14 17:34:39.816553+00:00
+2024-04-14 17:34:39,main,shutdown:65,Shutting FastAPI - 2024-04-14 17:34:39.816553+00:00

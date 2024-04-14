@@ -13,7 +13,7 @@ from .leave_request import report_leave_request
 from .business_trip import report_business_trip
 
 
-def get_report(db: Session, employee_fk_id, year, month):
+def employee_salary_report(db: Session, employee_fk_id, year, month):
     try:
         salary = db.query(dbm.SalaryPolicy_form).filter_by(deleted=False, employee_fk_id=employee_fk_id).first()
         if not salary:
@@ -43,6 +43,18 @@ def get_report(db: Session, employee_fk_id, year, month):
 
         return 200, "Added"
     except Exception as e:
-        logger.error(e)
+        logger.error(f'{e.__class__.__name__}: {e.args}')
         db.rollback()
-        return 500, e.__repr__()
+        return 500, f'{e.__class__.__name__}: {e.args}'
+
+
+
+def teacher_salary_report(db: Session, Form: sch.teacher_salary_report, year, month):
+    try:
+        start, end = generate_month_interval(year, month)
+        return 200, start
+    except Exception as e:
+        logger.error(f'{e.__class__.__name__}: {e.args}')
+        db.rollback()
+        return 500, f'{e.__class__.__name__}: {e.args}'
+
