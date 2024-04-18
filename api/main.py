@@ -49,7 +49,7 @@ async def startup():
     logger.info(f"Starting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
     while True:
         try:
-            # models.Base.metadata.drop_all(engine)
+            models.Base.metadata.drop_all(engine)
             models.Base.metadata.create_all(bind=engine)
             break
         except OperationalError as e:
