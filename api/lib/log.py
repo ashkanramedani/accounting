@@ -21,9 +21,11 @@ class log:
             self.developer = True
             PRJ_path = normpath(f'{dirname(__file__)}/../')
             config = load(open(join(PRJ_path, "configs/config.json"), 'r'))["logger"]
-
             self.logger = L
-            self.logger.add(sink=config["abs_sink"], level=config["level"], format=config["format"])
+            self.logger.add(
+                    sink=config["abs_sink"] if config["abs_sink"] else normpath(f'{dirname(__file__)}/../log/log.log'),
+                    level=config["level"],
+                    format=config["format"])
         else:
             self.developer = config['developer_log']
 

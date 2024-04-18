@@ -20,11 +20,11 @@ from .tools import router as tools_route
 from .files import router as files
 from .user import router as user
 from .post import router as post
-from .tag import router as tag
-from .category import router as category
+from .tag_category import router as tag_category_route
 from .library import router as library
 
 routes = [
+    tag_category_route,
     tools_route,
     report_route,
     roles_route,
@@ -47,8 +47,6 @@ routes = [
     files,
     user,
     post,
-    tag,
-    category,
     library
 ]
 

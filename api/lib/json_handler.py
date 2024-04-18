@@ -8,6 +8,18 @@
 import json
 
 
+class JSONEncoder(json.JSONEncoder):
+    """
+    Handles Not Json compatible types by attempting to create string version
+    """
+
+    def default(self, obj):
+        try:
+            return json.JSONEncoder.default(self, obj)
+        except TypeError:
+            return str(obj)
+
+
 class json_handler:
     def __init__(self, FilePath="", ShowJsonErrors=True):
         self.VERSION = "1.4.0 build:9705301047"  # Version of course

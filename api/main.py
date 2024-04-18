@@ -30,7 +30,7 @@ try:
     logger.info("Logger Configured")
 
 except Exception as e:
-    raise Exception(f"Error during importing libraries : {e}")
+    raise Exception(f"Error during importing libraries : f'{e.__class__.__name__}: {e.args}'")
 
 
 app = FastAPI()

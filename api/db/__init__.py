@@ -4,10 +4,9 @@ from .Survey import *
 from .business_trip import *
 from .course_cancellation import *
 from .course import *
-from .db_category import *
+from .tag_category import *
 from .db_library import *
 from .db_post import *
-from .db_tag import *
 from .db_user import *
 from .employee import *
 from .fingerprint_scanner import *
@@ -25,6 +24,17 @@ from .Extra import count
 
 __all__ = [
     "count",
+    # Tag_category.py
+    "get_tag",
+    "get_all_tag",
+    "post_tag",
+    "delete_tag",
+    "update_tag",
+    "get_category",
+    "get_all_category",
+    "post_category",
+    "delete_category",
+    "update_category",
     # salary.py
     "employee_salary_report",
     # SalaryPolicy_form.py
@@ -120,6 +130,12 @@ __all__ = [
     "post_course",
     "delete_course",
     "update_course",
+    "get_subcourse",
+    "get_all_subcourse",
+    "post_subcourse",
+    "delete_subcourse",
+    "update_subcourse",
+    "get_se"
     # payment.py
     "get_payment_method",
     "get_all_payment_method",
@@ -143,19 +159,12 @@ __all__ = [
     "update_posts",
     "create_post",
     # db_tag.py
-    "get_tag_by_name",
-    "get_tag_by_id",
-    "get_tages",
-    "get_all_tages",
-    "create_tag",
+
     "update_tag",
     "delete_tag",
     # db_category.py
-    "get_category_by_name",
-    "get_category_by_id",
-    "get_categoryes",
-    "get_all_categoryes",
-    "create_category",
+    "get_category",
+    "get_all_category",
     "update_category",
     "delete_category",
     # db_library.py

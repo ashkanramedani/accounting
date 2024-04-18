@@ -91,3 +91,43 @@ async def update_subcourse(Form: sch.update_sub_course_schema, db=Depends(get_db
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+# - - - - - -  Session ####
+@router.post("/session/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def add_session(Form: sch.post_sub_course_schema, db=Depends(get_db)):
+    status_code, result = dbf.post_session(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.get("/session/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def search_session(form_id, db=Depends(get_db)):
+    status_code, result = dbf.get_session(db, form_id)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.get("/session/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.sub_course_response])
+async def search_all_session(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+    status_code, result = dbf.get_all_session(db, page, limit, order)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.delete("/session/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def delete_session(form_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_session(db, form_id)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.put("/session/update", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+async def update_session(Form: sch.update_sub_course_schema, db=Depends(get_db)):
+    status_code, result = dbf.update_session(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+

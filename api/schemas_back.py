@@ -406,10 +406,6 @@ class Base_form(BaseModel):
     description: str | None = None
     status: int = 0
 
-class InstitutionsBase(BaseModel):
-    created_fk_by: UUID
-
-
 class Entity(BaseModel):
     name: str
     last_name: str
@@ -523,7 +519,7 @@ class export_student(BaseModel):
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
 # ---------------------- class ----------------------
-class course(InstitutionsBase):
+class course(Base_form):
     name: str
     teachers: List[UUID] = []
     course_time: str | datetime = datetime.now()
@@ -534,14 +530,14 @@ class post_course_schema(course):
     pass
 
 
-class update_course_schema(InstitutionsBase):
+class update_course_schema(Base_form):
     course_pk_id: UUID
     name: str
     course_time: str | datetime = datetime.now()
     duration: PositiveInt
 
 
-class course_response(InstitutionsBase):
+class course_response(Base_form):
     course_pk_id: UUID
     name: str
     course_time: str | datetime = datetime.now()

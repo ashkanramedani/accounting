@@ -4,3 +4,6 @@ from .hash import Hash
 from .json_handler import json_handler
 from .log import logger
 from .ApiException import API_Exception
+
+from .Date_Time import *
+from .FakeIdentity import person

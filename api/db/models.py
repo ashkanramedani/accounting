@@ -4,10 +4,12 @@
 from datetime import datetime
 
 from fastapi_utils.guid_type import GUID as GUID_TYPE, GUID_SERVER_DEFAULT_POSTGRESQL
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, JSON
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, JSON, Date, Time
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
+
+from lib import logger
 from .database import Base
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
@@ -85,59 +87,59 @@ class EducationalInstitutions(Base, BaseTable):
         return f'<EducationalInstitution "{self.educational_institution_pk_id}">'
 
 
-class Tags(Base):
-    __tablename__ = "tbl_tags"
-
-    tag_pk_id = Column(GUID, nullable=False, unique=True, primary_key=True, index=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
-    tag_name = Column(String(100), unique=True, nullable=False)
-
-    priority = Column(Integer, default=5, nullable=True)
-    visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expire_date = Column(DateTime(timezone=True), default=None)
-
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
-    delete_date = Column(DateTime(timezone=True), default=None)
-    user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-    def __repr__(self):
-        return f'<Tag "{self.tag_pk_id}">'
-
-
-class Categories(Base):
-    __tablename__ = "tbl_categories"
-
-    category_pk_id = Column(GUID, nullable=False, unique=True, primary_key=True, index=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
-    category_name = Column(String(100), index=True, nullable=False)
-
-    priority = Column(Integer, default=5, nullable=True)
-    visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expire_date = Column(DateTime(timezone=True), default=None)
-
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
-    delete_date = Column(DateTime(timezone=True), default=None)
-    user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-    def __repr__(self):
-        return f'<Category "{self.category_pk_id}">'
-
-    # class Authentications(Base, Base_form):
-
+# class Tags(Base):
+#     __tablename__ = "tbl_tags"
+#
+#     tag_pk_id = Column(GUID, nullable=False, unique=True, primary_key=True, index=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
+#     tag_name = Column(String(100), unique=True, nullable=False)
+#
+#     priority = Column(Integer, default=5, nullable=True)
+#     visible = Column(Boolean, server_default=expression.true(), nullable=False)
+#     expire_date = Column(DateTime(timezone=True), default=None)
+#
+#     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+#     user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+#
+#     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
+#     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
+#     user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+#
+#     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
+#     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
+#     delete_date = Column(DateTime(timezone=True), default=None)
+#     user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+#
+#     def __repr__(self):
+#         return f'<Tag "{self.tag_pk_id}">'
+#
+#
+# class Categories(Base):
+#     __tablename__ = "tbl_categories"
+#
+#     category_pk_id = Column(GUID, nullable=False, unique=True, primary_key=True, index=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
+#     category_name = Column(String(100), index=True, nullable=False)
+#
+#     priority = Column(Integer, default=5, nullable=True)
+#     visible = Column(Boolean, server_default=expression.true(), nullable=False)
+#     expire_date = Column(DateTime(timezone=True), default=None)
+#
+#     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+#     user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+#
+#     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
+#     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
+#     user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+#
+#     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
+#     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
+#     delete_date = Column(DateTime(timezone=True), default=None)
+#     user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+#
+#     def __repr__(self):
+#         return f'<Category "{self.category_pk_id}">'
+#
+#     # class Authentications(Base, Base_form):
+#
 
 #     __tablename__ = "tbl_authentications"
 #     authentication_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
@@ -327,13 +329,28 @@ class Libraries(Base):
 # functions
 
 IDs = {
-    "employees": "employees.employees_pk_id",
-    "course": "course.course_pk_id",
-    "days": "days.day_pk_id",
-    "survey": "survey.survey_pk_id",
-    "question": "question.question_pk_id",
-    "student": "student.student_pk_id",
-    "payment_method": "payment_method.payment_method_pk_id"
+    "employees": "employees_pk_id",
+    "student": "student_pk_id",
+    "course": "course_pk_id",
+    "sub_course": "sub_course_pk_id",
+    "session": "session_pk_id",
+    "leave_request": "leave_request_pk_id",
+    "business_trip": "business_trip_pk_id",
+    "remote_requests": "remote_request_pk_id",
+    "payment_method": "payment_method_pk_id",
+    "fingerprint_scanner": "FingerPrintScanner_pk_id",
+    "fingerprint_scanner_backUp": "FingerPrintScanner_pk_id",
+    "teacher_tardy_reports": "teacher_tardy_reports_pk_id",
+    "course_cancellation": "course_cancellation_pk_id",
+    "teacher_replacement": "teacher_replacement_pk_id",
+    "teachers_report": "teachers_report_pk_id",
+    "survey": "survey_pk_id",
+    "question": "question_pk_id",
+    "response": "response_pk_id",
+    "salary_policy": "SalaryPolicy_pk_id",
+    "salary": "salary_pk_id",
+    "language": "language_pk_id",
+    "course_type": "course_type_pk_id",
 }
 
 
@@ -347,7 +364,10 @@ def create_Unique_ID():
 
 
 def create_forenKey(table: str, unique: bool = False):
-    return Column(GUID, ForeignKey(IDs[table], ondelete="CASCADE"), nullable=False, unique=unique)
+    table = table.lower().replace("_form", "")
+    if table not in IDs:
+        raise ValueError(f"table {table} not in IDs")
+    return Column(GUID, ForeignKey(f'{table}.{IDs[table]}', ondelete="CASCADE"), nullable=False, unique=unique)
 
 
 # Base
@@ -367,6 +387,7 @@ class BaseTable:
 class Base_form(BaseTable):
     description = Column(String, nullable=True, default="")
     status = Column(Integer, nullable=False, default=0)
+    # note Json
 
 
 class InstitutionsBase(Base_form):
@@ -389,7 +410,7 @@ Modes_relation = {
 }
 
 
-def relation(table: str, relation_title: str):
+def relation(table: str, relation_title: str = "created"):
     return relationship(table, back_populates=relation_title, foreign_keys=f"{table}.{Modes_relation[relation_title]}")
 
 
@@ -412,13 +433,23 @@ UserRole = Table(
         Column("deleted", Boolean, default=False, nullable=False),
         UniqueConstraint("employee_fk_id", "role_fk_id", "deleted"), )
 
-TeacherCourse = Table(
-        "teacher_course",
+
+CourseTag = Table(
+        "course_tag",
         Base.metadata,
-        Column("employee_fk_id", ForeignKey("employees.employees_pk_id")),
+        Column("tag_fk_id", ForeignKey("tag.tag_pk_id")),
         Column("course_fk_id", ForeignKey("course.course_pk_id")),
         Column("deleted", Boolean, default=False, nullable=False),
-        UniqueConstraint("employee_fk_id", "course_fk_id", "deleted"), )
+        UniqueConstraint("tag_fk_id", "course_fk_id", "deleted"), )
+
+CourseCategory = Table(
+        "course_category",
+        Base.metadata,
+        Column("category_fk_id", ForeignKey("category.category_pk_id")),
+        Column("course_fk_id", ForeignKey("course.course_pk_id")),
+        Column("deleted", Boolean, default=False, nullable=False),
+        UniqueConstraint("category_fk_id", "course_fk_id", "deleted"),
+)
 
 
 # ========================== Entity ===========================
@@ -428,22 +459,27 @@ class Employees_form(Base, UserBase):
     employees_pk_id = create_Unique_ID()
     fingerprint_scanner_user_id = Column(String, nullable=True, unique=True)
 
-    course_Relation = relation("course_form", "created")
-    Roles_Relation = relation("Roles_form", "created")
-    student_Relation = relation("Student_form", 'created')
-    Survey_Relation = relation("Survey_form", "created")
-    Questions_Relation = relation("Questions_form", "created")
-    Business_Trip_Relation = relation("Business_Trip_form", "created")
-    Leave_request_Relation = relation("Leave_request_form", "created")
-    Remote_Request_Relation = relation("Remote_Request_form", "created")
-    payment_method_Relation = relation("Payment_method_form", "created")
-    course_Cancellation_Relation = relation("course_Cancellation_form", "created")
-    Teacher_Replacement_Relation = relation("Teacher_Replacement_form", "created")
-    fingerprint_scanner_Relation = relation("Fingerprint_scanner_form", "created")
-    fingerprint_scanner_backup_Relation = relation("Fingerprint_scanner_backup_form", "created")
-    Teacher_tardy_reports_Relation = relation("Teacher_tardy_reports_form", "created")
-
-    SalaryPolicy_Relation = relation("SalaryPolicy_form", "created")
+    Tag_Relation = relation("Tag_form")
+    Category_Relation = relation("Category_form")
+    Language_Relation = relation("Language_form")
+    course_type_Relation = relation("Course_Type_form")
+    course_Relation = relation("course_form")
+    sub_course_Relation = relation("sub_course_form")
+    Session_Relation = relation("Session_form")
+    Roles_Relation = relation("Roles_form")
+    student_Relation = relation("Student_form")
+    Survey_Relation = relation("Survey_form")
+    Questions_Relation = relation("Questions_form")
+    Business_Trip_Relation = relation("Business_Trip_form")
+    Leave_request_Relation = relation("Leave_request_form")
+    Remote_Request_Relation = relation("Remote_Request_form")
+    payment_method_Relation = relation("Payment_method_form")
+    course_Cancellation_Relation = relation("course_Cancellation_form")
+    Teacher_Replacement_Relation = relation("Teacher_Replacement_form")
+    fingerprint_scanner_Relation = relation("Fingerprint_scanner_form")
+    fingerprint_scanner_backup_Relation = relation("Fingerprint_scanner_backup_form")
+    Teacher_tardy_reports_Relation = relation("Teacher_tardy_reports_form")
+    SalaryPolicy_Relation = relation("SalaryPolicy_form")
 
     roles = relationship('Roles_form', secondary=UserRole, backref='user_role')
 
@@ -467,20 +503,65 @@ class course_form(Base, InstitutionsBase):
     __tablename__ = "course"
     course_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
+    course_language = create_forenKey("language")
+    course_type = create_forenKey("course_type")
 
-    name = Column(String)
-    course_time = Column(DateTime, nullable=False)
-    duration = Column(Integer)
+    course_name = Column(String)
 
-    # starting_date = Column(Date, nullable=False)
-    # ending_date = Column(Date, nullable=False)
-    # course_capacity = Column(Integer, nullable=False, default=0)
-    # course_type = Column(String, nullable=False)
-    # course_language = Column(String, nullable=False)
-    # course_level = Column(String, nullable=False)
+    starting_date = Column(Date, nullable=False)
+    ending_date = Column(Date, nullable=False)
+    course_capacity = Column(Integer, nullable=False)
+    course_level = Column(String, nullable=False)
+    course_code = Column(String, nullable=False)
+    picture = Column(String, nullable=True)
+
+    package_discount = Column(Float, nullable=False, default=0.0)
+
+    tags = relationship("Tag_form", secondary=CourseTag, backref="course_taf")
+    categories = relationship("Category_form", secondary=CourseCategory, backref="course_category")
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="course_Relation")
-    teachers = relationship("Employees_form", secondary=TeacherCourse, backref="course")
+    language = relationship("Language_form", foreign_keys=[course_language])
+    type = relationship("Course_Type_form", foreign_keys=[course_type])
+
+
+class sub_course_form(Base, InstitutionsBase):
+    __tablename__ = "sub_course"
+
+    sub_course_pk_id = create_Unique_ID()
+    course_fk_id = create_forenKey("course")
+    created_fk_by = create_forenKey("employees")
+    sub_course_teacher_fk_id = create_forenKey("employees")
+
+    sub_course_name = Column(String)
+    number_of_session = Column(Integer, nullable=False, default=0)
+    sub_course_starting_date = Column(Date, nullable=False)
+    sub_course_ending_date = Column(Date, nullable=False)
+    course_capacity = Column(Integer, nullable=False, default=0)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="sub_course_Relation")
+    teacher = relationship("Employees_form", foreign_keys=[sub_course_teacher_fk_id])
+
+
+class Session_form(Base, InstitutionsBase):
+    __tablename__ = "session"
+    session_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("employees")
+    course_fk_id = create_forenKey("course")
+    sub_course_fk_id = create_forenKey("sub_course")
+    session_teacher_fk_id = create_forenKey("employees")
+
+    is_sub = Column(Boolean, nullable=False, default=False)
+    session_date = Column(Date, nullable=False)
+    session_starting_time = Column(Time, nullable=False)
+    session_ending_time = Column(Time, nullable=False)
+    session_duration = Column(Integer, nullable=False)
+    days_of_week = Column(Integer, nullable=False)
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Session_Relation")
+    course = relationship("course_form", foreign_keys=[course_fk_id])
+    sub_course = relationship("sub_course_form", foreign_keys=[sub_course_fk_id])
+    teacher = relationship("Employees_form", foreign_keys=[session_teacher_fk_id])
 
 
 # ======================== Forms =============================
@@ -565,7 +646,7 @@ class Fingerprint_scanner_form(Base, Base_form):
 
 class Fingerprint_scanner_backup_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner_backUp"
-    FingerPrintScanner_pk_id = create_Unique_ID()
+    FingerPrintScanner_backup_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     TMNo = Column(Integer, nullable=False)
     EnNo = Column(Integer, nullable=False)
@@ -696,7 +777,7 @@ class Roles_form(Base, Base_form):
 
 # ++++++++++++++++++++++++++ SalaryPolicy_form +++++++++++++++++++++++++++
 class SalaryPolicy_form(Base, Base_form):
-    __tablename__ = "salary_policy_form"
+    __tablename__ = "salary_policy"
     SalaryPolicy_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("employees")
     employee_fk_id = create_forenKey("employees", unique=True)
@@ -794,3 +875,44 @@ class Salary(Base, Base_form):
     day_report_summery = Column(JSON, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[employee_fk_id])
+
+
+# ------------ Necessary for "Course" ------------
+class Tag_form(Base, Base_form):
+    __tablename__ = "tag"
+
+    tag_pk_id = create_Unique_ID()
+    tag_name = Column(String, unique=True, nullable=False)
+    created_fk_by = create_forenKey("employees")
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Tag_Relation")
+
+
+class Category_form(Base, Base_form):
+    __tablename__ = "category"
+
+    category_pk_id = create_Unique_ID()
+    category_name = Column(String, index=True, nullable=False)
+    created_fk_by = create_forenKey("employees")
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Category_Relation")
+
+
+class Language_form(Base, Base_form):
+    __tablename__ = "language"
+
+    language_pk_id = create_Unique_ID()
+    language_name = Column(String, index=True, nullable=False)
+    created_fk_by = create_forenKey("employees")
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Language_Relation")
+
+
+class Course_Type_form(Base, Base_form):
+    __tablename__ = "course_type"
+
+    course_type_pk_id = create_Unique_ID()
+    course_type_name = Column(String, index=True, nullable=False)
+    created_fk_by = create_forenKey("employees")
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="course_type_Relation")
