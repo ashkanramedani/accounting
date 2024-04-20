@@ -4063,3 +4063,276 @@
 2024-04-18 21:23:46,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:23:46.072968+00:00
 2024-04-18 21:23:46,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:23:46.072968+00:00
 2024-04-18 21:23:46,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:23:46.072968+00:00
+2024-04-18 21:31:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:31:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:31:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:31:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:31:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:31:44,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:31:46,main,<module>:30,Logger Configured
+2024-04-18 21:31:46,main,<module>:30,Logger Configured
+2024-04-18 21:31:46,main,<module>:30,Logger Configured
+2024-04-18 21:31:46,main,startup:49,Starting FastAPI - 2024-04-18 21:31:46.829976+00:00
+2024-04-18 21:31:46,main,startup:49,Starting FastAPI - 2024-04-18 21:31:46.829976+00:00
+2024-04-18 21:31:46,main,startup:49,Starting FastAPI - 2024-04-18 21:31:46.829976+00:00
+2024-04-18 21:32:03,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:32:03,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:32:03,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:32:07,main,<module>:30,Logger Configured
+2024-04-18 21:32:07,main,<module>:30,Logger Configured
+2024-04-18 21:32:07,main,<module>:30,Logger Configured
+2024-04-18 21:32:07,main,startup:49,Starting FastAPI - 2024-04-18 21:32:07.342358+00:00
+2024-04-18 21:32:07,main,startup:49,Starting FastAPI - 2024-04-18 21:32:07.342358+00:00
+2024-04-18 21:32:07,main,startup:49,Starting FastAPI - 2024-04-18 21:32:07.342358+00:00
+2024-04-18 21:32:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:32:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:32:16,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:32:18,db.employee,post_employee:56,IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "employees_email_mobile_number_name_key"\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\n',)
+2024-04-18 21:32:18,db.employee,post_employee:56,IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "employees_email_mobile_number_name_key"\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\n',)
+2024-04-18 21:32:18,db.employee,post_employee:56,IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "employees_email_mobile_number_name_key"\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\n',)
+2024-04-18 21:32:18,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,500,{"detail":"IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint \"employees_email_mobile_number_name_key\"\\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\\n',)"}
+2024-04-18 21:32:18,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,500,{"detail":"IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint \"employees_email_mobile_number_name_key\"\\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\\n',)"}
+2024-04-18 21:32:18,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,500,{"detail":"IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint \"employees_email_mobile_number_name_key\"\\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\\n',)"}
+2024-04-18 21:33:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:33:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:33:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:33:03,db.employee,post_employee:56,IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "employees_email_mobile_number_name_key"\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\n',)
+2024-04-18 21:33:03,db.employee,post_employee:56,IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "employees_email_mobile_number_name_key"\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\n',)
+2024-04-18 21:33:03,db.employee,post_employee:56,IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint "employees_email_mobile_number_name_key"\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\n',)
+2024-04-18 21:33:03,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,500,{"detail":"IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint \"employees_email_mobile_number_name_key\"\\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\\n',)"}
+2024-04-18 21:33:03,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,500,{"detail":"IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint \"employees_email_mobile_number_name_key\"\\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\\n',)"}
+2024-04-18 21:33:03,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,500,{"detail":"IntegrityError: ('(psycopg2.errors.UniqueViolation) duplicate key value violates unique constraint \"employees_email_mobile_number_name_key\"\\nDETAIL:  Key (email, mobile_number, name)=(, , Admin) already exists.\\n',)"}
+2024-04-18 21:34:48,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:34:48.390179+00:00
+2024-04-18 21:34:48,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:34:48.390179+00:00
+2024-04-18 21:34:48,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:34:48.390179+00:00
+2024-04-18 21:34:53,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:34:53,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:34:53,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:34:55,main,<module>:30,Logger Configured
+2024-04-18 21:34:55,main,<module>:30,Logger Configured
+2024-04-18 21:34:55,main,<module>:30,Logger Configured
+2024-04-18 21:34:55,main,startup:49,Starting FastAPI - 2024-04-18 21:34:55.540799+00:00
+2024-04-18 21:34:55,main,startup:49,Starting FastAPI - 2024-04-18 21:34:55.540799+00:00
+2024-04-18 21:34:55,main,startup:49,Starting FastAPI - 2024-04-18 21:34:55.540799+00:00
+2024-04-18 21:34:58,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:34:58.936476+00:00
+2024-04-18 21:34:58,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:34:58.936476+00:00
+2024-04-18 21:34:58,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:34:58.936476+00:00
+2024-04-18 21:35:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:35:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:35:01,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:35:04,main,<module>:30,Logger Configured
+2024-04-18 21:35:04,main,<module>:30,Logger Configured
+2024-04-18 21:35:04,main,<module>:30,Logger Configured
+2024-04-18 21:35:04,main,startup:49,Starting FastAPI - 2024-04-18 21:35:04.433044+00:00
+2024-04-18 21:35:04,main,startup:49,Starting FastAPI - 2024-04-18 21:35:04.433044+00:00
+2024-04-18 21:35:04,main,startup:49,Starting FastAPI - 2024-04-18 21:35:04.433044+00:00
+2024-04-18 21:36:26,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:36:26,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:36:26,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:36:30,main,<module>:30,Logger Configured
+2024-04-18 21:36:30,main,<module>:30,Logger Configured
+2024-04-18 21:36:30,main,<module>:30,Logger Configured
+2024-04-18 21:36:30,main,startup:49,Starting FastAPI - 2024-04-18 21:36:30.529142+00:00
+2024-04-18 21:36:30,main,startup:49,Starting FastAPI - 2024-04-18 21:36:30.529142+00:00
+2024-04-18 21:36:30,main,startup:49,Starting FastAPI - 2024-04-18 21:36:30.529142+00:00
+2024-04-18 21:36:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:36:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:36:43,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:36:46,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 1496b31e-c6bc-47aa-b025-73c7eee4a8be"
+2024-04-18 21:36:46,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 1496b31e-c6bc-47aa-b025-73c7eee4a8be"
+2024-04-18 21:36:46,__main__,add_admin:92,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 1496b31e-c6bc-47aa-b025-73c7eee4a8be"
+2024-04-18 21:36:49,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:49,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:49,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:50,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:50,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:50,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:51,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:51,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:51,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:51,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:51,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:51,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:52,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:52,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:52,__main__,add_entity:106,http://localhost:5001/api/v1/form/role/add ,200,"Record has been Added"
+2024-04-18 21:36:52,__main__,add_entity:108,http://localhost:5001/api/v1/form/role/search ,200,[{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"admin","cluster":"cluster","role_pk_id":"c1a48396-c30d-4b22-9f45-285e60c96ebf","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"supervisor","cluster":"cluster","role_pk_id":"3173a4e3-870f-409d-8dff-f5b7aa5dcf77","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"rd","cluster":"cluster","role_pk_id":"e7e4492b-5e03-496f-ae7f-49f413972c50","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"office","cluster":"cluster","role_pk_id":"b884bd57-b516-416a-add1-4a96b6fdcc43","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"teacher","cluster":"cluster","role_pk_id":"3ee65ef1-6cba-46c9-9e7a-fdec210d131c","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}}]
+2024-04-18 21:36:52,__main__,add_entity:108,http://localhost:5001/api/v1/form/role/search ,200,[{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"admin","cluster":"cluster","role_pk_id":"c1a48396-c30d-4b22-9f45-285e60c96ebf","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"supervisor","cluster":"cluster","role_pk_id":"3173a4e3-870f-409d-8dff-f5b7aa5dcf77","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"rd","cluster":"cluster","role_pk_id":"e7e4492b-5e03-496f-ae7f-49f413972c50","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"office","cluster":"cluster","role_pk_id":"b884bd57-b516-416a-add1-4a96b6fdcc43","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"teacher","cluster":"cluster","role_pk_id":"3ee65ef1-6cba-46c9-9e7a-fdec210d131c","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}}]
+2024-04-18 21:36:52,__main__,add_entity:108,http://localhost:5001/api/v1/form/role/search ,200,[{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"admin","cluster":"cluster","role_pk_id":"c1a48396-c30d-4b22-9f45-285e60c96ebf","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"supervisor","cluster":"cluster","role_pk_id":"3173a4e3-870f-409d-8dff-f5b7aa5dcf77","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"rd","cluster":"cluster","role_pk_id":"e7e4492b-5e03-496f-ae7f-49f413972c50","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"office","cluster":"cluster","role_pk_id":"b884bd57-b516-416a-add1-4a96b6fdcc43","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}},{"created_fk_by":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","description":"Add","status":0,"visible":true,"priority":5,"can_update":true,"can_deleted":true,"name":"teacher","cluster":"cluster","role_pk_id":"3ee65ef1-6cba-46c9-9e7a-fdec210d131c","created":{"employees_pk_id":"1496b31e-c6bc-47aa-b025-73c7eee4a8be","name":"Admin","last_name":"Admin","roles":[]}}]
+2024-04-18 21:36:52,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:36:52,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:36:52,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:36:53,__main__,add_entity:110,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:36:53,__main__,add_entity:110,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:36:53,__main__,add_entity:110,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:36:53,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:36:53,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:36:53,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:36:53,__main__,add_entity:111,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:36:53,__main__,add_entity:111,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:36:53,__main__,add_entity:111,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:36:54,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 6f69035d-9a7e-493e-9345-21c4d3716ee2"
+2024-04-18 21:36:54,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 6f69035d-9a7e-493e-9345-21c4d3716ee2"
+2024-04-18 21:36:54,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 6f69035d-9a7e-493e-9345-21c4d3716ee2"
+2024-04-18 21:36:54,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3340da6e-31b3-4080-a7a7-4e5c0bd01fb9"
+2024-04-18 21:36:54,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3340da6e-31b3-4080-a7a7-4e5c0bd01fb9"
+2024-04-18 21:36:54,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3340da6e-31b3-4080-a7a7-4e5c0bd01fb9"
+2024-04-18 21:36:55,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: cbaf7cc4-b579-46bd-8d1e-f905346db1a8"
+2024-04-18 21:36:55,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: cbaf7cc4-b579-46bd-8d1e-f905346db1a8"
+2024-04-18 21:36:55,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: cbaf7cc4-b579-46bd-8d1e-f905346db1a8"
+2024-04-18 21:36:56,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 1f4ed06d-1c14-45bf-b924-7482d1ce2e11"
+2024-04-18 21:36:56,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 1f4ed06d-1c14-45bf-b924-7482d1ce2e11"
+2024-04-18 21:36:56,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 1f4ed06d-1c14-45bf-b924-7482d1ce2e11"
+2024-04-18 21:36:56,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 2584f019-68b1-474b-b35d-543e5ca6b78e"
+2024-04-18 21:36:56,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 2584f019-68b1-474b-b35d-543e5ca6b78e"
+2024-04-18 21:36:56,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 2584f019-68b1-474b-b35d-543e5ca6b78e"
+2024-04-18 21:36:57,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: b414163f-eaf4-4f31-8bd8-c8ed449d1c80"
+2024-04-18 21:36:57,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: b414163f-eaf4-4f31-8bd8-c8ed449d1c80"
+2024-04-18 21:36:57,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: b414163f-eaf4-4f31-8bd8-c8ed449d1c80"
+2024-04-18 21:36:57,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 82eb17f5-10d5-4dfc-a6f9-ed7aabca7d32"
+2024-04-18 21:36:57,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 82eb17f5-10d5-4dfc-a6f9-ed7aabca7d32"
+2024-04-18 21:36:57,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 82eb17f5-10d5-4dfc-a6f9-ed7aabca7d32"
+2024-04-18 21:36:58,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3feeba2b-eab6-4692-91af-0901a2efb5d8"
+2024-04-18 21:36:58,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3feeba2b-eab6-4692-91af-0901a2efb5d8"
+2024-04-18 21:36:58,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3feeba2b-eab6-4692-91af-0901a2efb5d8"
+2024-04-18 21:36:58,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 7d83a0c6-e00c-4317-8684-a16b4c29110f"
+2024-04-18 21:36:58,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 7d83a0c6-e00c-4317-8684-a16b4c29110f"
+2024-04-18 21:36:58,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 7d83a0c6-e00c-4317-8684-a16b4c29110f"
+2024-04-18 21:36:59,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3b2d3580-0508-4f2a-a270-463514836db8"
+2024-04-18 21:36:59,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3b2d3580-0508-4f2a-a270-463514836db8"
+2024-04-18 21:36:59,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 3b2d3580-0508-4f2a-a270-463514836db8"
+2024-04-18 21:37:00,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: e82557bb-956c-4125-a267-9b4b9a943173"
+2024-04-18 21:37:00,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: e82557bb-956c-4125-a267-9b4b9a943173"
+2024-04-18 21:37:00,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: e82557bb-956c-4125-a267-9b4b9a943173"
+2024-04-18 21:37:00,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 09b68564-fe53-4566-a026-275856d0f3d6"
+2024-04-18 21:37:00,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 09b68564-fe53-4566-a026-275856d0f3d6"
+2024-04-18 21:37:00,__main__,add_entity:114,http://localhost:5001/api/v1/employee/add ,200,"Employee Added. ID: 09b68564-fe53-4566-a026-275856d0f3d6"
+2024-04-18 21:37:01,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:01,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:01,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:01,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:01,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:01,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:02,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:02,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:02,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:02,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:02,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:02,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:03,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:03,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:03,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:03,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:03,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:03,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:04,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:04,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:04,__main__,add_entity:118,http://localhost:5001/api/v1/form/language/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:04,__main__,add_entity:120,http://localhost:5001/api/v1/form/language/search ,404,{"detail":"Not Found"}
+2024-04-18 21:37:04,__main__,add_entity:120,http://localhost:5001/api/v1/form/language/search ,404,{"detail":"Not Found"}
+2024-04-18 21:37:04,__main__,add_entity:120,http://localhost:5001/api/v1/form/language/search ,404,{"detail":"Not Found"}
+2024-04-18 21:37:05,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:05,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:05,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:05,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:05,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:05,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:06,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:06,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:06,__main__,add_entity:123,http://localhost:5001/api/v1/form/course_type/add ,404,{"detail":"Not Found"}
+2024-04-18 21:37:06,__main__,add_entity:125,http://localhost:5001/api/v1/form/course_type/search ,404,{"detail":"Not Found"}
+2024-04-18 21:37:06,__main__,add_entity:125,http://localhost:5001/api/v1/form/course_type/search ,404,{"detail":"Not Found"}
+2024-04-18 21:37:06,__main__,add_entity:125,http://localhost:5001/api/v1/form/course_type/search ,404,{"detail":"Not Found"}
+2024-04-18 21:37:06,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:06,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:06,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:07,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:07,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:07,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:07,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:07,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:07,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:07,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:07,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:07,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:07,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:07,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:07,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:08,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:08,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:08,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:08,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:08,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:08,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:08,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:08,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:08,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:08,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:08,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:08,db.tag_category,post_tag:42,AttributeError: ("module 'db.models' has no attribute 'tag_form'",)
+2024-04-18 21:37:09,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:09,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:09,__main__,add_entity:129,http://localhost:5001/api/v1/form/tag/add ,500,{"detail":"AttributeError: (\"module 'db.models' has no attribute 'tag_form'\",)"}
+2024-04-18 21:37:10,__main__,add_entity:131,http://localhost:5001/api/v1/form/tag/search ,200,[]
+2024-04-18 21:37:10,__main__,add_entity:131,http://localhost:5001/api/v1/form/tag/search ,200,[]
+2024-04-18 21:37:10,__main__,add_entity:131,http://localhost:5001/api/v1/form/tag/search ,200,[]
+2024-04-18 21:37:10,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:10,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:10,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:10,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:10,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:10,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:10,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:10,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:10,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:11,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:11,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:11,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:11,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:11,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:11,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:11,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:11,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:11,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:11,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:11,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:11,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:12,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:12,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:12,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:12,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:12,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:12,db.tag_category,post_category:119,KeyError: ('roles',)
+2024-04-18 21:37:12,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:12,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:12,__main__,add_entity:134,http://localhost:5001/api/v1/form/category/add ,500,{"detail":"KeyError: ('roles',)"}
+2024-04-18 21:37:13,__main__,add_entity:135,http://localhost:5001/api/v1/form/category/search ,200,[]
+2024-04-18 21:37:13,__main__,add_entity:135,http://localhost:5001/api/v1/form/category/search ,200,[]
+2024-04-18 21:37:13,__main__,add_entity:135,http://localhost:5001/api/v1/form/category/search ,200,[]
+2024-04-18 21:38:20,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:38:20.259620+00:00
+2024-04-18 21:38:20,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:38:20.259620+00:00
+2024-04-18 21:38:20,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:38:20.259620+00:00
+2024-04-18 21:38:22,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:38:22,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:38:22,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:38:25,main,<module>:30,Logger Configured
+2024-04-18 21:38:25,main,<module>:30,Logger Configured
+2024-04-18 21:38:25,main,<module>:30,Logger Configured
+2024-04-18 21:38:25,main,startup:49,Starting FastAPI - 2024-04-18 21:38:25.132638+00:00
+2024-04-18 21:38:25,main,startup:49,Starting FastAPI - 2024-04-18 21:38:25.132638+00:00
+2024-04-18 21:38:25,main,startup:49,Starting FastAPI - 2024-04-18 21:38:25.132638+00:00
+2024-04-18 21:39:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:39:38.412366+00:00
+2024-04-18 21:39:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:39:38.412366+00:00
+2024-04-18 21:39:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:39:38.412366+00:00
+2024-04-18 21:39:40,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:39:40,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:39:40,db.database,<module>:26,postgresql://admin:adminadmin@localhost:5432/Acc1
+2024-04-18 21:39:43,main,<module>:30,Logger Configured
+2024-04-18 21:39:43,main,<module>:30,Logger Configured
+2024-04-18 21:39:43,main,<module>:30,Logger Configured
+2024-04-18 21:39:43,main,startup:49,Starting FastAPI - 2024-04-18 21:39:43.258255+00:00
+2024-04-18 21:39:43,main,startup:49,Starting FastAPI - 2024-04-18 21:39:43.258255+00:00
+2024-04-18 21:39:43,main,startup:49,Starting FastAPI - 2024-04-18 21:39:43.258255+00:00
+2024-04-18 21:42:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:42:38.253671+00:00
+2024-04-18 21:42:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:42:38.253671+00:00
+2024-04-18 21:42:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:42:38.253671+00:00

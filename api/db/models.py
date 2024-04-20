@@ -423,7 +423,6 @@ survey_questions = Table(
         Column("deleted", Boolean, default=False, nullable=False),
         UniqueConstraint("survey_fk_id", "question_fk_id", "deleted"), )
 
-deleted = Column(Boolean, server_default=expression.false(), nullable=False)
 
 UserRole = Table(
         "users_roles",
@@ -483,7 +482,7 @@ class Employees_form(Base, UserBase):
 
     roles = relationship('Roles_form', secondary=UserRole, backref='user_role')
 
-    __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name'),)
+    # __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name"),)
 
 
 class Student_form(Base, UserBase):
