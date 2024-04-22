@@ -4336,3 +4336,30 @@
 2024-04-18 21:42:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:42:38.253671+00:00
 2024-04-18 21:42:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:42:38.253671+00:00
 2024-04-18 21:42:38,main,shutdown:65,Shutting FastAPI - 2024-04-18 21:42:38.253671+00:00
+2024-04-22 13:45:59,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 13:45:59,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 13:45:59,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 13:47:11,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 13:47:11,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 13:47:11,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 13:47:12,main,<module>:30,Logger Configured
+2024-04-22 13:47:12,main,<module>:30,Logger Configured
+2024-04-22 13:47:12,main,<module>:30,Logger Configured
+2024-04-22 13:47:12,main,startup:49,Starting FastAPI - 2024-04-22 13:47:12.794200+00:00
+2024-04-22 13:47:12,main,startup:49,Starting FastAPI - 2024-04-22 13:47:12.794200+00:00
+2024-04-22 13:47:12,main,startup:49,Starting FastAPI - 2024-04-22 13:47:12.794200+00:00
+2024-04-22 13:47:57,main,shutdown:65,Shutting FastAPI - 2024-04-22 13:47:57.732704+00:00
+2024-04-22 13:47:57,main,shutdown:65,Shutting FastAPI - 2024-04-22 13:47:57.732704+00:00
+2024-04-22 13:47:57,main,shutdown:65,Shutting FastAPI - 2024-04-22 13:47:57.732704+00:00
+2024-04-22 10:28:47,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 10:28:47,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 10:28:47,db.database,<module>:26,postgresql://ieltsdaily:AliBig+Hi@87.107.161.173:15432/test
+2024-04-22 10:28:48,main,<module>:30,Logger Configured
+2024-04-22 10:28:48,main,<module>:30,Logger Configured
+2024-04-22 10:28:48,main,<module>:30,Logger Configured
+2024-04-22 10:28:48,main,startup:49,Starting FastAPI - 2024-04-22 13:58:48.884021+00:00
+2024-04-22 10:28:48,main,startup:49,Starting FastAPI - 2024-04-22 13:58:48.884021+00:00
+2024-04-22 10:28:48,main,startup:49,Starting FastAPI - 2024-04-22 13:58:48.884021+00:00
+2024-04-22 10:51:37,main,shutdown:65,Shutting FastAPI - 2024-04-22 14:21:37.769113+00:00
+2024-04-22 10:51:37,main,shutdown:65,Shutting FastAPI - 2024-04-22 14:21:37.769113+00:00
+2024-04-22 10:51:37,main,shutdown:65,Shutting FastAPI - 2024-04-22 14:21:37.769113+00:00

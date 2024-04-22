@@ -22,7 +22,7 @@ class log_mode(str, Enum):
     log = 'log'
 
 
-from prettytable import PrettyTable
+# from prettytable import PrettyTable
 
 # def create_table(log_path):
 #     a = open(log_path, 'r')
