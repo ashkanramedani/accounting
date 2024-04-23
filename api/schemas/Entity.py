@@ -14,9 +14,9 @@ __all__ = [
 # ---------------------- Employee ----------------------
 
 class Employee(Entity):
-    priority: int | None
-    fingerprint_scanner_user_id: int | None = None
-    roles: List[UUID] | None = []
+    priority: Optional[int] = 5
+    fingerprint_scanner_user_id: Optional[int] = None
+    roles: List[UUID] = []
 
 
 class post_employee_schema(Employee):

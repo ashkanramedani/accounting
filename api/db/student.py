@@ -1,6 +1,7 @@
 from lib import logger
 
 
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -13,7 +14,7 @@ def get_student(db: Session, student_id):
     try:
         return 200, db.query(dbm.Student_form).filter_by(student_pk_id=student_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -22,7 +23,7 @@ def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, 
     try:
         return 200, record_order_by(db, dbm.Student_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -36,7 +37,7 @@ def post_student(db: Session, Form: sch.post_student_schema):
         db.refresh(OBJ)
         return 200, "Student Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -50,7 +51,7 @@ def delete_student(db: Session, student_id):
         db.commit()
         return 200, "Student Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -66,6 +67,6 @@ def update_student(db: Session, Form: sch.update_student_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

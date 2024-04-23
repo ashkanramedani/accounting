@@ -26,7 +26,7 @@ class course_type_schema(Enum):
     hybrid = "hybrid"
 
 
-@router.get("/base_score/{course_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/base_score/{course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def get_teacher_payment_score(course_id: sch.UUID, db=Depends(get_db)):
     course = dbf.get_course(db, course_id)
     course_cap, course_type = course.course_capacity, course.course_type
@@ -58,7 +58,7 @@ teacher_level = {
 }
 
 
-@router.get("/teacher_level/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/teacher_level/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def get_teacher_level(employee_id, db=Depends(get_db)):
     salary_policy = db.query(dbf.SalaryPolicy).filter_by(employees_pk_id=employee_id, deleted=False).first()
     salary_policy = salary_policy.dict()
@@ -162,7 +162,7 @@ ReportToStudent = {
 }
 
 
-@router.get("/ReportToStudent/{course_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/ReportToStudent/{course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def ReportToStudent(course_id: sch.UUID, db=Depends(get_db)):
     status, result = dbf.get_course(db, course_id)
     if status != 200:

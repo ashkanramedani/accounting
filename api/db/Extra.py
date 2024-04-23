@@ -13,6 +13,7 @@ import schemas as sch
 import db.models as dbm
 from lib import logger
 
+
 import re
 
 Tables = {
@@ -76,7 +77,7 @@ def safe_run(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logger.error(f'{e.__class__.__name__}: {e.args}')
+            logger.error(e)
         return func(*args, **kwargs)
 
     return wrapper

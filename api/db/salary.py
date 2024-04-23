@@ -1,6 +1,7 @@
 from lib import logger
 
 
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -44,7 +45,7 @@ def employee_salary_report(db: Session, employee_fk_id, year, month):
 
         return 200, "Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -55,7 +56,7 @@ def teacher_salary_report(db: Session, Form: sch.teacher_salary_report, year, mo
         start, end = generate_month_interval(year, month)
         return 200, start
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 

@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import logger
+
 from .Extra import *
 
 
@@ -14,7 +15,7 @@ def get_all_survey(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, o
         return 200, record_order_by(db, dbm.Survey_form, page, limit, order)
 
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -45,7 +46,7 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
         db.commit()
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -60,7 +61,7 @@ def delete_survey(db: Session, survey_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -99,6 +100,6 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

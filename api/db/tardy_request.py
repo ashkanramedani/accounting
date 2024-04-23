@@ -2,6 +2,7 @@ from lib import logger
 
 
 
+
 from sqlalchemy.orm import Session, joinedload
 
 import db.models as dbm
@@ -14,7 +15,7 @@ def get_tardy_request(db: Session, form_id):
     try:
         return 200, db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -23,7 +24,7 @@ def get_all_tardy_request(db: Session, page: sch.PositiveInt, limit: sch.Positiv
     try:
         return 200, record_order_by(db, dbm.Teacher_tardy_reports_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -41,7 +42,7 @@ def report_tardy_request(db: Session, Form: sch.teacher_report):
 
         return 200, sum(row.delay for row in result)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -60,7 +61,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -74,7 +75,7 @@ def delete_tardy_request(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -96,6 +97,6 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

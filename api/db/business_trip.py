@@ -5,14 +5,16 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import logger
+
 from .Extra import *
 
+from lib.Date_Time import Fix_datetime
 
 def get_business_trip_form(db: Session, form_id):
     try:
         return 200, db.query(dbm.Business_Trip_form).filter_by(business_trip_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
@@ -20,7 +22,7 @@ def get_all_business_trip_form(db: Session, page: sch.PositiveInt, limit: sch.Po
     try:
         return 200, record_order_by(db, dbm.Business_Trip_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -42,6 +44,7 @@ def report_business_trip(db: Session, salary_rate, employee_fk_id, start_date, e
 
 def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema) -> Tuple[int, str | Dict | List]:
     try:
+        # db.query(dbm.Business_Trip_form).filter_by(star)
         if not employee_exist(db, [Form.employee_fk_id]):
             return 400, "Bad Request: Employee not found"
 
@@ -59,7 +62,7 @@ def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema) ->
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -73,7 +76,7 @@ def delete_business_trip_form(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -94,6 +97,6 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

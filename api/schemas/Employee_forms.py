@@ -23,7 +23,7 @@ class leave_request_response(Base_form, Base_response):
 
     start_date: time | None
     end_date: time | None
-    date: datetime | None
+    date: datetime
     duration: int
 
     leave_type: str

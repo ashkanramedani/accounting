@@ -12,7 +12,7 @@ import db as dbf
 import schemas as sch
 from db.database import get_db
 
-router = APIRouter(prefix='/api/v1/form/log')
+
 
 from enum import Enum
 
@@ -22,7 +22,7 @@ class log_mode(str, Enum):
     log = 'log'
 
 
-from prettytable import PrettyTable
+# from prettytable import PrettyTable
 
 # def create_table(log_path):
 #     a = open(log_path, 'r')
@@ -43,9 +43,9 @@ from starlette.templating import Jinja2Templates
 
 from fastapi import HTTPException, Request
 
-
-@router.get("/{mode}", include_in_schema=False, response_class=HTMLResponse)
-async def log(mode: log_mode = 'csv'):
+router = APIRouter()
+@router.get("/log", include_in_schema=False, response_class=HTMLResponse)
+async def log(mode: log_mode = 'log'):
     templates = Jinja2Templates(directory="./")
     log_path = normpath(f'{dirname(__file__)}/../log/log.{mode}')
     if mode == 'csv':
@@ -57,7 +57,7 @@ async def log(mode: log_mode = 'csv'):
     return log_file
 
 
-@router.get("/count", tags=["Ping"])
+@router.get("/api/v1/form/count", tags=["Ping"])
 async def count(field: str, db=Depends(get_db)):
     status_code, result = dbf.count(db, field)
     if status_code != 200:

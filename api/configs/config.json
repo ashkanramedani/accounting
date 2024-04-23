@@ -4,7 +4,7 @@
     "versions": "v 3.0.0",
     "logger": {
         "format": "{time:YYYY-MM-DD HH:mm:ss},{name},{function}:{line},{message}",
-        "sink": "log/Log.csv",
+        "sink": "log/Log.log",
         "rotation": "10 MB",
         "level": "INFO",
         "abs_sink": ""

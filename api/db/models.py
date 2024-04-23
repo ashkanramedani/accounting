@@ -10,6 +10,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
 
 from lib import logger
+
 from .database import Base
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
@@ -482,7 +483,7 @@ class Employees_form(Base, UserBase):
 
     roles = relationship('Roles_form', secondary=UserRole, backref='user_role')
 
-    # __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name"),)
+    __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name"),)
 
 
 class Student_form(Base, UserBase):
@@ -506,13 +507,12 @@ class course_form(Base, InstitutionsBase):
     course_type = create_forenKey("course_type")
 
     course_name = Column(String)
-
+    course_image = Column(String, nullable=True)
     starting_date = Column(Date, nullable=False)
     ending_date = Column(Date, nullable=False)
     course_capacity = Column(Integer, nullable=False)
     course_level = Column(String, nullable=False)
     course_code = Column(String, nullable=False)
-    picture = Column(String, nullable=True)
 
     package_discount = Column(Float, nullable=False, default=0.0)
 
@@ -536,7 +536,9 @@ class sub_course_form(Base, InstitutionsBase):
     number_of_session = Column(Integer, nullable=False, default=0)
     sub_course_starting_date = Column(Date, nullable=False)
     sub_course_ending_date = Column(Date, nullable=False)
-    course_capacity = Column(Integer, nullable=False, default=0)
+
+    sub_course_capacity = Column(Integer, nullable=False)
+    sub_course_available_seat = Column(Integer, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="sub_course_Relation")
     teacher = relationship("Employees_form", foreign_keys=[sub_course_teacher_fk_id])
@@ -597,6 +599,8 @@ class Business_Trip_form(Base, Base_form):
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Business_Trip_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
+
+    # __args__ = (UniqueConstraint('employee_fk_id', 'start_date', 'end_date', 'destination'),)
 
 
 class Remote_Request_form(Base, Base_form):

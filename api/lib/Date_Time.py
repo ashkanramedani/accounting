@@ -180,17 +180,14 @@ def Fix_date(time_obj: str | datetime | date):
 
 
 def Fix_datetime(time_obj: str | datetime):
-    print(time_obj, datetime_pattern, sep="\n")
     try:
         if isinstance(time_obj, datetime):
             return time_obj
         time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
         time_str = datetime_pattern.match(time_obj)
         if time_str is None:
-            print("Pattern Not Found")
             return
 
-        print(time_str)
         time_str = time_str.groups()
         return datetime(year=int(time_str[0]), month=int(time_str[1]), day=int(time_str[2]), hour=int(time_str[3]), minute=int(time_str[4]), second=int(time_str[5]))
     except Exception as e:
@@ -206,6 +203,9 @@ def is_off_day(day: date | datetime) -> bool:
 
 
 def time_gap(start: time, end: time) -> int:
+    """
+    return time gap in minutes
+    """
     start = datetime.combine(datetime.today(), start)
     end = datetime.combine(datetime.today(), end)
     return int((end - start).total_seconds() // 60)

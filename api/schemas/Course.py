@@ -6,7 +6,7 @@ from .Entity import *
 
 class Session_signature(BaseModel):
     days_of_week: int
-    starting_time: time
+    starting_time: time | str
     duration: int
 
     class Config:
@@ -15,7 +15,6 @@ class Session_signature(BaseModel):
 
 # ---------------------- class ----------------------
 class course(Base_form):
-    course_pk_id: UUID
     course_name: str
 
     starting_date: date
@@ -42,12 +41,25 @@ class update_course_schema(course):
     course_pk_id: UUID
 
 
-class course_response(update_course_schema):
+class course_response(Base_form):
+    course_pk_id: UUID
+
+    course_name: str
+    package_discount: float
+    course_image: str
+    course_capacity: int
+    course_level: str
+    course_code: str
+
+    starting_date: date
+    ending_date: date
+
+    language: export_language
+    type: export_course_type
+
     teachers: List[export_employee] | List[UUID]
-    course_number_of_session: int = 0
     course_signature: List[Session_signature] = []
     available_seat: int
-    total_seat: int
 
     class Config:
         orm_mode = True
@@ -85,16 +97,17 @@ class session_response(update_session_schema):
     class Config:
         orm_mode = True
 
+
 class export_session(session_response):
     pass
 
     class Config:
         orm_mode = True
 
+
 # ------- SubCourse - --
-class SubCourse(BaseModel):
+class SubCourse(Base_form):
     course_fk_id: UUID
-    created_fk_by: UUID
     sub_course_teacher_fk_id: UUID
 
     sub_course_name: str
@@ -114,20 +127,72 @@ class update_sub_course_schema(SubCourse):
     sub_course_pk_id: UUID
 
 
-class sub_course_response(update_sub_course_schema):
-    teacher: export_employee
-    available_seat: int
-    Sessions: List[export_session]
+class sub_course_response(BaseModel):
+    sub_course_pk_id: UUID
+    course_fk_id: UUID
+    sub_course_teacher_fk_id: UUID
+
+    sub_course_name: str
+    number_of_session: int
+
+    sub_course_starting_date: date
+    sub_course_ending_date: date
+    created: export_employee
+    # teacher: export_employee
+    # available_seat: int
+    # Sessions: List[export_session]
 
     class Config:
         orm_mode = True
 
 
+# -------- Language ----------
+
+class Language(Base_form):
+    language_name: str
+
+
+class post_language_schema(Language):
+    pass
+
+
+class update_language_schema(Language):
+    language_pk_id: UUID
+
+
+class language_response(update_language_schema):
+    created: export_employee
+
+    class Config:
+        orm_mode = True
+
+
+# ------- course_type ----------
+
+
+class Course_Type(Base_form):
+    course_type_name: str
+
+
+class post_course_type_schema(Course_Type):
+    pass
+
+
+class update_course_type_schema(Course_Type):
+    course_type_pk_id: UUID
+
+
+class course_type_response(update_course_type_schema):
+    created: export_employee
+
+    class Config:
+        orm_mode = True
+
 # ----- Course cancellation
 class course_cancellation(Base_form):
     course_fk_id: UUID
     teacher_fk_id: UUID
-    replacement_date: str | datetime = datetime.now()
+    replacement_date: datetime = datetime.now()
     course_duration: PositiveInt
     course_location: str
 

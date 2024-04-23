@@ -17,10 +17,9 @@ from khayyam import JalaliDatetime
 
 from lib.json_handler import json_handler
 from lib.redis_db import Redis
-from lib.log import log
+from lib.log import logger as _objLog
 from lib.hash import Hash
 
-_objLog = log()
 directory = normpath(f'{dirname(__file__)}/../')
 _obj_json_handler_config = json_handler(FilePath=directory + "/configs/config.json")
 

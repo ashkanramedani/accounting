@@ -1,4 +1,5 @@
-from lib import logger
+from lib import logger, generate_month_interval, Fix_time, time_gap
+
 from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
@@ -10,7 +11,7 @@ def get_SalaryPolicy(db: Session, form_id):
     try:
         return 200, db.query(dbm.SalaryPolicy_form).filter_by(SalaryPolicy_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -19,7 +20,7 @@ def get_all_SalaryPolicy(db: Session, page: sch.PositiveInt, limit: sch.Positive
     try:
         return 200, record_order_by(db, dbm.SalaryPolicy_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -37,7 +38,7 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
 
         return 200, sum(row.duration for row in result)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -57,7 +58,7 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
                 return 400, "Bad Request: End Date must be greater than Start Date"
 
         is_Fixed = True if data["day_starting_time"] and data["day_ending_time"] else False
-        Working_hour = _sub(data["day_starting_time"], data["day_ending_time"]) if is_Fixed else data["Regular_hours_cap"]
+        Working_hour = time_gap(data["day_starting_time"], data["day_ending_time"]) if is_Fixed else data["Regular_hours_cap"]
         del data["Regular_hours_cap"]
 
         OBJ = dbm.SalaryPolicy_form(is_Fixed=is_Fixed, Regular_hours_cap=Working_hour, **data)  # type: ignore[call-arg]
@@ -67,7 +68,7 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -84,7 +85,7 @@ def delete_SalaryPolicy(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -102,6 +103,6 @@ def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

@@ -12,7 +12,7 @@ router = APIRouter(prefix='/api/v1/form/question', tags=['question'])
 
 
 # tardy request
-@router.post("/add", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def add_question(Form: sch.post_questions_schema, db=Depends(get_db)):
     status_code, result = dbf.post_question(db, Form)
     if status_code != 200:
@@ -20,7 +20,7 @@ async def add_question(Form: sch.post_questions_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.Question_response)
 async def search_question(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_question(db, form_id)
     if status_code != 200:
@@ -28,7 +28,7 @@ async def search_question(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=10, seconds=5))], response_model=List[sch.Question_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Question_response])
 async def search_all_question(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_question(db, page, limit, order)
     if status_code != 200:
@@ -36,7 +36,7 @@ async def search_all_question(db=Depends(get_db), page: sch.PositiveInt = 1, lim
     return result
 
 
-@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_question(form_id, db=Depends(get_db)):
     status_code, result = dbf.delete_question(db, form_id)
     if status_code != 200:
@@ -44,7 +44,7 @@ async def delete_question(form_id, db=Depends(get_db)):
     return result
 
 
-@router.put("/update", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.put("/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_question(Form: sch.update_questions_schema, db=Depends(get_db)):
     status_code, result = dbf.update_question(db, Form)
     if status_code != 200:

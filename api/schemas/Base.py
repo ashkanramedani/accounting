@@ -1,10 +1,10 @@
 import uuid
-from datetime import datetime, date, time, timedelta
+from datetime import timedelta
+from datetime import time, date, datetime, date
 from enum import Enum
 from typing import Optional, List, Any, Tuple
 from uuid import UUID
 from pydantic import BaseModel, PositiveInt
-
 
 class Sort_Order(str, Enum):
     asc = "asc"
@@ -62,7 +62,19 @@ class export_student(BaseModel):
     class Config:
         orm_mode = True
 
+class export_language(BaseModel):
+    language_name: str
+    created: export_employee
 
+    class Config:
+        orm_mode = True
+
+class export_course_type(BaseModel):
+    course_type_name: str
+    created: export_employee
+
+    class Config:
+        orm_mode = True
 # Base Entry
 class Base_form(BaseModel):
     created_fk_by: UUID
@@ -78,12 +90,11 @@ class Base_form(BaseModel):
 class Entity(BaseModel):
     name: str
     last_name: str
-    day_of_birth: str | datetime = datetime.now()
-    email: str | None
-    mobile_number: str | None
-    id_card_number: str | None
-    address: str | None
-
+    day_of_birth: Optional[str] | Optional[datetime] = datetime.now()
+    email: Optional[str] = None
+    mobile_number: Optional[str] = None
+    id_card_number: Optional[str] = None
+    address: Optional[str] = None
 
 class Base_response(BaseModel):
     created: export_employee

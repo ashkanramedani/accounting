@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import logger
+
 from .Extra import record_order_by
 
 # question
@@ -10,7 +11,7 @@ def get_question(db: Session, question_id):
     try:
         return 200, db.query(dbm.Questions_form).filter_by(question_pk_id=question_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -19,7 +20,7 @@ def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
     try:
         return 200, record_order_by(db, dbm.Questions_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -33,7 +34,7 @@ def post_question(db: Session, Form: sch.post_questions_schema):
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -47,7 +48,7 @@ def delete_question(db: Session, question_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -63,7 +64,7 @@ def update_question(db: Session, Form: sch.update_questions_schema):
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -73,6 +74,6 @@ def get_survey(db: Session, survey_id):
     try:
         return 200, db.query(dbm.Survey_form).filter_by(survey_pk_id=survey_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

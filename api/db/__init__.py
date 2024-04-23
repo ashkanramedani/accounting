@@ -3,8 +3,7 @@ from .SalaryPolicy import *
 from .Survey import *
 from .business_trip import *
 from .course_cancellation import *
-from .course import *
-from .tag_category import *
+from .Course import *
 from .db_library import *
 from .db_post import *
 from .db_user import *
@@ -135,7 +134,11 @@ __all__ = [
     "post_subcourse",
     "delete_subcourse",
     "update_subcourse",
-    "get_se"
+    "get_session",
+    "get_all_session",
+    "post_session",
+    "delete_session",
+    "update_session",
     # payment.py
     "get_payment_method",
     "get_all_payment_method",

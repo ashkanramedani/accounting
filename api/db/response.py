@@ -4,6 +4,7 @@ import db.models as dbm
 from .Extra import *
 from uuid import UUID
 from lib import logger
+
 from typing import List
 from sqlalchemy.orm import Session
 
@@ -13,7 +14,7 @@ def get_response(db: Session, response_id):
     try:
         return 200, db.query(dbm.Response_form).filter_by(response_pk_id=response_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -22,7 +23,7 @@ def get_all_response(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
     try:
         return 200, record_order_by(db, dbm.Response_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -49,7 +50,7 @@ def post_response(db: Session, Form: sch.post_response_schema):
         db.commit()
         return 200, "response Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -63,7 +64,7 @@ def delete_response(db: Session, response_id):
         db.commit()
         return 200, "employee Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -87,6 +88,6 @@ def update_response(db: Session, Form: sch.update_response_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

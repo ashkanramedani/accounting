@@ -8,7 +8,8 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from lib import logger
+from lib import *
+
 from .Extra import *
 
 
@@ -44,7 +45,7 @@ def preprocess_report(report):
         if report[i]["Date"] not in preprocess_Days:
             preprocess_Days[Key] = {"Total_Work": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
 
-        preprocess_Days[Key]["Total_Work"] += _sub(report[i]["Enter"], report[i]["Exit"])
+        preprocess_Days[Key]["Total_Work"] += time_gap(report[i]["Enter"], report[i]["Exit"])
         preprocess_Days[Key]["EnterExit"].append(report[i]["Enter"])
         preprocess_Days[Key]["EnterExit"].append(report[i]["Exit"])
 
@@ -87,14 +88,14 @@ def Fixed_schedule(EMP_Salary: dbm.SalaryPolicy_form, report):
             first_enter: time = max(min(day["EnterExit"]), EMP_Salary.day_starting_time)  # type: ignore
             last_exit: time = max(day["EnterExit"])  # type: ignore
             # UnderTime
-            tmp_undertime = _sub(EMP_Salary.day_starting_time, first_enter)
+            tmp_undertime = time_gap(EMP_Salary.day_starting_time, first_enter)
             Undertime = tmp_undertime if tmp_undertime > EMP_Salary.undertime_threshold else 0
 
             if last_exit < EMP_Salary.day_ending_time:
-                tmp_undertime = _sub(last_exit, EMP_Salary.day_ending_time)
+                tmp_undertime = time_gap(last_exit, EMP_Salary.day_ending_time)
                 Undertime += tmp_undertime if tmp_undertime > EMP_Salary.undertime_threshold else 0
             else:
-                tmp_overtime = _sub(EMP_Salary.day_ending_time, last_exit)
+                tmp_overtime = time_gap(EMP_Salary.day_ending_time, last_exit)
                 Overtime = tmp_overtime if tmp_overtime > EMP_Salary.overtime_threshold else 0
 
             EnterExit = day["EnterExit"]
@@ -104,7 +105,7 @@ def Fixed_schedule(EMP_Salary: dbm.SalaryPolicy_form, report):
             # check if more than one Enter and Exit is in day
             if len(EnterExit) != 2:
                 for Enter, Exit in zip(enters, exits):
-                    day["Undertime"] += _sub(Enter, Exit)
+                    day["Undertime"] += time_gap(Enter, Exit)
 
         Days.append({
             "Date": Date_constructor(Date),
@@ -174,7 +175,7 @@ def get_fingerprint_scanner(db: Session, form_id):
     try:
         return 200, db.query(dbm.Fingerprint_scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -183,7 +184,7 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
     try:
         return 200, record_order_by(db, dbm.Fingerprint_scanner_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -225,7 +226,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -285,7 +286,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
                     if hour[H] == hour[H + 1] or hour[H + 1] is None:
                         OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
                     else:
-                        duration = 0 if hour[H] == hour[H + 1] else _sub(Fix_time(hour[H]), Fix_time(hour[H + 1]))
+                        duration = 0 if hour[H] == hour[H + 1] else time_gap(Fix_time(hour[H]), Fix_time(hour[H + 1]))
                         OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
@@ -293,7 +294,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
         return 200, "File added"
 
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -307,7 +308,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -324,13 +325,13 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         data = Form.dict()
 
         s, e = data["Enter"], data["Exit"]
-        data["duration"] = 0 if s == e else _sub(Fix_time(s), Fix_time(s))
+        data["duration"] = 0 if s == e else time_gap(Fix_time(s), Fix_time(s))
 
         record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

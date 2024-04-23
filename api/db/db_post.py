@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from lib import logger
 
 
+
 import schemas as sch
 import db.models as dbm
 
@@ -21,7 +22,7 @@ def read_all_posts_for_admin_panel(db: Session, topic: str, start_id: int, page_
             return False
         return data
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -33,7 +34,7 @@ def get_post_with_pid(db: Session, pid: str):
             return False
         return data
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -50,7 +51,7 @@ def delete_posts(db: Session, topic: str, pid: int):
         else:
             return 0
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -67,7 +68,7 @@ def update_posts(db: Session, topic: str, pid: int, update: dbm.Posts):
             return 0
 
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return -1
 
@@ -107,7 +108,7 @@ def create_post(db: Session, new: sch.PostCreate):
         db.refresh(data)
         return data
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return False
 
@@ -155,6 +156,6 @@ def create_post(db: Session, new: sch.PostCreate):
 #         db.refresh(data)
 #         return  data
 #     except Exception as e:
-#         logger.error(f'{e.__class__.__name__}: {e.args}')
+#         logger.error(e)
 #         db.rollback()
 #         return False

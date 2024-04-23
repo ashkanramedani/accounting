@@ -14,7 +14,7 @@ from fastapi import File, UploadFile
 router = APIRouter(prefix='/api/v1/form/salary', tags=['report'])
 
 
-@router.get("/employee/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.get("/employee/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def search_report(employee_id: UUID, year: sch.PositiveInt, month: sch.PositiveInt, db=Depends(get_db)):
     if not employee_id:
         raise HTTPException(status_code=400, detail="Employee ID Not provided")
@@ -29,7 +29,7 @@ async def search_report(employee_id: UUID, year: sch.PositiveInt, month: sch.Pos
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
-@router.post("/teacher/{employee_id}", dependencies=[Depends(RateLimiter(times=10, seconds=5))])
+@router.post("/teacher/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def search_teacher_report(Form: sch.teacher_salary_report, employee_id: UUID, year: sch.PositiveInt, month: sch.PositiveInt, db=Depends(get_db)):
     if not employee_id:
         raise HTTPException(status_code=400, detail="Employee ID Not provided")

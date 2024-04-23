@@ -1,4 +1,5 @@
 from lib import logger
+
 from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
@@ -13,7 +14,7 @@ def get_course_cancellation_form(db: Session, form_id):
     try:
         return 200, db.query(dbm.course_Cancellation_form).filter_by(course_cancellation_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -22,7 +23,7 @@ def get_all_course_cancellation_form(db: Session, page: sch.PositiveInt, limit: 
     try:
         return 200, record_order_by(db, dbm.course_Cancellation_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -39,7 +40,7 @@ def report_course_cancellation(db: Session, Form: sch.teacher_report):
 
         return 200, result
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -59,7 +60,7 @@ def post_course_cancellation_form(db: Session, Form: sch.post_course_cancellatio
         return 200, "Record has been Added"
 
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -73,7 +74,7 @@ def delete_course_cancellation_form(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -94,6 +95,6 @@ def update_course_cancellation_form(db: Session, Form: sch.update_course_cancell
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'

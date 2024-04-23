@@ -1,6 +1,6 @@
 from .business_trip import router as business_trip_route
 from .course_cancellation import router as course_cancellation_route
-from .course import router as course_route
+from .Course import course_route, course_extension_route, sub_course_route, session_route
 from .employee import router as employee_route
 from .leave_request import router as leave_request_route
 from .payment import router as route_payment
@@ -20,11 +20,13 @@ from .tools import router as tools_route
 from .files import router as files
 from .user import router as user
 from .post import router as post
-from .tag_category import router as tag_category_route
 from .library import router as library
 
 routes = [
-    tag_category_route,
+    course_route,
+    course_extension_route,
+    sub_course_route,
+    session_route,
     tools_route,
     report_route,
     roles_route,

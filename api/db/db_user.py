@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from lib import logger
 
 
+
 import db.models as dbm
 
 
@@ -77,7 +78,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         db.refresh(assoc)
 #         return user_created
 #     except ValueError as e:
-#         logger.error(f'{e.__class__.__name__}: {e.args}')
+#         logger.error(e)
 #         db.rollback()
 #         return -1 
 
@@ -104,7 +105,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         db.refresh(assoc)
 #         return user_created
 #     except ValueError as e:
-#         logger.error(f'{e.__class__.__name__}: {e.args}')
+#         logger.error(e)
 #         db.rollback()
 #         return -1 
 
@@ -131,7 +132,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         else:
 #             return 0
 #     except Exception as e:
-#         logger.error(f'{e.__class__.__name__}: {e.args}')
+#         logger.error(e)
 #         db.rollback()
 #         return -1 
 
@@ -175,7 +176,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 # #                     db.commit()
 # #                     db.refresh(role_rel_user)
 # #                 except Exception as e:
-# #                     logger.error(f'{e.__class__.__name__}: {e.args}')
+# #                     logger.error(e)
 
 # #             au = Authentications(
 # #                 password=Hash._bcrypt(new_obj.password),
@@ -188,7 +189,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 # #         return user.id
 
 # #     except Exception as e:
-# #         logger.error(f'{e.__class__.__name__}: {e.args}')
+# #         logger.error(e)
 # #         db.rollback()
 # #         return -1 
 

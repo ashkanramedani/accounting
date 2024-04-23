@@ -1,6 +1,7 @@
 from typing import Tuple
 
-from lib import logger
+from lib import logger, Fix_datetime, same_month, Separate_days_by_DayCap, is_off_day
+
 
 from sqlalchemy.orm import Session
 
@@ -14,7 +15,7 @@ def get_leave_request(db: Session, form_id):
     try:
         return 200, db.query(dbm.Leave_request_form).filter_by(leave_request_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -23,7 +24,7 @@ def get_all_leave_request(db: Session, page: sch.PositiveInt, limit: sch.Positiv
     try:
         return 200, record_order_by(db, dbm.Leave_request_form, page, limit, order)
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -91,7 +92,7 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
 
         return 200, f"Form Added"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -105,7 +106,7 @@ def delete_leave_request(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
@@ -123,6 +124,6 @@ def update_leave_request(db: Session, Form: sch.update_leave_request_schema):
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
