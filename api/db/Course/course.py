@@ -111,11 +111,16 @@ def delete_course(db: Session, course_id):
 
 def update_course(db: Session, Form: sch.update_course_schema):
     try:
+        if not employee_exist(db, [Form.created_fk_by]):
+            return 400, "Bad Request: employee not found"
+        data = Form.__dict__
+        if "session_signature" in data:
+            data.pop("session_signature")
         record = db.query(dbm.course_form).filter_by(course_pk_id=Form.course_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 
-        record.update(Form.dict(), synchronize_session=False)
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

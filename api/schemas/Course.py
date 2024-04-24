@@ -118,7 +118,6 @@ class SubCourse(Base_form):
 
     session_signature: List[Session_signature]
 
-
 class post_sub_course_schema(SubCourse):
     pass
 
