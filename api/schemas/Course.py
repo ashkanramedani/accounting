@@ -24,8 +24,9 @@ class course(Base_form):
     course_language: UUID
     course_type: UUID
 
-    tags: List[UUID] = []
-    categories: List[UUID] = []
+    tags: List[Tuple[UUID | None, UUID | None]] = []
+    categories: List[Tuple[UUID | None, UUID | None]] = []
+
     course_code: str
     course_image: str = ""
 
@@ -40,8 +41,7 @@ class post_course_schema(course):
 class update_course_schema(course):
     course_pk_id: UUID
 
-
-class course_response(Base_form):
+class course_response(Base_response):
     course_pk_id: UUID
 
     course_name: str
@@ -57,13 +57,15 @@ class course_response(Base_form):
     language: export_language
     type: export_course_type
 
-    teachers: List[export_employee] | List[UUID]
+    teachers: List[export_employee] | List[UUID] = None
     course_signature: List[Session_signature] = []
-    available_seat: int
+    available_seat: int = None
+
+    tags: List[export_tag] = []
+    categories: List[export_categories] = []
 
     class Config:
         orm_mode = True
-
 
 # ________ Session
 

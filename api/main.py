@@ -1,6 +1,8 @@
+import asyncio
 import os
 import pathlib
 import datetime
+from contextlib import asynccontextmanager
 
 from time import sleep
 from typing import List
@@ -33,23 +35,12 @@ except Exception as e:
     raise Exception(f"Error during importing libraries : f'{e.__class__.__name__}: {e.args}'")
 
 
-app = FastAPI()
-WHITELISTED_IPS: List[str] = []
-app.add_middleware(
-        CORSMiddleware,
-        allow_credentials=True,
-        allow_origins=['*'],
-        allow_methods=["*"],
-        allow_headers=["*"],
-)
 
-
-@app.on_event("startup")
 async def startup():
     logger.info(f"Starting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
     while True:
         try:
-            models.Base.metadata.drop_all(engine)
+            # models.Base.metadata.drop_all(engine)
             models.Base.metadata.create_all(bind=engine)
             break
         except OperationalError as e:
@@ -60,7 +51,6 @@ async def startup():
     await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
 
 
-@app.on_event("shutdown")
 async def shutdown():
     logger.info(f"Shutting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
     config["logger"]["abs_sink"] = ""
@@ -68,10 +58,40 @@ async def shutdown():
     await FastAPILimiter.close()
 
 
-@app.get("/ping", tags=["Ping"])
-def ping():
-    return "Pong"
+@asynccontextmanager
+async def app_lifespan(app: FastAPI):
+    logger.info(f"Starting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
+    while True:
+        try:
+            # models.Base.metadata.drop_all(engine)
+            models.Base.metadata.create_all(bind=engine)
+            break
+        except OperationalError as e:
+            logger.warning(f"[ Could Not Create Engine ]: {e.__repr__()}")
+            sleep(10)
+
+    Redis_url = os.getenv('LOCAL_REDIS') if os.getenv('LOCAL_POSTGRES') else "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
+    await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
+    yield
+    logger.info(f"Shutting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
+    config["logger"]["abs_sink"] = ""
+    dump(config, open(abs_config, 'w'), indent=4)
+    await FastAPILimiter.close()
+
+
+app = FastAPI(swagger_ui_parameters={"docExpansion": "none"}, title="Accounting", lifespan=app_lifespan)
+
+WHITELISTED_IPS: List[str] = []
+app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=['*'],
+        allow_methods=["*"],
+        allow_headers=["*"],
+)
 
 
 for route in routes:
     app.include_router(route)
+
+

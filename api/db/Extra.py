@@ -105,7 +105,7 @@ def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.Positi
 def count(db, field: str):
     field = field.lower().replace(" ", "_")
     if field not in Tables:
-        return 404, "field Not Found"
+        return 400, "field Not Found"
     return 200, len(db.query(Tables[field]).filter_by(deleted=False).all())
 
 def prepare_param(key, val):
@@ -130,3 +130,7 @@ def Exist(db: Session, Form: Dict) -> Tuple[bool, str]:
 
 if __name__ == '__main__':
     pass
+
+"""
+https://sand.admin.api.ieltsdaily.ir/count?field=Employee
+"""

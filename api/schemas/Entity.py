@@ -11,12 +11,13 @@ __all__ = [
     "update_student_schema",
     "student_response"]
 
+
 # ---------------------- Employee ----------------------
 
 class Employee(Entity):
     priority: Optional[int] = 5
     fingerprint_scanner_user_id: Optional[int] = None
-    roles: List[UUID] = []
+    roles: Optional[List[UUID | str] | str] = []
 
 
 class post_employee_schema(Employee):
@@ -29,15 +30,12 @@ class update_employee_schema(Entity):
     fingerprint_scanner_user_id: int | None = None
 
 
-class employee_response(BaseModel):
+class employee_response(Entity):
     employees_pk_id: UUID
-    name: str
-    last_name: str
     roles: List[export_role] | None
 
     class Config:
         orm_mode = True
-
 
 
 # ---------------------- student ----------------------

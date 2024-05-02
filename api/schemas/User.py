@@ -1,4 +1,6 @@
 from .Base import *
+
+
 class Role(Base_form):
     name: str
     cluster: str
@@ -11,11 +13,13 @@ class post_role_schema(Role):
 class update_role_schema(Role):
     role_pk_id: UUID
 
+
 class role_response(update_role_schema):
     created: export_employee
 
     class Config:
         orm_mode = True
+
 
 class fingerprint_scanner(Base_form):
     EnNo: int

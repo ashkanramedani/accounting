@@ -64,17 +64,67 @@ class export_student(BaseModel):
 
 class export_language(BaseModel):
     language_name: str
-    created: export_employee
+    # created: export_employee
 
     class Config:
         orm_mode = True
 
 class export_course_type(BaseModel):
     course_type_name: str
-    created: export_employee
+    # created: export_employee
 
     class Config:
         orm_mode = True
+
+
+class export_sub_course(BaseModel):
+    sub_course_pk_id: UUID
+
+    sub_course_name: str
+    number_of_session: int
+    sub_course_starting_date: date
+    sub_course_ending_date: date
+
+    sub_course_capacity: int
+    sub_course_available_seat: int
+
+    teacher: export_employee
+    course: export_course
+
+    class Config:
+        orm_mode = True
+
+
+class export_session(BaseModel):
+    session_pk_id: UUID
+
+    is_sub: bool
+    session_date: date
+    session_starting_time: time
+    session_ending_time: time
+
+    course: export_course
+    sub_course: export_sub_course
+    teacher: export_employee
+
+
+class export_tag(BaseModel):
+    tag_fk_id: UUID
+    tag_name: str
+    # created: export_employee
+
+    class Config:
+        orm_mode = True
+
+
+class export_categories(BaseModel):
+    category_fk_id: UUID
+    category_name: str
+    # created: export_employee
+
+    class Config:
+        orm_mode = True
+
 # Base Entry
 class Base_form(BaseModel):
     created_fk_by: UUID
@@ -90,7 +140,7 @@ class Base_form(BaseModel):
 class Entity(BaseModel):
     name: str
     last_name: str
-    day_of_birth: Optional[str] | Optional[datetime] = datetime.now()
+    day_of_birth: Optional[str] | Optional[date] = datetime.now().date()
     email: Optional[str] = None
     mobile_number: Optional[str] = None
     id_card_number: Optional[str] = None

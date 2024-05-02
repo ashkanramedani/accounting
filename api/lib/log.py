@@ -6,8 +6,8 @@ from lib.requester import requester
 from json import load, dump
 
 
-def empty_sink(logger_obj: L, remove_std: bool = True):
-    i = 0 if remove_std else remove_std
+def empty_sink(logger_obj: L, remove_std: bool = False):
+    i = 0 if remove_std else 1
     while True:
         try:
             logger_obj.remove(i)

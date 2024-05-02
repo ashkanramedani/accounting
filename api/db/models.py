@@ -516,7 +516,7 @@ class course_form(Base, InstitutionsBase):
 
     package_discount = Column(Float, nullable=False, default=0.0)
 
-    tags = relationship("Tag_form", secondary=CourseTag, backref="course_taf")
+    tags = relationship("Tag_form", secondary=CourseTag, backref="course_tag")
     categories = relationship("Category_form", secondary=CourseCategory, backref="course_category")
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="course_Relation")
@@ -542,7 +542,7 @@ class sub_course_form(Base, InstitutionsBase):
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="sub_course_Relation")
     teacher = relationship("Employees_form", foreign_keys=[sub_course_teacher_fk_id])
-
+    course = relationship("course_form", foreign_keys=[course_fk_id])
 
 class Session_form(Base, InstitutionsBase):
     __tablename__ = "session"

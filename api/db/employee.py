@@ -3,8 +3,6 @@ from uuid import UUID
 
 from lib import logger
 
-
-
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -33,7 +31,7 @@ def get_all_employee(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 def post_employee(db: Session, Form: sch.post_employee_schema):
     try:
         data = Form.dict()
-        roles: List[UUID] = data.pop("roles")
+        roles: List[UUID | str] | str = data.pop("roles")
 
         OBJ = dbm.Employees_form(**data)  # type: ignore[call-arg]
 
@@ -41,7 +39,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         db.commit()
         db.refresh(OBJ)
 
-        if not roles:
+        if not roles or isinstance(roles, str):
             return 200, f'Employee Added. ID: {OBJ.employees_pk_id}'
 
         role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Roles_form).filter_by(deleted=False).all()]
