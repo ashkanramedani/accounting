@@ -30,6 +30,11 @@ def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, ord
 
 def post_role(db: Session, Form: sch.post_role_schema):
     try:
+
+        data = Form.dict()
+        if data["name"] == "Administrator":
+            return 400, "illegal name Administrator"
+
         OBJ = dbm.Roles_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
@@ -47,6 +52,8 @@ def delete_role(db: Session, role_id):
         record = db.query(dbm.Roles_form).filter_by(role_pk_id=role_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
+        if record.name == "Administrator":
+            return 400, "Administrator role cant be deleted"
         record.deleted = True
         db.commit()
         return 200, "Deleted"
@@ -62,6 +69,9 @@ def update_role(db: Session, Form: sch.update_role_schema):
         if not record.first():
             return 404, "Record Not Found"
 
+        data = Form.dict()
+        if data["name"] == "Administrator":
+            return 400, "illegal name Administrator"
         record.update(Form.dict(), synchronize_session=False)
 
         db.commit()

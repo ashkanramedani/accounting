@@ -1,4 +1,3 @@
-import asyncio
 import os
 import pathlib
 import datetime
@@ -12,11 +11,11 @@ from redis import asyncio as redis
 from fastapi_limiter import FastAPILimiter
 from sqlalchemy.exc import OperationalError
 from fastapi.middleware.cors import CORSMiddleware
+from db import setUp_admin
 
 try:
     PRJ_file = str(pathlib.Path(__file__).parent.resolve())
-    config_path = "configs/config.json"
-    abs_config = os.path.join(PRJ_file, config_path)
+    abs_config = os.path.join(PRJ_file, "configs/config.json")
     config = load(open(abs_config))
     if "abs_sink" not in config["logger"]:
         config["logger"]["abs_sink"] = ""
@@ -27,7 +26,7 @@ try:
     from db import models
     from router import routes
     from lib.log import logger
-    from db.database import engine
+    from db.database import engine, SessionLocal
 
     logger.info("Logger Configured")
 
@@ -35,31 +34,8 @@ except Exception as e:
     raise Exception(f"Error during importing libraries : f'{e.__class__.__name__}: {e.args}'")
 
 
-
-async def startup():
-    logger.info(f"Starting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
-    while True:
-        try:
-            # models.Base.metadata.drop_all(engine)
-            models.Base.metadata.create_all(bind=engine)
-            break
-        except OperationalError as e:
-            logger.warning(f"[ Could Not Create Engine ]: {e.__repr__()}")
-            sleep(10)
-
-    Redis_url = os.getenv('LOCAL_REDIS') if os.getenv('LOCAL_POSTGRES') else "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
-    await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
-
-
-async def shutdown():
-    logger.info(f"Shutting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
-    config["logger"]["abs_sink"] = ""
-    dump(config, open(abs_config, 'w'), indent=4)
-    await FastAPILimiter.close()
-
-
 @asynccontextmanager
-async def app_lifespan(app: FastAPI):
+async def app_lifespan(api: FastAPI):
     logger.info(f"Starting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
     while True:
         try:
@@ -69,7 +45,7 @@ async def app_lifespan(app: FastAPI):
         except OperationalError as e:
             logger.warning(f"[ Could Not Create Engine ]: {e.__repr__()}")
             sleep(10)
-
+    setUp_admin(SessionLocal())
     Redis_url = os.getenv('LOCAL_REDIS') if os.getenv('LOCAL_POSTGRES') else "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
     await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
     yield
@@ -79,7 +55,10 @@ async def app_lifespan(app: FastAPI):
     await FastAPILimiter.close()
 
 
-app = FastAPI(swagger_ui_parameters={"docExpansion": "none"}, title="Accounting", lifespan=app_lifespan)
+app = FastAPI(
+        swagger_ui_parameters={"docExpansion": "none"},
+        title="Accounting",
+        lifespan=app_lifespan)
 
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(

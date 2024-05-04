@@ -31,7 +31,10 @@ def get_all_employee(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 def post_employee(db: Session, Form: sch.post_employee_schema):
     try:
         data = Form.dict()
-        roles: List[UUID | str] | str = data.pop("roles")
+        roles: List[UUID | str] | str = data.pop("roles") if "roles" in data else None
+
+        if data["name"] == "Admin":
+            return 400, "illegal Name Admin"
 
         OBJ = dbm.Employees_form(**data)  # type: ignore[call-arg]
 
@@ -62,6 +65,8 @@ def delete_employee(db: Session, employee_id):
         record = db.query(dbm.Employees_form).filter_by(employees_pk_id=employee_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
+        if record.name == "Admin":
+            return 400, "Admin Cont be deleted"
         record.deleted = True
         db.commit()
         return 200, "Deleted"
@@ -77,7 +82,10 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
         if not record.first():
             return 404, "Record Not Found"
 
-        record.update(Form.dict(), synchronize_session=False)
+        data = Form.dict()
+        if data["name"] == "Admin":
+            return 400, "illegal Name Admin"
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

@@ -20,8 +20,10 @@ from .salary import *
 from .question import *
 
 from .Extra import count
+from .SetUp import setUp_admin
 
 __all__ = [
+    "setUp_admin",
     "count",
     # Tag_category.py
     "get_tag",

@@ -1,15 +1,8 @@
-# from enum import unique
-# from unicodedata import category
-# from click import style
-from datetime import datetime
-
 from fastapi_utils.guid_type import GUID as GUID_TYPE, GUID_SERVER_DEFAULT_POSTGRESQL
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, JSON, Date, Time
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, Date, Time
+from sqlalchemy.dialects.postgresql import JSONB, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
-
-from lib import logger
 
 from .database import Base
 
@@ -24,21 +17,16 @@ class GUID(GUID_TYPE):
 
 
 class BaseTable:
-    priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    expire_date = Column(DateTime(timezone=True), default=None)
+    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
+    priority = Column(Integer, default=5, nullable=True)
+    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
+    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
 
     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    # user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False)
-
-    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    # user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
-    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
     delete_date = Column(DateTime(timezone=True), default=None)
-    # user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+    expire_date = Column(DateTime(timezone=True), default=None)
 
 
 users_departments_association = Table(
@@ -88,68 +76,15 @@ class EducationalInstitutions(Base, BaseTable):
         return f'<EducationalInstitution "{self.educational_institution_pk_id}">'
 
 
-# class Tags(Base):
-#     __tablename__ = "tbl_tags"
-#
-#     tag_pk_id = Column(GUID, nullable=False, unique=True, primary_key=True, index=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
-#     tag_name = Column(String(100), unique=True, nullable=False)
-#
-#     priority = Column(Integer, default=5, nullable=True)
-#     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-#     expire_date = Column(DateTime(timezone=True), default=None)
-#
-#     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-#     user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-#
-#     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-#     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-#     user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-#
-#     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-#     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
-#     delete_date = Column(DateTime(timezone=True), default=None)
-#     user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-#
-#     def __repr__(self):
-#         return f'<Tag "{self.tag_pk_id}">'
-#
-#
-# class Categories(Base):
-#     __tablename__ = "tbl_categories"
-#
-#     category_pk_id = Column(GUID, nullable=False, unique=True, primary_key=True, index=True, server_default=GUID_SERVER_DEFAULT_POSTGRESQL)
-#     category_name = Column(String(100), index=True, nullable=False)
-#
-#     priority = Column(Integer, default=5, nullable=True)
-#     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-#     expire_date = Column(DateTime(timezone=True), default=None)
-#
-#     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-#     user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-#
-#     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-#     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-#     user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-#
-#     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-#     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
-#     delete_date = Column(DateTime(timezone=True), default=None)
-#     user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-#
-#     def __repr__(self):
-#         return f'<Category "{self.category_pk_id}">'
-#
-#     # class Authentications(Base, Base_form):
-#
-
+# class Authentications(Base, Base_form):
 #     __tablename__ = "tbl_authentications"
 #     authentication_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
 #     username = Column(String, index=True, unique=True, nullable=False)
-#     password = Column(String, nullable=False)  
-#     auth_users = relationship("Users", back_populates="auth") 
-
+#     password = Column(String, nullable=False)
+#     auth_users = relationship("Users", back_populates="auth")
+#
 #     def __repr__(self):
-#         return f'<Authentication "{self.username}">' 
+#         return f'<Authentication "{self.username}">'
 
 class Users(Base, BaseTable):
     __tablename__ = "tbl_users"
@@ -388,7 +323,7 @@ class BaseTable:
 class Base_form(BaseTable):
     description = Column(String, nullable=True, default="")
     status = Column(Integer, nullable=False, default=0)
-    # note Json
+    # note = Column(JSON, nullable=True)
 
 
 class InstitutionsBase(Base_form):
@@ -424,7 +359,6 @@ survey_questions = Table(
         Column("deleted", Boolean, default=False, nullable=False),
         UniqueConstraint("survey_fk_id", "question_fk_id", "deleted"), )
 
-
 UserRole = Table(
         "users_roles",
         Base.metadata,
@@ -432,7 +366,6 @@ UserRole = Table(
         Column("role_fk_id", ForeignKey("roles.role_pk_id")),
         Column("deleted", Boolean, default=False, nullable=False),
         UniqueConstraint("employee_fk_id", "role_fk_id", "deleted"), )
-
 
 CourseTag = Table(
         "course_tag",
@@ -544,6 +477,7 @@ class sub_course_form(Base, InstitutionsBase):
     teacher = relationship("Employees_form", foreign_keys=[sub_course_teacher_fk_id])
     course = relationship("course_form", foreign_keys=[course_fk_id])
 
+
 class Session_form(Base, InstitutionsBase):
     __tablename__ = "session"
     session_pk_id = create_Unique_ID()
@@ -584,6 +518,8 @@ class Leave_request_form(Base, Base_form):
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Leave_request_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
+    # __args__ = (UniqueConstraint('employee_fk_id', 'start_date', 'end_date'),)
+
 
 class Business_Trip_form(Base, Base_form):
     __tablename__ = "business_trip"
@@ -595,12 +531,12 @@ class Business_Trip_form(Base, Base_form):
     end_date = Column(DateTime, index=True)
     duration = Column(Integer, nullable=False, default=0)
 
-    destination = Column(String)
+    destination = Column(String, nullable=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Business_Trip_Relation")
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
-    # __args__ = (UniqueConstraint('employee_fk_id', 'start_date', 'end_date', 'destination'),)
+    __args__ = (UniqueConstraint('employee_fk_id', 'start_date', 'end_date'),)
 
 
 class Remote_Request_form(Base, Base_form):

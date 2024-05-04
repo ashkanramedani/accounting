@@ -44,7 +44,7 @@ routes = [
     route_payment,
     finger_scanner_router,
     employee_route,
-    salary_route,
+    SalaryPolicy_route,
 
     files,
     user,
