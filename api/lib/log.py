@@ -18,20 +18,29 @@ def empty_sink(logger_obj: L, remove_std: bool = False):
 
 class Log:
     def __init__(self, config: dict = None):
-
+        self.Info_Status = [200, 201]
+        self.Warn_Status = [400]
+        self.ERR_Statis = [500]
+        self._path = None
         if not config:
             self.developer = True
             PRJ_path = normpath(f'{dirname(__file__)}/../')
             config = load(open(join(PRJ_path, "configs/config.json"), 'r'))["logger"]
+            self._path = config["abs_sink"] if config["abs_sink"] else normpath(f'{dirname(__file__)}/../log/log.log')
             self.logger = L
             self.logger = empty_sink(self.logger)
+
             self.logger.add(
-                    sink=config["abs_sink"] if config["abs_sink"] else normpath(f'{dirname(__file__)}/../log/log.log'),
+                    sink=self._path,
                     level=config["level"],
                     format=config["format"])
         else:
             self.developer = config['developer_log']
 
+
+    @property
+    def log_path(self):
+        return self._path
     def keep_log(self, msg, type_log, user_id, location):
         try:
             url = "logger_events"
@@ -74,6 +83,19 @@ class Log:
 
     def error(self, msg):
         self.logger.opt(depth=1).error(msg)
+
+
+    def on_status_code(self, status_code, msg):
+        if not isinstance(msg, str):
+            msg = repr(msg)
+        if status_code in self.Info_Status:
+            self.logger.opt(depth=2).info(msg)
+        elif status_code in self.Warn_Status:
+            self.logger.opt(depth=2).warning(msg)
+        elif status_code in self.ERR_Statis:
+            self.logger.opt(depth=2).error(msg)
+        else:
+            self.logger.opt(depth=2).warning("Status Code Has Not Beet Categorised.\n\t{msg}")
 
 
 logger = Log()

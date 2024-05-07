@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List
 from uuid import UUID
 
 from sqlalchemy.orm import Session
@@ -6,41 +6,40 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import logger
-
 from ..Extra import *
-from lib.Date_Time import *
-from datetime import timedelta, datetime
 
 
-def Add_tags_category(db: Session,course, course_pk_id: UUID, tags: List[Tuple[UUID, UUID]], categories: List[Tuple[UUID, UUID]]):
+def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Update_Relation], categories: List[sch.Update_Relation]):
+
     Errors = []
-    all_tags = db.query(dbm.Tag_form).filter_by(deleted=False).all()
-    all_categories = db.query(dbm.Category_form).filter_by(deleted=False).all()
-    for existing_tag, new_tag in tags:
-        if not new_tag:
+    all_tags = [id.tag_pk_id for id in db.query(dbm.Tag_form).filter_by(deleted=False).all()]
+    all_categories = [id.category_pk_id for id in db.query(dbm.Category_form).filter_by(deleted=False).all()]
+    for tag in tags:
+        if existing_tag := tag.old_id:
             tag_OBJ = db.query(dbm.CourseTag).filter_by(course_fk_id=course_pk_id, tag_pk_id=existing_tag, deleted=False)
             if not tag_OBJ.first():
                 Errors.append(f'Course does not have this tag {existing_tag}')
             else:
                 tag_OBJ.update({"deleted": True}, synchronize_session=False)
-        if new_tag:
+        if new_tag := tag.new_id:
             if new_tag not in all_tags:
                 Errors.append(f'this tag does not exist {new_tag}')
             else:
-                course.first().tags.append(db.query(dbm.Tag_form).filter_by(tag_pk_id=new_tag, deleted=False).first())
+                course.tags.append(db.query(dbm.Tag_form).filter_by(tag_pk_id=new_tag, deleted=False).first())
 
-    for existing_category, new_category in categories:
-        if not new_category:
+    for category in categories:
+        if existing_category := category.old_id:
             category_OBJ = db.query(dbm.CourseCategory).filter_by(course_fk_id=course_pk_id, category_pk_id=existing_category, deleted=False)
             if not category_OBJ.first():
                 Errors.append(f'Course does not have this category {existing_category}')
             else:
                 category_OBJ.update({"deleted": True}, synchronize_session=False)
-        if new_category:
+        if new_category := category.new_id:
             if new_category not in all_categories:
                 Errors.append(f'this category does not exist {new_category}')
             else:
-                course.first().categories.append(db.query(dbm.Category_form).filter_by(category_pk_id=new_category, deleted=False).first())
+                course.categories.append(db.query(dbm.Category_form).filter_by(category_pk_id=new_category, deleted=False).first())
+    db.commit()
     return Errors
 
 def get_course(db: Session, course_id):
@@ -110,8 +109,6 @@ def post_course(db: Session, Form: sch.post_course_schema):
         db.refresh(OBJ)
 
         Errors = Add_tags_category(db,OBJ,OBJ.course_pk_id, tags, categories)
-
-        db.commit()
         if Errors:
             return 200, "Course updated but there was an error in the tags or categories: " + ", ".join(Errors)
         return 200, "course Added"
@@ -141,20 +138,16 @@ def update_course(db: Session, Form: sch.update_course_schema):
         if not course.first():
             return 404, "Course Not Found"
 
-
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: employee not found"
         data = Form.__dict__
 
-
-        tags: List[Tuple[UUID, UUID]] = data.pop("tags")
-        categories: List[Tuple[UUID, UUID]] = data.pop("categories")
+        tags: List[sch.Update_Relation] = data.pop("tags")
+        categories: List[sch.Update_Relation] = data.pop("categories")
 
         course.update(data, synchronize_session=False)
-
-        Errors = Add_tags_category(db,course,Form.course_pk_id, tags, categories)
-
         db.commit()
+        Errors = Add_tags_category(db,course.first(),Form.course_pk_id, tags, categories)
         if Errors:
             return 200, "Course updated but there was an error in the tags or categories: " + ", ".join(Errors)
         return 200, "Record Updated"

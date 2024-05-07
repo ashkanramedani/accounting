@@ -27,6 +27,7 @@ async def search_course_cancellation(form_id, db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 # @router.post("/report", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 # async def report_course_cancellation(Form: sch.teacher_report, db=Depends(get_db)):
 #     status_code, result = dbf.report_course_cancellation(db, Form)

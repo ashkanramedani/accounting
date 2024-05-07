@@ -1,23 +1,20 @@
+from .Course import *
+from .Employee_Forms import *
+from .Teacher_Forms import *
+
 from .Roles import *
 from .SalaryPolicy import *
 from .Survey import *
-from .business_trip import *
-from .course_cancellation import *
-from .Course import *
+from .employee import *
+from .payment import *
+from .response import *
+from .student import *
+from .salary import *
+from .question import *
+
 from .db_library import *
 from .db_post import *
 from .db_user import *
-from .employee import *
-from .fingerprint_scanner import *
-from .leave_request import *
-from .payment import *
-from .remote_request import *
-from .response import *
-from .student import *
-from .tardy_request import *
-from .teacher_replacement import *
-from .salary import *
-from .question import *
 
 from .Extra import count
 from .SetUp import setUp_admin

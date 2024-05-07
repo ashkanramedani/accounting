@@ -1,24 +1,23 @@
 from enum import Enum
-from os.path import normpath, dirname
 
-import pandas as pd
 from fastapi import APIRouter, Depends
-from starlette.responses import HTMLResponse, RedirectResponse
-from typing_extensions import deprecated
+from fastapi import HTTPException
+# from fastapi import Response
+# from fastapi.responses import HTMLResponse
+from starlette.responses import RedirectResponse
 
 import db as dbf
 from db.database import get_db
 from lib.log import logger
 
 
+# from typing_extensions import deprecated
+
+
 class log_mode(str, Enum):
     csv = 'csv'
     log = 'log'
 
-
-from starlette.templating import Jinja2Templates
-
-from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -28,17 +27,53 @@ async def docs_redirect():
     return RedirectResponse(url='/docs')
 
 
-@router.get("/log", include_in_schema=False, response_class=HTMLResponse)
-async def log(mode: log_mode = 'log'):
-    templates = Jinja2Templates(directory="./")
-    log_path = normpath(f'{dirname(__file__)}/../log/log.{mode}')
-    if mode == 'csv':
-        pd.read_csv(log_path).to_html("./Tables.html")
-        return templates.TemplateResponse("./Tables.html")
-        # return "pd.read_csv(log_path).to_dict()"
-    with open(log_path, "r") as f:
-        log_file = f.read()
-    return log_file
+
+# def generate_html(log_content):
+#     # Generate HTML content to display the log file content
+#     html_content = f"""
+#     <html>
+#     <head>
+#         <title>Log File</title>
+#     </head>
+#     <body>
+#         <pre>{log_content}</pre>
+#     </body>
+#     </html>
+#     """
+#     return html_content
+
+
+# @router.get("/log", response_class=HTMLResponse, include_in_schema=False)
+# async def render_log_file(response: Response):
+#     try:
+#         log_path = logger.log_path
+#         if not log_path:
+#             response.status_code = 404
+#             return "<h1>Log file not Specified in config</h1>"
+#         with open("./log/Log.log", "r") as log_file:
+#             log_content = log_file.read()
+#             # Generate HTML content
+#             html_content = generate_html(log_content)
+#             return html_content
+#     except FileNotFoundError:
+#         response.status_code = 404
+#         return "<h1>Log file not found</h1>"
+#     except Exception as e:
+#         response.status_code = 500
+#         return f"<h1>An error occurred: {str(e)}</h1>"
+
+
+# @router.get("/log", include_in_schema=False, response_class=HTMLResponse)
+# async def log(mode: log_mode = 'log'):
+#     templates = Jinja2Templates(directory="./")
+#     log_path = normpath(f'{dirname(__file__)}/../log/log.{mode}')
+#     if mode == 'csv':
+#         pd.read_csv(log_path).to_html("./Tables.html")
+#         return templates.TemplateResponse("./Tables.html")
+#         # return "pd.read_csv(log_path).to_dict()"
+#     with open(log_path, "r") as f:
+#         log_file = f.read()
+#     return log_file
 
 
 @router.get("/api/v1/form/count", tags=["Ping"])

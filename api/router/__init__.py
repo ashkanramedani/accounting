@@ -3,7 +3,7 @@ from .course_cancellation import router as course_cancellation_route
 from .Course import course_route, course_extension_route, sub_course_route, session_route
 from .employee import router as employee_route
 from .leave_request import router as leave_request_route
-from .payment import router as route_payment
+from .payment import router as payment_route
 from .question import router as question_route
 from .remote_request import router as remote_request_route
 from .response import router as response_route
@@ -32,7 +32,6 @@ routes = [
     roles_route,
     business_trip_route,
     course_cancellation_route,
-    course_route,
     leave_request_route,
     question_route,
     remote_request_route,
@@ -41,11 +40,11 @@ routes = [
     survey_route,
     tardy_request_route,
     teacher_replacement_route,
-    route_payment,
+    payment_route,
     finger_scanner_router,
     employee_route,
     SalaryPolicy_route,
-
+    # 
     files,
     user,
     post,

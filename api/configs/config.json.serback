@@ -3,11 +3,11 @@
     "developer_log": true,
     "versions": "v 3.0.0",
     "logger": {
-        "format": "{time:YYYY-MM-DD HH:mm:ss},{name},{function}:{line},{message}",
+        "format": "<level>{time:HH:mm:ss}</level> | <cyan>{name}:{function}</cyan>:<cyan>{line}</cyan> - <level>{message}</level>",
         "sink": "log/Log.log",
         "rotation": "10 MB",
         "level": "INFO",
-        "abs_sink": ""
+        "abs_sink": "/home/user179/sand.admin.api.ieltsdaily.ir/log/Log.log"
     },
     "db": {
         "database_type": "postgresql",
@@ -52,4 +52,3 @@
     "email": {
         "url": "http://127.0.0.1:2031/api/v1/send_email"
     }
-}

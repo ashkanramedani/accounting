@@ -1,62 +1,56 @@
 from lib import logger
-
-
-
-
 from sqlalchemy.orm import Session, joinedload
 
 import db.models as dbm
 import schemas as sch
-from .Extra import *
+from ..Extra import *
 
 
 # Tardy Form - get_tardy_request
-
-# Teacher Replacement
-def get_teacher_replacement(db: Session, form_id):
+def get_tardy_request(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Teacher_Replacement_form).filter_by(teacher_replacement_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_teacher_replacement(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_tardy_request(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Teacher_Replacement_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Teacher_tardy_reports_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_teacher_replacement(db: Session, Form: sch.teacher_report):
+def report_tardy_request(db: Session, Form: sch.teacher_report):
     try:
         result = (
-            db.query(dbm.Teacher_Replacement_form)
-            .join(dbm.course_form, dbm.course_form.course_pk_id == dbm.Teacher_Replacement_form.course_fk_id)
+            db.query(dbm.Teacher_tardy_reports_form)
+            .join(dbm.course_form, dbm.course_form.course_pk_id == dbm.Teacher_tardy_reports_form.course_fk_id)
             .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
             .filter(dbm.course_form.course_time.between(Form.start_date, Form.end_date))
-            .options(joinedload(dbm.Teacher_Replacement_form.course))
-            .count()
+            .options(joinedload(dbm.Teacher_tardy_reports_form.course))
+            .all()
         )
 
-        return 200, result
+        return 200, sum(row.delay for row in result)
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_schema):
+def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema):
     try:
-        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
         if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
-        OBJ = dbm.Teacher_Replacement_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.Teacher_tardy_reports_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -68,9 +62,9 @@ def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_sch
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def delete_teacher_replacement(db: Session, form_id):
+def delete_tardy_request(db: Session, form_id):
     try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(teacher_replacement_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -82,13 +76,14 @@ def delete_teacher_replacement(db: Session, form_id):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement_schema):
+def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_schema):
     try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(teacher_replacement_pk_id=Form.teacher_replacement_pk_id, deleted=False)
+        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id, deleted=False)
+
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
         if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"

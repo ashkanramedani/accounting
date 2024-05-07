@@ -1,8 +1,6 @@
 from typing import List
 from uuid import UUID
-
 from lib import logger
-
 from sqlalchemy.orm import Session
 
 import db.models as dbm

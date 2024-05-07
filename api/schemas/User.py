@@ -25,8 +25,8 @@ class fingerprint_scanner(Base_form):
     EnNo: int
     Name: str
     Date: date | str
-    Enter: time | str
-    Exit: time | str
+    Enter: time | str | None
+    Exit: time | str | None
 
 
 class post_fingerprint_scanner_schema(fingerprint_scanner):
@@ -40,8 +40,8 @@ class update_fingerprint_scanner_schema(fingerprint_scanner):
 class fingerprint_scanner_response(Base_response):
     FingerPrintScanner_pk_id: UUID
     Date: date | str
-    Enter: time | str
-    Exit: time | str
+    Enter: time | str | None
+    Exit: time | str | None
     EnNo: int
     created: export_employee
 

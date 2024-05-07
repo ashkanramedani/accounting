@@ -9,11 +9,7 @@ import schemas as sch
 from .Extra import *
 from lib.Date_Time import generate_month_interval
 
-from .fingerprint_scanner import report_fingerprint_scanner
-from .remote_request import report_remote_request
-from .leave_request import report_leave_request
-from .business_trip import report_business_trip
-
+from .Employee_Forms import report_leave_request, report_remote_request, report_business_trip, report_fingerprint_scanner
 
 def employee_salary_report(db: Session, employee_fk_id, year, month):
     try:

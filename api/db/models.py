@@ -17,9 +17,10 @@ class GUID(GUID_TYPE):
 
 
 class BaseTable:
+    priority = Column(Integer, default=5, nullable=True)
+
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-    priority = Column(Integer, default=5, nullable=True)
     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
 
@@ -287,16 +288,12 @@ IDs = {
     "salary": "salary_pk_id",
     "language": "language_pk_id",
     "course_type": "course_type_pk_id",
+    "Status_form": "status_pk_id"
 }
 
 
 def create_Unique_ID():
-    return Column(GUID,
-                  server_default=GUID_SERVER_DEFAULT_POSTGRESQL,
-                  primary_key=True,
-                  nullable=False,
-                  unique=True,
-                  index=True)
+    return Column(GUID, server_default=GUID_SERVER_DEFAULT_POSTGRESQL, primary_key=True, nullable=False, unique=True, index=True)
 
 
 def create_forenKey(table: str, unique: bool = False):
@@ -308,9 +305,10 @@ def create_forenKey(table: str, unique: bool = False):
 
 # Base
 class BaseTable:
+    priority = Column(Integer, default=5, nullable=True)
+
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-    priority = Column(Integer, default=5, nullable=True)
     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
 
@@ -413,6 +411,7 @@ class Employees_form(Base, UserBase):
     fingerprint_scanner_backup_Relation = relation("Fingerprint_scanner_backup_form")
     Teacher_tardy_reports_Relation = relation("Teacher_tardy_reports_form")
     SalaryPolicy_Relation = relation("SalaryPolicy_form")
+    Status_Relation = relation("Status_form")
 
     roles = relationship('Roles_form', secondary=UserRole, backref='user_role')
 
@@ -559,8 +558,8 @@ class Payment_method_form(Base, Base_form):
     payment_method_pk_id = create_Unique_ID()
     employee_fk_id = create_forenKey("employees")
     created_fk_by = create_forenKey("employees")
-    shaba = Column(String, nullable=False)
-    card_number = Column(String, nullable=True)
+    shaba = Column(String(23), nullable=False)
+    card_number = Column(String(16), nullable=True)
     active = Column(Boolean, default=False)
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="payment_method_Relation")
@@ -763,32 +762,7 @@ class SalaryPolicy_form(Base, Base_form):
     employee = relationship("Employees_form", foreign_keys=[employee_fk_id])
 
     def summery(self):
-        return {
-            "is_Fixed": self.is_Fixed,
-            "day_starting_time": str(self.day_starting_time),
-            "day_ending_time": str(self.day_ending_time),
-            "Regular_hours_factor": self.Regular_hours_factor,
-            "Regular_hours_cap": self.Regular_hours_cap,
-            "overtime_permission": self.overtime_permission,
-            "overtime_factor": self.overtime_factor,
-            "overtime_cap": self.overtime_cap,
-            "overtime_threshold": self.overtime_threshold,
-            "undertime_factor": self.undertime_factor,
-            "undertime_threshold": self.undertime_threshold,
-            "off_day_permission": self.off_day_permission,
-            "off_day_factor": self.off_day_factor,
-            "off_day_cap": self.off_day_cap,
-            "remote_permission": self.remote_permission,
-            "remote_factor": self.remote_factor,
-            "remote_cap": self.remote_cap,
-            "medical_leave_factor": self.medical_leave_factor,
-            "medical_leave_cap": self.medical_leave_cap,
-            "vacation_leave_factor": self.vacation_leave_factor,
-            "vacation_leave_cap": self.vacation_leave_cap,
-            "business_trip_permission": self.business_trip_permission,
-            "business_trip_factor": self.business_trip_factor,
-            "business_trip_cap": self.business_trip_cap
-        }
+        return {k: v for k, v in self.__dict__.items() if "_fk_" not in k and "_pk_" not in k}
 
 
 class Salary(Base, Base_form):
@@ -855,3 +829,13 @@ class Course_Type_form(Base, Base_form):
     created_fk_by = create_forenKey("employees")
 
     created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="course_type_Relation")
+
+
+class Status_form(Base, Base_form):
+    __tablename__ = "status"
+
+    status_pk_id = create_Unique_ID()
+    status_name = Column(String, index=True, nullable=False)
+    created_fk_by = create_forenKey("employees")
+
+    created = relationship("Employees_form", foreign_keys=[created_fk_by], back_populates="Status_Relation")

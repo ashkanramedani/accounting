@@ -109,7 +109,7 @@ class export_session(BaseModel):
 
 
 class export_tag(BaseModel):
-    tag_fk_id: UUID
+    tag_pk_id: UUID
     tag_name: str
     # created: export_employee
 
@@ -118,7 +118,7 @@ class export_tag(BaseModel):
 
 
 class export_categories(BaseModel):
-    category_fk_id: UUID
+    category_pk_id: UUID
     category_name: str
     # created: export_employee
 

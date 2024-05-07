@@ -24,4 +24,5 @@ def setUp_admin(db: Session):
         logger.info(f'Admin Setup Finished')
     except Exception as e:
         db.rollback()
+        logger.error("Admin Setup Failed")
         logger.error(f'{e.__class__.__name__}: {e.args}')

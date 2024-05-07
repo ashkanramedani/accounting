@@ -14,6 +14,11 @@ class Session_signature(BaseModel):
 
 
 # ---------------------- class ----------------------
+class Update_Relation(BaseModel):
+    old_id: UUID | None | str
+    new_id: UUID | None | str
+
+
 class course(Base_form):
     course_name: str
 
@@ -24,8 +29,8 @@ class course(Base_form):
     course_language: UUID
     course_type: UUID
 
-    tags: List[Tuple[UUID | None, UUID | None]] = []
-    categories: List[Tuple[UUID | None, UUID | None]] = []
+    tags: List[Update_Relation]
+    categories: List[Update_Relation]
 
     course_code: str
     course_image: str = ""
@@ -61,8 +66,8 @@ class course_response(Base_response):
     course_signature: List[Session_signature] = []
     available_seat: int = None
 
-    tags: List[export_tag] = []
-    categories: List[export_categories] = []
+    tags: List[export_tag] | None
+    categories: Optional[List[export_categories]]
 
     class Config:
         orm_mode = True
@@ -212,3 +217,4 @@ class course_cancellation_response(Base_response, update_course_cancellation_sch
 
     class Config:
         orm_mode = True
+
