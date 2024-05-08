@@ -7,7 +7,7 @@
         "sink": "log/Log.log",
         "rotation": "10 MB",
         "level": "INFO",
-        "abs_sink": "/Users/hsa/Developer/Python/accounting/accounting_Api/accounting/api/log/Log.log"
+        "abs_sink": ""
     },
     "db": {
         "database_type": "postgresql",

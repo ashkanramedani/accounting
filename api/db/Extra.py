@@ -18,20 +18,20 @@ import re
 
 Tables = {
     "survey": dbm.Survey_form,
-    "role": dbm.Roles_form,
+    "role": dbm.Role_form,
     "remote_request": dbm.Remote_Request_form,
-    "question": dbm.Questions_form,
+    "question": dbm.Question_form,
     "response": dbm.Response_form,
     "business_trip": dbm.Business_Trip_form,
-    "course_cancellation": dbm.course_Cancellation_form,
-    "employee": dbm.Employees_form,
-    "tardy_request": dbm.Teacher_tardy_reports_form,
-    "student": dbm.Student_form,
+    "course_cancellation": dbm.Course_Cancellation_form,
+    "employee": dbm.User_form,
+    "tardy_request": dbm.Teacher_Tardy_report_form,
+    "student": dbm.User_form,
     "teacher_replacement": dbm.Teacher_Replacement_form,
-    "course": dbm.course_form,
-    "fingerprint_scanner": dbm.Fingerprint_scanner_form,
-    "payment_method": dbm.Payment_method_form,
-    "leave_forms": dbm.Leave_request_form
+    "course": dbm.Course_form,
+    "fingerprint_scanner": dbm.Fingerprint_Scanner_form,
+    "payment_method": dbm.Payment_Method_form,
+    "leave_forms": dbm.Leave_Request_form
 }
 
 
@@ -60,13 +60,13 @@ def safe_run(func):
 
 def employee_exist(db: Session, FK_fields: List[UUID]):
     for FK_field in FK_fields:
-        if not db.query(dbm.Employees_form).filter_by(employees_pk_id=FK_field, deleted=False).first():
+        if not db.query(dbm.User_form).filter_by(user_pk_id=FK_field, deleted=False).first():
             return False
     return True
 
 
 def course_exist(db: Session, FK_field: UUID):
-    if not db.query(dbm.course_form).filter_by(course_pk_id=FK_field, deleted=False).first():
+    if not db.query(dbm.Course_form).filter_by(course_pk_id=FK_field, deleted=False).first():
         return False
     return True
 

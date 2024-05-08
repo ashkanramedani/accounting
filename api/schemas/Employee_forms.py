@@ -3,7 +3,7 @@ from .Entity import *
 
 
 class leave_request(Base_form):
-    employee_fk_id: UUID
+    user_fk_id: UUID
     leave_type: Leave_type = "vacation"
     start_date: str | datetime = datetime.now()
     end_date: str | datetime = datetime.now() + timedelta(days=1)
@@ -34,7 +34,7 @@ class leave_request_response(Base_form, Base_response):
 
 # ---------------------- remote_request ----------------------
 class remote_request(Base_form):
-    employee_fk_id: UUID
+    user_fk_id: UUID
     start_date: str | datetime = datetime.now()
     end_date: str | datetime = datetime.now()
     working_location: str = ""
@@ -57,7 +57,7 @@ class remote_request_response(update_remote_request_schema, Base_response):
 
 # ---------------------- business_trip ----------------------
 class business_trip(Base_form):
-    employee_fk_id: UUID
+    user_fk_id: UUID
     destination: str
     start_date: str | datetime = datetime.now()
     end_date: str | datetime = datetime.now()

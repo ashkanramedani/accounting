@@ -17,7 +17,7 @@ from .db_post import *
 from .db_user import *
 
 from .Extra import count
-from .SetUp import setUp_admin
+from .models import setUp_admin
 
 __all__ = [
     "setUp_admin",
@@ -35,7 +35,7 @@ __all__ = [
     "update_category",
     # salary.py
     "employee_salary_report",
-    # SalaryPolicy_form.py
+    # Salary_Policy_form.py
     "get_SalaryPolicy",
     "get_all_SalaryPolicy",
     "post_SalaryPolicy",

@@ -34,7 +34,7 @@ class export_role(BaseModel):
 
 
 class export_employee(BaseModel):
-    employees_pk_id: UUID
+    user_pk_id: UUID
     name: str
     last_name: str
     # roles: List[export_role] | None

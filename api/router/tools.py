@@ -5,7 +5,7 @@ from fastapi import HTTPException
 from starlette.responses import RedirectResponse
 
 import db as dbf
-from db.database import get_db
+from db.models import get_db
 from lib.log import logger
 
 

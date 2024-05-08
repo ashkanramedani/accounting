@@ -11,21 +11,21 @@ from lib.Date_Time import generate_month_interval
 
 from .Employee_Forms import report_leave_request, report_remote_request, report_business_trip, report_fingerprint_scanner
 
-def employee_salary_report(db: Session, employee_fk_id, year, month):
+def employee_salary_report(db: Session, user_fk_id, year, month):
     try:
-        salary = db.query(dbm.SalaryPolicy_form).filter_by(deleted=False, employee_fk_id=employee_fk_id).first()
+        salary = db.query(dbm.Salary_Policy_form).filter_by(deleted=False, user_fk_id=user_fk_id).first()
         if not salary:
             return 400, "Bad Request: Target Employee has no salary record"
 
         start, end = generate_month_interval(year, month)
-        EnNo = db.query(dbm.Employees_form).filter_by(deleted=False, employees_pk_id=employee_fk_id).first().fingerprint_scanner_user_id
+        EnNo = db.query(dbm.User_form).filter_by(deleted=False, user_pk_id=user_fk_id).first().fingerprint_scanner_user_id
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
 
         F = report_fingerprint_scanner(db, salary, EnNo, start, end)
-        R = report_remote_request(db, salary, employee_fk_id, start, end)
-        L = report_leave_request(db, salary, employee_fk_id, start, end)
-        B = report_business_trip(db, salary, employee_fk_id, start, end)
+        R = report_remote_request(db, salary, user_fk_id, start, end)
+        L = report_leave_request(db, salary, user_fk_id, start, end)
+        B = report_business_trip(db, salary, user_fk_id, start, end)
 
         tmp = {}
         for s, i in [F, R, L, B]:
@@ -35,7 +35,7 @@ def employee_salary_report(db: Session, employee_fk_id, year, month):
             tmp |= i
 
         days_metadata = tmp.pop('Days') if "Days" in tmp else {"detail": "No data for Day Report"}
-        salary_obj = dbm.Salary(employee_fk_id=employee_fk_id, day_report_summery=days_metadata, salary_policy_summery=salary.summery(), **tmp)  # type: ignore[call-arg]
+        salary_obj = dbm.Salary_form(user_fk_id=user_fk_id, day_report_summery=days_metadata, salary_policy_summery=salary.summery(), **tmp)  # type: ignore[call-arg]
         db.add(salary_obj)
         db.commit()
 

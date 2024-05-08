@@ -50,7 +50,7 @@ class fingerprint_scanner_response(Base_response):
 
 
 class payment_method(Base_form):
-    employee_fk_id: UUID
+    user_fk_id: UUID
     shaba: str
     card_number: str
 

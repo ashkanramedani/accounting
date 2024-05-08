@@ -26,7 +26,7 @@ try:
     from db import models
     from router import routes
     from lib.log import logger
-    from db.database import engine, SessionLocal
+    from db.models import engine, SessionLocal
 
     logger.info("Logger Configured")
 

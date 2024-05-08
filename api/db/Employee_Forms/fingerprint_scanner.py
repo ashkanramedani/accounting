@@ -55,7 +55,7 @@ def preprocess_report(report):
     return preprocess_Days
 
 
-def Fixed_schedule(EMP_Salary: dbm.SalaryPolicy_form, report):
+def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report):
     preprocess_Days = preprocess_report(report)
     Days = []
     for Date, day in preprocess_Days.items():
@@ -173,7 +173,7 @@ def Split_schedule(EMP_Salary, reports):
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Fingerprint_scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Fingerprint_Scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -182,7 +182,7 @@ def get_fingerprint_scanner(db: Session, form_id):
 
 def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Fingerprint_scanner_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -190,8 +190,8 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
 
 
 def report_fingerprint_scanner(db: Session, salary, EnNo, start_date, end_date) -> tuple[int, str | dict]:
-    Fingerprint_scanner_report = db.query(dbm.Fingerprint_scanner_form) \
-        .filter(dbm.Fingerprint_scanner_form.Date.between(start_date, end_date)) \
+    Fingerprint_scanner_report = db.query(dbm.Fingerprint_Scanner_form) \
+        .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
         .filter_by(deleted=False, EnNo=EnNo).all()
 
     if not Fingerprint_scanner_report:
@@ -219,7 +219,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Fingerprint_scanner_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.Fingerprint_Scanner_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -248,9 +248,9 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
         end = datetime.combine(Fix_datetime(Data["DateTime"].max()), time()) + timedelta(days=1)
 
         history = (
-            db.query(dbm.Fingerprint_scanner_backup_form)
+            db.query(dbm.Fingerprint_Scanner_backup_form)
             .filter_by(deleted=False)
-            .filter(dbm.Fingerprint_scanner_backup_form.DateTime.between(start, end))
+            .filter(dbm.Fingerprint_Scanner_backup_form.DateTime.between(start, end))
             .all()
         )
 
@@ -271,7 +271,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
             if Signature in history:
                 continue
 
-            OBJs.append(dbm.Fingerprint_scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
+            OBJs.append(dbm.Fingerprint_Scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
             record_time = record["DateTime"]
             EMP = record['Name']
             if EMP not in ID:
@@ -289,10 +289,10 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
                     hour.append(None)
                 for H in range(0, len(hour), 2):
                     if hour[H] == hour[H + 1] or hour[H + 1] is None:
-                        OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
+                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
                     else:
                         duration = 0 if hour[H] == hour[H + 1] else time_gap(Fix_time(hour[H]), Fix_time(hour[H + 1]))
-                        OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
+                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()
@@ -306,7 +306,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
 
 def delete_fingerprint_scanner(db: Session, form_id):
     try:
-        record = db.query(dbm.Fingerprint_scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -320,7 +320,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
     try:
-        record = db.query(dbm.Fingerprint_scanner_form).filter_by(FingerPrintScanner_pk_id=Form.FingerPrintScanner_pk_id, deleted=False)
+        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(FingerPrintScanner_pk_id=Form.FingerPrintScanner_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 
@@ -356,9 +356,9 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
         end = datetime.combine(Fix_datetime(Data["DateTime"].max()), time()) + timedelta(days=1)
 
         history = (
-            db.query(dbm.Fingerprint_scanner_backup_form)
+            db.query(dbm.Fingerprint_Scanner_backup_form)
             .filter_by(deleted=False)
-            .filter(dbm.Fingerprint_scanner_backup_form.DateTime.between(start, end))
+            .filter(dbm.Fingerprint_Scanner_backup_form.DateTime.between(start, end))
             .all()
         )
 
@@ -378,7 +378,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
             if Signature in history:
                 continue
 
-            OBJs.append(dbm.Fingerprint_scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
+            OBJs.append(dbm.Fingerprint_Scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
             record_time = record["DateTime"]
             EMP = record['Name']
             if EMP not in ID:
@@ -396,10 +396,10 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
                     hour.append(None)
                 for H in range(0, len(hour), 2):
                     if hour[H] == hour[H + 1] or hour[H + 1] is None:
-                        OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
+                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
                     else:
                         duration = 0 if hour[H] == hour[H + 1] else time_gap(Fix_time(hour[H]), Fix_time(hour[H + 1]))
-                        OBJs.append(dbm.Fingerprint_scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
+                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()

@@ -6,10 +6,10 @@ import schemas as sch
 from .Extra import *
 
 
-# SalaryPolicy_form
+# Salary_Policy_form
 def get_SalaryPolicy(db: Session, form_id):
     try:
-        return 200, db.query(dbm.SalaryPolicy_form).filter_by(SalaryPolicy_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Salary_Policy_form).filter_by(SalaryPolicy_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -18,7 +18,7 @@ def get_SalaryPolicy(db: Session, form_id):
 
 def get_all_SalaryPolicy(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.SalaryPolicy_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Salary_Policy_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -30,9 +30,9 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
         start, end = generate_month_interval(Form.year, Form.month)
 
         result = (
-            db.query(dbm.SalaryPolicy_form)
-            .filter_by(deleted=False, employee_fk_id=Form.employee_fk_id)
-            .filter(dbm.SalaryPolicy_form.end_date.between(start, end))
+            db.query(dbm.Salary_Policy_form)
+            .filter_by(deleted=False, user_fk_id=Form.user_fk_id)
+            .filter(dbm.Salary_Policy_form.end_date.between(start, end))
             .all()
         )
 
@@ -45,7 +45,7 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
 
 def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
     try:
-        if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
+        if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
             return 400, "Bad Request: Employee Does Not Exist"
 
         data = Form.dict()
@@ -61,7 +61,7 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         Working_hour = time_gap(data["day_starting_time"], data["day_ending_time"]) if is_Fixed else data["Regular_hours_cap"]
         del data["Regular_hours_cap"]
 
-        OBJ = dbm.SalaryPolicy_form(is_Fixed=is_Fixed, Regular_hours_cap=Working_hour, **data)  # type: ignore[call-arg]
+        OBJ = dbm.Salary_Policy_form(is_Fixed=is_Fixed, Regular_hours_cap=Working_hour, **data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -75,7 +75,7 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
 
 def delete_SalaryPolicy(db: Session, form_id):
     try:
-        record = db.query(dbm.SalaryPolicy_form).filter_by(
+        record = db.query(dbm.Salary_Policy_form).filter_by(
                 SalaryPolicy_pk_id=form_id,
                 deleted=False
         ).first()
@@ -92,11 +92,11 @@ def delete_SalaryPolicy(db: Session, form_id):
 
 def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
     try:
-        record = db.query(dbm.SalaryPolicy_form).filter_by(SalaryPolicy_pk_id=Form.SalaryPolicy_pk_id, deleted=False)
+        record = db.query(dbm.Salary_Policy_form).filter_by(SalaryPolicy_pk_id=Form.SalaryPolicy_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
+        if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
         record.update(Form.dict(), synchronize_session=False)
 

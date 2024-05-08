@@ -8,7 +8,7 @@ from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
 import schemas as sch
-from db.database import get_db
+from db.models import get_db
 from fastapi import File, UploadFile
 
 

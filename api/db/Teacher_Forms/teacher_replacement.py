@@ -35,9 +35,9 @@ def report_teacher_replacement(db: Session, Form: sch.teacher_report):
     try:
         result = (
             db.query(dbm.Teacher_Replacement_form)
-            .join(dbm.course_form, dbm.course_form.course_pk_id == dbm.Teacher_Replacement_form.course_fk_id)
+            .join(dbm.Course_form, dbm.Course_form.course_pk_id == dbm.Teacher_Replacement_form.course_fk_id)
             .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
-            .filter(dbm.course_form.course_time.between(Form.start_date, Form.end_date))
+            .filter(dbm.Course_form.course_time.between(Form.start_date, Form.end_date))
             .options(joinedload(dbm.Teacher_Replacement_form.course))
             .count()
         )

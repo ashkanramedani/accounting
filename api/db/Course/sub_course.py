@@ -14,7 +14,7 @@ from datetime import timedelta, datetime
 # ------ sub course -------
 def get_subcourse(db: Session, subcourse_id):
     try:
-        sub_course = db.query(dbm.sub_course_form).filter_by(sub_course_pk_id=subcourse_id, deleted=False).first()
+        sub_course = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=subcourse_id, deleted=False).first()
         if not sub_course:
             return 200, []
 
@@ -27,7 +27,7 @@ def get_subcourse(db: Session, subcourse_id):
 
 def get_all_subcourse(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.sub_course_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Sub_Course_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -39,10 +39,10 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: employee not found"
 
-        if not db.query(dbm.Employees_form).filter_by(employees_pk_id=Form.sub_course_teacher_fk_id, deleted=False).first():
+        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.sub_course_teacher_fk_id, deleted=False).first():
             return 400, "Bad Request: teacher not found"
 
-        course = db.query(dbm.course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first()
+        course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first()
         if not course:
             return 400, "Bad Request: course not found"
 
@@ -50,7 +50,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
 
         session_signature = data.pop("session_signature")
         data |= {"sub_course_capacity": course.course_capacity, "sub_course_available_seat": course.course_capacity}
-        OBJ = dbm.sub_course_form(**data)  # type: ignore[call-arg]
+        OBJ = dbm.Sub_Course_form(**data)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -97,7 +97,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
 
 def delete_subcourse(db: Session, course_id):
     try:
-        record = db.query(dbm.course_form).filter_by(course_pk_id=course_id, deleted=False).first()
+        record = db.query(dbm.Course_form).filter_by(course_pk_id=course_id, deleted=False).first()
         if not record:
             return 400, "Record Not Found"
         record.deleted = True
@@ -113,7 +113,7 @@ def update_subcourse(db: Session, Form: sch.update_sub_course_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: employee not found"
-        record = db.query(dbm.sub_course_form).filter_by(sub_course_pk_id=Form.sub_course_pk_id, deleted=False)
+        record = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_pk_id, deleted=False)
         if not record.first():
             return 400, "Record Not Found"
 

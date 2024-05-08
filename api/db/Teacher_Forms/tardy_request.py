@@ -9,7 +9,7 @@ from ..Extra import *
 # Tardy Form - get_tardy_request
 def get_tardy_request(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -18,7 +18,7 @@ def get_tardy_request(db: Session, form_id):
 
 def get_all_tardy_request(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Teacher_tardy_reports_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Teacher_Tardy_report_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -28,11 +28,11 @@ def get_all_tardy_request(db: Session, page: sch.PositiveInt, limit: sch.Positiv
 def report_tardy_request(db: Session, Form: sch.teacher_report):
     try:
         result = (
-            db.query(dbm.Teacher_tardy_reports_form)
-            .join(dbm.course_form, dbm.course_form.course_pk_id == dbm.Teacher_tardy_reports_form.course_fk_id)
+            db.query(dbm.Teacher_Tardy_report_form)
+            .join(dbm.Course_form, dbm.Course_form.course_pk_id == dbm.Teacher_Tardy_report_form.course_fk_id)
             .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
-            .filter(dbm.course_form.course_time.between(Form.start_date, Form.end_date))
-            .options(joinedload(dbm.Teacher_tardy_reports_form.course))
+            .filter(dbm.Course_form.course_time.between(Form.start_date, Form.end_date))
+            .options(joinedload(dbm.Teacher_Tardy_report_form.course))
             .all()
         )
 
@@ -50,7 +50,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
         if not course_exist(db, Form.course_fk_id):
             return 400, "Bad Request"
 
-        OBJ = dbm.Teacher_tardy_reports_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.Teacher_Tardy_report_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -64,7 +64,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
 
 def delete_tardy_request(db: Session, form_id):
     try:
-        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -78,7 +78,7 @@ def delete_tardy_request(db: Session, form_id):
 
 def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_schema):
     try:
-        record = db.query(dbm.Teacher_tardy_reports_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id, deleted=False)
+        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id, deleted=False)
 
         if not record.first():
             return 404, "Record Not Found"

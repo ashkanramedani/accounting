@@ -3,7 +3,7 @@
 # from typing import Optional, Union, Any
 # from datetime import datetime, timedelta
 # from jose import jwt
-# from db.database import get_db
+# from db.models import get_db
 # from db import db_user
 # from sqlalchemy.orm import Session
 # from jose.exceptions import JWTError

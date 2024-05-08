@@ -27,12 +27,12 @@ def get_all_business_trip_form(db: Session, page: sch.PositiveInt, limit: sch.Po
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_business_trip(db: Session, salary_rate, employee_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
+def report_business_trip(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
     if not salary_rate.business_trip_permission:
         return 200, {"business_trip": 0, "business_trip_earning": 0}
     Business_Trip_report = (
         db.query(dbm.Business_Trip_form)
-        .filter_by(deleted=False, employee_fk_id=employee_fk_id)
+        .filter_by(deleted=False, user_fk_id=user_fk_id)
         .filter(dbm.Business_Trip_form.end_date.between(start_date, end_date))
         .all()
     )
@@ -45,7 +45,7 @@ def report_business_trip(db: Session, salary_rate, employee_fk_id, start_date, e
 def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema) -> Tuple[int, str | Dict | List]:
     try:
         # db.query(dbm.Business_Trip_form).filter_by(star)
-        if not employee_exist(db, [Form.employee_fk_id]):
+        if not employee_exist(db, [Form.user_fk_id]):
             return 400, "Bad Request: Employee not found"
 
         data = Form.dict()
@@ -90,7 +90,7 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.employee_fk_id]):
+        if not employee_exist(db, [Form.user_fk_id]):
             return 400, "Bad Request"
 
         record.update(Form.dict(), synchronize_session=False)

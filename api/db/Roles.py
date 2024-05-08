@@ -11,7 +11,7 @@ from .Extra import *
 @log_on_status
 def get_role(db: Session, role_id):
     try:
-        return 200, db.query(dbm.Roles_form).filter_by(role_pk_id=role_id, deleted=False).first()
+        return 200, db.query(dbm.Role_form).filter_by(role_pk_id=role_id, deleted=False).first()
     except Exception as e:
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
@@ -20,7 +20,7 @@ def get_role(db: Session, role_id):
 @log_on_status
 def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Roles_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Role_form, page, limit, order)
     except Exception as e:
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
@@ -34,7 +34,7 @@ def post_role(db: Session, Form: sch.post_role_schema):
         if data["name"] == "Administrator":
             return 400, "illegal name Administrator"
 
-        OBJ = dbm.Roles_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.Role_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -48,7 +48,7 @@ def post_role(db: Session, Form: sch.post_role_schema):
 @log_on_status
 def delete_role(db: Session, role_id):
     try:
-        record = db.query(dbm.Roles_form).filter_by(role_pk_id=role_id, deleted=False).first()
+        record = db.query(dbm.Role_form).filter_by(role_pk_id=role_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         if record.name == "Administrator":
@@ -64,7 +64,7 @@ def delete_role(db: Session, role_id):
 @log_on_status
 def update_role(db: Session, Form: sch.update_role_schema):
     try:
-        record = db.query(dbm.Roles_form).filter_by(role_pk_id=Form.role_pk_id, deleted=False)
+        record = db.query(dbm.Role_form).filter_by(role_pk_id=Form.role_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

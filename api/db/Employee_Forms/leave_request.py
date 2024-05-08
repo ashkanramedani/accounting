@@ -13,7 +13,7 @@ from ..Extra import *
 # Leave Request
 def get_leave_request(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Leave_request_form).filter_by(leave_request_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Leave_Request_form).filter_by(leave_request_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -22,25 +22,25 @@ def get_leave_request(db: Session, form_id):
 
 def get_all_leave_request(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Leave_request_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Leave_Request_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_leave_request(db: Session, salary_rate, employee_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
+def report_leave_request(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
     vacation_leave, medical_leave = 0, 0
     vacation_Leave_request_report = (
-        db.query(dbm.Leave_request_form)
-        .filter_by(deleted=False, employee_fk_id=employee_fk_id, leave_type="vacation")
-        .filter(dbm.Leave_request_form.date.between(start_date, end_date))
+        db.query(dbm.Leave_Request_form)
+        .filter_by(deleted=False, user_fk_id=user_fk_id, leave_type="vacation")
+        .filter(dbm.Leave_Request_form.date.between(start_date, end_date))
         .all()
     )
     medical_Leave_request_report = (
-        db.query(dbm.Leave_request_form)
-        .filter_by(deleted=False, employee_fk_id=employee_fk_id, leave_type="medical")
-        .filter(dbm.Leave_request_form.date.between(start_date, end_date))
+        db.query(dbm.Leave_Request_form)
+        .filter_by(deleted=False, user_fk_id=user_fk_id, leave_type="medical")
+        .filter(dbm.Leave_Request_form.date.between(start_date, end_date))
         .all()
     )
 
@@ -59,7 +59,7 @@ def report_leave_request(db: Session, salary_rate, employee_fk_id, start_date, e
 
 def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
     try:
-        if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by, Form.user_fk_id]):
             return 400, "Bad Request: Employee Does Not Exist"
 
         data = Form.dict()
@@ -76,16 +76,16 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
         # this part check if leave request is daily or hourly
         if End.date() == Start.date():
             if not is_off_day(Start):
-                OBJ = dbm.Leave_request_form(start_date=Start.time(), end_date=End.time(), duration=(End - Start).total_seconds() // 60, date=Start.replace(hour=0, minute=0, second=0, microsecond=0), **data)  # type: ignore[call-arg]
+                OBJ = dbm.Leave_Request_form(start_date=Start.time(), end_date=End.time(), duration=(End - Start).total_seconds() // 60, date=Start.replace(hour=0, minute=0, second=0, microsecond=0), **data)  # type: ignore[call-arg]
                 db.add(OBJ)
         else:
             OBJ = []
-            Salary_Obj = db.query(dbm.SalaryPolicy_form).filter_by(employee_fk_id=Form.employee_fk_id, deleted=False).first()
+            Salary_Obj = db.query(dbm.Salary_Policy_form).filter_by(user_fk_id=Form.user_fk_id, deleted=False).first()
             if not Salary_Obj:
-                return 400, "Bad Request: Employee Does Not Have Salary Record"
+                return 400, "Bad Request: Employee Does Not Have Salary_form Record"
             for day in Separate_days_by_DayCap(Start, End, Salary_Obj.Regular_hours_cap):
                 if not day["is_holiday"]:
-                    OBJ.append(dbm.Leave_request_form(date=day["Date"], duration=day["duration"], **data))  # type: ignore[call-arg]
+                    OBJ.append(dbm.Leave_Request_form(date=day["Date"], duration=day["duration"], **data))  # type: ignore[call-arg]
 
             db.add_all(OBJ)
         db.commit()
@@ -99,7 +99,7 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
 
 def delete_leave_request(db: Session, form_id):
     try:
-        record = db.query(dbm.Leave_request_form).filter_by(leave_request_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Leave_Request_form).filter_by(leave_request_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -113,11 +113,11 @@ def delete_leave_request(db: Session, form_id):
 
 def update_leave_request(db: Session, Form: sch.update_leave_request_schema):
     try:
-        record = db.query(dbm.Leave_request_form).filter_by(leave_request_pk_id=Form.leave_request_pk_id, deleted=False)
+        record = db.query(dbm.Leave_Request_form).filter_by(leave_request_pk_id=Form.leave_request_pk_id, deleted=False)
         if not record.first():
             return 404, "Form Not Found"
 
-        if not employee_exist(db, [Form.created_fk_by, Form.employee_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by, Form.user_fk_id]):
             return 400, "Bad Request"
 
         record.update(Form.dict(), synchronize_session=False)

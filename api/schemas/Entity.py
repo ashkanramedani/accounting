@@ -25,13 +25,13 @@ class post_employee_schema(Employee):
 
 
 class update_employee_schema(Entity):
-    employees_pk_id: UUID
+    user_pk_id: UUID
     priority: int | None
     fingerprint_scanner_user_id: int | None = None
 
 
 class employee_response(Entity):
-    employees_pk_id: UUID
+    user_pk_id: UUID
     roles: List[export_role] | None
 
     class Config:

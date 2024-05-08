@@ -30,7 +30,7 @@ def get_all_response(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 
 def post_response(db: Session, Form: sch.post_response_schema):
     try:
-        if not db.query(dbm.Student_form).filter_by(student_pk_id=Form.student_fk_id, deleted=False).first():
+        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.student_fk_id, deleted=False).first():
             return 400, "Bad Request: Student not found"
 
         if not db.query(dbm.Survey_form).filter_by(survey_pk_id=Form.survey_fk_id, deleted=False).first():
@@ -38,7 +38,7 @@ def post_response(db: Session, Form: sch.post_response_schema):
 
         data = Form.dict()
         question_answer_pair = data.pop("answer")
-        all_questions: List[UUID] = [question["question_pk_id"] for question in db.query(dbm.Questions_form).filter_by(deleted=False).all()]
+        all_questions: List[UUID] = [question["question_pk_id"] for question in db.query(dbm.Question_form).filter_by(deleted=False).all()]
 
         Responses = []
         for Q, A in question_answer_pair:
@@ -75,13 +75,13 @@ def update_response(db: Session, Form: sch.update_response_schema):
         if not record.first():
             return 400, "Bad request: Record not found"
 
-        if not db.query(dbm.Student_form).filter_by(student_pk_id=Form.student_fk_id, deleted=False).first():
+        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.student_fk_id, deleted=False).first():
             return 400, "Bad Request: Student not found"
 
         if not db.query(dbm.Survey_form).filter_by(survey_pk_id=Form.survey_fk_id, deleted=False).first():
             return 400, "Bad Request: Survey not found"
 
-        if not db.query(dbm.Questions_form).filter_by(question_pk_id=Form.question, deleted=False).first():
+        if not db.query(dbm.Question_form).filter_by(question_pk_id=Form.question, deleted=False).first():
             return 400, "Bad Request: Question not found"
 
         record.update(Form.dict(), synchronize_session=False)

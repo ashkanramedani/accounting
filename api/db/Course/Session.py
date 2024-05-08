@@ -40,11 +40,11 @@ def post_session(db: Session, Form: sch.post_session_schema):
         if not employee_exist(db, [Form.created_fk_by, Form.session_teacher_fk_id]):
             return 400, "Bad Request: employee not found"
 
-        subcourse = db.query(dbm.sub_course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first()
+        subcourse = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first()
         if not subcourse:
             return 400, "Bad Request: sub course not found"
 
-        if not db.query(dbm.course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first():
+        if not db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first():
             return 400, "Bad Request: course not found"
 
         data = Form.__dict__

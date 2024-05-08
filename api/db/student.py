@@ -12,7 +12,7 @@ from .Extra import *
 # Student
 def get_student(db: Session, student_id):
     try:
-        return 200, db.query(dbm.Student_form).filter_by(student_pk_id=student_id, deleted=False).first()
+        return 200, db.query(dbm.User_form).filter_by(student_pk_id=student_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -21,7 +21,7 @@ def get_student(db: Session, student_id):
 
 def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Student_form, page, limit, order)
+        return 200, record_order_by(db, dbm.User_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -30,7 +30,7 @@ def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, 
 
 def post_student(db: Session, Form: sch.post_student_schema):
     try:
-        OBJ = dbm.Student_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.User_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -44,7 +44,7 @@ def post_student(db: Session, Form: sch.post_student_schema):
 
 def delete_student(db: Session, student_id):
     try:
-        record = db.query(dbm.Student_form).filter_by(student_pk_id=student_id, deleted=False).first()
+        record = db.query(dbm.User_form).filter_by(student_pk_id=student_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -58,7 +58,7 @@ def delete_student(db: Session, student_id):
 
 def update_student(db: Session, Form: sch.update_student_schema):
     try:
-        record = db.query(dbm.Student_form).filter(dbm.Student_form.student_pk_id == Form.student_pk_id)
+        record = db.query(dbm.User_form).filter(dbm.User_form.student_pk_id == Form.student_pk_id)
         if not record.first():
             return 404, "Record Not Found"
 

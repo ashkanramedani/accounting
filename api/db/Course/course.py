@@ -44,10 +44,10 @@ def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Up
 
 def get_course(db: Session, course_id):
     try:
-        course = db.query(dbm.course_form).filter_by(course_pk_id=course_id, deleted=False).first()
+        course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id, deleted=False).first()
         if not course:
             return 400, "Bad Request: Course Not Found"
-        sub_course = db.query(dbm.sub_course_form).filter_by(course_fk_id=course_id, deleted=False).all()
+        sub_course = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id, deleted=False).all()
         if not sub_course:
             course.teachers = []
             course.session_signature = []
@@ -67,12 +67,12 @@ def get_course(db: Session, course_id):
 
 def get_all_course(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        courses = record_order_by(db, dbm.course_form, page, limit, order)
+        courses = record_order_by(db, dbm.Course_form, page, limit, order)
         if not courses:
             return 200, []
         Courses = []
         for course in courses:
-            sub_course = db.query(dbm.sub_course_form).filter_by(course_fk_id=course.course_pk_id, deleted=False).all()
+            sub_course = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course.course_pk_id, deleted=False).all()
             if not sub_course:
                 course.teachers = []
                 course.session_signature = []
@@ -102,7 +102,7 @@ def post_course(db: Session, Form: sch.post_course_schema):
         tags = data.pop("tags") if "tags" in data else []
         categories = data.pop("categories") if "categories" in data else []
 
-        OBJ = dbm.course_form(**data)  # type: ignore[call-arg]
+        OBJ = dbm.Course_form(**data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -120,7 +120,7 @@ def post_course(db: Session, Form: sch.post_course_schema):
 
 def delete_course(db: Session, course_id):
     try:
-        record = db.query(dbm.course_form).filter_by(course_pk_id=course_id, deleted=False).first()
+        record = db.query(dbm.Course_form).filter_by(course_pk_id=course_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -134,7 +134,7 @@ def delete_course(db: Session, course_id):
 
 def update_course(db: Session, Form: sch.update_course_schema):
     try:
-        course = db.query(dbm.course_form).filter_by(course_pk_id=Form.course_pk_id, deleted=False)
+        course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_pk_id, deleted=False)
         if not course.first():
             return 404, "Course Not Found"
 

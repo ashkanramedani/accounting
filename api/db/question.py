@@ -9,7 +9,7 @@ from .Extra import record_order_by
 # question
 def get_question(db: Session, question_id):
     try:
-        return 200, db.query(dbm.Questions_form).filter_by(question_pk_id=question_id, deleted=False).first()
+        return 200, db.query(dbm.Question_form).filter_by(question_pk_id=question_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -18,7 +18,7 @@ def get_question(db: Session, question_id):
 
 def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Questions_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Question_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -27,7 +27,7 @@ def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 
 def post_question(db: Session, Form: sch.post_questions_schema):
     try:
-        OBJ = dbm.Questions_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.Question_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -41,7 +41,7 @@ def post_question(db: Session, Form: sch.post_questions_schema):
 
 def delete_question(db: Session, question_id):
     try:
-        record = db.query(dbm.Questions_form).filter_by(question_pk_id=question_id, deleted=False).first()
+        record = db.query(dbm.Question_form).filter_by(question_pk_id=question_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -55,7 +55,7 @@ def delete_question(db: Session, question_id):
 
 def update_question(db: Session, Form: sch.update_questions_schema):
     try:
-        record = db.query(dbm.Questions_form).filter_by(question_pk_id=Form.question_pk_id, deleted=False)
+        record = db.query(dbm.Question_form).filter_by(question_pk_id=Form.question_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

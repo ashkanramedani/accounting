@@ -6,7 +6,7 @@ from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
 import schemas as sch
-from db.database import get_db
+from db.models import get_db
 
 router = APIRouter(prefix='/api/v1/form/teacher_payment', tags=['Remote Request'])
 
@@ -60,7 +60,7 @@ teacher_level = {
 
 @router.get("/teacher_level/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def get_teacher_level(employee_id, db=Depends(get_db)):
-    salary_policy = db.query(dbf.SalaryPolicy).filter_by(employees_pk_id=employee_id, deleted=False).first()
+    salary_policy = db.query(dbf.SalaryPolicy).filter_by(user_pk_id=employee_id, deleted=False).first()
     salary_policy = salary_policy.dict()
     teacher_level = salary_policy["teaching_level"]
     return teacher_level

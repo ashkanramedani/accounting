@@ -1,9 +1,9 @@
 from .Base import *
 
-# ---------------------- Salary ----------------------
+# ---------------------- Salary_form ----------------------
 class SalaryPolicy(BaseModel):
     created_fk_by: UUID
-    employee_fk_id: UUID
+    user_fk_id: UUID
 
     day_starting_time: Optional[time] = None
     day_ending_time: Optional[time] = None
@@ -58,9 +58,9 @@ class SalaryPolicy_response(Base_response, update_SalaryPolicy_schema):
         orm_mode = True
 
 
-# ++++++++++++++++++++++++++ Salary +++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++ Salary_form +++++++++++++++++++++++++++
 class salary_report(BaseModel):
-    employee_fk_id: UUID
+    user_fk_id: UUID
     year: PositiveInt
     month: PositiveInt
 
@@ -72,7 +72,7 @@ class teacher_report(BaseModel):
 
 
 class employee_report(BaseModel):
-    employee_fk_id: UUID
+    user_fk_id: UUID
     start_date: datetime | str
     end_date: datetime | str
 

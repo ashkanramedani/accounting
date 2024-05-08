@@ -10,7 +10,7 @@ from lib.json_handler import json_handler
 from lib.log import Log as log
 
 load_dotenv()
-directory = normpath(f'{dirname(__file__)}/../configs/config.json')
+directory = normpath(f'{dirname(__file__)}/../../configs/config.json')
 _obj_json_handler_config = json_handler(FilePath=directory)
 config = _obj_json_handler_config.Data
 _obj_log = log()

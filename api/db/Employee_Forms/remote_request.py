@@ -32,13 +32,13 @@ def get_all_remote_request_form(db: Session, page: sch.PositiveInt, limit: sch.P
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_remote_request(db: Session, salary_rate, employee_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
+def report_remote_request(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
     if not salary_rate.remote_permission:
         return 200, {"remote": 0, "remote_earning": 0}
 
     Remote_Request_report = (
         db.query(dbm.Remote_Request_form)
-        .filter_by(deleted=False, employee_fk_id=employee_fk_id)
+        .filter_by(deleted=False, user_fk_id=user_fk_id)
         .filter(dbm.Remote_Request_form.end_date.between(start_date, end_date))
         .all()
     )
@@ -49,7 +49,7 @@ def report_remote_request(db: Session, salary_rate, employee_fk_id, start_date, 
 
 def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
     try:
-        if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
+        if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
 
         data = Form.dict()
@@ -94,7 +94,7 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.employee_fk_id, Form.created_fk_by]):
+        if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
         record.update(Form.dict(), synchronize_session=False)
 
