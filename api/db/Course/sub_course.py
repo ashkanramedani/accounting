@@ -16,7 +16,7 @@ def get_subcourse(db: Session, subcourse_id):
     try:
         sub_course = db.query(dbm.sub_course_form).filter_by(sub_course_pk_id=subcourse_id, deleted=False).first()
         if not sub_course:
-            return 400, "Bad Request: Sub Course Not Found"
+            return 200, []
 
         return 200, sub_course
     except Exception as e:
@@ -46,7 +46,6 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         if not course:
             return 400, "Bad Request: course not found"
 
-
         data = Form.__dict__
 
         session_signature = data.pop("session_signature")
@@ -71,21 +70,21 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
                 day_of_week=Session_signature.keys())
 
         days = []
-        for day_date, day_weekday in date_table:
+        for day_date, day_weekday in date_table[:data["number_of_session"]]:
             for start_time, session_duration in Session_signature[day_weekday]:
                 session_starting_time = datetime.combine(day_date, Fix_time(start_time))
                 session_ending_time = session_starting_time + timedelta(minutes=session_duration)
 
                 session_data = {
-                            "created_fk_by": Form.created_fk_by,
-                            "course_fk_id": Form.course_fk_id,
-                            "sub_course_fk_id": OBJ.sub_course_pk_id,
-                            "session_teacher_fk_id": Form.sub_course_teacher_fk_id,
-                            "session_date": day_date,
-                            "session_starting_time": session_starting_time.time(),
-                            "session_ending_time": session_ending_time.time(),
-                            "session_duration": session_duration,
-                            "days_of_week": day_weekday}
+                    "created_fk_by": Form.created_fk_by,
+                    "course_fk_id": Form.course_fk_id,
+                    "sub_course_fk_id": OBJ.sub_course_pk_id,
+                    "session_teacher_fk_id": Form.sub_course_teacher_fk_id,
+                    "session_date": day_date,
+                    "session_starting_time": session_starting_time.time(),
+                    "session_ending_time": session_ending_time.time(),
+                    "session_duration": session_duration,
+                    "days_of_week": day_weekday}
                 days.append(dbm.Session_form(**session_data))  # type: ignore[call-arg]
         db.add_all(days)
         db.commit()

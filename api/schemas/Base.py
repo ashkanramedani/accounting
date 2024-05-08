@@ -37,7 +37,7 @@ class export_employee(BaseModel):
     employees_pk_id: UUID
     name: str
     last_name: str
-    roles: List[export_role] | None
+    # roles: List[export_role] | None
 
     class Config:
         orm_mode = True

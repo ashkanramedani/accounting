@@ -19,7 +19,7 @@ async def add_subcourse(Form: sch.post_sub_course_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.sub_course_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])#, response_model=sch.sub_course_response)
 async def search_subcourse(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_subcourse(db, form_id)
     if status_code != 200:
@@ -27,7 +27,7 @@ async def search_subcourse(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.sub_course_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])#, response_model=List[sch.sub_course_response])
 async def search_all_subcourse(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_subcourse(db, page, limit, order)
     if status_code != 200:

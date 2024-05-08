@@ -3,11 +3,11 @@
     "developer_log": true,
     "versions": "v 3.0.0",
     "logger": {
-        "format": "{time:YYYY-MM-DD HH:mm:ss},{name},{function}:{line},{message}",
+        "format": "{time:YYYY-MM-DD HH:mm:ss},{level},{name},{function}:{line},{message}",
         "sink": "log/Log.log",
         "rotation": "10 MB",
         "level": "INFO",
-        "abs_sink": ""
+        "abs_sink": "/Users/hsa/Developer/Python/accounting/accounting_Api/accounting/api/log/Log.log"
     },
     "db": {
         "database_type": "postgresql",

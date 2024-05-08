@@ -28,7 +28,7 @@ async def search_course(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))] , response_model=List[sch.course_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.course_response])
 async def search_all_course(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_course(db, page, limit, order)
     if status_code != 200:

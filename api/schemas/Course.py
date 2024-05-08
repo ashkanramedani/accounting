@@ -15,8 +15,8 @@ class Session_signature(BaseModel):
 
 # ---------------------- class ----------------------
 class Update_Relation(BaseModel):
-    old_id: UUID | None | str
-    new_id: UUID | None | str
+    old_id: UUID | str
+    new_id: UUID | str
 
 
 class course(Base_form):
@@ -29,11 +29,11 @@ class course(Base_form):
     course_language: UUID
     course_type: UUID
 
-    tags: List[Update_Relation]
-    categories: List[Update_Relation]
-
     course_code: str
     course_image: str = ""
+
+    tags: Optional[List[Update_Relation]] = []
+    categories: Optional[List[Update_Relation]] = []
 
     course_level: str
     package_discount: float
@@ -45,6 +45,7 @@ class post_course_schema(course):
 
 class update_course_schema(course):
     course_pk_id: UUID
+
 
 class course_response(Base_response):
     course_pk_id: UUID
@@ -59,18 +60,18 @@ class course_response(Base_response):
     starting_date: date
     ending_date: date
 
-    language: export_language
-    type: export_course_type
-
     teachers: List[export_employee] | List[UUID] = None
     course_signature: List[Session_signature] = []
     available_seat: int = None
 
-    tags: List[export_tag] | None
-    categories: Optional[List[export_categories]]
+    tags: List[export_tag] = []
+    categories: List[export_categories] = []
+    language: export_language
+    type: export_course_type
 
     class Config:
         orm_mode = True
+
 
 # ________ Session
 
@@ -125,6 +126,7 @@ class SubCourse(Base_form):
 
     session_signature: List[Session_signature]
 
+
 class post_sub_course_schema(SubCourse):
     pass
 
@@ -144,6 +146,7 @@ class sub_course_response(BaseModel):
     sub_course_starting_date: date
     sub_course_ending_date: date
     created: export_employee
+
     # teacher: export_employee
     # available_seat: int
     # Sessions: List[export_session]
@@ -194,6 +197,7 @@ class course_type_response(update_course_type_schema):
     class Config:
         orm_mode = True
 
+
 # ----- Course cancellation
 class course_cancellation(Base_form):
     course_fk_id: UUID
@@ -217,4 +221,3 @@ class course_cancellation_response(Base_response, update_course_cancellation_sch
 
     class Config:
         orm_mode = True
-

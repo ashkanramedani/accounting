@@ -2,16 +2,11 @@ from enum import Enum
 
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
-# from fastapi import Response
-# from fastapi.responses import HTMLResponse
 from starlette.responses import RedirectResponse
 
 import db as dbf
 from db.database import get_db
 from lib.log import logger
-
-
-# from typing_extensions import deprecated
 
 
 class log_mode(str, Enum):

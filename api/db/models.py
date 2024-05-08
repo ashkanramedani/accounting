@@ -373,6 +373,7 @@ CourseTag = Table(
         Column("deleted", Boolean, default=False, nullable=False),
         UniqueConstraint("tag_fk_id", "course_fk_id", "deleted"), )
 
+
 CourseCategory = Table(
         "course_category",
         Base.metadata,
