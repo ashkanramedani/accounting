@@ -11,15 +11,14 @@ def setUp_admin(db: Session):
         if not emp:
             UID = uuid.uuid4()
 
-
-            OBJ = dbm.User_form(user_pk_id=UID, created_fk_by=UID, name="Admin", last_name="Admin")  # type: ignore[call-arg]
+            OBJ = dbm.User_form(user_pk_id=UID, created_fk_by=UID, name="Admin", last_name="Admin", status=1)  # type: ignore[call-arg]
             db.add(OBJ)
             db.commit()
             db.refresh(OBJ)
             emp = db.query(dbm.User_form).filter_by(name="Admin").first()
 
             if not db.query(dbm.Role_form).filter_by(name="Administrator").first():
-                OBJ = dbm.Role_form(created_fk_by=emp.user_pk_id, name="Administrator", cluster="Administrator")  # type: ignore[call-arg]
+                OBJ = dbm.Role_form(created_fk_by=emp.user_pk_id, name="Administrator", cluster="Administrator", status=1)  # type: ignore[call-arg]
                 db.add(OBJ)
                 db.commit()
                 db.refresh(OBJ)

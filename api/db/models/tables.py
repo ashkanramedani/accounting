@@ -1,5 +1,13 @@
 from .Func import *
 
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, Date, Time
+from sqlalchemy.dialects.postgresql import JSONB, JSON
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import expression, func
+
+from .database import Base
+
+
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
@@ -331,28 +339,28 @@ class User_form(Base, Base_form):
     fingerprint_scanner_user_id = Column(String, nullable=True, unique=True)
     level = Column(String, index=True, nullable=True)
 
-    Tag_Relation = relation("Tag_form")
-    Category_Relation = relation("Category_form")
-    Language_Relation = relation("Language_form")
-    course_type_Relation = relation("Course_Type_form")
-    course_Relation = relation("Course_form")
-    sub_course_Relation = relation("Sub_Course_form")
-    Session_Relation = relation("Session_form")
-    Roles_Relation = relation("Role_form")
+    Tag_Relation = creator_relation("Tag_form")
+    Category_Relation = creator_relation("Category_form")
+    Language_Relation = creator_relation("Language_form")
+    course_type_Relation = creator_relation("Course_Type_form")
+    course_Relation = creator_relation("Course_form")
+    sub_course_Relation = creator_relation("Sub_Course_form")
+    Session_Relation = creator_relation("Session_form")
+    Roles_Relation = creator_relation("Role_form")
     # User_Relation = relation("User_form")
-    Survey_Relation = relation("Survey_form")
-    Questions_Relation = relation("Question_form")
-    Business_Trip_Relation = relation("Business_Trip_form")
-    Leave_request_Relation = relation("Leave_Request_form")
-    Remote_Request_Relation = relation("Remote_Request_form")
-    payment_method_Relation = relation("Payment_Method_form")
-    course_Cancellation_Relation = relation("Course_Cancellation_form")
-    Teacher_Replacement_Relation = relation("Teacher_Replacement_form")
-    fingerprint_scanner_Relation = relation("Fingerprint_Scanner_form")
-    fingerprint_scanner_backup_Relation = relation("Fingerprint_Scanner_backup_form")
-    Teacher_tardy_reports_Relation = relation("Teacher_Tardy_report_form")
-    SalaryPolicy_Relation = relation("Salary_Policy_form")
-    Status_Relation = relation("Status_form")
+    Survey_Relation = creator_relation("Survey_form")
+    Questions_Relation = creator_relation("Question_form")
+    Business_Trip_Relation = creator_relation("Business_Trip_form")
+    Leave_request_Relation = creator_relation("Leave_Request_form")
+    Remote_Request_Relation = creator_relation("Remote_Request_form")
+    payment_method_Relation = creator_relation("Payment_Method_form")
+    course_Cancellation_Relation = creator_relation("Course_Cancellation_form")
+    Teacher_Replacement_Relation = creator_relation("Teacher_Replacement_form")
+    fingerprint_scanner_Relation = creator_relation("Fingerprint_Scanner_form")
+    fingerprint_scanner_backup_Relation = creator_relation("Fingerprint_Scanner_backup_form")
+    Teacher_tardy_reports_Relation = creator_relation("Teacher_Tardy_report_form")
+    SalaryPolicy_Relation = creator_relation("Salary_Policy_form")
+    Status_Relation = creator_relation("Status_form")
 
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
     created = relationship("User_form", foreign_keys=[created_fk_by])#, back_populates="User_Relation")
@@ -489,7 +497,7 @@ class Payment_Method_form(Base, Base_form):
     payment_method_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
     created_fk_by = create_forenKey("User_form")
-    shaba = Column(String(23), nullable=False)
+    shaba = Column(String(24), nullable=False)
     card_number = Column(String(16), nullable=True)
     active = Column(Boolean, default=False)
 
@@ -620,7 +628,7 @@ class Question_form(Base, InstitutionsBase):
 class Response_form(Base, Base_form):
     __tablename__ = "response"
     response_pk_id = create_Unique_ID()
-    student_fk_id = create_forenKey("student")
+    student_fk_id = create_forenKey("user_form")
     question_fk_id = create_forenKey("question")
     survey_fk_id = create_forenKey("survey")
     answer = Column(String, nullable=False)

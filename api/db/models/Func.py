@@ -1,10 +1,6 @@
 from fastapi_utils.guid_type import GUID as GUID_TYPE, GUID_SERVER_DEFAULT_POSTGRESQL
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, Date, Time
-from sqlalchemy.dialects.postgresql import JSONB, JSON
+from sqlalchemy import Column, ForeignKey, MetaData
 from sqlalchemy.orm import relationship
-from sqlalchemy.sql import expression, func
-
-from .database import Base
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
@@ -32,5 +28,22 @@ Modes_relation = {
 }
 
 
-def relation(table: str, relation_title: str = "created"):
-    return relationship(table, back_populates=relation_title, foreign_keys=f"{table}.{Modes_relation[relation_title]}")
+def creator_relation(table: str):
+    return relationship(table, back_populates="created", foreign_keys=f"{table}.created_fk_by")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

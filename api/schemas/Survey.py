@@ -23,7 +23,7 @@ class Question_response(update_questions_schema):
 class export_question(BaseModel):
     question_pk_id: UUID
     text: str
-    language: str
+    language: UUID
 
     class Config:
         orm_mode = True
@@ -42,7 +42,6 @@ class post_survey_schema(Survey):
 
 class update_survey_schema(Survey):
     survey_pk_id: UUID
-    course_fk_id: UUID
 
 
 class survey_response(Base_response, update_survey_schema):

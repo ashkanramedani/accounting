@@ -27,6 +27,8 @@ def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 
 def post_question(db: Session, Form: sch.post_questions_schema):
     try:
+        if not db.query(dbm.Language_form).filter_by(deleted=False).count():
+            return 400, "Bad Request: No language found"
         OBJ = dbm.Question_form(**Form.dict())  # type: ignore[call-arg]
 
         db.add(OBJ)
