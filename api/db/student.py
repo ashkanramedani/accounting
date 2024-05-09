@@ -30,7 +30,7 @@ def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, 
 
 def post_student(db: Session, Form: sch.post_student_schema):
     try:
-        OBJ = dbm.User_form(**Form.dict())  # type: ignore[call-arg]
+        OBJ = dbm.User_form(**Form.dict(), is_employee=False)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

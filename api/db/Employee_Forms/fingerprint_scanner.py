@@ -173,7 +173,7 @@ def Split_schedule(EMP_Salary, reports):
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Fingerprint_Scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -306,7 +306,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
 
 def delete_fingerprint_scanner(db: Session, form_id):
     try:
-        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(FingerPrintScanner_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -320,7 +320,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
     try:
-        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(FingerPrintScanner_pk_id=Form.FingerPrintScanner_pk_id, deleted=False)
+        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=Form.fingerprint_scanner_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

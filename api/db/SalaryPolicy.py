@@ -9,7 +9,7 @@ from .Extra import *
 # Salary_Policy_form
 def get_SalaryPolicy(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Salary_Policy_form).filter_by(SalaryPolicy_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=form_id, deleted=False).first()
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -76,7 +76,7 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
 def delete_SalaryPolicy(db: Session, form_id):
     try:
         record = db.query(dbm.Salary_Policy_form).filter_by(
-                SalaryPolicy_pk_id=form_id,
+                salary_policy_pk_id=form_id,
                 deleted=False
         ).first()
         if not record:
@@ -92,7 +92,7 @@ def delete_SalaryPolicy(db: Session, form_id):
 
 def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
     try:
-        record = db.query(dbm.Salary_Policy_form).filter_by(SalaryPolicy_pk_id=Form.SalaryPolicy_pk_id, deleted=False)
+        record = db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=Form.salary_policy_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
 

@@ -48,6 +48,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
 
 def teacher_salary_report(db: Session, Form: sch.teacher_salary_report, year, month):
+    return 404 ,"not implemented"
     try:
         start, end = generate_month_interval(year, month)
         return 200, start

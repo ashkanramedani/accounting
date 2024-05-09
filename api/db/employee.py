@@ -8,6 +8,15 @@ import schemas as sch
 from .Extra import *
 
 
+def Add_role(db, roles, EMP_obj):
+    role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Role_form).filter_by(deleted=False).all()]
+
+    for r_id in roles:
+        if r_id not in role_ID:
+            return 400, "Bad Request"
+        EMP_obj.roles.append(db.query(dbm.Role_form).filter_by(role_pk_id=r_id, deleted=False).first())
+    db.commit()
+
 def get_employee(db: Session, employee_id):
     try:
         return 200, db.query(dbm.User_form).filter_by(user_pk_id=employee_id, deleted=False).first()
@@ -34,7 +43,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         if data["name"] == "Admin":
             return 400, "illegal Name Admin"
 
-        OBJ = dbm.User_form(**data)  # type: ignore[call-arg]
+        OBJ = dbm.User_form(**data, is_employee=True)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -43,14 +52,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         if not roles or isinstance(roles, str):
             return 200, f'Employee Added. ID: {OBJ.user_pk_id}'
 
-        role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Role_form).filter_by(deleted=False).all()]
-
-        for r_id in roles:
-            if r_id not in role_ID:
-                return 400, "Bad Request"
-            OBJ.roles.append(db.query(dbm.Role_form).filter_by(role_pk_id=r_id, deleted=False).first())
-        db.commit()
-
+        Add_role(db, roles, OBJ)
         return 200, f'Employee Added. ID: {OBJ.user_pk_id}'
     except Exception as e:
         logger.error(e)
@@ -83,9 +85,16 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
         data = Form.dict()
         if data["name"] == "Admin":
             return 400, "illegal Name Admin"
-        record.update(data, synchronize_session=False)
 
+        roles: List[UUID | str] | str = data.pop("roles") if "roles" in data else None
+        record.update(data, synchronize_session=False)
         db.commit()
+
+        if not roles:
+            return 200, "Record Updated"
+
+        Add_role(db, roles, record.first())
+
         return 200, "Record Updated"
     except Exception as e:
         logger.error(e)

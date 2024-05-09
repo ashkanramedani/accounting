@@ -24,11 +24,10 @@ class post_employee_schema(Employee):
     pass
 
 
-class update_employee_schema(Entity):
+class update_employee_schema(Employee):
     user_pk_id: UUID
-    priority: int | None
-    fingerprint_scanner_user_id: int | None = None
 
+    
 
 class employee_response(Entity):
     user_pk_id: UUID

@@ -10,7 +10,4 @@
 
 # Navid 
 - Language in question
-- description not nessecery
-- spacing in cart number
-- card schema its a bit wierd
 - after error back needed

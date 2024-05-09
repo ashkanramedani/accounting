@@ -48,7 +48,7 @@ class post_SalaryPolicy_schema(SalaryPolicy):
 
 
 class update_SalaryPolicy_schema(SalaryPolicy):
-    SalaryPolicy_pk_id: UUID
+    salary_policy_pk_id: UUID
 
 
 class SalaryPolicy_response(Base_response, update_SalaryPolicy_schema):
