@@ -700,8 +700,13 @@ class Salary_Policy_form(Base, Base_form):
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="SalaryPolicy_Relation")
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
-    def summery(self):
-        return {k: v for k, v in self.__dict__.items() if "_fk_" not in k and "_pk_" not in k}
+    def summery(self) -> dict:
+        def Validate(key: str):
+            for invalid_key in ["_fk_", "_pk_", "_sa_instance_"]:
+                if invalid_key in key:
+                    return False
+            return True
+        return {k: v for k, v in self.__dict__.items() if Validate(k)}
 
 
 class Salary_form(Base, Base_form):

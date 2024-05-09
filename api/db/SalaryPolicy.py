@@ -37,6 +37,7 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
         )
 
         return 200, sum(row.duration for row in result)
+
     except Exception as e:
         logger.error(e)
         db.rollback()
