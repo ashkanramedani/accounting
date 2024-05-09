@@ -13,7 +13,6 @@ import schemas as sch
 import db.models as dbm
 from lib import logger
 
-
 import re
 
 Tables = {
@@ -34,16 +33,14 @@ Tables = {
     "leave_forms": dbm.Leave_Request_form
 }
 
-
 __all__ = [
     "employee_exist",
     "course_exist",
     'record_order_by',
     'count',
     'safe_run',
-    'log_on_status']
-
-
+    'log_on_status',
+    'Return_Exception']
 
 
 def safe_run(func):
@@ -83,6 +80,7 @@ def count(db, field: str):
         return 400, "field Not Found"
     return 200, len(db.query(Tables[field]).filter_by(deleted=False).all())
 
+
 def prepare_param(key, val):
     table = key.lower().replace("_fk_id", "").replace("_pk_id", "")
     if key in ["created", "session_main_teacher", "session_sub_teacher", "employee", "teacher", "employees"]:
@@ -90,6 +88,7 @@ def prepare_param(key, val):
     elif table not in Tables:
         return None, table
     return Tables[table], {"deleted": False, key.replace("_fk_id", "_pk_id"): val}
+
 
 def Exist(db: Session, Form: Dict) -> Tuple[bool, str]:
     for key, val in Form.items():
@@ -104,13 +103,23 @@ def Exist(db: Session, Form: Dict) -> Tuple[bool, str]:
 
 import functools
 
+
 def log_on_status(func):
-  @functools.wraps(func)
-  def wrapper(*args, **kwargs) -> Tuple[int, str]:
-    status, message = func(*args, **kwargs)
-    logger.on_status_code(status, message)
-    return status, message
-  return wrapper
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs) -> Tuple[int, str]:
+        status, message = func(*args, **kwargs)
+        logger.on_status_code(status, message)
+        return status, message
+
+    return wrapper
+
+
+def Return_Exception(db: Session, Error: Exception):
+    logger.error(Error, depth=2)
+    db.rollback()
+    if "UniqueViolation" in str(Error):
+        return 409, "Already Exist"
+    return 500, f'{Error.__class__.__name__}: {Error.args}'
 
 
 if __name__ == '__main__':

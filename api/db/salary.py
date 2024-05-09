@@ -44,9 +44,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
         return 200, salary_obj.__dict__
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 
@@ -56,7 +54,5 @@ def teacher_salary_report(db: Session, Form: sch.teacher_salary_report, year, mo
         start, end = generate_month_interval(year, month)
         return 200, start
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 

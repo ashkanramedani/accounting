@@ -14,18 +14,14 @@ def get_student(db: Session, student_id):
     try:
         return 200, db.query(dbm.User_form).filter_by(student_pk_id=student_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.User_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_student(db: Session, Form: sch.post_student_schema):
@@ -37,9 +33,7 @@ def post_student(db: Session, Form: sch.post_student_schema):
         db.refresh(OBJ)
         return 200, "Student Added"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_student(db: Session, student_id):
@@ -51,9 +45,7 @@ def delete_student(db: Session, student_id):
         db.commit()
         return 200, "Student Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_student(db: Session, Form: sch.update_student_schema):
@@ -67,6 +59,4 @@ def update_student(db: Session, Form: sch.update_student_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)

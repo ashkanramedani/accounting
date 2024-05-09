@@ -150,3 +150,7 @@ class Base_response(BaseModel):
     created: export_employee
     description: str | None = None
     status: int = 0
+
+class Update_Relation(BaseModel):
+    old_id: UUID | str
+    new_id: UUID | str

@@ -11,18 +11,14 @@ def get_SalaryPolicy(db: Session, form_id):
     try:
         return 200, db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_SalaryPolicy(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Salary_Policy_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def report_SalaryPolicy(db: Session, Form: sch.salary_report):
@@ -39,9 +35,7 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
         return 200, sum(row.duration for row in result)
 
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
@@ -69,9 +63,7 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_SalaryPolicy(db: Session, form_id):
@@ -86,9 +78,7 @@ def delete_SalaryPolicy(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
@@ -104,6 +94,4 @@ def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)

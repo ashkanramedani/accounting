@@ -14,11 +14,6 @@ class Session_signature(BaseModel):
 
 
 # ---------------------- class ----------------------
-class Update_Relation(BaseModel):
-    old_id: UUID | str
-    new_id: UUID | str
-
-
 class course(Base_form):
     course_name: str
 

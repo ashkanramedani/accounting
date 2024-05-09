@@ -59,9 +59,7 @@ def post_session(db: Session, Form: sch.post_session_schema):
 
         return 200, "session Added"
     except Exception as e:
-        db.rollback()
-        logger.error(e)
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_session(db: Session, course_id):

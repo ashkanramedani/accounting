@@ -17,7 +17,7 @@ __all__ = [
 class Employee(Entity):
     priority: Optional[int] = 5
     fingerprint_scanner_user_id: Optional[int] = None
-    roles: Optional[List[UUID | str] | str] = []
+    roles: Optional[List[Update_Relation]] = []
 
 
 class post_employee_schema(Employee):
@@ -25,6 +25,7 @@ class post_employee_schema(Employee):
 
 
 class update_employee_schema(Employee):
+    roles: Optional[List[Update_Relation]] = []
     user_pk_id: UUID
 
     

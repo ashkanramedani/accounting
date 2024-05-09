@@ -81,8 +81,8 @@ class Log:
     def warning(self, msg):
         self.logger.opt(depth=1).warning(msg)
 
-    def error(self, msg):
-        self.logger.opt(depth=1).error(msg)
+    def error(self, msg, depth=1):
+        self.logger.opt(depth=depth).error(msg)
 
 
     def on_status_code(self, status_code, msg):

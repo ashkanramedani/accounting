@@ -14,18 +14,14 @@ def get_response(db: Session, response_id):
     try:
         return 200, db.query(dbm.Response_form).filter_by(response_pk_id=response_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_response(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Response_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_response(db: Session, Form: sch.post_response_schema):
@@ -50,9 +46,7 @@ def post_response(db: Session, Form: sch.post_response_schema):
         db.commit()
         return 200, "response Added"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_response(db: Session, response_id):
@@ -64,9 +58,7 @@ def delete_response(db: Session, response_id):
         db.commit()
         return 200, "employee Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_response(db: Session, Form: sch.update_response_schema):
@@ -88,6 +80,4 @@ def update_response(db: Session, Form: sch.update_response_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
