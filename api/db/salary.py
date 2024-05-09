@@ -42,7 +42,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         db.add(salary_obj)
         db.commit()
 
-        return 200, "Added"
+        return 200, salary_obj.__dict__
     except Exception as e:
         logger.error(e)
         db.rollback()
