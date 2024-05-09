@@ -706,7 +706,7 @@ class Salary_Policy_form(Base, Base_form):
                 if invalid_key in key:
                     return False
             return True
-        return {k: v for k, v in self.__dict__.items() if Validate(k)}
+        return {k: str(v) for k, v in self.__dict__.items() if Validate(k)}
 
 
 class Salary_form(Base, Base_form):

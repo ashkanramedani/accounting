@@ -16,6 +16,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         salary = db.query(dbm.Salary_Policy_form).filter_by(deleted=False, user_fk_id=user_fk_id).first()
         if not salary:
             return 400, "Bad Request: Target Employee has no salary record"
+        logger.warning(f'{salary.summery() = }')
 
         start, end = generate_month_interval(year, month)
         EnNo = db.query(dbm.User_form).filter_by(deleted=False, user_pk_id=user_fk_id).first().fingerprint_scanner_user_id
@@ -35,6 +36,8 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
             tmp |= i
 
         days_metadata = tmp.pop('Days') if "Days" in tmp else {"detail": "No data for Day Report"}
+
+
         salary_obj = dbm.Salary_form(user_fk_id=user_fk_id, day_report_summery=days_metadata, salary_policy_summery=salary.summery(), **tmp)  # type: ignore[call-arg]
         db.add(salary_obj)
         db.commit()
