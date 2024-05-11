@@ -50,7 +50,6 @@ async def app_lifespan(api: FastAPI):
     await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
     yield
     logger.info(f"Shutting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
-    config["logger"]["abs_sink"] = ""
     dump(config, open(abs_config, 'w'), indent=4)
     await FastAPILimiter.close()
 
@@ -70,7 +69,17 @@ app.add_middleware(
 )
 
 
+Rotes_Schema = {}
 for route in routes:
+    tag = route.tags.__str__().replace("['", "").replace("']", "")
+    Rotes_Schema[tag] = {}
+    for route_signature in route.routes:
+        methods = route_signature.methods.__str__().replace("{'", "").replace("'}", "")
+        if methods not in Rotes_Schema[tag]:
+            Rotes_Schema[tag][methods] = []
+        url = route_signature.path.split("{")[0] + "<UUID>" if "{" in route_signature.path else route_signature.path
+        Rotes_Schema[tag][methods].append(f"http://localhost:5001{url}")
     app.include_router(route)
 
 
+dump(Rotes_Schema, open(f'{PRJ_file}/configs/routes.json', 'w'), indent=4)

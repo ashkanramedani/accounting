@@ -1,6 +1,6 @@
 import uuid
 from datetime import timedelta, date, time, datetime
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 import pandas as pd
 from fastapi import File, UploadFile
@@ -11,6 +11,42 @@ import schemas as sch
 from lib import *
 
 from ..Extra import *
+
+
+def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
+    if not Total_activity:
+        return {"Total": 0, "Regular": 0, "Overtime": 0, "Undertime": 0, "Off_Day": 0}
+
+    rates = {
+        "Regular": salary_rate.Regular_hours_factor * Total_activity["Regular"],
+        "Overtime": salary_rate.overtime_factor * Total_activity["Overtime"],
+        "Undertime": salary_rate.undertime_factor * Total_activity["Undertime"],
+        "Off_Day": salary_rate.off_day_factor * Total_activity["Off_Day"]
+    }
+    rates["Total"] = sum(rates.values())
+    return rates
+
+
+"""
+Regular_hours_factor
+overtime_factor
+undertime_factor
+off_day_factor
+"""
+
+
+def Sum_of_Activity(salary_rate, Day_activity: List):
+    if not Day_activity:
+        return {"Total": 0, "Regular": 0, "Overtime": 0, "Undertime": 0, "Off_Day": 0}
+
+    rates = {
+        "Total": sum(day["Total_Work"] for day in Day_activity),
+        "Regular": sum(day["Regular_hours"] for day in Day_activity),
+        "Overtime": min(sum(day["Overtime"] for day in Day_activity), salary_rate.overtime_cap),
+        "Undertime": sum(day["Undertime"] for day in Day_activity),
+        "Off_Day": min(sum(day["off_Day_Overtime"] for day in Day_activity), salary_rate.off_day_cap)
+    }
+    return rates
 
 
 def Date_constructor(Date_obj: str | date | datetime):
@@ -55,7 +91,21 @@ def preprocess_report(report):
     return preprocess_Days
 
 
-def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report):
+def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report) -> List[Dict]:
+    """
+    :return: List[{
+                    Date: str
+                    Holiday: bool
+                    Total_Work: int
+                    Regular_hours: int
+                    Overtime: int
+                    Undertime: int
+                    off_Day_Overtime: int
+                    IsValid: bool
+                    EnterExit: str
+                    msg: str
+                }]
+    """
     preprocess_Days = preprocess_report(report)
     Days = []
     for Date, day in preprocess_Days.items():
@@ -63,17 +113,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report):
 
         Overtime, Undertime, Regular_hours, off_day_overtime, Total_Work = 0, 0, 0, 0, 0
         if not day["IsValid"]:
-            Days.append({
-                "Date": Date_constructor(Date),
-                "Holiday": Holiday,
-                "Total_Work": 0,
-                "Regular_hours": 0,
-                "Overtime": 0,
-                "Undertime": 0,
-                "off_Day_Overtime": 0,
-                "IsValid": False,
-                "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]),
-                "msg": day["msg"]})
+            Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "Total_Work": 0, "Regular_hours": 0, "Overtime": 0, "Undertime": 0, "off_Day_Overtime": 0, "IsValid": False, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": day["msg"]})
             continue
 
         if Holiday:
@@ -107,21 +147,25 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report):
                 for Enter, Exit in zip(enters, exits):
                     day["Undertime"] += time_gap(Enter, Exit)
 
-        Days.append({
-            "Date": Date_constructor(Date),
-            "Holiday": Holiday,
-            "Total_Work": day["Total_Work"],
-            "Regular_hours": min(day["Total_Work"] - Overtime, EMP_Salary.Regular_hours_cap) if not off_day_overtime else 0,
-            "Overtime": Overtime,
-            "Undertime": Undertime,
-            "off_Day_Overtime": off_day_overtime,
-            "IsValid": True,
-            "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]),
-            "msg": "Finished"})
+        Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "Total_Work": day["Total_Work"], "Regular_hours": min(day["Total_Work"] - Overtime, EMP_Salary.Regular_hours_cap) if not off_day_overtime else 0, "Overtime": Overtime, "Undertime": Undertime, "off_Day_Overtime": off_day_overtime, "IsValid": True, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": "Finished"})
     return Days
 
 
-def Split_schedule(EMP_Salary, reports):
+def Split_schedule(EMP_Salary, reports) -> List[Dict]:
+    """
+    :return: List[{
+                    Date: str
+                    Holiday: bool
+                    Total_Work: int
+                    Regular_hours: int
+                    Overtime: int
+                    Undertime: int
+                    off_Day_Overtime: int
+                    IsValid: bool
+                    EnterExit: str
+                    msg: str
+                }]
+    """
     preprocess_Days = preprocess_report(reports)
     Days = []
 
@@ -189,7 +233,7 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_fingerprint_scanner(db: Session, salary, EnNo, start_date, end_date) -> tuple[int, str | dict]:
+def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end_date) -> tuple[int, str | dict]:
     Fingerprint_scanner_report = db.query(dbm.Fingerprint_Scanner_form) \
         .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
         .filter_by(deleted=False, EnNo=EnNo).all()
@@ -198,19 +242,15 @@ def report_fingerprint_scanner(db: Session, salary, EnNo, start_date, end_date) 
         return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
 
     report_dicts = [{k: v for k, v in record.__dict__.items() if k != "_sa_instance_state"} for record in Fingerprint_scanner_report]
-    final_result = {"Days": [], "total_Regular_hours": 0, "total_Overtime_hours": 0, "total_Undertime_hours": 0, "off_Day_Overtime": 0}
-
+    final_result = {}
     # Split schedule and Fix schedule
-    if salary.is_Fixed:
-        final_result["Days"] = Fixed_schedule(salary, report_dicts)
+    if Salary_Policy.is_Fixed:
+        final_result["Days"]: List[dict] = Fixed_schedule(Salary_Policy, report_dicts)
     else:
-        final_result["Days"] = Split_schedule(salary, report_dicts)
+        final_result["Days"]: List[dict] = Split_schedule(Salary_Policy, report_dicts)
 
-    final_result["Total_Work"] = sum(day["Total_Work"] for day in final_result["Days"])
-    final_result["total_Regular_hours"] = sum(day["Regular_hours"] for day in final_result["Days"])
-    final_result["total_Overtime_hours"] = min(sum(day["Overtime"] for day in final_result["Days"]), salary.overtime_cap)
-    final_result["total_Undertime_hours"] = sum(day["Undertime"] for day in final_result["Days"])
-    final_result["off_Day_Overtime"] = min(sum(day["off_Day_Overtime"] for day in final_result["Days"]), salary.off_day_cap)
+    final_result["Total_Activity"] = Sum_of_Activity(Salary_Policy, final_result["Days"])
+    final_result["Earning"] = Calculate_earning(Salary_Policy, **final_result["Total_Activity"])
     return 200, final_result
 
 
@@ -410,4 +450,9 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
+
 """
+
+"""
+Expected type 'list[DaySchadule]', 
+got 'list[dict[str, str | list | int | bool] | dict[str, str | list | int | bool | Any]]' instead """

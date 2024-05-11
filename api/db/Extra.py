@@ -40,7 +40,19 @@ __all__ = [
     'count',
     'safe_run',
     'log_on_status',
-    'Return_Exception']
+    'Return_Exception',
+    "not_implemented",
+    "out_of_service"]
+
+def not_implemented(func):
+    def wrapper(*args, **kwargs):
+        return 501, "Not Implemented"
+    return wrapper
+
+def out_of_service(func):
+  def wrapper(*args, **kwargs):
+    return 503, "Service Unavailable"
+  return wrapper
 
 
 def safe_run(func):

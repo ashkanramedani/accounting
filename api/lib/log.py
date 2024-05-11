@@ -24,19 +24,17 @@ class Log:
         self._path = None
         if not config:
             self.developer = True
-            PRJ_path = normpath(f'{dirname(__file__)}/../')
-            config = load(open(join(PRJ_path, "configs/config.json"), 'r'))["logger"]
-            self._path = config["abs_sink"] if config["abs_sink"] else normpath(f'{dirname(__file__)}/../log/log.log')
+            self.config_path = join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")
+            config = load(open(self.config_path))
+            self._path = config["logger"]["abs_sink"] if config["logger"]["abs_sink"] else normpath(f'{dirname(__file__)}/../log/log.log')
+            config["logger"]["abs_sink"] = ""
+            dump(config, open(self.config_path, 'w'))
             self.logger = L
             self.logger = empty_sink(self.logger)
 
-            self.logger.add(
-                    sink=self._path,
-                    level=config["level"],
-                    format=config["format"])
+            self.logger.add(sink=self._path, level=config["logger"]["level"], format=config["logger"]["format"])
         else:
-            self.developer = config['developer_log']
-
+            self.developer = config["logger"]['developer_log']
 
     @property
     def log_path(self):

@@ -13,8 +13,8 @@ from .Employee_Forms import report_leave_request, report_remote_request, report_
 
 def employee_salary_report(db: Session, user_fk_id, year, month):
     try:
-        salary = db.query(dbm.Salary_Policy_form).filter_by(deleted=False, user_fk_id=user_fk_id).first()
-        if not salary:
+        Salary_Policy = db.query(dbm.Salary_Policy_form).filter_by(deleted=False, user_fk_id=user_fk_id).first()
+        if not Salary_Policy:
             return 400, "Bad Request: Target Employee has no salary record"
 
         start, end = generate_month_interval(year, month)
@@ -22,33 +22,34 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
 
-        F = report_fingerprint_scanner(db, salary, EnNo, start, end)
-        R = report_remote_request(db, salary, user_fk_id, start, end)
-        L = report_leave_request(db, salary, user_fk_id, start, end)
-        B = report_business_trip(db, salary, user_fk_id, start, end)
+        Report = [
+            report_fingerprint_scanner(db, Salary_Policy, EnNo, start, end),
+            report_remote_request(db, Salary_Policy, user_fk_id, start, end),
+            report_leave_request(db, Salary_Policy, user_fk_id, start, end),
+            report_business_trip(db, Salary_Policy, user_fk_id, start, end)]
 
         tmp = {}
-        for s, i in [F, R, L, B]:
+        for s, i in Report:
             if s != 200:
                 logger.warning(i)
                 return s, i
             tmp |= i
 
+        return 200, tmp
         days_metadata = tmp.pop('Days') if "Days" in tmp else {"detail": "No data for Day Report"}
 
+        # salary_obj = dbm.Salary_form(user_fk_id=user_fk_id, day_report_summery=days_metadata, salary_policy_summery=Salary_Policy.summery(), **tmp)  # type: ignore[call-arg]
+        # db.add(salary_obj)
+        # db.commit()
 
-        salary_obj = dbm.Salary_form(user_fk_id=user_fk_id, day_report_summery=days_metadata, salary_policy_summery=salary.summery(), **tmp)  # type: ignore[call-arg]
-        db.add(salary_obj)
-        db.commit()
-
-        return 200, db.query(dbm.Salary_form).filter_by(deleted=False, salary_pk_id=salary_obj.salary_pk_id).first()
+        # return 200, db.query(dbm.Salary_form).filter_by(deleted=False, salary_pk_id=salary_obj.salary_pk_id).first()
+        return 200, tmp
     except Exception as e:
         return Return_Exception(db, e)
 
 
-
+@not_implemented
 def teacher_salary_report(db: Session, Form: sch.teacher_salary_report, year, month):
-    return 404 ,"not implemented"
     try:
         start, end = generate_month_interval(year, month)
         return 200, start

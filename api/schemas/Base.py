@@ -154,3 +154,6 @@ class Base_response(BaseModel):
 class Update_Relation(BaseModel):
     old_id: UUID | str
     new_id: UUID | str
+
+    class Config:
+        orm_mode = True

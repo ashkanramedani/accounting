@@ -56,6 +56,9 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         Working_hour = time_gap(data["day_starting_time"], data["day_ending_time"]) if is_Fixed else data["Regular_hours_cap"]
         del data["Regular_hours_cap"]
 
+        if data["undertime_factor"] > 0:
+            data["undertime_factor"] *= -1
+
         OBJ = dbm.Salary_Policy_form(is_Fixed=is_Fixed, Regular_hours_cap=Working_hour, **data)  # type: ignore[call-arg]
 
         db.add(OBJ)
@@ -87,9 +90,14 @@ def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
         if not record.first():
             return 404, "Record Not Found"
 
+
         if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"
-        record.update(Form.dict(), synchronize_session=False)
+
+        data = Form.dict()
+        if data["undertime_factor"] > 0:
+            data["undertime_factor"] *= -1
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"

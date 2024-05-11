@@ -8,7 +8,7 @@ import schemas as sch
 from .Extra import *
 
 
-def Add_role(db, roles, EMP_obj, Employee_id):
+def Add_role(db, roles: List[sch.Update_Relation], EMP_obj, Employee_id):
     Errors = []
     role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Role_form).filter_by(deleted=False).all()]
 
@@ -43,7 +43,7 @@ def get_all_employee(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 def post_employee(db: Session, Form: sch.post_employee_schema):
     try:
         data = Form.dict()
-        roles: List[UUID | str] | str = data.pop("roles") if "roles" in data else None
+        roles: List[sch.Update_Relation | str] | str = data.pop("roles") if "roles" in data else None
 
         if data["name"] == "Admin":
             return 400, "illegal Name Admin"
@@ -59,7 +59,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
 
         Error = Add_role(db, roles, OBJ, OBJ.user_pk_id)
         if Error:
-            return 200, "EMployee Added But there was an error in roles: " + " | ".join(Error)
+            return 200, "EEmployee Added But there was an error in roles: " + " | ".join(Error)
         return 200, f'Employee Added. ID: {OBJ.user_pk_id}'
     except Exception as e:
         return Return_Exception(db, e)
@@ -89,7 +89,7 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
         if data["name"] == "Admin":
             return 400, "illegal Name Admin"
 
-        roles: List[UUID | str] | str = data.pop("roles") if "roles" in data else None
+        roles: List[sch.Update_Relation | str] | str = data.pop("roles") if "roles" in data else None
         record.update(data, synchronize_session=False)
         db.commit()
 
