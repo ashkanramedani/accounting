@@ -18,21 +18,12 @@ def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
         return {"Total": 0, "Regular": 0, "Overtime": 0, "Undertime": 0, "Off_Day": 0}
 
     rates = {
-        "Regular": salary_rate.Regular_hours_factor * Total_activity["Regular"],
-        "Overtime": salary_rate.overtime_factor * Total_activity["Overtime"],
-        "Undertime": salary_rate.undertime_factor * Total_activity["Undertime"],
-        "Off_Day": salary_rate.off_day_factor * Total_activity["Off_Day"]
+        "Regular_earning": salary_rate.Regular_hours_factor * (Total_activity["regular_work_time"] / 60),
+        "Overtime_earning": salary_rate.overtime_factor * (Total_activity["overtime"] / 60),
+        "Undertime_earning": salary_rate.undertime_factor * (Total_activity["undertime"] / 60),
+        "Off_Day_earning": salary_rate.off_day_factor * (Total_activity["off_Day_work_time"] / 60)
     }
-    rates["Total"] = sum(rates.values())
     return rates
-
-
-"""
-Regular_hours_factor
-overtime_factor
-undertime_factor
-off_day_factor
-"""
 
 
 def Sum_of_Activity(salary_rate, Day_activity: List):
@@ -40,11 +31,11 @@ def Sum_of_Activity(salary_rate, Day_activity: List):
         return {"Total": 0, "Regular": 0, "Overtime": 0, "Undertime": 0, "Off_Day": 0}
 
     rates = {
-        "Total": sum(day["Total_Work"] for day in Day_activity),
-        "Regular": sum(day["Regular_hours"] for day in Day_activity),
-        "Overtime": min(sum(day["Overtime"] for day in Day_activity), salary_rate.overtime_cap),
-        "Undertime": sum(day["Undertime"] for day in Day_activity),
-        "Off_Day": min(sum(day["off_Day_Overtime"] for day in Day_activity), salary_rate.off_day_cap)
+        "present_time": sum(day["present_time"] for day in Day_activity),
+        "regular_work_time": sum(day["Regular_hours"] for day in Day_activity),
+        "overtime": min(sum(day["Overtime"] for day in Day_activity), salary_rate.overtime_cap),
+        "undertime": sum(day["Undertime"] for day in Day_activity),
+        "off_Day_work_time": min(sum(day["off_Day_Overtime"] for day in Day_activity), salary_rate.off_day_cap)
     }
     return rates
 
@@ -67,7 +58,7 @@ def add_missing_day(seq: list) -> List[Tuple]:
     currentDay: date = seq[0]["Date"]
     while currentDay < seq[1]["Date"]:
         currentDay += timedelta(days=1)
-        missing_day.append((str(currentDay), {"Total_Work": 0, "EnterExit": [], "IsValid": True, "msg": "Not Present"}))
+        missing_day.append((str(currentDay), {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Not Present"}))
     return missing_day
 
 
@@ -76,12 +67,12 @@ def preprocess_report(report):
     for i in range(len(report) - 1):
         Key = str(report[i]["Date"])
         if report[i]["Enter"] is None or report[i]["Exit"] is None:
-            preprocess_Days[Key] = {"Total_Work": 0, "EnterExit": [report[i]["Enter"], report[i]["Exit"]], "IsValid": False, "msg": 'invalid Enter/exit time'}
+            preprocess_Days[Key] = {"present_time": 0, "EnterExit": [report[i]["Enter"], report[i]["Exit"]], "IsValid": False, "msg": 'invalid Enter/exit time'}
             continue
         if report[i]["Date"] not in preprocess_Days:
-            preprocess_Days[Key] = {"Total_Work": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
+            preprocess_Days[Key] = {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
 
-        preprocess_Days[Key]["Total_Work"] += time_gap(report[i]["Enter"], report[i]["Exit"])
+        preprocess_Days[Key]["present_time"] += time_gap(report[i]["Enter"], report[i]["Exit"])
         preprocess_Days[Key]["EnterExit"].append(report[i]["Enter"])
         preprocess_Days[Key]["EnterExit"].append(report[i]["Exit"])
 
@@ -96,7 +87,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report) -> List[Dict]:
     :return: List[{
                     Date: str
                     Holiday: bool
-                    Total_Work: int
+                    present_time: int
                     Regular_hours: int
                     Overtime: int
                     Undertime: int
@@ -111,14 +102,14 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report) -> List[Dict]:
     for Date, day in preprocess_Days.items():
         Holiday = is_off_day(Fix_date(Date))
 
-        Overtime, Undertime, Regular_hours, off_day_overtime, Total_Work = 0, 0, 0, 0, 0
+        Overtime, Undertime, Regular_hours, off_day_overtime, present_time = 0, 0, 0, 0, 0
         if not day["IsValid"]:
-            Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "Total_Work": 0, "Regular_hours": 0, "Overtime": 0, "Undertime": 0, "off_Day_Overtime": 0, "IsValid": False, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": day["msg"]})
+            Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "present_time": 0, "Regular_hours": 0, "Overtime": 0, "Undertime": 0, "off_Day_Overtime": 0, "IsValid": False, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": day["msg"]})
             continue
 
         if Holiday:
             if EMP_Salary.off_day_permission:
-                off_day_overtime = day["Total_Work"]
+                off_day_overtime = day["present_time"]
 
         elif not day["EnterExit"]:
             Overtime = 0
@@ -147,7 +138,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report) -> List[Dict]:
                 for Enter, Exit in zip(enters, exits):
                     day["Undertime"] += time_gap(Enter, Exit)
 
-        Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "Total_Work": day["Total_Work"], "Regular_hours": min(day["Total_Work"] - Overtime, EMP_Salary.Regular_hours_cap) if not off_day_overtime else 0, "Overtime": Overtime, "Undertime": Undertime, "off_Day_Overtime": off_day_overtime, "IsValid": True, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": "Finished"})
+        Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "present_time": day["present_time"], "Regular_hours": min(day["present_time"] - Overtime, EMP_Salary.Regular_hours_cap) if not off_day_overtime else 0, "Overtime": Overtime, "Undertime": Undertime, "off_Day_Overtime": off_day_overtime, "IsValid": True, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": "Finished"})
     return Days
 
 
@@ -156,7 +147,7 @@ def Split_schedule(EMP_Salary, reports) -> List[Dict]:
     :return: List[{
                     Date: str
                     Holiday: bool
-                    Total_Work: int
+                    present_time: int
                     Regular_hours: int
                     Overtime: int
                     Undertime: int
@@ -176,7 +167,7 @@ def Split_schedule(EMP_Salary, reports) -> List[Dict]:
             Days.append({
                 "Date": Date_constructor(Date),
                 "Holiday": Holiday,
-                "Total_Work": 0,
+                "present_time": 0,
                 "Regular_hours": 0,
                 "Overtime": 0,
                 "Undertime": 0,
@@ -188,23 +179,23 @@ def Split_schedule(EMP_Salary, reports) -> List[Dict]:
 
         if Holiday:
             if EMP_Salary.off_day_permission:
-                off_day_overtime = day["Total_Work"]
+                off_day_overtime = day["present_time"]
         else:
-            Total_Work = day["Total_Work"]
+            present_time = day["present_time"]
 
-            if Total_Work >= EMP_Salary.Regular_hours_cap:
-                posible_Overtime = Total_Work - EMP_Salary.Regular_hours_cap
+            if present_time >= EMP_Salary.Regular_hours_cap:
+                posible_Overtime = present_time - EMP_Salary.Regular_hours_cap
                 Overtime = posible_Overtime if posible_Overtime >= EMP_Salary.overtime_threshold else 0
 
             else:
-                posible_undertime = EMP_Salary.Regular_hours_cap - Total_Work
+                posible_undertime = EMP_Salary.Regular_hours_cap - present_time
                 Undertime = posible_undertime if posible_undertime >= EMP_Salary.undertime_threshold else 0
 
         Days.append({
             "Date": Date_constructor(Date),
             "Holiday": Holiday,
-            "Total_Work": day["Total_Work"],
-            "Regular_hours": min(EMP_Salary.Regular_hours_cap, day["Total_Work"]),
+            "present_time": day["present_time"],
+            "Regular_hours": min(EMP_Salary.Regular_hours_cap, day["present_time"]),
             "Overtime": Overtime,
             "Undertime": Undertime,
             "off_Day_Overtime": off_day_overtime,
@@ -233,13 +224,13 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end_date) -> tuple[int, str | dict]:
+def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end_date) -> Dict | str:
     Fingerprint_scanner_report = db.query(dbm.Fingerprint_Scanner_form) \
         .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
         .filter_by(deleted=False, EnNo=EnNo).all()
 
     if not Fingerprint_scanner_report:
-        return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
+        return f"Employee Has No fingerprint record from {start_date} to {end_date}"
 
     report_dicts = [{k: v for k, v in record.__dict__.items() if k != "_sa_instance_state"} for record in Fingerprint_scanner_report]
     final_result = {}
@@ -249,9 +240,10 @@ def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end
     else:
         final_result["Days"]: List[dict] = Split_schedule(Salary_Policy, report_dicts)
 
-    final_result["Total_Activity"] = Sum_of_Activity(Salary_Policy, final_result["Days"])
-    final_result["Earning"] = Calculate_earning(Salary_Policy, **final_result["Total_Activity"])
-    return 200, final_result
+    Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
+    final_result |= Total_Activity
+    final_result = Calculate_earning(Salary_Policy, **Total_Activity)
+    return final_result
 
 
 def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_schema):

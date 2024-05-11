@@ -22,28 +22,24 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
 
-        Report = [
-            report_fingerprint_scanner(db, Salary_Policy, EnNo, start, end),
-            report_remote_request(db, Salary_Policy, user_fk_id, start, end),
-            report_leave_request(db, Salary_Policy, user_fk_id, start, end),
-            report_business_trip(db, Salary_Policy, user_fk_id, start, end)]
+        report_summery = report_fingerprint_scanner(db, Salary_Policy, EnNo, start, end)
 
-        tmp = {}
-        for s, i in Report:
-            if s != 200:
-                logger.warning(i)
-                return s, i
-            tmp |= i
+        if isinstance(report_summery, str):
+            return 400, report_summery
+        days_metadata = report_summery.pop('Days') if "Days" in report_summery else {"detail": "No data for Day Report"}
 
-        return 200, tmp
-        days_metadata = tmp.pop('Days') if "Days" in tmp else {"detail": "No data for Day Report"}
+        report_summery |= report_remote_request(db, Salary_Policy, user_fk_id, start, end)
+        report_summery |= report_leave_request(db, Salary_Policy, user_fk_id, start, end)
+        report_summery |= report_business_trip(db, Salary_Policy, user_fk_id, start, end)
+
+        report_summery["total_earning"] = sum(report_summery[key] for key in [key for key in report_summery.keys() if "earning" in key])
 
         # salary_obj = dbm.Salary_form(user_fk_id=user_fk_id, day_report_summery=days_metadata, salary_policy_summery=Salary_Policy.summery(), **tmp)  # type: ignore[call-arg]
         # db.add(salary_obj)
         # db.commit()
 
         # return 200, db.query(dbm.Salary_form).filter_by(deleted=False, salary_pk_id=salary_obj.salary_pk_id).first()
-        return 200, tmp
+        return 200, report_summery
     except Exception as e:
         return Return_Exception(db, e)
 

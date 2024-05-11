@@ -1,5 +1,5 @@
 from datetime import timedelta
-from typing import Tuple
+from typing import Tuple, Dict
 
 from lib import logger, Fix_datetime
 
@@ -32,9 +32,9 @@ def get_all_remote_request_form(db: Session, page: sch.PositiveInt, limit: sch.P
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_remote_request(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
+def report_remote_request(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Dict:
     if not salary_rate.remote_permission:
-        return 200, {"remote": 0, "remote_earning": 0}
+        return {"remote": 0, "remote_earning": 0}
 
     Remote_Request_report = (
         db.query(dbm.Remote_Request_form)
@@ -45,7 +45,7 @@ def report_remote_request(db: Session, salary_rate, user_fk_id, start_date, end_
 
     total_remote = sum(row.duration for row in Remote_Request_report)
     remote = min(total_remote, salary_rate.remote_cap)
-    return 200, {"remote": remote, "remote_earning": remote * salary_rate.remote_factor}
+    return {"remote": remote, "remote_earning": (remote / 60) * salary_rate.remote_factor}
 
 def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
     try:

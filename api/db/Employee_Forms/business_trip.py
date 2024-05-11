@@ -27,9 +27,9 @@ def get_all_business_trip_form(db: Session, page: sch.PositiveInt, limit: sch.Po
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_business_trip(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
+def report_business_trip(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Dict:
     if not salary_rate.business_trip_permission:
-        return 200, {"business_trip": 0, "business_trip_earning": 0}
+        return {"business_trip": 0, "business_trip_earning": 0}
     Business_Trip_report = (
         db.query(dbm.Business_Trip_form)
         .filter_by(deleted=False, user_fk_id=user_fk_id)
@@ -39,7 +39,7 @@ def report_business_trip(db: Session, salary_rate, user_fk_id, start_date, end_d
 
     total_business = sum(row.duration for row in Business_Trip_report)
     business_trip = min(total_business, salary_rate.business_trip_cap)
-    return 200, {"business_trip": business_trip, "business_trip_earning": business_trip * salary_rate.business_trip_factor}
+    return {"business_trip": business_trip, "business_trip_earning": (business_trip / 60) * salary_rate.business_trip_factor}
 
 
 def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema) -> Tuple[int, str | Dict | List]:

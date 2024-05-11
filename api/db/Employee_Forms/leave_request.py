@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, Dict
 
 from lib import logger, Fix_datetime, same_month, Separate_days_by_DayCap, is_off_day
 
@@ -29,7 +29,7 @@ def get_all_leave_request(db: Session, page: sch.PositiveInt, limit: sch.Positiv
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_leave_request(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Tuple[int, dict | str]:
+def report_leave_request(db: Session, salary_rate, user_fk_id, start_date, end_date) -> Dict:
     vacation_leave, medical_leave = 0, 0
     vacation_Leave_request_report = (
         db.query(dbm.Leave_Request_form)
@@ -45,16 +45,16 @@ def report_leave_request(db: Session, salary_rate, user_fk_id, start_date, end_d
     )
 
     if vacation_Leave_request_report:
-        vacation_leave = (salary_rate.medical_leave_cap * 60) - sum(row.duration for row in vacation_Leave_request_report)
+        vacation_leave = salary_rate.medical_leave_cap - sum(row.duration for row in vacation_Leave_request_report)
 
     if medical_Leave_request_report:
-        medical_leave = (salary_rate.medical_leave_cap * 60) - sum(row.duration for row in medical_Leave_request_report)
+        medical_leave = salary_rate.medical_leave_cap - sum(row.duration for row in medical_Leave_request_report)
 
-    return 200, {
+    return {
         "vacation_leave": vacation_leave,
-        "vacation_leave_earning": vacation_leave * salary_rate.vacation_leave_factor,
+        "vacation_leave_earning": (vacation_leave / 60) * salary_rate.vacation_leave_factor,
         "medical_leave": medical_leave,
-        "medical_leave_earning": medical_leave * salary_rate.medical_leave_factor}
+        "medical_leave_earning": (min(medical_leave, 0) / 60) * salary_rate.medical_leave_factor}
 
 
 def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
