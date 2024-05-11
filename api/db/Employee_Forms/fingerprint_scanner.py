@@ -15,7 +15,7 @@ from ..Extra import *
 
 def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
     if not Total_activity:
-        return {"Total": 0, "Regular": 0, "Overtime": 0, "Undertime": 0, "Off_Day": 0}
+        return {"Regular_earning": 0, "Overtime_earning": 0, "Undertime_earning": 0, "Off_Day_earning": 0}
 
     rates = {
         "Regular_earning": salary_rate.Regular_hours_factor * (Total_activity["regular_work_time"] / 60),
@@ -28,7 +28,7 @@ def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
 
 def Sum_of_Activity(salary_rate, Day_activity: List):
     if not Day_activity:
-        return {"Total": 0, "Regular": 0, "Overtime": 0, "Undertime": 0, "Off_Day": 0}
+        return {"present_time": 0, "regular_work_time": 0, "overtime": 0, "undertime": 0, "off_Day_work_time": 0}
 
     rates = {
         "present_time": sum(day["present_time"] for day in Day_activity),
@@ -242,7 +242,7 @@ def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end
 
     Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
     final_result |= Total_Activity
-    final_result = Calculate_earning(Salary_Policy, **Total_Activity)
+    final_result |= Calculate_earning(Salary_Policy, **Total_Activity)
     return final_result
 
 
