@@ -7,7 +7,7 @@ import db.models as dbm
 import schemas as sch
 from lib import logger
 
-from .Extra import *
+from ..Extra import *
 
 
 def get_all_survey(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):

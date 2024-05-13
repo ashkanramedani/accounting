@@ -13,7 +13,6 @@ DAYS_OF_WEEK = {
     1: "Sunday",
 }
 
-
 holidays = [
     "1402-01-01",
     "1402-01-02",
@@ -144,6 +143,7 @@ __all__ = [
     "to_international",
 ]
 
+
 def Fix_time(time_obj: str | datetime | time):
     if isinstance(time_obj, time):
         return time_obj
@@ -193,6 +193,7 @@ def Fix_datetime(time_obj: str | datetime):
     except Exception as e:
         raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.MMM, received: {time_obj}\n{e}")
 
+
 def is_off_day(day: date | datetime) -> bool:
     day = day if isinstance(day, date) else day.date()
     if day.weekday() == 4:
@@ -202,10 +203,11 @@ def is_off_day(day: date | datetime) -> bool:
     return False
 
 
-def time_gap(start: time, end: time) -> int:
+def time_gap(start: time | str, end: time | str) -> int:
     """
     return time gap in minutes
     """
+    start, end = Fix_time(start), Fix_time(end)
     start = datetime.combine(datetime.today(), start)
     end = datetime.combine(datetime.today(), end)
     return int((end - start).total_seconds() // 60)
@@ -324,7 +326,9 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
         starting_date += timedelta(days=1)
     return Days
 
+
 if __name__ == '__main__':
-    from json_handler import JSONEncoder
-    a = generate_time_table(date(2024, 1, 1), date(2024, 1, 31), [0, 1])
-    print(json.dumps(a, indent=4, cls=JSONEncoder))
+    a, b = generate_month_interval(1402, 11, False)
+    print(a, b)
+    a, b = generate_month_interval(1402, 11, True)
+    print(a, b)

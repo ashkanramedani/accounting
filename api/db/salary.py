@@ -17,7 +17,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if not Salary_Policy:
             return 400, "Bad Request: Target Employee has no salary record"
 
-        start, end = generate_month_interval(year, month)
+        start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
         EnNo = db.query(dbm.User_form).filter_by(deleted=False, user_pk_id=user_fk_id).first().fingerprint_scanner_user_id
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
@@ -26,7 +26,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
         if isinstance(report_summery, str):
             return 400, report_summery
-        days_metadata = report_summery.pop('Days') if "Days" in report_summery else {"detail": "No data for Day Report"}
+        # days_metadata = report_summery.pop('Days') if "Days" in report_summery else {"detail": "No data for Day Report"}
 
         report_summery |= report_remote_request(db, Salary_Policy, user_fk_id, start, end)
         report_summery |= report_leave_request(db, Salary_Policy, user_fk_id, start, end)

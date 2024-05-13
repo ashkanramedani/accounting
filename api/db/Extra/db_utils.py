@@ -1,19 +1,12 @@
-from lib.Date_Time import *
-
-import json
-from functools import wraps
-
 # from faker import Faker
-from sqlalchemy.orm import Session
-from datetime import datetime, timedelta, time, date
 from typing import List, Dict, Tuple
 from uuid import UUID
-from random import choice as r_ch
-import schemas as sch
-import db.models as dbm
-from lib import logger
 
-import re
+from sqlalchemy.orm import Session
+
+import db.models as dbm
+import schemas as sch
+from lib import logger
 
 Tables = {
     "survey": dbm.Survey_form,
@@ -33,38 +26,31 @@ Tables = {
     "leave_forms": dbm.Leave_Request_form
 }
 
-__all__ = [
-    "employee_exist",
-    "course_exist",
-    'record_order_by',
-    'count',
-    'safe_run',
-    'log_on_status',
-    'Return_Exception',
-    "not_implemented",
-    "out_of_service"]
 
-def not_implemented(func):
-    def wrapper(*args, **kwargs):
-        return 501, "Not Implemented"
-    return wrapper
+def Add_role(db, roles: List[sch.Update_Relation | Dict], UserOBJ, UserID):
+    Errors = []
+    role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Role_form).filter_by(deleted=False).all()]
+    Roles = []
+    for role in roles:
+        if not isinstance(role, dict):
+            Roles.append(role.__dict__)
+        else:
+            Roles.append(role)
 
-def out_of_service(func):
-  def wrapper(*args, **kwargs):
-    return 503, "Service Unavailable"
-  return wrapper
-
-
-def safe_run(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            logger.error(e)
-        return func(*args, **kwargs)
-
-    return wrapper
+    for r_id in Roles:
+        if existing_role := r_id["old_id"]:
+            role_obj = db.query(dbm.UserRole).filter_by(role_fk_id=existing_role, user_fk_id=UserID, deleted=False)
+            if not role_obj.first():
+                Errors.append(f'Employee does not have this role {existing_role}')
+            else:
+                role_obj.update({"deleted": True}, synchronize_session=False)
+        if new_role := r_id["new_id"]:
+            if new_role not in role_ID:
+                Errors.append(f'this role does not exist {new_role}')
+            else:
+                UserOBJ.roles.append(db.query(dbm.Role_form).filter_by(role_pk_id=new_role, deleted=False).first())
+    db.commit()
+    return Errors
 
 
 def employee_exist(db: Session, FK_fields: List[UUID]):
@@ -93,13 +79,6 @@ def count(db, field: str):
     return 200, len(db.query(Tables[field]).filter_by(deleted=False).all())
 
 
-def prepare_param(key, val):
-    table = key.lower().replace("_fk_id", "").replace("_pk_id", "")
-    if key in ["created", "session_main_teacher", "session_sub_teacher", "employee", "teacher", "employees"]:
-        table = "employee"
-    elif table not in Tables:
-        return None, table
-    return Tables[table], {"deleted": False, key.replace("_fk_id", "_pk_id"): val}
 
 
 def Exist(db: Session, Form: Dict) -> Tuple[bool, str]:
@@ -113,30 +92,9 @@ def Exist(db: Session, Form: Dict) -> Tuple[bool, str]:
     return True, "Done"
 
 
-import functools
-
-
-def log_on_status(func):
-    @functools.wraps(func)
-    def wrapper(*args, **kwargs) -> Tuple[int, str]:
-        status, message = func(*args, **kwargs)
-        logger.on_status_code(status, message)
-        return status, message
-
-    return wrapper
-
-
 def Return_Exception(db: Session, Error: Exception):
     logger.error(Error, depth=2)
     db.rollback()
     if "UniqueViolation" in str(Error):
         return 409, "Already Exist"
     return 500, f'{Error.__class__.__name__}: {Error.args}'
-
-
-if __name__ == '__main__':
-    pass
-
-"""
-https://sand.admin.api.ieltsdaily.ir/count?field=Employee
-"""

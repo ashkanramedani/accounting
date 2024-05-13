@@ -1,9 +1,5 @@
 from lib import logger
-
-
-
 from sqlalchemy.orm import Session
-
 import db.models as dbm
 import schemas as sch
 from .Extra import *

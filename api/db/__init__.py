@@ -4,13 +4,11 @@ from .Teacher_Forms import *
 
 from .Roles import *
 from .SalaryPolicy import *
-from .Survey import *
+from .Survey_form import *
 from .employee import *
 from .payment import *
-from .response import *
 from .student import *
 from .salary import *
-from .question import *
 
 from .db_library import *
 from .db_post import *

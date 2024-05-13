@@ -659,6 +659,7 @@ class Salary_Policy_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
     user_fk_id = create_forenKey("User_form", unique=True)
 
+    Base_salary = Column(Float, nullable=False)
     is_Fixed = Column(Boolean, nullable=False)
     day_starting_time = Column(TIME, nullable=True, default=None)
     day_ending_time = Column(TIME, nullable=True, default=None)
@@ -714,11 +715,18 @@ class Salary_form(Base, Base_form):
     salary_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
 
-    total_Regular_hours = Column(Integer, nullable=False)
-    total_Overtime_hours = Column(Integer, nullable=False)
-    total_Undertime_hours = Column(Integer, nullable=False)
-    off_Day_Overtime = Column(Integer, nullable=False)
-    Total_Work = Column(Integer, nullable=False)
+    present_time = Column(Integer, nullable=False)
+    regular_work_time = Column(Integer, nullable=False)
+    overtime = Column(Integer, nullable=False)
+    undertime = Column(Integer, nullable=False)
+    off_Day_work_time = Column(Integer, nullable=False)
+
+    Regular_earning = Column(Float, nullable=False)
+    Overtime_earning = Column(Float, nullable=False)
+    Undertime_earning = Column(Float, nullable=False)
+    Off_Day_earning = Column(Float, nullable=False)
+
+
     remote = Column(Integer, nullable=False)
     remote_earning = Column(Float, nullable=False)
     vacation_leave = Column(Integer, nullable=False)
@@ -728,8 +736,9 @@ class Salary_form(Base, Base_form):
     business_trip = Column(Integer, nullable=False)
     business_trip_earning = Column(Float, nullable=False)
 
+    total_earning = Column(Float, nullable=False)
     salary_policy_summery = Column(JSON, nullable=False)
-    day_report_summery = Column(JSON, nullable=False)
+    Days = Column(JSON, nullable=False)
 
     created = relationship("User_form", foreign_keys=[user_fk_id])
 

@@ -13,6 +13,12 @@ from lib import *
 from ..Extra import *
 
 
+def calculate_duration(time_1: time | None, time_2: time | None):
+    if time_1 is None or time_2 is None or time_1 == time_2:
+        return 0
+    return time_gap(time_1, time_2)
+
+
 def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
     if not Total_activity:
         return {"Regular_earning": 0, "Overtime_earning": 0, "Undertime_earning": 0, "Off_Day_earning": 0}
@@ -63,23 +69,23 @@ def add_missing_day(seq: list) -> List[Tuple]:
 
 
 def preprocess_report(report):
-    preprocess_Days = {}
-    for i in range(len(report) - 1):
-        Key = str(report[i]["Date"])
-        if report[i]["Enter"] is None or report[i]["Exit"] is None:
-            preprocess_Days[Key] = {"present_time": 0, "EnterExit": [report[i]["Enter"], report[i]["Exit"]], "IsValid": False, "msg": 'invalid Enter/exit time'}
+    Days = {}
+    for i, record in enumerate(report):
+        Key = str(record["Date"])
+        if record["Enter"] is None or record["Exit"] is None:
+            Days[Key] = {"present_time": 0, "EnterExit": [record["Enter"], record["Exit"]], "IsValid": False, "msg": 'invalid Enter/exit time'}
             continue
-        if report[i]["Date"] not in preprocess_Days:
-            preprocess_Days[Key] = {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
+        if record["Date"] not in Days:
+            Days[Key] = {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
 
-        preprocess_Days[Key]["present_time"] += time_gap(report[i]["Enter"], report[i]["Exit"])
-        preprocess_Days[Key]["EnterExit"].append(report[i]["Enter"])
-        preprocess_Days[Key]["EnterExit"].append(report[i]["Exit"])
+        Days[Key]["present_time"] += time_gap(record["Enter"], record["Exit"])
+        Days[Key]["EnterExit"].append(record["Enter"])
+        Days[Key]["EnterExit"].append(record["Exit"])
 
         for Date, Date_data in add_missing_day(report[i: i + 2]):
-            preprocess_Days[Date] = Date_data
+            Days[Date] = Date_data
 
-    return preprocess_Days
+    return Days
 
 
 def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report) -> List[Dict]:
@@ -251,7 +257,12 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
-        OBJ = dbm.Fingerprint_Scanner_form(**Form.dict())  # type: ignore[call-arg]
+        data = Form.dict()
+        if data["Enter"]:
+            data["Enter"] = Fix_time(data["Enter"]).replace(second=0)
+        if data["Exit"]:
+            data["Exit"] = Fix_time(data["Exit"]).replace(second=0)
+        OBJ = dbm.Fingerprint_Scanner_form(**data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -270,11 +281,6 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
 
         logger.warning(f'{type(file)} {file.filename}')
         Data = pd.read_csv(file.file)
-        # if isinstance(file, UploadFile):
-        #     pass
-        # else:
-        #     logger.warning('400, "File is Not Acceptable"')
-        #     return 400, "File is Not Acceptable"
 
         start = datetime.combine(Fix_datetime(Data["DateTime"].min()), time())
         end = datetime.combine(Fix_datetime(Data["DateTime"].max()), time()) + timedelta(days=1)
@@ -301,6 +307,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
             record["In_Out"] = record.pop("In/Out")
             Signature = (record["EnNo"], record["DateTime"])
             if Signature in history:
+                logger.warning(f"400, {Signature} Already Exist")
                 continue
 
             OBJs.append(dbm.Fingerprint_Scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
@@ -320,11 +327,10 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
                 if len(hour) % 2:
                     hour.append(None)
                 for H in range(0, len(hour), 2):
-                    if hour[H] == hour[H + 1] or hour[H + 1] is None:
-                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
-                    else:
-                        duration = 0 if hour[H] == hour[H + 1] else time_gap(Fix_time(hour[H]), Fix_time(hour[H + 1]))
-                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
+                    duration = calculate_duration(hour[H], hour[H + 1])
+                    hour[H] = Fix_time(hour[H]).replace(second=0) if hour[H] else None
+                    hour[H + 1] = Fix_time(hour[H + 1]).replace(second=0) if hour[H + 1] else None
+                    OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()

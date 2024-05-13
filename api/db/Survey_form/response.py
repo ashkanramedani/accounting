@@ -1,7 +1,7 @@
 import schemas as sch
 import db.models as dbm
 
-from .Extra import *
+from ..Extra import *
 from uuid import UUID
 from lib import logger
 
