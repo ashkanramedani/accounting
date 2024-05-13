@@ -83,3 +83,4 @@ for route in routes:
 
 
 dump(Rotes_Schema, open(f'{PRJ_file}/configs/routes.json', 'w'), indent=4)
+
