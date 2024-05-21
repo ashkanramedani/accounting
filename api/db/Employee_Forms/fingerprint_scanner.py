@@ -6,6 +6,7 @@ from typing import List, Tuple, Dict
 
 import pandas as pd
 from fastapi import File, UploadFile
+from sqlalchemy import String, cast
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -184,6 +185,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
         Days.append(Day_OBJ)
     return Days
 
+
 def Split_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
     """
     :return: List[{
@@ -230,6 +232,7 @@ def Split_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
             Day_OBJ["msg"] = "Finished"
         Days.append(Day_OBJ)
     return Days
+
 
 def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
     """
@@ -284,7 +287,8 @@ def get_fingerprint_scanner(db: Session, form_id):
 
 def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
+
+        return 200,  record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -450,78 +454,12 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
-
 """
-def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: UploadFile = File(...)):
-    try:
-        if not employee_exist(db, [created_fk_by]):
-            return 400, "Bad Request"
-
-        with open(f"./{file.filename}", "wb") as csv_file:
-            csv_file.write(file.file.read())
-        Data = pd.read_csv(f"./{file.filename}")
-
-        start = datetime.combine(Fix_datetime(Data["DateTime"].min()), time())
-        end = datetime.combine(Fix_datetime(Data["DateTime"].max()), time()) + timedelta(days=1)
-
-        history = (
-            db.query(dbm.Fingerprint_Scanner_backup_form)
-            .filter_by(deleted=False)
-            .filter(dbm.Fingerprint_Scanner_backup_form.DateTime.between(start, end))
+results = (
+            db.query(dbm.Fingerprint_Scanner_form, dbm.User_form)
+            .join(dbm.User_form, cast(dbm.Fingerprint_Scanner_form.EnNo, String) == dbm.User_form.fingerprint_scanner_user_id)
+            .filter(dbm.Fingerprint_Scanner_form.deleted == False)
+            .with_entities(dbm.Fingerprint_Scanner_form.EnNo, dbm.User_form.name, dbm.User_form.last_name)
             .all()
         )
-
-        history = [(obj.__dict__["EnNo"], str(obj.__dict__["DateTime"])) for obj in history]
-
-        Data = Data.to_dict(orient="records")
-
-        OBJs, RES, ID = [], {}, {}
-
-        if len(Data) == 0:
-            return 400, "Empty File"
-
-        for record in Data:
-            del record["No"]
-            record["In_Out"] = record.pop("In/Out")
-            Signature = (record["EnNo"], record["DateTime"])
-            if Signature in history:
-                continue
-
-            OBJs.append(dbm.Fingerprint_Scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
-            record_time = record["DateTime"]
-            EMP = record['Name']
-            if EMP not in ID:
-                ID[EMP] = record['EnNo']
-            D, T = record_time.split(" ")
-            if EMP not in RES:
-                RES[EMP] = {}
-            if D not in RES[EMP]:
-                RES[EMP][D] = []
-            RES[EMP][D].append(T)
-
-        for EMP, Times in RES.items():
-            for day, hour in Times.items():
-                if len(hour) % 2:
-                    hour.append(None)
-                for H in range(0, len(hour), 2):
-                    if hour[H] == hour[H + 1] or hour[H + 1] is None:
-                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=0))  # type: ignore[call-arg]
-                    else:
-                        duration = 0 if hour[H] == hour[H + 1] else time_gap(Fix_time(hour[H]), Fix_time(hour[H + 1]))
-                        OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
-
-        db.add_all(OBJs)
-        db.commit()
-        return 200, "File added"
-
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
-
-
 """
-
-"""
-Expected type 'list[DaySchadule]', 
-got 'list[dict[str, str | list | int | bool] | dict[str, str | list | int | bool | Any]]' instead """
