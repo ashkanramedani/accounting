@@ -1,3 +1,4 @@
+from io import StringIO
 import json
 import pickle
 import uuid
@@ -274,7 +275,6 @@ def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
         Days.append(Day_OBJ)
     return Days
 
-
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, form_id):
     try:
@@ -345,21 +345,10 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: UploadFile = File(...)):
+def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: pd.DataFrame):
     try:
         if not employee_exist(db, [created_fk_by]):
             return 400, "Bad Request: Employee Does Not Exist"
-
-        Data = pd.read_csv(file.file)
-        if "No" in Data.columns:
-            Data = Data.drop("No", axis=1)
-
-        try:
-            Data["DateTime"] = pd.to_datetime(Data["DateTime"], errors='coerce').dt.floor('min')
-            Data = Data.sort_values(by="DateTime").drop_duplicates()
-            Data.rename(columns={"In/Out": "In_Out"}, inplace=True)
-        except pd.errors.ParserError:
-            return 400, f"Error parsing the CSV."
 
         start = datetime.combine(Data.iloc[0]["DateTime"], time())
         end = datetime.combine(Data.iloc[-1]["DateTime"] + pd.Timedelta(days=1), time())
