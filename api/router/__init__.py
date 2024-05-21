@@ -10,8 +10,7 @@ from .response import router as response_route
 from .student import router as student_route
 from .survey import router as survey_route
 from .fingerScanner import router as finger_scanner_router
-from .tardy_request import router as tardy_request_route
-from .teacher_replacement import router as teacher_replacement_route
+from .Teachers_Forms import teacher_replacement_route, tardy_request_route
 from .roles import router as roles_route
 from .SalaryPolicy import router as SalaryPolicy_route
 from .salary import router as report_route
@@ -36,10 +35,10 @@ routes = [
     # question_route,
     remote_request_route,
     # response_route,
-    # student_route,
+    student_route,
     # survey_route,
     # tardy_request_route,
-    # teacher_replacement_route,
+    teacher_replacement_route,
     payment_route,
     finger_scanner_router,
     employee_route,

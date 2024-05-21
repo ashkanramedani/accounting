@@ -39,7 +39,7 @@ async def app_lifespan(api: FastAPI):
     logger.info(f"Starting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
     while True:
         try:
-            models.Base.metadata.drop_all(engine)
+            # models.Base.metadata.drop_all(engine)
             models.Base.metadata.create_all(bind=engine)
             break
         except OperationalError as e:
@@ -60,27 +60,23 @@ app = FastAPI(
         lifespan=app_lifespan)
 
 WHITELISTED_IPS: List[str] = []
-app.add_middleware(
-        CORSMiddleware,
-        allow_credentials=True,
-        allow_origins=['*'],
-        allow_methods=["*"],
-        allow_headers=["*"],
-)
+app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
 
+# Rotes_Schema = {}
+# for route in routes:
+#     tag = route.tags.__str__().replace("['", "").replace("']", "")
+#     Rotes_Schema[tag] = {}
+#     for route_signature in route.routes:
+#         methods = route_signature.methods.__str__().replace("{'", "").replace("'}", "")
+#         if methods not in Rotes_Schema[tag]:
+#             Rotes_Schema[tag][methods] = []
+#         url = route_signature.path.split("{")[0] + "<UUID>" if "{" in route_signature.path else route_signature.path
+#         Rotes_Schema[tag][methods].append(f"http://localhost:5001{url}")
+#     app.include_router(route)
+# dump(Rotes_Schema, open(f'{PRJ_file}/configs/routes.json', 'w'), indent=4)
 
-Rotes_Schema = {}
 for route in routes:
-    tag = route.tags.__str__().replace("['", "").replace("']", "")
-    Rotes_Schema[tag] = {}
-    for route_signature in route.routes:
-        methods = route_signature.methods.__str__().replace("{'", "").replace("'}", "")
-        if methods not in Rotes_Schema[tag]:
-            Rotes_Schema[tag][methods] = []
-        url = route_signature.path.split("{")[0] + "<UUID>" if "{" in route_signature.path else route_signature.path
-        Rotes_Schema[tag][methods].append(f"http://localhost:5001{url}")
     app.include_router(route)
 
 
-dump(Rotes_Schema, open(f'{PRJ_file}/configs/routes.json', 'w'), indent=4)
 

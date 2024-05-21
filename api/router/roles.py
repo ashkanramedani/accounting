@@ -10,6 +10,12 @@ from db.models import get_db
 
 router = APIRouter(prefix='/api/v1/form/role', tags=['role'])
 
+@router.get("/cluster", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])#, response_model=List[str])
+async def search_all_cluster(db=Depends(get_db)):
+    status_code, result = dbf.get_all_cluster(db)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
 
 # tardy request
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])

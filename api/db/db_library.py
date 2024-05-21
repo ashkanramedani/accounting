@@ -1,10 +1,6 @@
 import sqlalchemy.sql.expression as sse
 from sqlalchemy.orm import Session
-
 from lib import logger
-
-
-
 import db.models as dbm
 
 

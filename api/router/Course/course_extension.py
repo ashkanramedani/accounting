@@ -27,6 +27,7 @@ async def search_tag(form_id, db=Depends(get_db)):
     return result
 
 
+
 @router.get("/tag/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.tag_response])
 async def search_all_tag(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_tag(db, page, limit, order)

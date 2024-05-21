@@ -20,6 +20,9 @@ class JSONEncoder(json.JSONEncoder):
             return str(obj)
 
 
+
+
+
 class json_handler:
     def __init__(self, FilePath="", ShowJsonErrors=True):
         self.VERSION = "1.4.0 build:9705301047"  # Version of course

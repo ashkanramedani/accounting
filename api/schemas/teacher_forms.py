@@ -1,5 +1,6 @@
 from .Base import *
 
+
 # ---------------------- teacher_tardy_reports ----------------------
 class teacher_tardy_reports(Base_form):
     teacher_fk_id: UUID
@@ -24,7 +25,19 @@ class teacher_tardy_reports_response(Base_response, update_teacher_tardy_reports
 
 
 # ---------------------- teacher_replacement ----------------------
+class session_teacher_replacement(Base_form):
+    sub_course_fk_id: UUID
+    session_fk_id: List[UUID]
+    sub_teacher_fk_id: UUID
 
+
+class subcourse_teacher_replacement(Base_form):
+    replacement_date: datetime | str
+    subcourse_fk_id: UUID
+    sub_teacher_fk_id: UUID
+
+
+"""
 class teacher_replacement(Base_form):
     course_pk_id: UUID
     sub_course_pk_id: UUID
@@ -57,3 +70,4 @@ class teacher_replacement_response(Base_response):
 
     class Config:
         orm_mode = True
+"""

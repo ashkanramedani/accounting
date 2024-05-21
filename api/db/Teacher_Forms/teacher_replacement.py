@@ -1,7 +1,6 @@
+from sqlalchemy import and_
+
 from lib import logger
-
-
-
 
 from sqlalchemy.orm import Session, joinedload
 
@@ -10,94 +9,95 @@ import schemas as sch
 from ..Extra import *
 
 
-# Tardy Form - get_tardy_request
-
 # Teacher Replacement
-def get_teacher_replacement(db: Session, form_id):
+
+
+def session_teacher_replacement(db: Session, Form: sch.session_teacher_replacement):
     try:
-        return 200, db.query(dbm.Teacher_Replacement_form).filter_by(teacher_replacement_pk_id=form_id, deleted=False).first()
+        if not employee_exist(db, [Form.created_fk_by, Form.sub_teacher_fk_id]):
+            return 400, "Bad Request"
+
+        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first():
+            return 400, "Bad Request: subcourse not found"
+
+        sub_course = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.sub_course_fk_id, subcourse_pk_id=Form.session_fk_id, deleted=False).all()
+        sub_course_id = [i.session_pk_id for i in sub_course]
+
+        data = Form.dict()
+        sessions = data.pop("session_fk_id")
+
+        if any(i not in sub_course_id for i in sessions):
+            return 400, "Bad Request: Session not found"
+
+        new_sessions = []
+        for session_id in sessions:
+            tmp_session_object = db.query(dbm.Session_form).filter_by(session_pk_id=session_id, deleted=False)
+            old_session = tmp_session_object.first()
+
+            tmp_session_object_data = old_session.dict()
+            tmp_session_object_data.update({"is_sub": True, "session_teacher_fk_id": Form.sub_teacher_fk_id})
+
+            new_sessions.append(dbm.Session_form(**tmp_session_object_data))  # type: ignore[call-arg]
+            tmp_session_object.update({"deleted": True})
+
+        db.add_all(new_sessions)
+        db.commit()
+        return 200, "Record has been Added"
+
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_teacher_replacement(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
-    try:
-        return 200, record_order_by(db, dbm.Teacher_Replacement_form, page, limit, order)
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
 
-
-def report_teacher_replacement(db: Session, Form: sch.teacher_report):
+def sub_course_teacher_replacement(db: Session, Form: sch.subcourse_teacher_replacement):
     try:
-        result = (
-            db.query(dbm.Teacher_Replacement_form)
-            .join(dbm.Course_form, dbm.Course_form.course_pk_id == dbm.Teacher_Replacement_form.course_fk_id)
-            .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
-            .filter(dbm.Course_form.course_time.between(Form.start_date, Form.end_date))
-            .options(joinedload(dbm.Teacher_Replacement_form.course))
-            .count()
+        if not employee_exist(db, [Form.created_fk_by, Form.sub_teacher_fk_id]):
+            return 400, "Bad Request"
+
+        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.subcourse_fk_id, deleted=False).first():
+            return 400, "Bad Request: subcourse not found"
+
+        NotStarted = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.subcourse_fk_id, deleted=False).filter(dbm.Session_form.session_starting_time.between(Form.start_date, Form.end_date)).count()
+
+        replacement_date = Fix_datetime(Form.replacement_date)
+
+        records = (
+            db.query(dbm.Session_form)
+            .filter_by(sub_course_fk_id=Form.subcourse_fk_id, deleted=False)
+            .filter(dbm.Session_form.session_starting_time > (replacement_date.time()))
+            .all()
+        )
+        records = (
+            db.query(dbm.Session_form)
+            .filter_by(sub_course_fk_id=Form.subcourse_fk_id, deleted=False)
+            .filter(and_(
+                    dbm.Session_form.session_starting_time > (replacement_date.time()),
+                    dbm.Session_form.session_date >= replacement_date.date(),
+                    dbm.Session_form.session_date > replacement_date.time()
+            ))
+            .all()
         )
 
-        return 200, result
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
-
-
-def post_teacher_replacement(db: Session, Form: sch.post_teacher_replacement_schema):
-    try:
-        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
-            return 400, "Bad Request"
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
-
-        OBJ = dbm.Teacher_Replacement_form(**Form.dict())  # type: ignore[call-arg]
-
-        db.add(OBJ)
-        db.commit()
-        db.refresh(OBJ)
+        # data = Form.dict()
+        # replacement_date = Fix_datetime(data.pop("replacement_date"))
+        # if any(i not in sessions for i in Form.session_fk_id):
+        #     return 400, "Bad Request: Session not found"
+        #
+        # new_sessions = []
+        # for session_id in sessions:
+        #     tmp_session_object = db.query(dbm.Session_form).filter_by(session_pk_id=session_id, deleted=False)
+        #     old_session = tmp_session_object.first()
+        #
+        #     tmp_session_object_data = old_session.dict()
+        #     tmp_session_object_data.update({"is_sub": True, "session_teacher_fk_id": Form.sub_teacher_fk_id})
+        #
+        #     new_sessions.append(dbm.Session_form(**tmp_session_object_data))  # type: ignore[call-arg]
+        #     tmp_session_object.update({"deleted": True})
+        #
+        # db.add_all(new_sessions)
+        # db.commit()
         return 200, "Record has been Added"
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
-
-
-def delete_teacher_replacement(db: Session, form_id):
-    try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(teacher_replacement_pk_id=form_id, deleted=False).first()
-        if not record:
-            return 404, "Record Not Found"
-        record.deleted = True
-        db.commit()
-        return 200, "Deleted"
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
-
-
-def update_teacher_replacement(db: Session, Form: sch.update_teacher_replacement_schema):
-    try:
-        record = db.query(dbm.Teacher_Replacement_form).filter_by(teacher_replacement_pk_id=Form.teacher_replacement_pk_id, deleted=False)
-        if not record.first():
-            return 404, "Record Not Found"
-
-        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id, Form.replacement_teacher_fk_id]):
-            return 400, "Bad Request"
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
-
-        record.update(Form.dict(), synchronize_session=False)
-
-        db.commit()
-        return 200, "Form Updated"
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+    except Exception:
+        pass

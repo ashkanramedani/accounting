@@ -3,12 +3,11 @@ from .Employee_Forms import *
 from .Teacher_Forms import *
 
 from .Roles import *
-from .SalaryPolicy import *
+from .Salary import *
 from .Survey_form import *
 from .employee import *
 from .payment import *
 from .student import *
-from .salary import *
 
 from .db_library import *
 from .db_post import *
@@ -77,11 +76,13 @@ __all__ = [
     "delete_tardy_request",
     "update_tardy_request",
     # teacher_replacement.py
-    "get_teacher_replacement",
-    "get_all_teacher_replacement",
-    "post_teacher_replacement",
-    "delete_teacher_replacement",
-    "update_teacher_replacement",
+    "session_teacher_replacement",
+    "sub_course_teacher_replacement",
+    # "get_teacher_replacement",
+    # "get_all_teacher_replacement",
+    # "post_teacher_replacement",
+    # "delete_teacher_replacement",
+    # "update_teacher_replacement",
     # business_trip.py
     "get_business_trip_form",
     "get_all_business_trip_form",

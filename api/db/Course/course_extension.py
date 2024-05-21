@@ -15,6 +15,7 @@ import db.models as dbm
 import schemas as sch
 from ..Extra import *
 
+
 def get_tag(db: Session, tag_id):
     try:
         return 200, db.query(dbm.Tag_form).filter_by(tag_pk_id=tag_id, deleted=False).first()

@@ -6,13 +6,13 @@ class SalaryPolicy(BaseModel):
     created_fk_by: UUID
     user_fk_id: UUID
 
-    day_starting_time: time | None | str = None
-    day_ending_time: time | None | str = None
+    day_starting_time: time | str | None = None
+    day_ending_time: time | str | None = None
 
     # finger_print
     Base_salary: float
     Regular_hours_factor: float
-    Regular_hours_cap: Optional[int] = None
+    Regular_hours_cap: int | None = None
 
     overtime_permission: bool
     overtime_factor: float

@@ -44,9 +44,6 @@ def post_session(db: Session, Form: sch.post_session_schema):
         if not subcourse:
             return 400, "Bad Request: sub course not found"
 
-        if not db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first():
-            return 400, "Bad Request: course not found"
-
         data = Form.__dict__
         current_sessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=data["sub_course_fk_id"], course_fk_id=data["course_fk_id"], deleted=False).count()
         if subcourse.number_of_session >= current_sessions:

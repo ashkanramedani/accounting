@@ -14,6 +14,15 @@ def get_payment_method(db: Session, payment_method_id):
 
 def get_all_payment_method(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
+        # Records = record_order_by(db, dbm.Payment_Method_form, page, limit, order)
+        # New = []
+        #
+        # for record in Records:
+        #
+        #     record.shaba = "Edited"
+        #     record.card_number = "Edited"
+        #     logger.warning(record.__dict__)
+        #     New.append(record)
         return 200, record_order_by(db, dbm.Payment_Method_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)

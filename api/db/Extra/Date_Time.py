@@ -237,7 +237,7 @@ def Separate_days_by_DayCap(start, end, Working_cap: int) -> List[Dict]:
     return daily
 
 
-def to_persian(year, month, day, return_obj=True) -> tuple | date:
+def to_persian(year, month, day):
     d_4 = year % 4
     g_a = [0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
     doy_g = g_a[month] + day
@@ -267,12 +267,10 @@ def to_persian(year, month, day, return_obj=True) -> tuple | date:
         jd = doy_j - 186 - (jm * 30)
         jm += 7
 
-    if return_obj:
-        return date(jy, jm, jd)
-    return (jy, jm, jd)
+    return date(jy, jm, jd)
 
 
-def to_international(year, month, day, return_obj=True) -> tuple | date:
+def to_international(year, month, day):
     d_4 = (year + 1) % 4
     doy_j = ((month - 1) * 31 + day) if month < 7 else ((month - 7) * 30 + day + 186)
     d_33 = int(((year - 55) % 132) * .0305)
@@ -287,9 +285,7 @@ def to_international(year, month, day, return_obj=True) -> tuple | date:
             break
         day -= v
 
-    if return_obj:
-        return date(year, month, day)
-    return (year, month, day)
+    return date(year, month, day)
 
 
 def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
@@ -304,10 +300,9 @@ def generate_month_interval(year, month, include_nex_month_fist_day: bool = Fals
 
 
 def same_month(date_1: datetime, date_2: datetime):
-    y1, m1, _ = to_persian(date_1.year, date_1.month, date_1.day, return_obj=False)
-    y2, m2, _ = to_persian(date_2.year, date_2.month, date_2.day, return_obj=False)
-
-    return y1 == y2 and m1 == m2
+    date_1 = to_persian(date_1.year, date_1.month, date_1.day)
+    date_2 = to_persian(date_2.year, date_2.month, date_2.day)
+    return date_1.year == date_2.year and date_1.month == date_2.month
 
 
 def generate_time_table(starting_date: date, ending_date: date, day_of_week=None) -> list:
@@ -334,24 +329,7 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
 
 
 if __name__ == '__main__':
-    "2024-05-20T16:17:00.577242"
-    "2024-05-21T16:17:00.577251"
-    date_1 = Fix_datetime("2024-05-19T16:17:00.577242")
-    date_2 = Fix_datetime("2024-05-20T16:17:00.577251")
-    #
-    # date_11 = to_persian(2024, 5, 20)
-    # date_22 = to_persian(date_2.year, date_2.month, date_2.day)
-    res = same_month(date_1, date_2)
-    # print(res)
-    for y in range(2023, 2030):
-        for i in range(1, 13):
-            try:
-                to_persian(y, i, 1)
-            except Exception as e:
-                print(f'{e.__class__.__name__}: {e.args}')
-
-
-
-
-
-
+    a, b = generate_month_interval(1402, 11, False)
+    print(a, b)
+    a, b = generate_month_interval(1402, 11, True)
+    print(a, b)

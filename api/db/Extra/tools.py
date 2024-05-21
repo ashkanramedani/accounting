@@ -5,15 +5,6 @@ from typing import Tuple
 
 from lib import logger
 
-
-def prepare_param(key, val):
-    table = key.lower().replace("_fk_id", "").replace("_pk_id", "")
-    if key in ["created", "session_main_teacher", "session_sub_teacher", "employee", "teacher", "employees"]:
-        table = "employee"
-    elif table not in Tables:
-        return None, table
-    return Tables[table], {"deleted": False, key.replace("_fk_id", "_pk_id"): val}
-
 def log_on_status(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs) -> Tuple[int, str]:

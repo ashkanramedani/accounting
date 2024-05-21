@@ -8,40 +8,6 @@ import schemas as sch
 from lib import logger
 from ..Extra import *
 
-
-def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Update_Relation], categories: List[sch.Update_Relation]):
-    Errors = []
-    all_tags = [id.tag_pk_id for id in db.query(dbm.Tag_form).filter_by(deleted=False).all()]
-    all_categories = [id.category_pk_id for id in db.query(dbm.Category_form).filter_by(deleted=False).all()]
-    for tag in tags:
-        if existing_tag := tag.old_id:
-            tag_OBJ = db.query(dbm.CourseTag).filter_by(course_fk_id=course_pk_id, tag_fk_id=existing_tag, deleted=False)
-            if not tag_OBJ.first():
-                Errors.append(f'Course does not have this tag {existing_tag}')
-            else:
-                tag_OBJ.update({"deleted": True}, synchronize_session=False)
-        if new_tag := tag.new_id:
-            if new_tag not in all_tags:
-                Errors.append(f'this tag does not exist {new_tag}')
-            else:
-                course.tags.append(db.query(dbm.Tag_form).filter_by(tag_pk_id=new_tag, deleted=False).first())
-
-    for category in categories:
-        if existing_category := category.old_id:
-            category_OBJ = db.query(dbm.CourseCategory).filter_by(course_fk_id=course_pk_id, category_fk_id=existing_category, deleted=False)
-            if not category_OBJ.first():
-                Errors.append(f'Course does not have this category {existing_category}')
-            else:
-                category_OBJ.update({"deleted": True}, synchronize_session=False)
-        if new_category := category.new_id:
-            if new_category not in all_categories:
-                Errors.append(f'this category does not exist {new_category}')
-            else:
-                course.categories.append(db.query(dbm.Category_form).filter_by(category_pk_id=new_category, deleted=False).first())
-    db.commit()
-    return Errors
-
-
 def get_course(db: Session, course_id):
     try:
         course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id, deleted=False).first()

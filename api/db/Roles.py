@@ -1,3 +1,4 @@
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 import db.models as dbm
 
@@ -5,6 +6,18 @@ import schemas as sch
 from lib import logger
 
 from .Extra import *
+
+func
+
+def get_all_cluster(db: Session):
+    try:
+        return 200, [dict(name)["cluster"] for name in db.query(dbm.Role_form.cluster).group_by(dbm.Role_form.cluster).all()]
+        # return 200, record_order_by(db, dbm.Tag_form, page, limit, order)
+    except Exception as e:
+        logger.error(e)
+        db.rollback()
+        return 500, f'{e.__class__.__name__}: {e.args}'
+
 
 
 # role

@@ -1,3 +1,5 @@
+import json
+import pickle
 import uuid
 from datetime import timedelta, date, time, datetime
 from typing import List, Tuple, Dict
@@ -24,10 +26,10 @@ def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
         return {"Regular_earning": 0, "Overtime_earning": 0, "Undertime_earning": 0, "Off_Day_earning": 0}
 
     rates = {
-        "Regular_earning": salary_rate.Regular_hours_factor * (Total_activity["regular_work_time"] / 60),
-        "Overtime_earning": salary_rate.overtime_factor * (Total_activity["overtime"] / 60),
-        "Undertime_earning": salary_rate.undertime_factor * (Total_activity["undertime"] / 60),
-        "Off_Day_earning": salary_rate.off_day_factor * (Total_activity["off_Day_work_time"] / 60)
+        "Regular_earning": salary_rate.Base_salary * salary_rate.Regular_hours_factor * (Total_activity["regular_work_time"] / 60),
+        "Overtime_earning": salary_rate.Base_salary * salary_rate.overtime_factor * (Total_activity["overtime"] / 60),
+        "Undertime_earning": salary_rate.Base_salary * salary_rate.undertime_factor * (Total_activity["undertime"] / 60),
+        "Off_Day_earning": salary_rate.Base_salary * salary_rate.off_day_factor * (Total_activity["off_Day_work_time"] / 60)
     }
     return rates
 
@@ -57,6 +59,45 @@ def Date_constructor(Date_obj: str | date | datetime):
     return f'{M_Date}  {P_Date}'
 
 
+def Create_Day_Schema(Date: str | date | datetime, day: dict, Holiday: bool) -> Dict:
+    return {
+        "Date": Date_constructor(Date),
+        "Holiday": Holiday,
+        "Accrued_Holiday": False,
+        "present_time": 0,
+        "Regular_hours": 0,
+        "Overtime": 0,
+        "Undertime": 0,
+        "off_Day_Overtime": 0,
+        "IsValid": day["IsValid"],
+        "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]),
+        "msg": "Created"}
+
+
+def preprocess_report(report):
+    """
+    This Function Preprocesses the Report. on each Enter/Exit time it calculates the time gap and add missing days to calender
+    """
+    Days = {}
+    for i, record in enumerate(report):
+        Key = str(record["Date"])
+
+        if Key not in Days:
+            Days[Key] = {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Normal"}
+
+        if not record["Enter"] or not record["Exit"]:
+            Days[Key]["IsValid"] = False
+            Days[Key]["msg"] = "invalid Enter/exit time"
+
+        else:
+            Days[Key]["present_time"] += time_gap(record["Enter"], record["Exit"])
+        Days[Key]["EnterExit"].extend([record["Enter"], record["Exit"]])
+
+        for Date, Date_data in add_missing_day(report[i: i + 2]):
+            Days[Date] = Date_data
+    return Days
+
+
 def add_missing_day(seq: list) -> List[Tuple]:
     if len(seq) < 2:
         return []
@@ -65,30 +106,10 @@ def add_missing_day(seq: list) -> List[Tuple]:
     while currentDay < seq[1]["Date"]:
         currentDay += timedelta(days=1)
         missing_day.append((str(currentDay), {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Not Present"}))
-    return missing_day
+    return missing_day[:-1]
 
 
-def preprocess_report(report):
-    Days = {}
-    for i, record in enumerate(report):
-        Key = str(record["Date"])
-        if record["Enter"] is None or record["Exit"] is None:
-            Days[Key] = {"present_time": 0, "EnterExit": [record["Enter"], record["Exit"]], "IsValid": False, "msg": 'invalid Enter/exit time'}
-            continue
-        if record["Date"] not in Days:
-            Days[Key] = {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Processed"}
-
-        Days[Key]["present_time"] += time_gap(record["Enter"], record["Exit"])
-        Days[Key]["EnterExit"].append(record["Enter"])
-        Days[Key]["EnterExit"].append(record["Exit"])
-
-        for Date, Date_data in add_missing_day(report[i: i + 2]):
-            Days[Date] = Date_data
-
-    return Days
-
-
-def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report) -> List[Dict]:
+def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[Dict]:
     """
     :return: List[{
                     Date: str
@@ -100,55 +121,70 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, report) -> List[Dict]:
                     off_Day_Overtime: int
                     IsValid: bool
                     EnterExit: str
-                    msg: str
-                }]
+                    msg: str}]
     """
-    preprocess_Days = preprocess_report(report)
     Days = []
     for Date, day in preprocess_Days.items():
         Holiday = is_off_day(Fix_date(Date))
+        Day_OBJ = Create_Day_Schema(Date, day, Holiday)
 
-        Overtime, Undertime, Regular_hours, off_day_overtime, present_time = 0, 0, 0, 0, 0
-        if not day["IsValid"]:
-            Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "present_time": 0, "Regular_hours": 0, "Overtime": 0, "Undertime": 0, "off_Day_Overtime": 0, "IsValid": False, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": day["msg"]})
+        if Day_OBJ["Accrued_Holiday"]:
+            Day_OBJ["msg"] = "Accrued_Holiday"
+            Days.append(Day_OBJ)
             continue
 
+        if not Day_OBJ["IsValid"]:
+            Day_OBJ["msg"] = day["msg"]
+            Days.append(Day_OBJ)
+            continue
+
+        Day_OBJ["present_time"] = day["present_time"]
         if Holiday:
             if EMP_Salary.off_day_permission:
-                off_day_overtime = day["present_time"]
+                Day_OBJ["off_Day_Overtime"] = day["present_time"]
 
         elif not day["EnterExit"]:
-            Overtime = 0
-            Undertime = EMP_Salary.Regular_hours_cap
+            Day_OBJ["Undertime"] = EMP_Salary.Regular_hours_cap
 
         else:
-            first_enter: time = max(min(day["EnterExit"]), EMP_Salary.day_starting_time)  # type: ignore
-            last_exit: time = max(day["EnterExit"])  # type: ignore
+            EnterExit = day["EnterExit"]
+            EnterExit.sort()
+            first_enter = max(EnterExit[0], EMP_Salary.day_starting_time)
+            res = {
+                "first_enter": first_enter,
+                "day['EnterExit']": day["EnterExit"],
+                "min(day['EnterExit'])": min(day["EnterExit"]),
+                "EMP_Salary.day_starting_time": EMP_Salary.day_starting_time
+            }
+
+            # logger.warning(json.dumps(res, indent=4, cls=JSONEncoder))
+            last_exit = EnterExit[-1]
             # UnderTime
             tmp_undertime = time_gap(EMP_Salary.day_starting_time, first_enter)
-            Undertime = tmp_undertime if tmp_undertime > EMP_Salary.undertime_threshold else 0
+            if tmp_undertime > EMP_Salary.undertime_threshold:
+                Day_OBJ["Undertime"] = tmp_undertime
 
             if last_exit < EMP_Salary.day_ending_time:
                 tmp_undertime = time_gap(last_exit, EMP_Salary.day_ending_time)
-                Undertime += tmp_undertime if tmp_undertime > EMP_Salary.undertime_threshold else 0
+                if tmp_undertime > EMP_Salary.undertime_threshold:
+                    Day_OBJ["Undertime"] += tmp_undertime
             else:
                 tmp_overtime = time_gap(EMP_Salary.day_ending_time, last_exit)
-                Overtime = tmp_overtime if tmp_overtime > EMP_Salary.overtime_threshold else 0
+                if tmp_overtime > EMP_Salary.overtime_threshold:
+                    Day_OBJ["Overtime"] = tmp_overtime
 
-            EnterExit = day["EnterExit"]
-            EnterExit.sort()
-            enters = EnterExit[2::2]
-            exits = EnterExit[1:-1:2]
             # check if more than one Enter and Exit is in day
-            if len(EnterExit) != 2:
-                for Enter, Exit in zip(enters, exits):
+            if len(EnterExit) > 2:
+                for Enter, Exit in zip(EnterExit[2::2], EnterExit[1:-1:2]):
                     day["Undertime"] += time_gap(Enter, Exit)
 
-        Days.append({"Date": Date_constructor(Date), "Holiday": Holiday, "present_time": day["present_time"], "Regular_hours": min(day["present_time"] - Overtime, EMP_Salary.Regular_hours_cap) if not off_day_overtime else 0, "Overtime": Overtime, "Undertime": Undertime, "off_Day_Overtime": off_day_overtime, "IsValid": True, "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]), "msg": "Finished"})
+            Day_OBJ["Regular_hours"] = min(day["present_time"] - Day_OBJ["Overtime"], EMP_Salary.Regular_hours_cap)
+
+        Day_OBJ["msg"] = "Finished"
+        Days.append(Day_OBJ)
     return Days
 
-
-def Split_schedule(EMP_Salary, reports) -> List[Dict]:
+def Split_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
     """
     :return: List[{
                     Date: str
@@ -160,54 +196,79 @@ def Split_schedule(EMP_Salary, reports) -> List[Dict]:
                     off_Day_Overtime: int
                     IsValid: bool
                     EnterExit: str
-                    msg: str
-                }]
+                    msg: str}]
     """
-    preprocess_Days = preprocess_report(reports)
     Days = []
 
     for Date, day in preprocess_Days.items():
         Holiday = is_off_day(Fix_date(Date))
-        Overtime, Undertime, Regular_hours, off_day_overtime = 0, 0, 0, 0
-        if not day["IsValid"]:
-            Days.append({
-                "Date": Date_constructor(Date),
-                "Holiday": Holiday,
-                "present_time": 0,
-                "Regular_hours": 0,
-                "Overtime": 0,
-                "Undertime": 0,
-                "off_Day_Overtime": 0,
-                "IsValid": False,
-                "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]),
-                "msg": day["msg"]})
+        Day_OBJ = Create_Day_Schema(Date, day, Holiday)
+
+        if Day_OBJ["Accrued_Holiday"]:
+            Day_OBJ["msg"] = "Accrued_Holiday"
+            Days.append(Day_OBJ)
             continue
 
+        if not Day_OBJ["IsValid"]:
+            Day_OBJ["msg"] = day["msg"]
+            Days.append(Day_OBJ)
+            continue
+
+        Day_OBJ["present_time"] = day["present_time"]
         if Holiday:
             if EMP_Salary.off_day_permission:
-                off_day_overtime = day["present_time"]
+                Day_OBJ["off_Day_Overtime"] = day["present_time"]
         else:
-            present_time = day["present_time"]
-
-            if present_time >= EMP_Salary.Regular_hours_cap:
-                posible_Overtime = present_time - EMP_Salary.Regular_hours_cap
-                Overtime = posible_Overtime if posible_Overtime >= EMP_Salary.overtime_threshold else 0
-
+            if Day_OBJ["present_time"] >= EMP_Salary.Regular_hours_cap:
+                posible_Overtime = Day_OBJ["present_time"] - EMP_Salary.Regular_hours_cap
+                Day_OBJ["Overtime"] = posible_Overtime if posible_Overtime >= EMP_Salary.overtime_threshold else 0
             else:
-                posible_undertime = EMP_Salary.Regular_hours_cap - present_time
-                Undertime = posible_undertime if posible_undertime >= EMP_Salary.undertime_threshold else 0
+                posible_undertime = EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"]
+                Day_OBJ["Undertime"] = posible_undertime if posible_undertime >= EMP_Salary.undertime_threshold else 0
+            Day_OBJ["Regular_hours"] = min(EMP_Salary.Regular_hours_cap, day["present_time"])
 
-        Days.append({
-            "Date": Date_constructor(Date),
-            "Holiday": Holiday,
-            "present_time": day["present_time"],
-            "Regular_hours": min(EMP_Salary.Regular_hours_cap, day["present_time"]),
-            "Overtime": Overtime,
-            "Undertime": Undertime,
-            "off_Day_Overtime": off_day_overtime,
-            "IsValid": True,
-            "EnterExit": ' '.join([str(t) for t in day["EnterExit"]]),
-            "msg": "Finished"})
+            Day_OBJ["msg"] = "Finished"
+        Days.append(Day_OBJ)
+    return Days
+
+def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
+    """
+    :return: List[{
+                    Date: str
+                    Holiday: bool
+                    present_time: int
+                    Regular_hours: int
+                    Overtime: int
+                    Undertime: int
+                    off_Day_Overtime: int
+                    IsValid: bool
+                    EnterExit: str
+                    msg: str}]
+    """
+    Days = []
+    for Date, day in preprocess_Days.items():
+        Holiday = is_off_day(Fix_date(Date))
+        Day_OBJ = Create_Day_Schema(Date, day, Holiday)
+
+        if Day_OBJ["Accrued_Holiday"]:
+            Day_OBJ["msg"] = "Accrued_Holiday"
+            Days.append(Day_OBJ)
+            continue
+
+        if not Day_OBJ["IsValid"]:
+            Day_OBJ["msg"] = day["msg"]
+            Days.append(Day_OBJ)
+            continue
+
+        Day_OBJ["present_time"] = day["present_time"]
+        if Holiday:
+            if EMP_Salary.off_day_permission:
+                Day_OBJ["off_Day_Overtime"] = day["present_time"]
+        else:
+            Day_OBJ["Regular_hours"] = min(EMP_Salary.Regular_hours_cap, day["present_time"])
+
+        Day_OBJ["msg"] = "Finished"
+        Days.append(Day_OBJ)
     return Days
 
 
@@ -240,6 +301,12 @@ def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end
 
     report_dicts = [{k: v for k, v in record.__dict__.items() if k != "_sa_instance_state"} for record in Fingerprint_scanner_report]
     final_result = {}
+
+    report2 = {}
+    for i, record in enumerate(report_dicts):
+        report2[i] = {k: str(v) for k, v in record.items() if k in ["Date", "Enter", "Exit", "EnNo", "duration"]}
+    report_dicts = preprocess_report(report_dicts)
+
     # Split schedule and Fix schedule
     if Salary_Policy.is_Fixed:
         final_result["Days"]: List[dict] = Fixed_schedule(Salary_Policy, report_dicts)
@@ -279,12 +346,19 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
         if not employee_exist(db, [created_fk_by]):
             return 400, "Bad Request: Employee Does Not Exist"
 
-        logger.warning(f'{type(file)} {file.filename}')
         Data = pd.read_csv(file.file)
+        if "No" in Data.columns:
+            Data = Data.drop("No", axis=1)
 
-        start = datetime.combine(Fix_datetime(Data["DateTime"].min()), time())
-        end = datetime.combine(Fix_datetime(Data["DateTime"].max()), time()) + timedelta(days=1)
+        try:
+            Data["DateTime"] = pd.to_datetime(Data["DateTime"], errors='coerce').dt.floor('min')
+            Data = Data.sort_values(by="DateTime").drop_duplicates()
+            Data.rename(columns={"In/Out": "In_Out"}, inplace=True)
+        except pd.errors.ParserError:
+            return 400, f"Error parsing the CSV."
 
+        start = datetime.combine(Data.iloc[0]["DateTime"], time())
+        end = datetime.combine(Data.iloc[-1]["DateTime"] + pd.Timedelta(days=1), time())
         history = (
             db.query(dbm.Fingerprint_Scanner_backup_form)
             .filter_by(deleted=False)
@@ -292,7 +366,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
             .all()
         )
 
-        history = [(obj.__dict__["EnNo"], str(obj.__dict__["DateTime"])) for obj in history]
+        history = [f'{obj.__dict__["EnNo"]}_{str(obj.__dict__["DateTime"])}' for obj in history]
 
         Data = Data.to_dict(orient="records")
 
@@ -303,11 +377,8 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
             return 400, "Empty File"
 
         for record in Data:
-            del record["No"]
-            record["In_Out"] = record.pop("In/Out")
-            Signature = (record["EnNo"], record["DateTime"])
+            Signature = f'{record["EnNo"]}_{record["DateTime"]}'
             if Signature in history:
-                logger.warning(f"400, {Signature} Already Exist")
                 continue
 
             OBJs.append(dbm.Fingerprint_Scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
@@ -315,7 +386,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
             EMP = record['Name']
             if EMP not in ID:
                 ID[EMP] = record['EnNo']
-            D, T = record_time.split(" ")
+            D, T = record_time.date(), record_time.time()
             if EMP not in RES:
                 RES[EMP] = {}
             if D not in RES[EMP]:
@@ -328,8 +399,8 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, file: U
                     hour.append(None)
                 for H in range(0, len(hour), 2):
                     duration = calculate_duration(hour[H], hour[H + 1])
-                    hour[H] = Fix_time(hour[H]).replace(second=0) if hour[H] else None
-                    hour[H + 1] = Fix_time(hour[H + 1]).replace(second=0) if hour[H + 1] else None
+                    hour[H] = Fix_time(hour[H]) if hour[H] else None
+                    hour[H + 1] = Fix_time(hour[H + 1]) if hour[H + 1] else None
                     OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
 
         db.add_all(OBJs)

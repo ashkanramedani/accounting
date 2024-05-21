@@ -1,15 +1,14 @@
 from lib import logger
 
-
-
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from .Extra import *
+from ..Extra import *
 from lib.Date_Time import generate_month_interval
 
-from .Employee_Forms import report_leave_request, report_remote_request, report_business_trip, report_fingerprint_scanner
+from ..Employee_Forms import report_leave_request, report_remote_request, report_business_trip, report_fingerprint_scanner
+
 
 def employee_salary_report(db: Session, user_fk_id, year, month):
     try:
@@ -34,7 +33,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
         report_summery["total_earning"] = sum(report_summery[key] for key in [key for key in report_summery.keys() if "earning" in key])
 
-        # salary_obj = dbm.Salary_form(user_fk_id=user_fk_id, day_report_summery=days_metadata, salary_policy_summery=Salary_Policy.summery(), **tmp)  # type: ignore[call-arg]
+        # salary_obj = dbm.Salary_form(user_fk_id=user_fk_id, Days=days_metadata, Salary_Policy=Salary_Policy.summery(), **report_summery)  # type: ignore[call-arg]
         # db.add(salary_obj)
         # db.commit()
 
@@ -51,4 +50,3 @@ def teacher_salary_report(db: Session, Form: sch.teacher_salary_report, year, mo
         return 200, start
     except Exception as e:
         return Return_Exception(db, e)
-
