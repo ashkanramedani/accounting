@@ -25,6 +25,7 @@ routes = [
     course_extension_route,
     sub_course_route,
     session_route,
+    teacher_replacement_route,
     # tools_route,
     # report_route,
     # roles_route,
@@ -40,7 +41,7 @@ routes = [
     # teacher_replacement_route,
     # payment_route,
     # finger_scanner_router,
-    # employee_route,
+    employee_route,
     # SalaryPolicy_route,
     # #
     # files,

@@ -32,7 +32,7 @@ class session_teacher_replacement(BaseModel):
 
 
 class subcourse_teacher_replacement(BaseModel):
-    replacement_date: date | str
+    replacement_date: datetime | str
     subcourse_fk_id: UUID
     sub_teacher_fk_id: UUID
 

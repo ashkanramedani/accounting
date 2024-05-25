@@ -59,7 +59,7 @@ def sub_course_cancellation(db: Session, Form: sch.sub_course_cancellation):
             sub_Course.deleted = True
 
         db.commit()
-        return 200, f"Session cancelled successfully. {' | '.join(warnings)} ... {message}"
+        return 200, f"Sub Course cancelled successfully. {' | '.join(warnings)} ... {message}"
 
     except Exception as e:
         return Return_Exception(db, e)
@@ -68,18 +68,17 @@ def sub_course_cancellation(db: Session, Form: sch.sub_course_cancellation):
 def course_cancellation(db: Session, Form: sch.course_cancellation):
     try:
 
-        Course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_pk_id, deleted=False)
-        if not Course.first():
+        Course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_pk_id, deleted=False).first()
+        if not Course:
             return 400, "Course Not Found"
 
         warnings = []
-
-        status, message = sub_course_cancellation(db, sch.sub_course_cancellation(course_fk_id=Form.course_pk_id, session_pk_id=get_Course_active_subcourse(db, Form.course_fk_id)))  # ignore type[call-arg]
+        status, message = sub_course_cancellation(db, sch.sub_course_cancellation(course_fk_id=Form.course_pk_id, sub_course_pk_id=get_Course_active_subcourse(db, Form.course_pk_id)))  # ignore type[call-arg]
         if status != 200:
             return status, message
         Course.deleted = True
         db.commit()
-        return 200, f"Session cancelled successfully. {' | '.join(warnings)} ... {message}"
+        return 200, f"Course cancelled successfully. {' | '.join(warnings)} ... {message}"
 
     except Exception as e:
         return Return_Exception(db, e)

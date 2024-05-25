@@ -56,11 +56,13 @@ async def app_lifespan(api: FastAPI):
 
 app = FastAPI(
         swagger_ui_parameters={"docExpansion": "none"},
-        title="Accounting",
+        title="Accounting V 0.1.0.0 ",
         lifespan=app_lifespan)
+
 
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
+
 
 # Rotes_Schema = {}
 # for route in routes:
