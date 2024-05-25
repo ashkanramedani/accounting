@@ -17,7 +17,7 @@ class update_leave_request_schema(leave_request):
     leave_request_pk_id: UUID
 
 
-class leave_request_response(Base_form, Base_response):
+class leave_request_response(Base_response):
     leave_request_pk_id: UUID
     employee: export_employee
 

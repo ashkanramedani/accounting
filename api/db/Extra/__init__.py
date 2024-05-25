@@ -11,6 +11,7 @@ __all__ = [
     'log_on_status',
     'Return_Exception',
     "not_implemented",
+    "NOT_AVAILABLE",
     "out_of_service",
     "Add_role",
     "Add_tags_category",

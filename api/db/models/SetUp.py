@@ -4,7 +4,10 @@ from lib import logger
 from sqlalchemy.orm import Session
 import db.models as dbm
 
-ADMIN = {"name": "Admin", "lastname": "Admin", "role": {"name": "Administrator", "cluster": "Administrator"}}
+ADMIN = {
+    "name": "Admin",
+    "lastname": "Admin",
+    "role": {"name": "Administrator", "cluster": "Administrator"}}
 
 DEFAULT_ROLES = [
     {"name": "Manager", "cluster": "Manager"},
@@ -14,12 +17,13 @@ DEFAULT_ROLES = [
     {"name": "Teacher", "cluster": "Teachers"}
 ]
 
-
+DEFAULT_LANGUAGE = ["Not_Assigned", "English", "Spanish", "Italian", "French", "German", "Chinese", "Japanese", "Korean", "Portuguese", "Russian"]
+DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
 def setUp_admin(db: Session):
     try:
         emp = db.query(dbm.User_form).filter_by(name=ADMIN["name"]).first()
         if not emp:
-            UID = uuid.uuid4()
+            UID = "308e2744-833c-4b94-8e27-44833c2b940f"
             admin_user = dbm.User_form(user_pk_id=UID, created_fk_by=UID, name=ADMIN["name"], last_name=ADMIN["lastname"], status=1)  # type: ignore[call-arg]
             db.add(admin_user)
             db.commit()
@@ -34,16 +38,27 @@ def setUp_admin(db: Session):
 
             emp.roles.append(admin_role)
 
-        existing_roles = db.query(dbm.Role_form).filter(dbm.Role_form.name.in_([r["name"] for r in DEFAULT_ROLES])).all()
-        existing_role_names = [role.name for role in existing_roles]
+        existing_role_names = [role.name for role in db.query(dbm.Role_form).filter(dbm.Role_form.name.in_([r["name"] for r in DEFAULT_ROLES])).all()]
+        new_OBJ = []
 
-        new_roles = []
         for role_data in DEFAULT_ROLES:
             if role_data["name"] not in existing_role_names:
-                new_roles.append(dbm.Role_form(created_fk_by=emp.user_pk_id, **role_data, status=1))  # type: ignore[call-arg]
+                new_OBJ.append(dbm.Role_form(created_fk_by=emp.user_pk_id, **role_data, status=1))  # type: ignore[call-arg]
 
-        if new_roles:
-            db.bulk_save_objects(new_roles)
+        existing_role_names = [language.language_name for language in db.query(dbm.Language_form).filter(dbm.Language_form.language_name.in_(DEFAULT_LANGUAGE)).all()]
+        for language in DEFAULT_LANGUAGE:
+            if language not in existing_role_names:
+                UID = "7f371975-e397-4fc5-b719-75e3978fc547" if language == "Not_Assigned" else uuid.uuid4()
+                new_OBJ.append(dbm.Language_form(language_pk_id=UID, created_fk_by=emp.user_pk_id, language_name=language, status=1))  # type: ignore[call-arg]
+    
+        existing_course_type = [course_type.course_type_name for course_type in db.query(dbm.Course_Type_form).filter(dbm.Course_Type_form.course_type_name.in_(DEFAULT_COURSE_TYPE)).all()]
+        for course_type in DEFAULT_COURSE_TYPE:
+            if course_type not in existing_course_type:
+                UID = "7f485938-f59f-401f-8859-38f59f201f3e" if course_type == "Not_Assigned" else uuid.uuid4()
+                new_OBJ.append(dbm.Course_Type_form(course_type_pk_id=UID, created_fk_by=emp.user_pk_id, course_type_name=course_type, status=1))  # type: ignore[call-arg]
+
+        if new_OBJ:
+            db.bulk_save_objects(new_OBJ)
             db.commit()
 
         logger.info('Admin Setup Finished')
@@ -51,3 +66,25 @@ def setUp_admin(db: Session):
         db.rollback()
         logger.error("Admin Setup Failed")
         logger.error(f'{e.__class__.__name__}: {e.args}')
+
+"""
+class Language_form(Base, Base_form):
+    __tablename__ = "language"
+
+    language_pk_id = create_Unique_ID()
+    language_name = Column(String, index=True, nullable=False, unique=True)
+    created_fk_by = create_forenKey("User_form")
+
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Language_Relation")
+
+
+class Course_Type_form(Base, Base_form):
+    __tablename__ = "course_type"
+
+    course_type_pk_id = create_Unique_ID()
+    course_type_name = Column(String, index=True, nullable=False, unique=True)
+    created_fk_by = create_forenKey("User_form")
+
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="course_type_Relation")
+
+"""

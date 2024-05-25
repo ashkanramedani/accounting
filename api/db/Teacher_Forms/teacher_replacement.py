@@ -20,28 +20,34 @@ def session_teacher_replacement(db: Session, Form: sch.session_teacher_replaceme
         if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first():
             return 400, "Bad Request: subcourse not found"
 
-        sub_course = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.sub_course_fk_id, subcourse_pk_id=Form.session_fk_id, deleted=False).all()
-        sub_course_id = [i.session_pk_id for i in sub_course]
+        sessions_id = [i.session_pk_id for i in db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.sub_course_fk_id, deleted=False).all()]
 
         data = Form.dict()
-        sessions = data.pop("session_fk_id")
+        sessions = data.pop("sessions")
 
-        if any(i not in sub_course_id for i in sessions):
-            return 400, "Bad Request: Session not found"
+        if not sessions:
+            return 400, "Bad Request: No Session found"
 
         new_sessions = []
+        Warn = []
         for session_id in sessions:
-            tmp_session_object = db.query(dbm.Session_form).filter_by(session_pk_id=session_id, deleted=False)
-            old_session = tmp_session_object.first()
+            if session_id not in sessions_id:
+                Warn.append(f'{session_id} NotFound. ')
+                continue
+            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=session_id, deleted=False)
+            old_session_data = old_session.first().__dict__
 
-            tmp_session_object_data = old_session.dict()
-            tmp_session_object_data.update({"is_sub": True, "session_teacher_fk_id": Form.sub_teacher_fk_id})
+            old_session_data.pop("is_sub")
+            old_session_data.pop("session_teacher_fk_id")
+            new_Session = dbm.Session_form(**old_session_data, is_sub=True, session_teacher_fk_id=Form.sub_teacher_fk_id)  # type: ignore[call-arg]
+            new_sessions.append(new_Session)
 
-            new_sessions.append(dbm.Session_form(**tmp_session_object_data))  # type: ignore[call-arg]
-            tmp_session_object.update({"deleted": True})
+            old_session.update({"deleted": True})
 
         db.add_all(new_sessions)
         db.commit()
+        if Warn:
+            return 200, f"Record has been Added. {' | '.join(Warn)}"
         return 200, "Record has been Added"
 
     except Exception as e:
@@ -61,7 +67,7 @@ def sub_course_teacher_replacement(db: Session, Form: sch.subcourse_teacher_repl
 
         NotStarted = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.subcourse_fk_id, deleted=False).filter(dbm.Session_form.session_starting_time.between(Form.start_date, Form.end_date)).count()
 
-        replacement_date = Fix_datetime(Form.replacement_date)
+        replacement_date = Fix_date(Form.replacement_date)
 
         records = (
             db.query(dbm.Session_form)

@@ -7,7 +7,6 @@ from lib import logger
 
 from .Extra import *
 
-func
 
 def get_all_cluster(db: Session):
     try:
@@ -19,27 +18,24 @@ def get_all_cluster(db: Session):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-
 # role
-@log_on_status
+
 def get_role(db: Session, role_id):
     try:
         return 200, db.query(dbm.Role_form).filter_by(role_pk_id=role_id, deleted=False).first()
     except Exception as e:
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-@log_on_status
+
 def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Role_form, page, limit, order)
     except Exception as e:
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-@log_on_status
+
 def post_role(db: Session, Form: sch.post_role_schema):
     try:
 
@@ -54,11 +50,10 @@ def post_role(db: Session, Form: sch.post_role_schema):
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-@log_on_status
+
 def delete_role(db: Session, role_id):
     try:
         record = db.query(dbm.Role_form).filter_by(role_pk_id=role_id, deleted=False).first()
@@ -70,11 +65,10 @@ def delete_role(db: Session, role_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-@log_on_status
+
 def update_role(db: Session, Form: sch.update_role_schema):
     try:
         record = db.query(dbm.Role_form).filter_by(role_pk_id=Form.role_pk_id, deleted=False)
@@ -89,5 +83,4 @@ def update_role(db: Session, Form: sch.update_role_schema):
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)

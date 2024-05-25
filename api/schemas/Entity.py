@@ -42,7 +42,7 @@ class employee_response(Entity):
 
 # ---------------------- student ----------------------
 class Student(Entity):
-    created_fk_by: UUID
+    # created_fk_by: UUID
     level: str
 
 
@@ -51,11 +51,17 @@ class post_student_schema(Student):
 
 
 class update_student_schema(Student):
-    student_pk_id: UUID
+    user_pk_id: UUID
 
 
-class student_response(update_student_schema):
-    created: export_employee
+class student_response(BaseModel):
+    description: str | None = None
+    status: int = 0
+    user_pk_id: UUID
+    name: str
+    last_name: str
+    level: str
+    day_of_birth: date | datetime | str
 
     class Config:
         orm_mode = True

@@ -1,3 +1,6 @@
+from typing import List
+from uuid import UUID
+
 from lib import logger
 
 from sqlalchemy.orm import Session
@@ -6,95 +9,77 @@ import schemas as sch
 from ..Extra import *
 
 
+def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:
+    return [session.session_pk_id for session in db.query(dbm.Session_form).filter_by(sub_course_fk_id=SubCourse, deleted=False).all()]
 
 
+def get_Course_active_subcourse(db: Session, Course: UUID) -> List[UUID]:
+    return [subcourse.sub_course_pk_id for subcourse in db.query(dbm.Sub_Course_form).filter_by(course_fk_id=Course, deleted=False).all()]
 
-# course_cancellation
-def get_course_cancellation_form(db: Session, form_id):
+
+def session_cancellation(db: Session, Form: sch.session_cancellation):
     try:
-        return 200, db.query(dbm.Course_Cancellation_form).filter_by(course_cancellation_pk_id=form_id, deleted=False).first()
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        warnings = []
+        sessions_to_cancel = []
+        Existing_Subcourse_Session = get_subCourse_active_session(db, Form.sub_course_fk_id)
 
+        for session_id in Form.session_pk_id:
+            if session_id not in Existing_Subcourse_Session:
+                warnings.append(f'{session_id} is not found.')
+                continue
+            sessions_to_cancel.append(session_id)
 
-def get_all_course_cancellation_form(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
-    try:
-        return 200, record_order_by(db, dbm.Course_Cancellation_form, page, limit, order)
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
-
-
-
-def report_course_cancellation(db: Session, Form: sch.teacher_report):
-    try:
-        result = (
-            db.query(dbm.Course_Cancellation_form)
-            .filter_by(deleted=False, user_fk_id= Form.teacher_fk_id)
-            .filter(dbm.Course_Cancellation_form.end_date.between(Form.start_date, Form.end_date))
-            .count()
-        )
-
-        return 200, result
-    except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
-
-def post_course_cancellation_form(db: Session, Form: sch.post_course_cancellation_schema):
-    try:
-        if not employee_exist(db, [Form.teacher_fk_id, Form.created_fk_by]):
-            return 400, "Bad Request"
-
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
-
-        OBJ = dbm.Course_Cancellation_form(**Form.dict())  # type: ignore[call-arg]  # type: ignore[call-arg]
-
-        db.add(OBJ)
+        for session in db.query(dbm.Session_form).filter(dbm.Session_form.session_pk_id.in_(sessions_to_cancel), dbm.Session_form.deleted == False).all():
+            session.deleted = True
         db.commit()
-        db.refresh(OBJ)
-        return 200, "Record has been Added"
+        return 200, f"Session cancelled successfully. {' | '.join(warnings)}"
 
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-def delete_course_cancellation_form(db: Session, form_id):
+def sub_course_cancellation(db: Session, Form: sch.sub_course_cancellation):
     try:
-        record = db.query(dbm.Course_Cancellation_form).filter_by(course_cancellation_pk_id=form_id, deleted=False).first()
-        if not record:
-            return 404, "Record Not Found"
-        record.deleted = True
+        warnings = []
+        message = ''
+        Sub_course_to_cancel = []
+        Existing_Course_Subcourse = get_Course_active_subcourse(db, Form.course_fk_id)
+
+        for sub_course_id in Form.sub_course_pk_id:
+            if sub_course_id not in Existing_Course_Subcourse:
+                warnings.append(f'{sub_course_id} is not found.')
+                continue
+            Sub_course_to_cancel.append(sub_course_id)
+
+        for sub_Course in db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.sub_course_pk_id.in_(Sub_course_to_cancel), dbm.Sub_Course_form.deleted == False).all():
+            logger.warning(get_subCourse_active_session(db, sub_Course.sub_course_pk_id))
+            status, message = session_cancellation(db, sch.session_cancellation(sub_course_fk_id=sub_Course.sub_course_pk_id, session_pk_id=get_subCourse_active_session(db, sub_Course.sub_course_pk_id)))  # ignore type[call-arg]
+            if status != 200:
+                return status, message
+            sub_Course.deleted = True
+
         db.commit()
-        return 200, "Deleted"
+        return 200, f"Session cancelled successfully. {' | '.join(warnings)} ... {message}"
+
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-def update_course_cancellation_form(db: Session, Form: sch.update_course_cancellation_schema):
+def course_cancellation(db: Session, Form: sch.course_cancellation):
     try:
-        record = db.query(dbm.Course_Cancellation_form).filter_by(course_cancellation_pk_id=Form.course_cancellation_pk_id, deleted=False)
-        if not record.first():
-            return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.teacher_fk_id, Form.created_fk_by]):
-            return 400, "Bad Request"
+        Course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_pk_id, deleted=False)
+        if not Course.first():
+            return 400, "Course Not Found"
 
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
+        warnings = []
 
-        record.update(Form.dict(), synchronize_session=False)
+        status, message = sub_course_cancellation(db, sch.sub_course_cancellation(course_fk_id=Form.course_pk_id, session_pk_id=get_Course_active_subcourse(db, Form.course_fk_id)))  # ignore type[call-arg]
+        if status != 200:
+            return status, message
+        Course.deleted = True
         db.commit()
-        return 200, "Form Updated"
+        return 200, f"Session cancelled successfully. {' | '.join(warnings)} ... {message}"
+
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)

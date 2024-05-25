@@ -7,21 +7,16 @@ import db.models as dbm
 import schemas as sch
 from .Extra import *
 
-"""
-,{"detail":"AttributeError: (\"'dict' object has no attribute 'old_id'\",)"}
-"""
-
-
 def get_employee(db: Session, employee_id):
     try:
-        return 200, db.query(dbm.User_form).filter_by(user_pk_id=employee_id, deleted=False).first()
+        return 200, db.query(dbm.User_form).filter_by(user_pk_id=employee_id, deleted=False, is_employee=True).first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
 def get_all_employee(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.User_form, page, limit, order)
+        return 200, record_order_by(db, dbm.User_form, page, limit, order, is_employee=True)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -45,7 +40,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
 
         Error = Add_role(db, roles, OBJ, OBJ.user_pk_id)
         if Error:
-            return 200, "EEmployee Added But there was an error in roles: " + " | ".join(Error)
+            return 200, "Employee Added But there was an error in roles: " + " | ".join(Error)
         return 200, f'Employee Added. ID: {OBJ.user_pk_id}'
     except Exception as e:
         return Return_Exception(db, e)

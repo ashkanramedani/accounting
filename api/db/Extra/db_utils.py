@@ -23,7 +23,8 @@ Tables = {
     "course": dbm.Course_form,
     "fingerprint_scanner": dbm.Fingerprint_Scanner_form,
     "payment_method": dbm.Payment_Method_form,
-    "leave_forms": dbm.Leave_Request_form
+    "leave_forms": dbm.Leave_Request_form,
+    "salarypolicy": dbm.Salary_Policy_form
 }
 
 
@@ -100,10 +101,10 @@ def course_exist(db: Session, FK_field: UUID):
     return True
 
 
-def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc", **filter_kwargs):
     if order == "desc":
-        return db.query(table).filter_by(deleted=False).order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
-    return db.query(table).filter_by(deleted=False).order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()
+        return db.query(table).filter_by(deleted=False, **filter_kwargs).order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
+    return db.query(table).filter_by(deleted=False, **filter_kwargs).order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()
 
 
 def count(db, field: str):

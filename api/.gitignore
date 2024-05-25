@@ -178,4 +178,6 @@ api/sand.admin.api.ieltsdaily.ir.tar
 api/log/Log.csv
 api/configs/site_org_config.json
 api/configs/test_config.json
-api/admin.api.ieltsdaily.ir.tar
+api/admin.api.ieltsdaily.ir.tar!/router_Dev/
+
+router_Dev/

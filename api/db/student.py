@@ -9,14 +9,14 @@ from .Extra import *
 # Student
 def get_student(db: Session, student_id):
     try:
-        return 200, db.query(dbm.User_form).filter_by(student_pk_id=student_id, deleted=False).first()
+        return 200, db.query(dbm.User_form).filter_by(student_pk_id=student_id, deleted=False, is_employee=False).first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
 def get_all_student(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.User_form, page, limit, order)
+        return 200, record_order_by(db, dbm.User_form, page, limit, order, is_employee=False)
     except Exception as e:
         return Return_Exception(db, e)
 

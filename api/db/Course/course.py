@@ -121,7 +121,3 @@ def update_course(db: Session, Form: sch.update_course_schema):
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
-
-"""
-update ,500,{"detail":"InvalidRequestError: ('Entity namespace for \"course_tag\" has no property \"tag_pk_id\"',)"}
-"""

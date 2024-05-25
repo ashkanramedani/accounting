@@ -6,6 +6,7 @@ from typing import Optional, List, Any, Tuple
 from uuid import UUID
 from pydantic import BaseModel, PositiveInt
 
+
 class Sort_Order(str, Enum):
     asc = "asc"
     desc = "desc"
@@ -37,6 +38,7 @@ class export_employee(BaseModel):
     user_pk_id: UUID
     name: str
     last_name: str
+
     # roles: List[export_role] | None
 
     class Config:
@@ -45,10 +47,10 @@ class export_employee(BaseModel):
 
 class export_course(BaseModel):
     course_pk_id: UUID
-    name: str
-    course_time: str | datetime = datetime.now()
-    duration: PositiveInt | Any
-    teachers: List[export_employee]
+    course_name: str
+    starting_date: date
+    ending_date: date
+    course_level: str
 
     class Config:
         orm_mode = True
@@ -62,15 +64,19 @@ class export_student(BaseModel):
     class Config:
         orm_mode = True
 
+
 class export_language(BaseModel):
     language_name: str
+
     # created: export_employee
 
     class Config:
         orm_mode = True
 
+
 class export_course_type(BaseModel):
     course_type_name: str
+
     # created: export_employee
 
     class Config:
@@ -89,7 +95,6 @@ class export_sub_course(BaseModel):
     sub_course_available_seat: int
 
     teacher: export_employee
-    course: export_course
 
     class Config:
         orm_mode = True
@@ -111,7 +116,6 @@ class export_session(BaseModel):
 class export_tag(BaseModel):
     tag_pk_id: UUID
     tag_name: str
-    # created: export_employee
 
     class Config:
         orm_mode = True
@@ -120,14 +124,16 @@ class export_tag(BaseModel):
 class export_categories(BaseModel):
     category_pk_id: UUID
     category_name: str
+
     # created: export_employee
 
     class Config:
         orm_mode = True
 
+
 # Base Entry
 class Base_form(BaseModel):
-    created_fk_by: UUID
+    created_fk_by: UUID = "308e2744-833c-4b94-8e27-44833c2b940f"
     description: str | None = None
     status: int = 0
 
@@ -146,10 +152,13 @@ class Entity(BaseModel):
     id_card_number: Optional[str] = None
     address: Optional[str] = None
 
+
 class Base_response(BaseModel):
     created: export_employee
     description: str | None = None
     status: int = 0
+    priority: int
+
 
 class Update_Relation(BaseModel):
     old_id: UUID | str

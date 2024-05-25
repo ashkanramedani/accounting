@@ -2,7 +2,7 @@ from .Base import *
 # ---------------------- question ----------------------
 class Question(Base_form):
     text: str
-    language: str
+    language: UUID
 
 
 class post_questions_schema(Question):

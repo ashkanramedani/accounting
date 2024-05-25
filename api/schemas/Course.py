@@ -21,8 +21,8 @@ class course(Base_form):
     ending_date: date
     course_capacity: int
 
-    course_language: UUID
-    course_type: UUID
+    course_language: UUID = "7f371975-e397-4fc5-b719-75e3978fc547"
+    course_type: UUID = "7f485938-f59f-401f-8859-38f59f201f3e"
 
     course_code: str
     course_image: str = ""
@@ -92,17 +92,31 @@ class update_session_schema(Session):
     session_pk_id: UUID
 
 
-class session_response(update_session_schema):
-    created: export_employee
+class session_response(Base_response):
+    session_pk_id: UUID
+    course_fk_id: UUID
+
+    is_sub: bool
+    session_date: date
+    session_starting_time: time
+    session_ending_time: time
+    session_duration: int
+    days_of_week: int
+    course: export_course
+    sub_course: export_sub_course
     teacher: export_employee
-    sub_teacher: export_employee | None
 
     class Config:
         orm_mode = True
 
 
-class export_session(session_response):
-    pass
+class export_session(BaseModel):
+    session_pk_id: UUID
+    session_starting_time: time
+    session_ending_time: time
+    session_duration: int
+    days_of_week: int
+    teacher: export_employee
 
     class Config:
         orm_mode = True
@@ -130,7 +144,7 @@ class update_sub_course_schema(SubCourse):
     sub_course_pk_id: UUID
 
 
-class sub_course_response(BaseModel):
+class sub_course_response(Base_response):
     sub_course_pk_id: UUID
     course_fk_id: UUID
     sub_course_teacher_fk_id: UUID
@@ -164,8 +178,9 @@ class update_language_schema(Language):
     language_pk_id: UUID
 
 
-class language_response(update_language_schema):
-    created: export_employee
+class language_response(Base_response):
+    language_name: str
+    language_pk_id: UUID
 
     class Config:
         orm_mode = True
@@ -186,33 +201,12 @@ class update_course_type_schema(Course_Type):
     course_type_pk_id: UUID
 
 
-class course_type_response(update_course_type_schema):
-    created: export_employee
+class course_type_response(Base_response):
+    course_type_name: str
+    course_type_pk_id: UUID
 
     class Config:
         orm_mode = True
 
 
 # ----- Course cancellation
-class course_cancellation(Base_form):
-    course_fk_id: UUID
-    teacher_fk_id: UUID
-    replacement_date: datetime = datetime.now()
-    course_duration: PositiveInt
-    course_location: str
-
-
-class post_course_cancellation_schema(course_cancellation):
-    pass
-
-
-class update_course_cancellation_schema(course_cancellation):
-    course_cancellation_pk_id: UUID
-
-
-class course_cancellation_response(Base_response, update_course_cancellation_schema):
-    teacher: export_employee
-    course: export_course
-
-    class Config:
-        orm_mode = True
