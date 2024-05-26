@@ -15,18 +15,15 @@ Tables = {
     "question": dbm.Question_form,
     "response": dbm.Response_form,
     "business_trip": dbm.Business_Trip_form,
-    "course_cancellation": dbm.Course_Cancellation_form,
     "employee": dbm.User_form,
     "tardy_request": dbm.Teacher_Tardy_report_form,
     "student": dbm.User_form,
-    "teacher_replacement": dbm.Teacher_Replacement_form,
     "course": dbm.Course_form,
     "fingerprint_scanner": dbm.Fingerprint_Scanner_form,
     "payment_method": dbm.Payment_Method_form,
     "leave_forms": dbm.Leave_Request_form,
     "salarypolicy": dbm.Salary_Policy_form
 }
-
 
 def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Update_Relation], categories: List[sch.Update_Relation]):
     Errors = []

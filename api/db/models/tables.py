@@ -359,6 +359,8 @@ class User_form(Base, Base_form):
     Teacher_tardy_reports_Relation = creator_relation("Teacher_Tardy_report_form")
     SalaryPolicy_Relation = creator_relation("Salary_Policy_form")
     Status_Relation = creator_relation("Status_form")
+
+    # User_Relation = relation("User_form")
     # Salary_Relation = creator_relation("Salary_form")
 
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
@@ -372,8 +374,8 @@ class Course_form(Base, InstitutionsBase):
     __tablename__ = "course"
     course_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
-    course_language = create_forenKey("language")
-    course_type = create_forenKey("course_type")
+    course_language = create_forenKey("Language_form")
+    course_type = create_forenKey("Course_Type_form")
 
     course_name = Column(String)
     course_image = Column(String, nullable=True)
@@ -549,41 +551,13 @@ class Teacher_Tardy_report_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
     teacher_fk_id = create_forenKey("User_form")
     course_fk_id = create_forenKey("Course_form")
+    sub_course_fk_id = create_forenKey("Sub_Course_form")
     delay = Column(Integer, nullable=False)
 
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Teacher_tardy_reports_Relation")
     teacher = relationship("User_form", foreign_keys=[teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
-
-
-class Course_Cancellation_form(Base, Base_form):
-    __tablename__ = "course_cancellation"
-    course_cancellation_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
-    teacher_fk_id = create_forenKey("User_form")
-    course_fk_id = create_forenKey("Course_form")
-    course_duration = Column(Integer, nullable=False)
-    course_location = Column(String, nullable=False)
-
-    replacement_date = Column(DateTime, nullable=False)
-
-    # created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="course_Cancellation_Relation")
-    # teacher = relationship("User_form", foreign_keys=[teacher_fk_id])
-    # course = relationship("Course_form", foreign_keys=[course_fk_id])
-    #
-
-class Teacher_Replacement_form(Base, Base_form):
-    __tablename__ = "teacher_replacement"
-    teacher_replacement_pk_id = create_Unique_ID()
-    main_teacher_fk_id = create_forenKey("User_form")
-    sub_teacher_fk_id = create_forenKey("User_form")
-    created_fk_by = create_forenKey("User_form")
-    session_fk_id = create_forenKey("Session_form")
-
-    # created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Teacher_Replacement_Relation")
-    # main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
-    # sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
-    # session = relationship("Course_form", foreign_keys=[session_fk_id])
+    sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
 
 
 class Teachers_Report_form(Base, Base_form):
@@ -662,7 +636,7 @@ class Salary_Policy_form(Base, Base_form):
     Base_salary = Column(Float, nullable=False)
 
     is_Fixed = Column(Boolean, nullable=False, default=False)  # Will Replace by Salary Type
-    Salary_Type = Column(String, nullable=False, default="Fixed")
+    Salary_Type = Column(String, nullable=False, default="Fixed") # Fixed, Hourly, Split
 
     day_starting_time = Column(TIME, nullable=True, default=None)
     day_ending_time = Column(TIME, nullable=True, default=None)

@@ -1,6 +1,6 @@
 from .Employee_Forms import business_trip_route, leave_request_route, remote_request_route
 from .Course import course_route, course_extension_route, sub_course_route, session_route
-from .Teachers_Forms import teacher_replacement_route, tardy_request_route, course_cancellation_route
+from .Teachers_Forms import teacher_replacement_route, course_cancellation_route, tardy_request_route
 
 from .employee import router as employee_route
 from .payment import router as payment_route
@@ -20,34 +20,33 @@ from .post import router as post
 from .library import router as library
 
 routes = [
+    teacher_replacement_route,
     course_cancellation_route,
+    teacher_replacement_route,
     course_route,
     course_extension_route,
     sub_course_route,
     session_route,
-    teacher_replacement_route,
-    # tools_route,
-    # report_route,
-    # roles_route,
-    # business_trip_route,
-    # course_cancellation_route,
-    # leave_request_route,
-    # # question_route,
-    # remote_request_route,
-    # # response_route,
-    # student_route,
-    # # survey_route,
-    # # tardy_request_route,
-    # teacher_replacement_route,
-    # payment_route,
-    # finger_scanner_router,
+    tools_route,
+    report_route,
+    roles_route,
+    business_trip_route,
+    leave_request_route,
+    # question_route,
+    remote_request_route,
+    # response_route,
+    student_route,
+    # survey_route,
+    tardy_request_route,
+    payment_route,
+    finger_scanner_router,
     employee_route,
-    # SalaryPolicy_route,
-    # #
-    # files,
-    # user,
-    # post,
-    # library
+    SalaryPolicy_route,
+    #
+    files,
+    user,
+    post,
+    library
 ]
 
 __all__ = ["routes"]

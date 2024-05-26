@@ -20,11 +20,10 @@ def get_all_tardy_request(db: Session, page: sch.PositiveInt, limit: sch.Positiv
     try:
         return 200, record_order_by(db, dbm.Teacher_Tardy_report_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
+@not_implemented
 def report_tardy_request(db: Session, Form: sch.teacher_report):
     try:
         result = (
@@ -46,9 +45,11 @@ def report_tardy_request(db: Session, Form: sch.teacher_report):
 def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
-            return 400, "Bad Request"
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
+            return 400, "Bad Request: Employee Not Found"
+        if not db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first():
+            return 400, "Bad Request: course not found"
+        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first():
+            return 400, "Bad Request: subcourse not found"
 
         OBJ = dbm.Teacher_Tardy_report_form(**Form.dict())  # type: ignore[call-arg]
 
@@ -57,9 +58,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_tardy_request(db: Session, form_id):
@@ -71,28 +70,24 @@ def delete_tardy_request(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_schema):
     try:
         record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_reports_pk_id, deleted=False)
 
-        if not record.first():
-            return 404, "Record Not Found"
-
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request"
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
+
+        if not db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first():
+            return 400, "Bad Request: course not found"
+        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first():
+            return 400, "Bad Request: subcourse not found"
 
         record.update(Form.dict(), synchronize_session=False)
 
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
