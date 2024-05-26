@@ -318,7 +318,7 @@ def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end
     elif Salary_Policy.Salary_Type == "Split":
         final_result["Days"]: List[dict] = Split_schedule(Salary_Policy, report_dicts)
     elif Salary_Policy.Salary_Type == "Hourly":
-        return "Hourly schedule is not implemented yet"
+        final_result["Days"]: List[dict] = Hourly_schedule(Salary_Policy, report_dicts)
     else:
         return "Invalid Salary Type"
 
