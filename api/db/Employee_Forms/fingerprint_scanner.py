@@ -275,6 +275,7 @@ def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
         Days.append(Day_OBJ)
     return Days
 
+
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, form_id):
     try:
@@ -288,7 +289,7 @@ def get_fingerprint_scanner(db: Session, form_id):
 def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
     try:
 
-        return 200,  record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
+        return 200, record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -312,10 +313,14 @@ def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end
     report_dicts = preprocess_report(report_dicts)
 
     # Split schedule and Fix schedule
-    if Salary_Policy.is_Fixed:
+    if Salary_Policy.Salary_Type == "Fixed":
         final_result["Days"]: List[dict] = Fixed_schedule(Salary_Policy, report_dicts)
-    else:
+    elif Salary_Policy.Salary_Type == "Split":
         final_result["Days"]: List[dict] = Split_schedule(Salary_Policy, report_dicts)
+    elif Salary_Policy.Salary_Type == "Hourly":
+        return "Hourly schedule is not implemented yet"
+    else:
+        return "Invalid Salary Type"
 
     Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
     final_result |= Total_Activity
@@ -442,6 +447,7 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
+
 
 """
 results = (

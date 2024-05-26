@@ -46,10 +46,8 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
             return 400, "Bad Request: Employee Not Found"
-        if not db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first():
-            return 400, "Bad Request: course not found"
-        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first():
-            return 400, "Bad Request: subcourse not found"
+        if not db.query(dbm.Sub_Course_form).filter_by(course_fk_id=Form.course_fk_id, sub_course_pk_id=Form.sub_course_fk_id, sub_course_teacher_fk_id=Form.teacher_fk_id, deleted=False).first():
+            return 400, "Bad Request: subcourse with given course and teacher not found"
 
         OBJ = dbm.Teacher_Tardy_report_form(**Form.dict())  # type: ignore[call-arg]
 

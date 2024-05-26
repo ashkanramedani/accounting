@@ -634,9 +634,7 @@ class Salary_Policy_form(Base, Base_form):
     user_fk_id = create_forenKey("User_form", unique=True)
 
     Base_salary = Column(Float, nullable=False)
-
-    is_Fixed = Column(Boolean, nullable=False, default=False)  # Will Replace by Salary Type
-    Salary_Type = Column(String, nullable=False, default="Fixed") # Fixed, Hourly, Split
+    Salary_Type = Column(String, nullable=False, default="Fixed")  # Fixed, Hourly, Split
 
     day_starting_time = Column(TIME, nullable=True, default=None)
     day_ending_time = Column(TIME, nullable=True, default=None)

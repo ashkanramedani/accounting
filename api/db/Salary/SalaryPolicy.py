@@ -59,9 +59,7 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         if data["undertime_factor"] > 0:
             data["undertime_factor"] *= -1
 
-
-        Salary_Type = ""
-        OBJ = dbm.Salary_Policy_form(is_Fixed=is_Fixed, Salary_Type=Salary_Type, Regular_hours_cap=Working_hour, **data)  # type: ignore[call-arg]
+        OBJ = dbm.Salary_Policy_form(Regular_hours_cap=Working_hour, **data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

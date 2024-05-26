@@ -1,5 +1,13 @@
 from .Base import *
 
+from enum import Enum
+
+
+class salary_type(Enum):
+    Fixed = "Fixed"
+    Split = "Split"
+    Hourly = "Hourly"
+
 
 # ---------------------- Salary_form ----------------------
 class SalaryPolicy(BaseModel):
@@ -8,11 +16,12 @@ class SalaryPolicy(BaseModel):
 
     day_starting_time: time | str | None = None
     day_ending_time: time | str | None = None
+    Regular_hours_cap: int | None = None
+    Salary_Type: salary_type
 
     # finger_print
     Base_salary: float
     Regular_hours_factor: float
-    Regular_hours_cap: int | None = None
 
     overtime_permission: bool
     overtime_factor: float
