@@ -20,11 +20,10 @@ def get_all_survey(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, o
 
 def post_survey(db: Session, Form: sch.post_survey_schema):
     try:
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
+        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first():
+            return 400, "Bad Request: Sub Course not found"
 
         data = Form.dict()
-
         questions: List[UUID] = data.pop("questions") if "questions" in data else []
 
         OBJ = dbm.Survey_form(**data)  # type: ignore[call-arg]
@@ -66,31 +65,14 @@ def update_survey(db: Session, Form: sch.update_survey_schema):
         if not record.first():
             return 404, "Record Not Found"
 
-        if not course_exist(db, Form.course_fk_id):
-            return 400, "Bad Request"
+        if not course_exist(db, Form.sub_course_fk_id):
+            return 400, "Bad Request: Sub Course not found"
 
         data = Form.dict()
         if "questions" not in data:
             return 200, "Form Updated"
 
-        questions = data.pop("questions")
         record.update(data, synchronize_session=False)
-
-        for question_one, question_two in questions:
-            if question_one == question_two:
-                continue
-
-            if question_one:
-                Q_1_OBJ = db.query(dbm.Question_form).filter_by(question_pk_id=questions, deleted=False).first()
-                if not Q_1_OBJ:
-                    return 400, "Bad Request: Question Not Found"
-                Q_1_OBJ.deleted = True
-            if question_two:
-                Q_2_OBJ = db.query(dbm.Question_form).filter_by(question_pk_id=questions, deleted=False).first()
-                if not Q_2_OBJ:
-                    return 400, "Bad Request: Question Not Found"
-                record.first().questions.append(Q_2_OBJ)
-
         db.commit()
         return 200, "Form Updated"
     except Exception as e:

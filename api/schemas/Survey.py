@@ -31,13 +31,12 @@ class export_question(BaseModel):
 # ---------------------- Survey_form ----------------------
 
 class Survey(Base_form):
-    questions: List[UUID]
-    course_fk_id: UUID
+    sub_course_fk_id: UUID
     title: str
 
 
 class post_survey_schema(Survey):
-    pass
+    questions: List[UUID]
 
 
 class update_survey_schema(Survey):
@@ -61,10 +60,14 @@ class export_survey(BaseModel):
 
 
 # ---------------------- response ----------------------
+class QuestionAnswer_pair(BaseModel):
+    survey_fk_id: UUID
+    question_fk_id: UUID
+    answer: str
+
 class Response(Base_form):
     student_fk_id: UUID
-    survey_fk_id: UUID
-    answers: List[Tuple[UUID, str]] = [(uuid.uuid4(), "Answer_1"), (uuid.uuid4(), "Answer_2")]
+    A_Q:  List[QuestionAnswer_pair]
 
 class post_response_schema(Response):
     pass

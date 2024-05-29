@@ -42,16 +42,3 @@ class subcourse_teacher_replacement(BaseModel):
     sub_teacher_fk_id: UUID
 
 
-# ---------------------- course cancellation ----------------------
-class course_cancellation(BaseModel):
-    course_pk_id: UUID
-
-
-class sub_course_cancellation(BaseModel):
-    course_fk_id: UUID
-    sub_course_pk_id: List[UUID]
-
-
-class session_cancellation(BaseModel):
-    sub_course_fk_id: UUID
-    session_pk_id: List[UUID]

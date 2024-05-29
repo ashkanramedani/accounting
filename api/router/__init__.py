@@ -1,17 +1,14 @@
 from .Employee_Forms import business_trip_route, leave_request_route, remote_request_route
 from .Course import course_route, course_extension_route, sub_course_route, session_route
-from .Teachers_Forms import teacher_replacement_route, course_cancellation_route, tardy_request_route
+from .Teachers_Forms import tardy_request_route
+from .Survey_form import question_route, response_route, survey_route
+from .Salary import report_route, SalaryPolicy_route
 
 from .employee import router as employee_route
 from .payment import router as payment_route
-from .question import router as question_route
-from .response import router as response_route
 from .student import router as student_route
-from .survey import router as survey_route
 from .fingerScanner import router as finger_scanner_router
 from .roles import router as roles_route
-from .SalaryPolicy import router as SalaryPolicy_route
-from .salary import router as report_route
 from .tools import router as tools_route
 
 from .files import router as files
@@ -20,9 +17,6 @@ from .post import router as post
 from .library import router as library
 
 routes = [
-    teacher_replacement_route,
-    course_cancellation_route,
-    teacher_replacement_route,
     course_route,
     course_extension_route,
     sub_course_route,

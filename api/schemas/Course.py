@@ -92,6 +92,7 @@ class update_session_schema(Session):
     session_pk_id: UUID
 
 
+
 class session_response(Base_response):
     session_pk_id: UUID
     course_fk_id: UUID
@@ -209,4 +210,4 @@ class course_type_response(Base_response):
         orm_mode = True
 
 
-# ----- Course cancellation
+# ---------------------- course cancellation ---------------------

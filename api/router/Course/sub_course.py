@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
@@ -8,7 +9,7 @@ import db as dbf
 import schemas as sch
 from db.models import get_db
 
-router = APIRouter(prefix='/api/v1/form/sub_course', tags=['course'])
+router = APIRouter(prefix='/api/v1/form/sub_course', tags=['Sub Course'])
 
 
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
@@ -19,7 +20,7 @@ async def add_subcourse(Form: sch.post_sub_course_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])#, response_model=sch.sub_course_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.sub_course_response)
 async def search_subcourse(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_subcourse(db, form_id)
     if status_code != 200:
@@ -27,7 +28,7 @@ async def search_subcourse(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])#, response_model=List[sch.sub_course_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=List[sch.sub_course_response])
 async def search_all_subcourse(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_subcourse(db, page, limit, order)
     if status_code != 200:
@@ -35,9 +36,11 @@ async def search_all_subcourse(db=Depends(get_db), page: sch.PositiveInt = 1, li
     return result
 
 
-@router.delete("/delete/{form_id}") #, dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def delete_subcourse(form_id, db=Depends(get_db)):
-    status_code, result = dbf.delete_subcourse(db, form_id)
+@router.delete("/delete/{sub_course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def delete_subcourse(sub_course_id: UUID, course_id: UUID = None, db=Depends(get_db)):
+    if not course_id:
+        raise HTTPException(status_code=400, detail="Course Not Provided")
+    status_code, result = dbf.delete_subcourse(db, course_id, sub_course_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -50,3 +53,10 @@ async def update_subcourse(Form: sch.update_sub_course_schema, db=Depends(get_db
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
+@router.post("/teacher_replacement", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def subcourse_teacher_replacement(Form: sch.subcourse_teacher_replacement, db=Depends(get_db)):
+    status_code, result = dbf.sub_course_teacher_replacement(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result

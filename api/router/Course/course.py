@@ -36,9 +36,9 @@ async def search_all_course(db=Depends(get_db), page: sch.PositiveInt = 1, limit
     return result
 
 
-@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def delete_course(form_id, db=Depends(get_db)):
-    status_code, result = dbf.delete_course(db, form_id)
+@router.delete("/delete/{course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def delete_course(course_id, db=Depends(get_db)):
+    status_code, result = dbf.delete_course(db, course_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

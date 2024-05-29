@@ -7,11 +7,11 @@ from sqlalchemy.sql import expression, func
 
 from .database import Base
 
-
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 metadata_obj = MetaData()
+
 
 class BaseTable:
     priority = Column(Integer, default=5, nullable=True)
@@ -259,6 +259,7 @@ class Libraries(Base):
     def __repr__(self):
         return f'<Library "{self.library_pk_id}">'
 
+
 # Base
 class BaseTable:
     priority = Column(Integer, default=5, nullable=True)
@@ -282,7 +283,6 @@ class Base_form(BaseTable):
 
 class InstitutionsBase(Base_form):
     pass
-
 
 
 # +++++++++++++++++++++++ association +++++++++++++++++++++++++++
@@ -334,9 +334,9 @@ class User_form(Base, Base_form):
     id_card_number = Column(String, nullable=True)
     address = Column(String(5000), default=None)
 
-    is_employee = Column(Boolean, default=True, nullable=False)
-
     fingerprint_scanner_user_id = Column(String, nullable=True, unique=True)
+
+    is_employee = Column(Boolean, default=True, nullable=False)
     level = Column(String, index=True, nullable=True)
 
     Tag_Relation = creator_relation("Tag_form")
@@ -364,7 +364,7 @@ class User_form(Base, Base_form):
     # Salary_Relation = creator_relation("Salary_form")
 
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
-    created = relationship("User_form", foreign_keys=[created_fk_by])#, back_populates="User_Relation")
+    created = relationship("User_form", foreign_keys=[created_fk_by])  # , back_populates="User_Relation")
 
     __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name"),)
 
@@ -426,6 +426,7 @@ class Session_form(Base, InstitutionsBase):
     session_teacher_fk_id = create_forenKey("User_form")
 
     is_sub = Column(Boolean, nullable=False, default=False)
+    canceled = Column(Boolean, nullable=False, default=False)
     session_date = Column(Date, nullable=False)
     session_starting_time = Column(Time, nullable=False)
     session_ending_time = Column(Time, nullable=False)
@@ -506,8 +507,6 @@ class Payment_Method_form(Base, Base_form):
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
 
-
-
 class Fingerprint_Scanner_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner"
     fingerprint_scanner_pk_id = create_Unique_ID()
@@ -580,12 +579,12 @@ class Teachers_Report_form(Base, Base_form):
 class Survey_form(Base, Base_form):
     __tablename__ = "survey"
     survey_pk_id = create_Unique_ID()
-    course_fk_id = create_forenKey("Course_form")
+    sub_course_fk_id = create_forenKey("Sub_Course_form")
     created_fk_by = create_forenKey("User_form")
     title = Column(String, index=True)
 
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Survey_Relation")
-    course = relationship("Course_form", foreign_keys=[course_fk_id])
+    sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
     questions = relationship('Question_form', secondary=survey_questions, backref='surveys')
 
 
@@ -602,12 +601,12 @@ class Question_form(Base, InstitutionsBase):
 class Response_form(Base, Base_form):
     __tablename__ = "response"
     response_pk_id = create_Unique_ID()
-    student_fk_id = create_forenKey("user_form")
-    question_fk_id = create_forenKey("question")
-    survey_fk_id = create_forenKey("survey")
+    student_fk_id = create_forenKey("User_form")
+    question_fk_id = create_forenKey("Question_form")
+    survey_fk_id = create_forenKey("Survey_form")
     answer = Column(String, nullable=False)
 
-    # student = relationship("User_form", foreign_keys=[student_fk_id])
+    student = relationship("User_form", foreign_keys=[student_fk_id])
     question = relationship("Question_form", foreign_keys=[question_fk_id])
     survey = relationship("Survey_form", foreign_keys=[survey_fk_id])
 
@@ -682,6 +681,7 @@ class Salary_Policy_form(Base, Base_form):
                 if invalid_key in key:
                     return False
             return True
+
         return {k: str(v) for k, v in self.__dict__.items() if Validate(k)}
 
 
@@ -701,7 +701,6 @@ class Salary_form(Base, Base_form):
     Undertime_earning = Column(Float, nullable=False)
     Off_Day_earning = Column(Float, nullable=False)
 
-
     remote = Column(Integer, nullable=False)
     remote_earning = Column(Float, nullable=False)
     vacation_leave = Column(Integer, nullable=False)
@@ -716,9 +715,6 @@ class Salary_form(Base, Base_form):
     Days = Column(JSON, nullable=False)
 
     # created = relationship("User_form", foreign_keys=[user_fk_id], back_populates="SalaryPolicy_Relation")
-
-
-
 
 
 # ------------ Necessary for "Course" ------------
@@ -762,6 +758,7 @@ class Course_Type_form(Base, Base_form):
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="course_type_Relation")
 
 
+# Status of the form will be use in V0.2.0.0 and after
 class Status_form(Base, Base_form):
     __tablename__ = "status"
 

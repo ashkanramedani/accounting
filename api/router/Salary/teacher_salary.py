@@ -1,8 +1,7 @@
 from typing import List
-
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
+from enum import Enum
 
 import db as dbf
 import schemas as sch
@@ -17,7 +16,6 @@ Base_salary = {
     "13": {"in_person": 77, "online": 66, "hybrid": 0},
 }
 
-from enum import Enum
 
 
 class course_type_schema(Enum):

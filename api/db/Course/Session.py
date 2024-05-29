@@ -12,6 +12,11 @@ from lib.Date_Time import *
 from datetime import timedelta, datetime
 
 
+def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:
+    return [session.session_pk_id for session in db.query(dbm.Session_form).filter_by(sub_course_fk_id=SubCourse, deleted=False
+                                                                                      ).all()]
+
+
 # ------ Session -------
 def get_session(db: Session, session_id):
     try:
@@ -59,18 +64,44 @@ def post_session(db: Session, Form: sch.post_session_schema):
         return Return_Exception(db, e)
 
 
-def delete_session(db: Session, course_id):
+def delete_session(db: Session, sub_course: UUID, session: List[UUID]):
     try:
-        record = db.query(dbm.Session_form).filter_by(session_pk_id=course_id, deleted=False).first()
-        if not record:
-            return 400, "Record Not Found"
-        record.deleted = True
+        warnings = []
+        sessions_to_cancel = []
+        Existing_Subcourse_Session = get_subCourse_active_session(db, sub_course)
+
+        for session_id in session:
+            if session_id not in Existing_Subcourse_Session:
+                warnings.append(f'{session_id} is not found.')
+                continue
+            sessions_to_cancel.append(session_id)
+
+        for session in db.query(dbm.Session_form).filter(dbm.Session_form.session_pk_id.in_(sessions_to_cancel), dbm.Session_form.deleted == False).all():
+            session.deleted = True
         db.commit()
-        return 200, "Deleted"
+        return 200, f"Session deleted successfully. {' | '.join(warnings)}"
     except Exception as e:
-        db.rollback()
-        logger.error(e)
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
+
+
+def cancel_session(db: Session, sub_course: UUID, session: List[UUID]):
+    try:
+        warnings = []
+        sessions_to_cancel = []
+        Existing_Subcourse_Session = get_subCourse_active_session(db, sub_course)
+
+        for session_id in session:
+            if session_id not in Existing_Subcourse_Session:
+                warnings.append(f'{session_id} is not found.')
+                continue
+            sessions_to_cancel.append(session_id)
+
+        for session in db.query(dbm.Session_form).filter(dbm.Session_form.session_pk_id.in_(sessions_to_cancel), dbm.Session_form.deleted == False, dbm.Session_form.canceled == False).all():
+            session.canceled = True
+        db.commit()
+        return 200, f"Session cancelled successfully. {' | '.join(warnings)}"
+    except Exception as e:
+        return Return_Exception(db, e)
 
 
 def update_session(db: Session, Form: sch.update_session_schema):
@@ -80,10 +111,7 @@ def update_session(db: Session, Form: sch.update_session_schema):
             return 400, "Record Not Found"
 
         record.update(Form.dict(), synchronize_session=False)
-
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)

@@ -16,6 +16,7 @@ from lib import *
 
 from ..Extra import *
 
+Day_Schema: dict
 
 def calculate_duration(time_1: time | None, time_2: time | None):
     if time_1 is None or time_2 is None or time_1 == time_2:
@@ -116,6 +117,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
     :return: List[{
                     Date: str
                     Holiday: bool
+                    Accrued_Holiday: bool
                     present_time: int
                     Regular_hours: int
                     Overtime: int
@@ -192,6 +194,7 @@ def Split_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
     :return: List[{
                     Date: str
                     Holiday: bool
+                    Accrued_Holiday: bool
                     present_time: int
                     Regular_hours: int
                     Overtime: int
@@ -240,6 +243,7 @@ def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
     :return: List[{
                     Date: str
                     Holiday: bool
+                    Accrued_Holiday: bool
                     present_time: int
                     Regular_hours: int
                     Overtime: int

@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
@@ -8,7 +9,7 @@ import db as dbf
 import schemas as sch
 from db.models import get_db
 
-router = APIRouter(prefix='/api/v1/form/session', tags=['course'])
+router = APIRouter(prefix='/api/v1/form/session', tags=['Sessions'])
 
 
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
@@ -35,9 +36,11 @@ async def search_all_session(db=Depends(get_db), page: sch.PositiveInt = 1, limi
     return result
 
 
-@router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def delete_session(form_id, db=Depends(get_db)):
-    status_code, result = dbf.delete_session(db, form_id)
+@router.delete("/delete/{session_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def delete_session(session_id: UUID, sub_course_id: UUID = None, db=Depends(get_db)):
+    if not sub_course_id:
+        raise HTTPException(status_code=400, detail="subCourse Not Provided")
+    status_code, result = dbf.delete_session(db, sub_course_id, [session_id])
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -50,3 +53,9 @@ async def update_session(Form: sch.update_session_schema, db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+@router.post("/teacher_replacement", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def session_teacher_replacement(Form: sch.session_teacher_replacement, db=Depends(get_db)):
+    status_code, result = dbf.session_teacher_replacement(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result

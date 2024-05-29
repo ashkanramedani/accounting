@@ -58,7 +58,7 @@ def delete_role(db: Session, role_id):
     try:
         record = db.query(dbm.Role_form).filter_by(role_pk_id=role_id, deleted=False).first()
         if not record:
-            return 404, "Record Not Found"
+            return 400, "Role Record Not Found"
         if record.name == "Administrator":
             return 400, "Administrator role cant be deleted"
         record.deleted = True
@@ -66,7 +66,6 @@ def delete_role(db: Session, role_id):
         return 200, "Deleted"
     except Exception as e:
         return Return_Exception(db, e)
-
 
 
 def update_role(db: Session, Form: sch.update_role_schema):

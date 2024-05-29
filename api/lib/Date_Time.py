@@ -293,6 +293,10 @@ def to_international(year, month, day, return_obj=True) -> tuple | date:
 
 
 def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
+    """
+    this function takes a year and month and returns two date object representing the start and end of the month
+
+    """
     end_year = year + 1 if month == 12 else year
     end_month = 1 if month == 12 else month + 1
 

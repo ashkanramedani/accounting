@@ -7,6 +7,16 @@ import db.models as dbm
 import schemas as sch
 from lib import logger
 from ..Extra import *
+from .sub_course import delete_subcourse
+
+
+def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:
+    return [session.session_pk_id for session in db.query(dbm.Session_form).filter_by(sub_course_fk_id=SubCourse, deleted=False).all()]
+
+
+def get_Course_active_subcourse(db: Session, Course: UUID) -> List[UUID]:
+    return [subcourse.sub_course_pk_id for subcourse in db.query(dbm.Sub_Course_form).filter_by(course_fk_id=Course, deleted=False).all()]
+
 
 def get_course(db: Session, course_id):
     try:
@@ -86,16 +96,21 @@ def post_course(db: Session, Form: sch.post_course_schema):
 
 def delete_course(db: Session, course_id):
     try:
-        record = db.query(dbm.Course_form).filter_by(course_pk_id=course_id, deleted=False).first()
-        if not record:
-            return 404, "Record Not Found"
-        record.deleted = True
+
+        Course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id, deleted=False).first()
+        if not Course:
+            return 400, "Course Not Found"
+
+        warnings = []
+        status, message = delete_subcourse(db, sch.delete_sub_course(course_fk_id=course_id, sub_course_pk_id=get_Course_active_subcourse(db, course_id)))  # ignore type[call-arg]
+        if status != 200:
+            return status, message
+        Course.deleted = True
         db.commit()
-        return 200, "Deleted"
+        return 200, f"Course cancelled successfully. {' | '.join(warnings)} ... {message}"
+
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_course(db: Session, Form: sch.update_course_schema):

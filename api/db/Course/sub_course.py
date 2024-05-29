@@ -1,4 +1,6 @@
 import json
+from typing import List
+from uuid import UUID
 
 from sqlalchemy.orm import Session
 
@@ -9,6 +11,16 @@ from lib import logger, JSONEncoder
 from ..Extra import *
 from lib.Date_Time import *
 from datetime import timedelta, datetime
+
+from .Session import delete_session
+
+
+def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:
+    return [session.session_pk_id for session in db.query(dbm.Session_form).filter_by(sub_course_fk_id=SubCourse, deleted=False).all()]
+
+
+def get_Course_active_subcourse(db: Session, Course: UUID) -> List[UUID]:
+    return [subcourse.sub_course_pk_id for subcourse in db.query(dbm.Sub_Course_form).filter_by(course_fk_id=Course, deleted=False).all()]
 
 
 # ------ sub course -------
@@ -95,18 +107,31 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def delete_subcourse(db: Session, course_id):
+def delete_subcourse(db: Session, course_id, sub_course_id):
     try:
-        record = db.query(dbm.Course_form).filter_by(course_pk_id=course_id, deleted=False).first()
-        if not record:
-            return 400, "Record Not Found"
-        record.deleted = True
+        warnings = []
+        message = ''
+        Sub_course_to_cancel = []
+        Existing_Course_Subcourse = get_Course_active_subcourse(db, course_id)
+
+        for sub_course_id in sub_course_id:
+            if sub_course_id not in Existing_Course_Subcourse:
+                warnings.append(f'{sub_course_id} is not found.')
+                continue
+            Sub_course_to_cancel.append(sub_course_id)
+
+        for sub_Course in db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.sub_course_pk_id.in_(Sub_course_to_cancel), dbm.Sub_Course_form.deleted == False).all():
+            logger.warning(get_subCourse_active_session(db, sub_Course.sub_course_pk_id))
+            status, message = delete_session(db, sub_course_id, get_subCourse_active_session(db, sub_Course.sub_course_pk_id))  # ignore type[call-arg]
+            if status != 200:
+                return status, message
+            sub_Course.deleted = True
+
         db.commit()
-        return 200, "Deleted"
+        return 200, f"Sub Course cancelled successfully. {' | '.join(warnings)} ... {message}"
+
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_subcourse(db: Session, Form: sch.update_sub_course_schema):

@@ -44,7 +44,7 @@ __all__ = [
     "post_role",
     "delete_role",
     "update_role",
-    # question.py
+    # survey_question_bank.py
     "get_question",
     "get_all_question",
     "post_question",
@@ -78,23 +78,12 @@ __all__ = [
     # teacher_replacement.py
     "session_teacher_replacement",
     "sub_course_teacher_replacement",
-    # "get_teacher_replacement",
-    # "get_all_teacher_replacement",
-    # "post_teacher_replacement",
-    # "delete_teacher_replacement",
-    # "update_teacher_replacement",
     # business_trip.py
     "get_business_trip_form",
     "get_all_business_trip_form",
     "post_business_trip_form",
     "delete_business_trip_form",
     "update_business_trip_form",
-    # course_cancellation.py
-    "get_course_cancellation_form",
-    "get_all_course_cancellation_form",
-    "post_course_cancellation_form",
-    "delete_course_cancellation_form",
-    "update_course_cancellation_form",
     # remote_request.py
     "get_remote_request_form",
     "get_all_remote_request_form",
@@ -115,7 +104,7 @@ __all__ = [
     "delete_survey",
     "update_survey",
     # "update_survey_question",
-    # response.py
+    # survey_response.py
     "get_response",
     "get_all_response",
     "post_response",

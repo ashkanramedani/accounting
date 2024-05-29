@@ -93,3 +93,4 @@ async def count(field: str, db=Depends(get_db)):
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
