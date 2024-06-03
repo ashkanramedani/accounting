@@ -66,7 +66,7 @@ class QuestionAnswer_pair(BaseModel):
     answer: str
 
 class Response(Base_form):
-    student_fk_id: UUID
+    user_fk_id: UUID
     A_Q:  List[QuestionAnswer_pair]
 
 class post_response_schema(Response):
@@ -75,7 +75,7 @@ class post_response_schema(Response):
 
 class update_response_schema(Base_form):
     response_pk_id: UUID
-    student_fk_id: UUID
+    user_fk_id: UUID
     survey_fk_id: UUID
     question: UUID
     answer: str

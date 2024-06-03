@@ -57,7 +57,7 @@ class export_course(BaseModel):
 
 
 class export_student(BaseModel):
-    student_pk_id: UUID
+    user_pk_id: UUID
     name: str
     last_name: str
 

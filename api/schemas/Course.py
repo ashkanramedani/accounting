@@ -92,7 +92,6 @@ class update_session_schema(Session):
     session_pk_id: UUID
 
 
-
 class session_response(Base_response):
     session_pk_id: UUID
     course_fk_id: UUID
@@ -143,6 +142,11 @@ class post_sub_course_schema(SubCourse):
 
 class update_sub_course_schema(SubCourse):
     sub_course_pk_id: UUID
+
+
+class delete_sub_course_schema(Base_form):
+    course_fk_id: UUID
+    sub_course_pk_id: List[UUID]
 
 
 class sub_course_response(Base_response):
@@ -208,6 +212,5 @@ class course_type_response(Base_response):
 
     class Config:
         orm_mode = True
-
 
 # ---------------------- course cancellation ---------------------

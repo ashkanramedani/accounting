@@ -23,16 +23,6 @@ async def add_fingerprint_scanner(Form: sch.post_fingerprint_scanner_schema, db=
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
-
-def DECODER(content: bytes) -> str | None:
-    try:
-        return content.decode("utf-16-le")  # Decode with UTF-16LE encoding
-    except UnicodeDecodeError:
-        return content.decode("utf-8")  # Decode with UTF-8 encoding
-    except Exception as e:
-        return None
-
-
 async def LoadFile(file: UploadFile):
     filename = file.filename
     content = await file.read()

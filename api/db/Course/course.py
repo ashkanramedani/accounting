@@ -102,7 +102,7 @@ def delete_course(db: Session, course_id):
             return 400, "Course Not Found"
 
         warnings = []
-        status, message = delete_subcourse(db, sch.delete_sub_course(course_fk_id=course_id, sub_course_pk_id=get_Course_active_subcourse(db, course_id)))  # ignore type[call-arg]
+        status, message = delete_subcourse(db, course_id, sch.delete_sub_course_schema(course_fk_id=course_id, sub_course_pk_id=get_Course_active_subcourse(db, course_id)))  # ignore type[call-arg]
         if status != 200:
             return status, message
         Course.deleted = True

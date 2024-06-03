@@ -1,5 +1,5 @@
 from typing import Tuple, Dict
-
+from datetime import time
 from lib import logger, Fix_datetime, same_month, Separate_days_by_DayCap, is_off_day
 
 from sqlalchemy.orm import Session

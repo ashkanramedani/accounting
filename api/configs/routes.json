@@ -1,4 +1,21 @@
 {
+    "Sub Request": {
+        "POST": [
+            "http://localhost:5001/api/v1/form/sub_request/add"
+        ],
+        "GET": [
+            "http://localhost:5001/api/v1/form/sub_request/search/<UUID>",
+            "http://localhost:5001/api/v1/form/sub_request/search"
+        ],
+        "DELETE": [
+            "http://localhost:5001/api/v1/form/sub_request/delete/<UUID>"
+        ],
+        "PUT": [
+            "http://localhost:5001/api/v1/form/sub_request/update",
+            "http://localhost:5001/api/v1/form/sub_request/updates",
+            "http://localhost:5001/api/v1/form/sub_request/verify"
+        ]
+    },
     "course": {
         "POST": [
             "http://localhost:5001/api/v1/form/course/add"
@@ -62,8 +79,7 @@
     },
     "Sessions": {
         "POST": [
-            "http://localhost:5001/api/v1/form/session/add",
-            "http://localhost:5001/api/v1/form/session/teacher_replacement"
+            "http://localhost:5001/api/v1/form/session/add"
         ],
         "GET": [
             "http://localhost:5001/api/v1/form/session/search/<UUID>",
@@ -180,7 +196,8 @@
             "http://localhost:5001/api/v1/form/tardy_request/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/tardy_request/update"
+            "http://localhost:5001/api/v1/form/tardy_request/update",
+            "http://localhost:5001/api/v1/form/tardy_request/updates"
         ]
     },
     "payment_method": {

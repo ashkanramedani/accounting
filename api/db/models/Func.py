@@ -24,7 +24,7 @@ def create_forenKey(table: str, unique: bool = False, index: bool = False, nulla
 
 Modes_relation = {
     "created": "created_fk_by",
-    "student": "student_fk_id"
+    "student": "user_fk_id"
 }
 
 

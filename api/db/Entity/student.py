@@ -3,13 +3,13 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from .Extra import *
+from ..Extra import *
 
 
 # Student
 def get_student(db: Session, student_id):
     try:
-        return 200, db.query(dbm.User_form).filter_by(student_pk_id=student_id, deleted=False, is_employee=False).first()
+        return 200, db.query(dbm.User_form).filter_by(user_pk_id=student_id, deleted=False, is_employee=False).first()
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -35,7 +35,7 @@ def post_student(db: Session, Form: sch.post_student_schema):
 
 def delete_student(db: Session, student_id):
     try:
-        record = db.query(dbm.User_form).filter_by(student_pk_id=student_id, deleted=False).first()
+        record = db.query(dbm.User_form).filter_by(user_pk_id=student_id, deleted=False).first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -47,7 +47,7 @@ def delete_student(db: Session, student_id):
 
 def update_student(db: Session, Form: sch.update_student_schema):
     try:
-        record = db.query(dbm.User_form).filter(dbm.User_form.student_pk_id == Form.student_pk_id)
+        record = db.query(dbm.User_form).filter(dbm.User_form.user_pk_id == Form.user_pk_id)
         if not record.first():
             return 404, "Record Not Found"
 

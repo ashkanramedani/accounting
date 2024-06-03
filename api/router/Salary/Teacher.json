@@ -1,7 +1,7 @@
 {   
     "From_DataBase": {
         "Course_Cancellation": {
-            "None": 11,
+            "0": 11,
             "1": -5.5,
             "2": -7.5,
             "3": -16.5

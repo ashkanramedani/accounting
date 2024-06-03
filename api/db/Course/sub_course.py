@@ -48,11 +48,8 @@ def get_all_subcourse(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt
 
 def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
     try:
-        if not employee_exist(db, [Form.created_fk_by]):
+        if not employee_exist(db, [Form.created_fk_by, Form.sub_course_teacher_fk_id]):
             return 400, "Bad Request: employee not found"
-
-        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.sub_course_teacher_fk_id, deleted=False).first():
-            return 400, "Bad Request: teacher not found"
 
         course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first()
         if not course:
@@ -107,7 +104,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def delete_subcourse(db: Session, course_id, sub_course_id):
+def delete_subcourse(db: Session, course_id, sub_course_id: sch.delete_sub_course_schema):
     try:
         warnings = []
         message = ''

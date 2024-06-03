@@ -7,17 +7,16 @@ from fastapi_limiter.depends import RateLimiter
 import db as dbf
 import schemas as sch
 from db.models import get_db
+from ..Routes_Lib import create_Response
 
-router = APIRouter(prefix='/api/v1/form/tardy_request', tags=['Tardy Request'])
+router = APIRouter(prefix='/api/v1/form/reassign_instructor', tags=['Reassign Instructor'])
 
 
 # tardy request
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def add_tardy_request(Form: sch.post_teacher_tardy_reports_schema, db=Depends(get_db)):
+async def add_tardy_request(Form: sch.post_te, db=Depends(get_db)):
     status_code, result = dbf.post_tardy_request(db, Form)
-    if status_code != 200:
-        raise HTTPException(status_code=status_code, detail=result)
-    return result
+    return create_Response(status_code, result)
 
 
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.teacher_tardy_reports_response)

@@ -26,7 +26,7 @@ def get_all_response(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 
 def post_response(db: Session, Form: sch.post_response_schema):
     try:
-        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.student_fk_id, deleted=False).first():
+        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.user_fk_id, deleted=False).first():
             return 400, "Bad Request: Student not found"
 
         if not db.query(dbm.Survey_form).filter_by(survey_pk_id=Form.survey_fk_id, deleted=False).first():
@@ -40,7 +40,7 @@ def post_response(db: Session, Form: sch.post_response_schema):
         for Q, A in question_answer_pair:
             if Q not in all_questions:
                 return 400, "Bad Request: Question not found"
-            Responses.append(dbm.Response_form(student_fk_id=student_fk_id, question_fk_id=question_fk_id, survey_fk_id=survey_fk_id, answer=answer))  # type: ignore[call-arg]
+            Responses.append(dbm.Response_form(user_fk_id=user_fk_id, question_fk_id=question_fk_id, survey_fk_id=survey_fk_id, answer=answer))  # type: ignore[call-arg]
 
         db.add_all(Responses)
         db.commit()
@@ -67,7 +67,7 @@ def update_response(db: Session, Form: sch.update_response_schema):
         if not record.first():
             return 400, "Bad request: Record not found"
 
-        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.student_fk_id, deleted=False).first():
+        if not db.query(dbm.User_form).filter_by(user_pk_id=Form.user_fk_id, deleted=False).first():
             return 400, "Bad Request: Student not found"
 
         if not db.query(dbm.Survey_form).filter_by(survey_pk_id=Form.survey_fk_id, deleted=False).first():

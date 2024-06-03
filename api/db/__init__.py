@@ -1,13 +1,14 @@
 from .Course import *
 from .Employee_Forms import *
 from .Teacher_Forms import *
+from .Entity import *
+
+from .Teacher_Forms import Sub_Request
 
 from .Roles import *
 from .Salary import *
 from .Survey_form import *
-from .employee import *
 from .payment import *
-from .student import *
 
 from .db_library import *
 from .db_post import *
@@ -19,6 +20,7 @@ from .models import setUp_admin
 __all__ = [
     "setUp_admin",
     "count",
+    'tardy_request',
     # Tag_category.py
     "get_tag",
     "get_all_tag",
@@ -75,9 +77,9 @@ __all__ = [
     "post_tardy_request",
     "delete_tardy_request",
     "update_tardy_request",
-    # teacher_replacement.py
-    "session_teacher_replacement",
-    "sub_course_teacher_replacement",
+    # Sub_Request.py
+    # "session_teacher_replacement",
+    # "sub_course_teacher_replacement",
     # business_trip.py
     "get_business_trip_form",
     "get_all_business_trip_form",

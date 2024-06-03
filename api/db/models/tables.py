@@ -348,6 +348,7 @@ class User_form(Base, Base_form):
     Session_Relation = creator_relation("Session_form")
     Roles_Relation = creator_relation("Role_form")
     # User_Relation = relation("User_form")
+    sub_request_Relation = creator_relation("Sub_Request_form")
     Survey_Relation = creator_relation("Survey_form")
     Questions_Relation = creator_relation("Question_form")
     Business_Trip_Relation = creator_relation("Business_Trip_form")
@@ -366,7 +367,7 @@ class User_form(Base, Base_form):
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
     created = relationship("User_form", foreign_keys=[created_fk_by])  # , back_populates="User_Relation")
 
-    __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name"),)
+    __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name", "is_employee"),)
 
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
@@ -601,12 +602,12 @@ class Question_form(Base, InstitutionsBase):
 class Response_form(Base, Base_form):
     __tablename__ = "response"
     response_pk_id = create_Unique_ID()
-    student_fk_id = create_forenKey("User_form")
+    user_fk_id = create_forenKey("User_form")
     question_fk_id = create_forenKey("Question_form")
     survey_fk_id = create_forenKey("Survey_form")
     answer = Column(String, nullable=False)
 
-    student = relationship("User_form", foreign_keys=[student_fk_id])
+    student = relationship("User_form", foreign_keys=[user_fk_id])
     question = relationship("Question_form", foreign_keys=[question_fk_id])
     survey = relationship("Survey_form", foreign_keys=[survey_fk_id])
 
@@ -767,3 +768,41 @@ class Status_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Status_Relation")
+
+
+"""
+class session_teacher_replacement(BaseModel):
+    sub_course_fk_id: UUID
+    sessions: List[UUID]
+    sub_teacher_fk_id: UUID
+"""
+
+
+class Sub_Request_form(Base, Base_form):
+    __tablename__ = "sub_request"
+
+    sub_request_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("User_form")
+    session_fk_id = create_forenKey("Session_form")
+    main_teacher_fk_id = create_forenKey("User_form")
+    sub_teacher_fk_id = create_forenKey("User_form")
+
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="sub_request_Relation")
+    sessions = relationship("Session_form", foreign_keys=[session_fk_id])
+    main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
+    sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
+
+# class Reassign_Instructor_form(Base, Base_form):
+#     __tablename__ = "reassign_instructor"
+#
+#     reassign_instructor_pk_id = create_Unique_ID()
+#     created_fk_by = create_forenKey("User_form")
+#     sessions_fk_id = create_forenKey("Session_form")
+#     main_teacher_fk_id = create_forenKey("User_form")
+#     sub_teacher_fk_id = create_forenKey("User_form")
+#
+#     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="sub_request_Relation")
+#     sessions = relationship("Session_form", foreign_keys=[sessions_fk_id])
+#     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
+#     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
+

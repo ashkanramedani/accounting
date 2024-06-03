@@ -18,7 +18,7 @@ async def add_SalaryPolicy(Form: sch.post_SalaryPolicy_schema, db=Depends(get_db
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.SalaryPolicy_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.SalaryPolicy_response)
 async def search_SalaryPolicy(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_SalaryPolicy(db, form_id)
     if status_code != 200:
