@@ -41,9 +41,16 @@ def get_course(db: Session, course_id):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_course(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_course(db: Session, course_type: str | None, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        courses = record_order_by(db, dbm.Course_form, page, limit, order)
+        if course_type:
+            Course_type = db.query(dbm.Course_Type_form.course_type_pk_id).filter_by(course_type_name=course_type).first()
+            if Course_type:
+                courses = record_order_by(db, dbm.Course_form, page, limit, order, course_type=Course_type[0])
+            else:
+                courses = []
+        else:
+            courses = record_order_by(db, dbm.Course_form, page, limit, order)
         if not courses:
             return 200, []
         Courses = []

@@ -6,6 +6,7 @@ class Role(Base_form):
     cluster: str
 
 
+
 class post_role_schema(Role):
     pass
 

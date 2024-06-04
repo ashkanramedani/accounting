@@ -52,8 +52,6 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
             if Fix_time(data["day_ending_time"]) < Fix_time(data["day_starting_time"]):
                 return 400, "Bad Request: End Date must be greater than Start Date"
 
-        is_Fixed = True if data["day_starting_time"] and data["day_ending_time"] else False
-        Working_hour = time_gap(data["day_starting_time"], data["day_ending_time"]) if is_Fixed else data["Regular_hours_cap"]
         del data["Regular_hours_cap"]
 
         if data["undertime_factor"] > 0:

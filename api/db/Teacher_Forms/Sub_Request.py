@@ -138,11 +138,6 @@ def update_sub_request(db: Session, Form: sch.update_Sub_request_schema):
         return Return_Exception(db, e)
 
 
-def apply_changes(db: Session, record: dbm.Sub_Request_form):
-    session = record.session_fk_id
-
-
-
 def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema):
     try:
         Warn = []
@@ -163,7 +158,6 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema):
             record.status = 1
             verified += 1
 
-
         db.add_all(new_Record)
         db.commit()
         if Warn:
@@ -171,9 +165,3 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema):
         return 200, f"{len(records)} Form Verified."
     except Exception as e:
         return Return_Exception(db, e)
-
-"""
-[(UUID('f60ba3e2-7e48-401e-b7f8-879b17e56374'), UUID('308e2744-833c-4b94-8e27-44833c2b940f')), (UUID('6b212109-9e91-4e5c-993b-6c956692891b'), UUID('308e2744-833c-4b94-8e27-44833c2b940f')), (UUID('7b5a3d8a-4870-4cec-83ed-e0a8ce8fd439'), UUID('308e2744-833c-4b94-8e27-44833c2b940f')), (UUID('28edfba5-c619-4b23-8a6e-62ac09980f29'), UUID('308e2744-833c-4b94-8e27-44833c2b940f')), (UUID('318b5a4c-b422-4bc7-9142-38ccdaa59efb'), UUID('308e2744-833c-4b94-8e27-44833c2b940f'))]
-(UUID('3fa85f64-5717-4562-b3fc-2c963f66afa6'), UUID('f60ba3e2-7e48-401e-b7f8-879b17e56374'))
-
-"""
