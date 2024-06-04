@@ -1,6 +1,34 @@
 {   
     "From_DataBase": {
-        "Course_Cancellation": {
+        "Base_salary": {
+            "1-5": {
+                "in_person": 77,
+                "online": 66,
+                "hybrid": 0
+            },
+            "6-9": {
+                "in_person": 77,
+                "online": 66,
+                "hybrid": 0
+            },
+            "10-12": {
+                "in_person": 77,
+                "online": 66,
+                "hybrid": 0
+            },
+            "13": {
+                "in_person": 77,
+                "online": 66,
+                "hybrid": 0
+            }
+        },
+        "course_level": {
+            "connect": 11,
+            "FCE": 22,
+            "CAE": 44,
+            "CPE": 66
+        },
+        "Cancelled_Sessions": {
             "0": 11,
             "1": -5.5,
             "2": -7.5,
@@ -27,34 +55,6 @@
             "supervisor": 55,
             "master_Supervisor": 5.5,
             "director_of_education": 5.5
-        },
-        "course_level": {
-            "connect": 11,
-            "FCE": 22,
-            "CAE": 44,
-            "CPE": 66
-        },
-        "Base_salary": {
-            "1-5": {
-                "in_person": 77,
-                "online": 66,
-                "hybrid": 0
-            },
-            "6-9": {
-                "in_person": 77,
-                "online": 66,
-                "hybrid": 0
-            },
-            "10-12": {
-                "in_person": 77,
-                "online": 66,
-                "hybrid": 0
-            },
-            "13": {
-                "in_person": 77,
-                "online": 66,
-                "hybrid": 0
-            }
         }
     },
     "From_dropDown": {
