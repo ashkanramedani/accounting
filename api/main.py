@@ -26,7 +26,7 @@ try:
     from router import routes
     from lib.log import logger
     from db.models import engine, SessionLocal
-    from db import setUp_admin, save_route
+    from db import setUp_admin
 
     logger.info("Logger Configured")
 
@@ -64,10 +64,9 @@ WHITELISTED_IPS: List[str] = []
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
 
 
-route_schema = save_route(routes)
-dump(route_schema, open(f'{PRJ_file}/configs/routes.json', 'w'), indent=4)
+# route_schema = save_route(routes)
+# dump(route_schema, open(f'{PRJ_file}/configs/routes.json', 'w'), indent=4)
 
 for route in routes:
     app.include_router(route)
-
 

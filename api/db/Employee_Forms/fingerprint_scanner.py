@@ -50,17 +50,32 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
             return 400, "Bad Request"
 
         data = Form.dict()
+        EnNo = db.query(dbm.User_form).filter_by(employee_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
         if data["Enter"]:
             data["Enter"] = Fix_time(data["Enter"]).replace(second=0)
         if data["Exit"]:
             data["Exit"] = Fix_time(data["Exit"]).replace(second=0)
 
-        Back_up_Body = {"TMNo": 0, "EnNo": data["EnNo"], "Name": data["Name"], "GMNo": 0, "Mode": "Manually", "In_Out": "Normal", "Antipass": 0, "ProxyWork": 0}
+        Back_up_Body = {"TMNo": 0, "EnNo": EnNo, "Name": data["Name"], "GMNo": 0, "Mode": "Manually", "In_Out": "Normal", "Antipass": 0, "ProxyWork": 0}
 
         OBJs = []
         OBJs.append(dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Enter"]}'))  # type: ignore[call-arg]
         OBJs.append(dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Exit"]}'))  # type: ignore[call-arg]
-        OBJs.append(dbm.Fingerprint_Scanner_form(**data))  # type: ignore[call-arg]
+
+        """
+            user_fk_id: UUID
+            Date: date | str
+            Enter: time | str | None
+            Exit: time | str | None
+            :::::::::
+            
+            
+            Name = Column(String, nullable=False)
+                      
+            
+            duration = Column(Integer, nullable=False, default=0)
+        """
+        OBJs.append(dbm.Fingerprint_Scanner_form(**data, duration=calculate_duration(data["Enter"], data["Exit"])))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()

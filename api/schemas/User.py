@@ -23,8 +23,7 @@ class role_response(update_role_schema):
 
 
 class fingerprint_scanner(Base_form):
-    EnNo: int
-    Name: str
+    user_fk_id: UUID
     Date: date | str
     Enter: time | str | None
     Exit: time | str | None
@@ -44,7 +43,6 @@ class fingerprint_scanner_response(Base_response):
     Enter: time | str | None
     Exit: time | str | None
     EnNo: int
-    Name: str
     created: export_employee
 
     class Config:

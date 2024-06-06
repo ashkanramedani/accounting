@@ -11,7 +11,7 @@ class salary_type(Enum):
     Hourly = "Hourly"
 
 
-# ---------------------- Salary_form ----------------------
+# ---------------------- Employee_Salary_form ----------------------
 class SalaryPolicy(BaseModel):
     created_fk_by: UUID
     user_fk_id: UUID
@@ -71,7 +71,7 @@ class SalaryPolicy_response(Base_response, update_SalaryPolicy_schema):
         orm_mode = True
 
 
-# ++++++++++++++++++++++++++ Salary_form +++++++++++++++++++++++++++
+# ++++++++++++++++++++++++++ Employee_Salary_form +++++++++++++++++++++++++++
 class salary_report(BaseModel):
     user_fk_id: UUID
     year: PositiveInt

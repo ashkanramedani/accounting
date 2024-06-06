@@ -28,7 +28,8 @@
             "http://localhost:5001/api/v1/form/course/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/course/update"
+            "http://localhost:5001/api/v1/form/course/update",
+            "http://localhost:5001/api/v1/form/course/Report/<UUID>"
         ]
     },
     "course_Extension": {

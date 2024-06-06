@@ -63,7 +63,10 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
+    except Exception as e:
+        return Return_Exception(db, e)
 
+    try:
         if not session_signature:
             return 200, "Empty SubCourse Added ( NO SESSION )"
 
@@ -99,9 +102,15 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         db.commit()
         return 200, "SubCourse Added ( WITH SESSION )"
     except Exception as e:
-        logger.error(e)
         db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        try:
+            OBJ.deleted = True
+            OBJ.description = "Deleted due to an error in session creation"
+            db.commit()
+        except Exception as inner_e:
+            db.rollback()
+            return Return_Exception(db, inner_e)
+        return Return_Exception(db, e)
 
 
 def delete_subcourse(db: Session, course_id, sub_course_id: sch.delete_sub_course_schema):

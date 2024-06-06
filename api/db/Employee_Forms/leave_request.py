@@ -93,7 +93,7 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
             OBJ = []
             Salary_Obj = db.query(dbm.Salary_Policy_form).filter_by(user_fk_id=Form.user_fk_id, deleted=False).first()
             if not Salary_Obj:
-                return 400, "Bad Request: Employee Does Not Have Salary_form Record"
+                return 400, "Bad Request: Employee Does Not Have Employee_Salary_form Record"
             for day in Separate_days_by_DayCap(Start, End, Salary_Obj.Regular_hours_cap):
                 if not day["is_holiday"]:
                     OBJ.append(dbm.Leave_Request_form(start_date=time(0, 0, 0), end_date=time(24, 59, 59), date=day["Date"], duration=day["duration"], **data))  # type: ignore[call-arg]

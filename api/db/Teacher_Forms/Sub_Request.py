@@ -152,9 +152,9 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema):
             if not old_session.first():
                 Warn.append(f'{record.session_fk_id}: Session Not Found.')
                 continue
-            old_session_data = {k: v for k, v in old_session.first().__dict__.items() if k not in ["_sa_instance_state", "is_sub", "session_teacher_fk_id", "session_pk_id"]}
-            new_Record.append(dbm.Session_form(**old_session_data, is_sub=True, session_teacher_fk_id=record.sub_teacher_fk_id))  # type: ignore[call-arg]
-            old_session.update({"deleted": True})
+            old_session_data = {k: v for k, v in old_session.first().__dict__.items() if k not in ["_sa_instance_state", "is_sub", "session_teacher_fk_id", "session_pk_id", "sub_Request"]}
+            new_Record.append(dbm.Session_form(**old_session_data, sub_Request=record.sub_request_pk_id, is_sub=True, session_teacher_fk_id=record.sub_teacher_fk_id))  # type: ignore[call-arg]
+            old_session.update({"deleted": True, "sub_Request": record.sub_request_pk_id})
             record.status = 1
             verified += 1
 

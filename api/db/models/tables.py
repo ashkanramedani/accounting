@@ -334,7 +334,7 @@ class User_form(Base, Base_form):
     id_card_number = Column(String, nullable=True)
     address = Column(String(5000), default=None)
 
-    fingerprint_scanner_user_id = Column(String, nullable=True, unique=True)
+    fingerprint_scanner_user_id = Column(Integer, nullable=True, unique=True)
 
     is_employee = Column(Boolean, default=True, nullable=False)
     level = Column(String, index=True, nullable=True)
@@ -362,7 +362,7 @@ class User_form(Base, Base_form):
     Status_Relation = creator_relation("Status_form")
 
     # User_Relation = relation("User_form")
-    # Salary_Relation = creator_relation("Salary_form")
+    # Salary_Relation = creator_relation("Employee_Salary_form")
 
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
     created = relationship("User_form", foreign_keys=[created_fk_by])  # , back_populates="User_Relation")
@@ -425,6 +425,7 @@ class Session_form(Base, InstitutionsBase):
     course_fk_id = create_forenKey("Course_form")
     sub_course_fk_id = create_forenKey("sub_course")
     session_teacher_fk_id = create_forenKey("User_form")
+    sub_Request = create_forenKey("Sub_Request_form", nullable=True)
 
     is_sub = Column(Boolean, nullable=False, default=False)
     canceled = Column(Boolean, nullable=False, default=False)
@@ -513,7 +514,6 @@ class Fingerprint_Scanner_form(Base, Base_form):
     fingerprint_scanner_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
     EnNo = Column(Integer, nullable=False)
-    Name = Column(String, nullable=False)
     Date = Column(DATE, nullable=False)
     Enter = Column(TIME, nullable=False)
     Exit = Column(TIME, nullable=True)
@@ -686,10 +686,14 @@ class Salary_Policy_form(Base, Base_form):
         return {k: str(v) for k, v in self.__dict__.items() if Validate(k)}
 
 
-class Salary_form(Base, Base_form):
-    __tablename__ = "salary"
-    salary_pk_id = create_Unique_ID()
+class Employee_Salary_form(Base, Base_form):
+    __tablename__ = "employee_salary"
+    employee_salary_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
+
+    year = Column(Integer, nullable=False)
+    month = Column(Integer, nullable=False)
+    fingerprint_scanner_user_id = Column(Integer, nullable=True, unique=True)
 
     present_time = Column(Integer, nullable=False)
     regular_work_time = Column(Integer, nullable=False)
@@ -768,14 +772,6 @@ class Status_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Status_Relation")
-
-
-"""
-class session_teacher_replacement(BaseModel):
-    sub_course_fk_id: UUID
-    sessions: List[UUID]
-    sub_teacher_fk_id: UUID
-"""
 
 
 class Sub_Request_form(Base, Base_form):

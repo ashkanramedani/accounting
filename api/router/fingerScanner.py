@@ -24,31 +24,39 @@ async def add_fingerprint_scanner(Form: sch.post_fingerprint_scanner_schema, db=
     return result
 
 async def LoadFile(file: UploadFile):
-    filename = file.filename
-    content = await file.read()
-    if filename.endswith('.xlsx'):
-        df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
-    elif filename.endswith('.csv') or filename.endswith('.txt'):
-        try:
-            decoded_content = content.decode("utf-16-le")  # Decode with UTF-16LE encoding
-        except UnicodeDecodeError:
-            decoded_content = content.decode("utf-8")  # Decode with UTF-8 encoding
-
-        if filename.endswith('.csv'):
-            df = pd.read_csv(io.StringIO(decoded_content))
-        else:
-            df = pd.read_csv(io.StringIO(decoded_content), sep="\t")
-    else:
-        return 500, "Unsupported file format"
     try:
-        df.columns = ["No", "TMNo", "EnNo", "Name", "GMNo", "Mode", "In_Out", "Antipass", "ProxyWork", "DateTime"]
-        df = df.drop('No', axis=1)
-        df["DateTime"] = pd.to_datetime(df["DateTime"], errors='coerce').dt.floor('min')
-        df = df.sort_values(by="DateTime").drop_duplicates()
-        df.rename(columns={"In/Out": "In_Out"}, inplace=True)
-        return 200, df
-    except pd.errors.ParserError:
-        return 400, f"Error parsing the CSV."
+        filename = file.filename
+        content = await file.read()
+        if filename.endswith('.xlsx'):
+            df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
+        elif filename.endswith('.csv') or filename.endswith('.txt'):
+            try:
+                decoded_content = content.decode("utf-16-le")  # Decode with UTF-16LE encoding
+            except UnicodeDecodeError:
+                decoded_content = content.decode("utf-8")  # Decode with UTF-8 encoding
+
+            if filename.endswith('.csv'):
+                df = pd.read_csv(io.StringIO(decoded_content))
+            else:
+                df = pd.read_csv(io.StringIO(decoded_content), sep="\t")
+        else:
+            return 500, "Unsupported file format"
+        try:
+            try:
+                df.columns = ["No", "TMNo", "EnNo", "Name", "GMNo", "Mode", "In_Out", "Antipass", "ProxyWork", "DateTime"]
+                df = df.drop('No', axis=1)
+            except ValueError:
+                df.columns = ["TMNo", "EnNo", "Name", "GMNo", "Mode", "In_Out", "Antipass", "ProxyWork", "DateTime"]
+
+            df = df.drop('Name', axis=1)
+            df["DateTime"] = pd.to_datetime(df["DateTime"], errors='coerce').dt.floor('min')
+            df = df.sort_values(by="DateTime").drop_duplicates()
+            df.rename(columns={"In/Out": "In_Out"}, inplace=True)
+            return 200, df
+        except pd.errors.ParserError:
+            return 400, f"Error parsing the CSV."
+    except Exception as e:
+        return 500, f'{e.__class__.__name__}: {e.args}'
 
 
 @router.post("/bulk_add/{created_by}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
