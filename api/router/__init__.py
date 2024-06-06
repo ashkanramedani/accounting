@@ -19,7 +19,7 @@ from .library import router as library
 # from .Test import router as Dev_route
 
 routes = [
-    Dev_route,
+    # Dev_route,
     request_sub_route,
     course_route,
     course_extension_route,
