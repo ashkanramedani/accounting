@@ -16,7 +16,7 @@ from .user import router as user
 from .post import router as post
 from .library import router as library
 
-from .Test import router as Dev_route
+# from .Test import router as Dev_route
 
 routes = [
     Dev_route,
