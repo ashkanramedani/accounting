@@ -1,0 +1,108 @@
+@startuml
+
+title Activity Diagram for SubCourse Report Generation
+
+start
+
+:Initialize Base_salary;
+:Initialize Teacher_tardy;
+
+partition "Function: BaseSalary_for_SubCourse" {
+  :course_cap, course_type;
+    if (course_cap <= 5) then (yes)
+      :Return Base_salary["1-5"][course_type];
+    else if (6 <= course_cap <= 9) then (yes)
+      :Return Base_salary["6-9"][course_type];
+    else if (10 <= course_cap <= 12) then (yes)
+      :Return Base_salary["10-12"][course_type];
+    else (13 <= course_cap)
+      :Return Base_salary["13"][course_type];
+    endif
+}
+
+partition "Function: Tardy_for_SubCourse" {
+  :tardy;
+  if (tardy <= 10) then (yes)
+    :Return Teacher_tardy["0_10"];
+  else if (10 <= tardy <= 30) then (yes)
+    :Return Teacher_tardy["10_30"];
+  else if (30 <= tardy <= 40) then (yes)
+    :Return Teacher_tardy["30_40"];
+  else (40 <= tardy)
+    :Return Teacher_tardy["40"];
+  endif
+}
+
+partition "Function: safe_field" {
+  :db, Data, fields;
+    if (teacher_id not in Data) then (yes)
+      :Add new teacher data to Data;
+    endif
+  :Return Data;
+}
+
+partition "Function: SubCourse_report" {
+  :db, sub_course, course_level, course_type, Cancellation_factor;
+  :BaseSalary_for_course_type;
+  :Call BaseSalary_for_SubCourse;
+  if (BaseSalary_for_course_type is None) then (yes)
+    :Return "No BaseSalary Found";
+  endif
+  :sub_course_summary;
+  :Get sub_course_Sessions;
+  if (sub_course_Sessions is empty) then (yes)
+    :Return "No sessions found";
+  endif
+
+    :Session_teacher;
+    :Call safe_field;
+    if (session is canceled) then (yes)
+      :Increment Cancelled_Session;
+    else if (session is sub) then (yes)
+      :Get sub_request;
+      :main_teacher, sub_teacher;
+      :Call safe_field;
+      :Adjust Sub_points;
+    else
+      :Increment Attended_Session;
+    endif
+  end loop
+
+  loop (for each tardy in tardies)
+    :Increment Tardy for teacher;
+  end loop
+
+  loop (for each teacher in sub_course_summary)
+    if (teacher is dict) then (yes)
+      :Calculate Cancelled_Session_Score;
+      :Calculate Tardy_Score;
+    endif
+  end loop
+
+  :Return sub_course_summary;
+}
+
+partition "Function: course_report" {
+  :db, course_id, Cancellation_factor;
+  :Course_summary;
+  :Get course;
+  if (course not found) then (yes)
+    :Return 400, "No Course Found";
+  endif
+  :Get sub_courses;
+  if (sub_courses are empty) then (yes)
+    :Return 400, "No Sub Course Found";
+  endif
+  :course_level, course_type;
+
+  loop (for each sub_course in sub_courses)
+    :sub_course_summary;
+    :Call SubCourse_report;
+    :Add sub_course_summary to Course_summary;
+  end loop
+
+  :Return 200, Course_summary;
+}
+
+stop
+@enduml

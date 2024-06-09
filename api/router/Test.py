@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Any, Optional
 
 from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
@@ -18,8 +18,16 @@ class Input(BaseModel):
     month: int
 
 
+class Return_Salary(sch.export_employee):
+    Does_Have_Salary_Record: bool
+    role: Optional[Any] = None
+
+    class Config:
+        orm_mode = True
+
+
 # tardy request
-@router.post("/salary", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+@router.post("/salary", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[Return_Salary])
 async def add_student(Form: Input, db=Depends(get_db)):
     status_code, result = employee_salary(db, Form.year, Form.month)
     if status_code != 200:

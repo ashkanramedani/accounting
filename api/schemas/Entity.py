@@ -14,7 +14,7 @@ __all__ = [
 
 # ---------------------- Employee ----------------------
 
-class Employee(Entity):
+class Employee(Entity, Base_form):
     priority: Optional[int] = 5
     fingerprint_scanner_user_id: Optional[int] = None
     roles: Optional[List[Update_Relation]] = []
@@ -41,9 +41,9 @@ class employee_response(Entity):
 
 
 # ---------------------- student ----------------------
-class Student(Entity):
+class Student(Entity, Base_form):
     # created_fk_by: UUID
-    level: str
+    pass
 
 
 class post_student_schema(Student):

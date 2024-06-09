@@ -30,8 +30,8 @@ class course(Base_form):
     tags: Optional[List[Update_Relation]] = []
     categories: Optional[List[Update_Relation]] = []
 
-    course_level: str
-    package_discount: float
+    course_level: str = "Base"
+    package_discount: float = 0
 
 
 class post_course_schema(course):
@@ -41,6 +41,13 @@ class post_course_schema(course):
 class update_course_schema(course):
     course_pk_id: UUID
 
+
+class Course_Calender(BaseModel):  # instant of session form (can be modify as needed)
+    days_of_week: int
+    session_date: str | date
+
+    class Config:
+        orm_mode = True
 
 class course_response(Base_response):
     course_pk_id: UUID
@@ -55,8 +62,8 @@ class course_response(Base_response):
     starting_date: date
     ending_date: date
 
-    teachers: List[export_employee] | List[UUID] = None
-    course_signature: List[Session_signature] = []
+    teachers: List[export_employee | UUID] = None
+    course_signature: List[Course_Calender] = []
     available_seat: int = None
 
     tags: List[export_tag] = []

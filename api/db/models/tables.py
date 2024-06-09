@@ -378,7 +378,7 @@ class Course_form(Base, InstitutionsBase):
     course_language = create_forenKey("Language_form")
     course_type = create_forenKey("Course_Type_form")
 
-    course_name = Column(String)
+    course_name = Column(String, unique=True)
     course_image = Column(String, nullable=True)
     starting_date = Column(Date, nullable=False)
     ending_date = Column(Date, nullable=False)
@@ -395,6 +395,8 @@ class Course_form(Base, InstitutionsBase):
     language = relationship("Language_form", foreign_keys=[course_language])
     type = relationship("Course_Type_form", foreign_keys=[course_type])
 
+    __args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
+
 
 class Sub_Course_form(Base, InstitutionsBase):
     __tablename__ = "sub_course"
@@ -404,7 +406,7 @@ class Sub_Course_form(Base, InstitutionsBase):
     created_fk_by = create_forenKey("User_form")
     sub_course_teacher_fk_id = create_forenKey("User_form")
 
-    sub_course_name = Column(String)
+    sub_course_name = Column(String, unique=True)
     number_of_session = Column(Integer, nullable=False, default=0)
     sub_course_starting_date = Column(Date, nullable=False)
     sub_course_ending_date = Column(Date, nullable=False)
@@ -416,6 +418,7 @@ class Sub_Course_form(Base, InstitutionsBase):
     teacher = relationship("User_form", foreign_keys=[sub_course_teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
 
+    __args__ = (UniqueConstraint('sub_course_name', 'course_fk_id'),)
 
 class Session_form(Base, InstitutionsBase):
     __tablename__ = "session"
@@ -763,8 +766,7 @@ class Course_Type_form(Base, Base_form):
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="course_type_Relation")
 
 
-# Status of the form will be use in V0.2.0.0 and after
-class Status_form(Base, Base_form):
+class Status_form(Base, Base_form):  # NC: 002
     __tablename__ = "status"
 
     status_pk_id = create_Unique_ID()

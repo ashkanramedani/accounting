@@ -52,11 +52,3 @@ async def update_subcourse(Form: sch.update_sub_course_schema, db=Depends(get_db
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-
-
-@router.post("/teacher_replacement", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def subcourse_teacher_replacement(Form: sch.subcourse_teacher_replacement, db=Depends(get_db)):
-    status_code, result = dbf.sub_course_teacher_replacement(db, Form)
-    if status_code != 200:
-        raise HTTPException(status_code=status_code, detail=result)
-    return result

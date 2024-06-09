@@ -28,12 +28,6 @@
             "CAE": 44,
             "CPE": 66
         },
-        "Cancelled_Sessions": {
-            "0": 11,
-            "1": -5.5,
-            "2": -7.5,
-            "3": -16.5
-        },
         "Teacher_tardy": {
             "less_than_10_min": 11,
             "10_to_30_min": 5.5,
@@ -58,6 +52,7 @@
         }
     },
     "From_dropDown": {
+        "Cancellation_factor": Cancellation_Factor,
         "StudentAssignFeedback": {
             "weak": -5.5,
             "average": 0,

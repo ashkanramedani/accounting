@@ -91,18 +91,9 @@ class employee_report(BaseModel):
 
 
 class teacher_salary_report(BaseModel):
-    course_pk_id: UUID
-
-
-# Base_salary: int | float
-# teacher_level: int | float
-# course_cap: int | float
-# StudentAssignFeedback: int | float
-# course_level: int | float
-# course_type: int | float
-# survey_score: int | float
-# LP_submission: int | float
-# result_submission_to_FD: int | float
-# course_cancellation: int | float
-# ReportToStudent: int | float
-# time_management: int | float
+    course_id: UUID
+    Cancellation_factor: float
+    StudentAssignFeedback: str
+    LP_submission: str
+    result_submission_to_FD: str
+    ReportToStudent: str

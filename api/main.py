@@ -69,4 +69,3 @@ app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], 
 
 for route in routes:
     app.include_router(route)
-

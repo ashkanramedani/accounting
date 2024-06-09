@@ -295,8 +295,8 @@ def to_international(year, month, day, return_obj=True) -> tuple | date:
 def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
     """
     this function takes a year and month and returns two date object representing the start and end of the month
-
     """
+
     end_year = year + 1 if month == 12 else year
     end_month = 1 if month == 12 else month + 1
 
@@ -321,6 +321,7 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
     Parameters:
         starting_date (date): The starting date of the time table.
         ending_date (date): The ending date of the time table.
+        day_of_week (list, optional): A list of integers representing the days of the week. Defaults to None.
 
     Returns:
         list: A list of dictionaries containing the date and a boolean indicating if it's a holiday.

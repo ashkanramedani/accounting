@@ -4,7 +4,7 @@ from datetime import time, date, datetime, date
 from enum import Enum
 from typing import Optional, List, Any, Tuple
 from uuid import UUID
-from pydantic import BaseModel, PositiveInt
+from pydantic import BaseModel, PositiveInt, EmailStr
 
 
 class Sort_Order(str, Enum):
@@ -146,11 +146,13 @@ class Base_form(BaseModel):
 class Entity(BaseModel):
     name: str
     last_name: str
-    day_of_birth: Optional[str] | Optional[date] = datetime.now().date()
-    email: Optional[str] = None
+    email: EmailStr
+
+    level: Optional[str] = ""
+    address: Optional[str] = None
     mobile_number: Optional[str] = None
     id_card_number: Optional[str] = None
-    address: Optional[str] = None
+    day_of_birth: Optional[date | str] = datetime.now().date()
 
 
 class Base_response(BaseModel):

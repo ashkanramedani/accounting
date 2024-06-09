@@ -97,6 +97,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
                     "session_ending_time": session_ending_time.time(),
                     "session_duration": session_duration,
                     "days_of_week": day_weekday}
+
                 days.append(dbm.Session_form(**session_data))  # type: ignore[call-arg]
         db.add_all(days)
         db.commit()

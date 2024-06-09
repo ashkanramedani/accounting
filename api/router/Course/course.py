@@ -51,9 +51,9 @@ async def update_course(Form: sch.update_course_schema, db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
-@router.put("/Report/{course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def update_course(course_id, db=Depends(get_db)):
-    status_code, result = dbf.course_report(db, course_id)
-    if status_code != 200:
-        raise HTTPException(status_code=status_code, detail=result)
-    return result
+# @router.put("/Report/{course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+# async def update_course(course_id, Form: sch.teacher_salary_report, db=Depends(get_db)):
+#     status_code, result = dbf.teacher_salary_report(db, course_id)
+#     if status_code != 200:
+#         raise HTTPException(status_code=status_code, detail=result)
+#     return result

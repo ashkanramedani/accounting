@@ -3,6 +3,7 @@ fastapi~=0.110.0
 fastapi_utils
 fastapi-limiter
 # pydantic
+pydantic[email]
 sqlalchemy~=1.4.51
 passlib
 python-multipart
