@@ -49,6 +49,7 @@ class Course_Calender(BaseModel):  # instant of session form (can be modify as n
     class Config:
         orm_mode = True
 
+
 class course_response(Base_response):
     course_pk_id: UUID
 
@@ -220,4 +221,16 @@ class course_type_response(Base_response):
     class Config:
         orm_mode = True
 
+
 # ---------------------- course cancellation ---------------------
+class Input(BaseModel):
+    year: int
+    month: int
+
+
+class Return_Salary(export_employee):
+    Does_Have_Salary_Record: bool
+    role: Optional[Any] = None
+
+    class Config:
+        orm_mode = True

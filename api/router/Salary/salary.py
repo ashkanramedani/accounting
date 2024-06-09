@@ -9,8 +9,15 @@ import db as dbf
 import schemas as sch
 from db.models import get_db
 
-
 router = APIRouter(prefix='/api/v1/form/salary', tags=['report'])
+
+
+@router.post("/salary", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Return_Salary])
+async def add_student(Form: sch.Input, db=Depends(get_db)):
+    status_code, result = dbf.employee_salary(db, Form.year, Form.month)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
 
 
 @router.get("/employee/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])

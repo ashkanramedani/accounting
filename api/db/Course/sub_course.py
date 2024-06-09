@@ -128,7 +128,6 @@ def delete_subcourse(db: Session, course_id, sub_course_id: sch.delete_sub_cours
             Sub_course_to_cancel.append(sub_course_id)
 
         for sub_Course in db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.sub_course_pk_id.in_(Sub_course_to_cancel), dbm.Sub_Course_form.deleted == False).all():
-            logger.warning(get_subCourse_active_session(db, sub_Course.sub_course_pk_id))
             status, message = delete_session(db, sub_course_id, get_subCourse_active_session(db, sub_Course.sub_course_pk_id))  # ignore type[call-arg]
             if status != 200:
                 return status, message
