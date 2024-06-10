@@ -10,6 +10,7 @@ from ..Extra import *
 
 from lib.Date_Time import Fix_datetime
 
+
 def get_business_trip_form(db: Session, form_id):
     try:
         return 200, db.query(dbm.Business_Trip_form).filter_by(business_trip_pk_id=form_id, deleted=False).first()
@@ -96,3 +97,24 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
+
+
+def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema):
+    try:
+        Warn = []
+        verified = 0
+        records = db.query(dbm.Business_Trip_form) \
+            .filter_by(deleted=False) \
+            .filter(dbm.Business_Trip_form.business_trip_pk_id.in_(Form.business_trip_id)) \
+            .all()
+
+        for record in records:
+            record.status = 1
+            verified += 1
+
+        db.commit()
+        if Warn:
+            return 200, f"{verified} Form Verified. {' | '.join(Warn)}"
+        return 200, f"{len(records)} Form Verified."
+    except Exception as e:
+        return Return_Exception(db, e)

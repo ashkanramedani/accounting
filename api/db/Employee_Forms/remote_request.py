@@ -95,3 +95,23 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
+
+def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema):
+    try:
+        Warn = []
+        verified = 0
+        records = db.query(dbm.Remote_Request_form) \
+            .filter_by(deleted=False) \
+            .filter(dbm.Remote_Request_form.remote_request_pk_id.in_(Form.remote_request_id)) \
+            .all()
+
+        for record in records:
+            record.status = 1
+            verified += 1
+
+        db.commit()
+        if Warn:
+            return 200, f"{verified} Form Verified. {' | '.join(Warn)}"
+        return 200, f"{len(records)} Form Verified."
+    except Exception as e:
+        return Return_Exception(db, e)

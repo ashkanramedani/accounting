@@ -28,7 +28,7 @@ async def search_business_trip(form_id, db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
-@router.post("/report/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+@router.get("/report/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def report_business_trip(employee_id: int | UUID, year: int, month: int, db=Depends(get_db)):
     start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
     status_code, result = dbf.report_business_trip(db, employee_id, start, end)
@@ -56,6 +56,14 @@ async def delete_business_trip(form_id, db=Depends(get_db)):
 @router.put("/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_business_trip(Form: sch.update_business_trip_schema, db=Depends(get_db)):
     status_code, result = dbf.update_business_trip_form(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.put("/verify", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def verify_business_trip(Form: sch.Verify_business_trip_schema, db=Depends(get_db)):
+    status_code, result = dbf.Verify_business_trip(db, Form)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

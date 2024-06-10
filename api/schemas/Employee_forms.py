@@ -16,6 +16,8 @@ class post_leave_request_schema(leave_request):
 class update_leave_request_schema(leave_request):
     leave_request_pk_id: UUID
 
+class Verify_leave_request_schema(BaseModel):
+    leave_request_id: List[UUID]
 
 class leave_request_response(Base_response):
     leave_request_pk_id: UUID
@@ -47,6 +49,8 @@ class post_remote_request_schema(remote_request):
 class update_remote_request_schema(remote_request):
     remote_request_pk_id: UUID
 
+class Verify_remote_request_schema(BaseModel):
+    remote_request_id: List[UUID]
 
 class remote_request_response(update_remote_request_schema, Base_response):
     employee: export_employee
@@ -76,3 +80,6 @@ class business_trip_response(update_business_trip_schema, Base_response):
 
     class Config:
         orm_mode = True
+
+class Verify_business_trip_schema(BaseModel):
+    business_trip_id: List[UUID]
