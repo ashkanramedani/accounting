@@ -1,7 +1,7 @@
 import json
 import uuid
 from datetime import time, datetime
-from typing import Dict
+from typing import Dict, List
 
 import pandas as pd
 from sqlalchemy.orm import Session
@@ -9,9 +9,9 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import *
-from .Daily_work_calculation import Create_Finger_report, calculate_duration
+from .Salary_Utils import generate_daily_report, calculate_duration
 from ..Extra import *
-
+from uuid import UUID
 
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, form_id):
@@ -33,15 +33,20 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_fingerprint_scanner(db: Session, Salary_Policy, EnNo, start_date, end_date) -> Dict | str:
-    Fingerprint_scanner_report = db.query(dbm.Fingerprint_Scanner_form) \
-        .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
-        .filter_by(deleted=False, EnNo=EnNo).all()
+def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_date):
+    try:
+        if isinstance(EnNo, UUID):
+            EnNo = db.query(dbm.User_form).filter_by(employee_pk_id=EnNo, deleted=False).first().fingerprint_scanner_user_id
+        Fingerprint_scanner_report: List[dbm.Fingerprint_Scanner_form] = db.query(dbm.Fingerprint_Scanner_form) \
+            .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
+            .filter_by(deleted=False, EnNo=EnNo).all()
 
-    if not Fingerprint_scanner_report:
-        return f"Employee Has No fingerprint record from {start_date} to {end_date}"
+        if not Fingerprint_scanner_report:
+            return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
+        return 200, Fingerprint_scanner_report
 
-    return Create_Finger_report(Salary_Policy, Fingerprint_scanner_report)
+    except Exception as e:
+        return Return_Exception(db, e)
 
 
 def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_schema):
@@ -58,24 +63,10 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
 
         Back_up_Body = {"TMNo": 0, "EnNo": EnNo, "Name": data["Name"], "GMNo": 0, "Mode": "Manually", "In_Out": "Normal", "Antipass": 0, "ProxyWork": 0}
 
-        OBJs = []
-        OBJs.append(dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Enter"]}'))  # type: ignore[call-arg]
-        OBJs.append(dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Exit"]}'))  # type: ignore[call-arg]
-
-        """
-            user_fk_id: UUID
-            Date: date | str
-            Enter: time | str | None
-            Exit: time | str | None
-            :::::::::
-            
-            
-            Name = Column(String, nullable=False)
-                      
-            
-            duration = Column(Integer, nullable=False, default=0)
-        """
-        OBJs.append(dbm.Fingerprint_Scanner_form(**data, duration=calculate_duration(data["Enter"], data["Exit"])))  # type: ignore[call-arg]
+        OBJs = [
+            dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Enter"]}'),  # type: ignore[call-arg]
+            dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Exit"]}'),  # type: ignore[call-arg]
+            dbm.Fingerprint_Scanner_form(**data, duration=calculate_duration(data["Enter"], data["Exit"]))]  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()
@@ -180,14 +171,3 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
-
-
-"""
-results = (
-            db.query(dbm.Fingerprint_Scanner_form, dbm.User_form)
-            .join(dbm.User_form, cast(dbm.Fingerprint_Scanner_form.EnNo, String) == dbm.User_form.fingerprint_scanner_user_id)
-            .filter(dbm.Fingerprint_Scanner_form.deleted == False)
-            .with_entities(dbm.Fingerprint_Scanner_form.EnNo, dbm.User_form.name, dbm.User_form.last_name)
-            .all()
-        )
-"""

@@ -7,7 +7,7 @@ from fastapi_limiter.depends import RateLimiter
 from db import Sub_Request
 import schemas as sch
 from db.models import get_db
-from ..Routes_Lib import create_Response
+
 
 router = APIRouter(prefix='/api/v1/form/sub_request', tags=['Sub Request'])
 
@@ -16,8 +16,9 @@ router = APIRouter(prefix='/api/v1/form/sub_request', tags=['Sub Request'])
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def add_sub_request(Form: sch.post_Sub_request_schema, db=Depends(get_db)):
     status_code, result = Sub_Request.post_sub_request(db, Form)
-    return create_Response(status_code, result)
-
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
 
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch)
 async def search_sub_request(form_id, db=Depends(get_db)):

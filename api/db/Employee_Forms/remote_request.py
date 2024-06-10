@@ -3,9 +3,6 @@ from typing import Tuple, Dict
 
 from lib import logger, Fix_datetime
 
-
-
-
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -32,20 +29,17 @@ def get_all_remote_request_form(db: Session, page: sch.PositiveInt, limit: sch.P
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_remote_request(db: Session, salary_rate: sch.SalaryPolicy, user_fk_id, start_date, end_date) -> Dict:
-    if not salary_rate.remote_permission:
-        return {"remote": 0, "remote_earning": 0}
+def report_remote_request(db: Session, user_fk_id, start_date, end_date):
+    try:
+        Remote_Request_report = db.query(dbm.Remote_Request_form) \
+            .filter_by(deleted=False, user_fk_id=user_fk_id) \
+            .filter(dbm.Remote_Request_form.end_date.between(start_date, end_date)) \
+            .all()
 
-    Remote_Request_report = (
-        db.query(dbm.Remote_Request_form)
-        .filter_by(deleted=False, user_fk_id=user_fk_id)
-        .filter(dbm.Remote_Request_form.end_date.between(start_date, end_date))
-        .all()
-    )
+        return 200, Remote_Request_report
+    except Exception as e:
+        return Return_Exception(db, e)
 
-    total_remote = sum(row.duration for row in Remote_Request_report)
-    remote = min(total_remote, salary_rate.remote_cap)
-    return {"remote": remote, "remote_earning": (remote / 60) * salary_rate.remote_factor * salary_rate.Base_salary}
 
 def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
     try:
@@ -53,7 +47,6 @@ def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
             return 400, "Bad Request"
 
         data = Form.dict()
-
         Start, End = Fix_datetime(data["start_date"]), Fix_datetime(data["end_date"])
 
         if End < Start:
@@ -66,9 +59,7 @@ def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
         db.refresh(OBJ)
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_remote_request_form(db: Session, form_id):

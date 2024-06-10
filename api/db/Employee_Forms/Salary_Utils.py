@@ -27,7 +27,7 @@ def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
     return rates
 
 
-def Sum_of_Activity(salary_rate, Day_activity: List):
+def Sum_of_Activity(salary_rate, Day_activity: List) -> Dict[str, int]:
     if not Day_activity:
         return {"present_time": 0, "regular_work_time": 0, "overtime": 0, "undertime": 0, "off_Day_work_time": 0}
 
@@ -69,7 +69,9 @@ def Create_Day_Schema(Date: str | date | datetime, day: dict, Holiday: bool) -> 
 
 def preprocess_report(report):
     """
-    This Function Preprocesses the Report. on each Enter/Exit time it calculates the time gap and add missing days to calender
+    This Function Preprocesses the Report on each Enter/Exit.
+        - calculates the time gap
+        - add missing days to calender
     """
     Days = {}
     for i, record in enumerate(report):
@@ -133,26 +135,22 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
             continue
 
         Day_OBJ["present_time"] = day["present_time"]
+        # present on Holiday
         if Holiday:
             if EMP_Salary.off_day_permission:
                 Day_OBJ["off_Day_Overtime"] = day["present_time"]
 
+        # Not Present on working day
         elif not day["EnterExit"]:
             Day_OBJ["Undertime"] = EMP_Salary.Regular_hours_cap
 
+        # Present on working day
         else:
             EnterExit = day["EnterExit"]
             EnterExit.sort()
-            first_enter = max(EnterExit[0], EMP_Salary.day_starting_time)
-            res = {
-                "first_enter": first_enter,
-                "day['EnterExit']": day["EnterExit"],
-                "min(day['EnterExit'])": min(day["EnterExit"]),
-                "EMP_Salary.day_starting_time": EMP_Salary.day_starting_time
-            }
 
-            # logger.warning(json.dumps(res, indent=4, cls=JSONEncoder))
-            last_exit = EnterExit[-1]
+            first_enter, last_exit = max(EnterExit[0], EMP_Salary.day_starting_time), EnterExit[-1]
+
             # UnderTime
             tmp_undertime = time_gap(EMP_Salary.day_starting_time, first_enter)
             if tmp_undertime > EMP_Salary.undertime_threshold:
@@ -270,26 +268,27 @@ def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
     return Days
 
 
-def Create_Finger_report(Salary_Policy, Fingerprint_scanner_report) -> dict | str:
-    report_dicts = [{k: v for k, v in record.__dict__.items() if k != "_sa_instance_state"} for record in Fingerprint_scanner_report]
-    final_result = {}
+def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_scanner_report: List[dbm.Fingerprint_Scanner_form]):
+    """
+    Generate the daily report Base on Employee fingerprint scanner report
+    """
+    try:
+        final_result = {}
+        report_dicts = preprocess_report([{k: v for k, v in record.__dict__.items() if k != "_sa_instance_state"} for record in Fingerprint_scanner_report])
 
-    report2 = {}
-    for i, record in enumerate(report_dicts):
-        report2[i] = {k: str(v) for k, v in record.items() if k in ["Date", "Enter", "Exit", "EnNo", "duration"]}
-    report_dicts = preprocess_report(report_dicts)
+        # Split schedule and Fix schedule
+        if Salary_Policy.Salary_Type == "Fixed":
+            final_result["Days"]: List[dict] = Fixed_schedule(Salary_Policy, report_dicts)
+        elif Salary_Policy.Salary_Type == "Split":
+            final_result["Days"]: List[dict] = Split_schedule(Salary_Policy, report_dicts)
+        elif Salary_Policy.Salary_Type == "Hourly":
+            final_result["Days"]: List[dict] = Hourly_schedule(Salary_Policy, report_dicts)
+        else:
+            return 400, "Invalid Salary Type"
 
-    # Split schedule and Fix schedule
-    if Salary_Policy.Salary_Type == "Fixed":
-        final_result["Days"]: List[dict] = Fixed_schedule(Salary_Policy, report_dicts)
-    elif Salary_Policy.Salary_Type == "Split":
-        final_result["Days"]: List[dict] = Split_schedule(Salary_Policy, report_dicts)
-    elif Salary_Policy.Salary_Type == "Hourly":
-        final_result["Days"]: List[dict] = Hourly_schedule(Salary_Policy, report_dicts)
-    else:
-        return "Invalid Salary Type"
-
-    Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
-    final_result |= Total_Activity
-    final_result |= Calculate_earning(Salary_Policy, **Total_Activity)
-    return final_result
+        Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
+        final_result |= Total_Activity
+        final_result |= Calculate_earning(Salary_Policy, **Total_Activity)
+        return 200, final_result
+    except Exception as e:
+        return 500, f'{e.__class__.__name__}: {e.args}'

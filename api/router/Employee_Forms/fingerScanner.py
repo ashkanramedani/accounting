@@ -3,7 +3,8 @@ from typing import List
 from uuid import UUID
 import pandas as pd
 from fastapi import APIRouter, Depends
-from lib import API_Exception
+
+from lib.Date_Time import generate_month_interval
 from fastapi import HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -97,6 +98,15 @@ async def delete_fingerprint_scanner(form_id, db=Depends(get_db)):
 @router.put("/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_fingerprint_scanner(Form: sch.update_fingerprint_scanner_schema, db=Depends(get_db)):
     status_code, result = dbf.update_fingerprint_scanner(db, Form)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.get("/report/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def update_fingerprint_scanner(employee_id: int | UUID, year: int, month: int, db=Depends(get_db)):
+    start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
+    status_code, result = dbf.report_fingerprint_scanner(db, employee_id, start, end)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

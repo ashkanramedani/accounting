@@ -1,8 +1,20 @@
 from lib.Date_Time import generate_month_interval
+from .. import generate_daily_report
 
 from ..Course import course_report
 from ..Employee_Forms import report_leave_request, report_remote_request, report_business_trip, report_fingerprint_scanner
 from ..Teacher_Forms import *
+
+
+def permissions(db: Session, User_ID):
+    try:
+        return 200, db. \
+            query(dbm.Salary_Policy_form.remote_permission, dbm.Salary_Policy_form.business_trip_permission) \
+            .filter_by(user_fk_id=User_ID, deleted=False) \
+            .order_by(dbm.Salary_Policy_form.create_date.desc()) \
+            .first()
+    except Exception as e:
+        return Return_Exception(db, e)
 
 
 def employee_salary(db: Session, year, month):  # NC: 003
@@ -51,15 +63,51 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
 
-        report_summary = report_fingerprint_scanner(db, Salary_Policy, EnNo, start, end)
+        status, report_summary = report_fingerprint_scanner(db, EnNo, start, end)
+        if status != 200:
+            return status, report_summary
 
-        if isinstance(report_summary, str):
-            return 400, report_summary
-        # days_metadata = report_summary.pop('Days') if "Days" in report_summary else {"detail": "No data for Day Report"}
+        status, report_summary = generate_daily_report(Salary_Policy, report_summary)
 
-        report_summary |= report_remote_request(db, Salary_Policy, user_fk_id, start, end)
-        report_summary |= report_leave_request(db, Salary_Policy, user_fk_id, start, end)
-        report_summary |= report_business_trip(db, Salary_Policy, user_fk_id, start, end)
+        if status != 200:
+            return status, report_summary
+
+        days_metadata = report_summary.pop('Days') if "Days" in report_summary else {"detail": "No data for Day Report"}
+
+        # Remote Request
+        if Salary_Policy.remote_permission:
+            status, Remote_Request_report = report_remote_request(db, user_fk_id, start, end)
+            if status != 200:
+                return status, Remote_Request_report
+            total_remote = sum(row.duration for row in Remote_Request_report)
+            remote = min(total_remote, Salary_Policy.remote_cap)
+            report_summary |= {"remote": remote, "remote_earning": (remote / 60) * Salary_Policy.remote_factor * Salary_Policy.Base_salary}
+        else:
+            report_summary |= {"remote": 0, "remote_earning": 0}
+
+
+        # Business Trip
+        if Salary_Policy.business_trip_permission:
+            status, Business_Trip_report = report_business_trip(db, user_fk_id, start, end)
+            if status != 200:
+                return status, Business_Trip_report
+            total_business_trip = sum(row.duration for row in Business_Trip_report)
+            business_trip = min(total_business_trip, Salary_Policy.business_trip_cap)
+            report_summary |= {"business_trip": business_trip, "business_trip_earning": (business_trip / 60) * Salary_Policy.business_trip_factor * Salary_Policy.Base_salary}
+        else:
+            report_summary |= {"business_trip": 0, "business_trip_earning": 0}
+
+        # Leave Request
+        status, leave_report = report_leave_request(db, user_fk_id, start, end)
+        if status != 200:
+            return status, leave_report
+
+        vacation = Salary_Policy.vacation_leave_cap - sum(row.duration for row in leave_report["Vacation"]) if leave_report["Vacation"] else 0
+        medical = Salary_Policy.medical_leave_cap - sum(row.duration for row in leave_report["Medical"]) if leave_report["Medical"] else 0
+
+        report_summary |= {
+            "vacation_leave": vacation, "vacation_leave_earning": (vacation / 60) * Salary_Policy.vacation_leave_factor * Salary_Policy.Base_salary,
+            "medical_leave": medical, "medical_leave_earning": (min(medical, 0) / 60) * Salary_Policy.medical_leave_factor * Salary_Policy.Base_salary}
 
         report_summary["total_earning"] = sum(report_summary[key] for key in [key for key in report_summary.keys() if "earning" in key])
 
@@ -68,11 +116,23 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         db.commit()
         db.refresh(salary_obj)
 
-        # return 200, db.query(dbm.Employee_Salary_form).filter_by(deleted=False, salary_pk_id=salary_obj.salary_pk_id).first()
         return 200, report_summary
     except Exception as e:
         return Return_Exception(db, e)
 
+"""
+if not salary_rate.remote_permission:
+    return {"remote": 0, "remote_earning": 0}
+
+Remote_Request_report = (
+    db.query(dbm.Remote_Request_form)
+    .filter_by(deleted=False, user_fk_id=user_fk_id)
+    .filter(dbm.Remote_Request_form.end_date.between(start_date, end_date))
+    .all()
+)
+
+
+"""
 
 def teacher_salary_report(db: Session, Form: sch.teacher_salary_report):
     try:

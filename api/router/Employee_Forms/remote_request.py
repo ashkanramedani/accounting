@@ -1,6 +1,7 @@
 from typing import List
+from uuid import UUID
 
-from lib import API_Exception
+from lib.Date_Time import generate_month_interval
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -28,12 +29,13 @@ async def search_remote_request(form_id, db=Depends(get_db)):
     return result
 
 
-# @router.post("/report", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-# async def report_remote_request(Form: sch.salary_report, db=Depends(get_db)):
-#     status_code, result = dbf.report_remote_request(db, Form)
-#     if status_code != 200:
-#         raise HTTPException(status_code=status_code, detail=result)
-#     return result
+@router.post("/report/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def report_remote_request(employee_id: int | UUID, year: int, month: int, db=Depends(get_db)):
+    start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
+    status_code, result = dbf.report_remote_request(db, employee_id, start, end)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.remote_request_response])

@@ -28,46 +28,25 @@ def get_all_leave_request(db: Session, page: sch.PositiveInt, limit: sch.Positiv
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def report_leave_request(db: Session, salary_rate: sch.SalaryPolicy, user_fk_id, start_date, end_date) -> Dict:
-    vacation_leave, medical_leave = 0, 0
-    vacation_Leave_request_report = (
-        db.query(dbm.Leave_Request_form)
-        .filter_by(deleted=False, user_fk_id=user_fk_id, leave_type="vacation")
-        .filter(dbm.Leave_Request_form.date.between(start_date, end_date))
-        .all()
-    )
-    medical_Leave_request_report = (
-        db.query(dbm.Leave_Request_form)
-        .filter_by(deleted=False, user_fk_id=user_fk_id, leave_type="medical")
-        .filter(dbm.Leave_Request_form.date.between(start_date, end_date))
-        .all()
-    )
+def report_leave_request(db: Session, user_fk_id, start_date, end_date):
+    try:
+        vacation_Leave_request_report = (
+            db.query(dbm.Leave_Request_form)
+            .filter_by(deleted=False, user_fk_id=user_fk_id, leave_type="vacation")
+            .filter(dbm.Leave_Request_form.date.between(start_date, end_date))
+            .all()
+        )
+        medical_Leave_request_report = (
+            db.query(dbm.Leave_Request_form)
+            .filter_by(deleted=False, user_fk_id=user_fk_id, leave_type="medical")
+            .filter(dbm.Leave_Request_form.date.between(start_date, end_date))
+            .all()
+        )
 
-    if vacation_Leave_request_report:
-        vacation_leave = salary_rate.medical_leave_cap - sum(row.duration for row in vacation_Leave_request_report)
+        return 200, {"Vacation": vacation_Leave_request_report, "Medical": medical_Leave_request_report}
+    except Exception as e:
+        return Return_Exception(db, e)
 
-    if medical_Leave_request_report:
-        medical_leave = salary_rate.medical_leave_cap - sum(row.duration for row in medical_Leave_request_report)
-
-    return {
-        "vacation_leave": vacation_leave,
-        "vacation_leave_earning": (vacation_leave / 60) * salary_rate.vacation_leave_factor * salary_rate.Base_salary,
-        "medical_leave": medical_leave,
-        "medical_leave_earning": (min(medical_leave, 0) / 60) * salary_rate.medical_leave_factor * salary_rate.Base_salary}
-
-"""
-"created_fk_by": "7cdfdaf3-cb2c-48a5-b371-ae09c0c74f57",
-"description": "string",
-"status": 0,
-"visible": true,
-"priority": 5,
-"can_update": true,
-"can_deleted": true,
-"user_fk_id": "7cdfdaf3-cb2c-48a5-b371-ae09c0c74f57",
-"leave_type": "vacation",
-"start_date": "2024-05-20T16:17:00.577242",
-"end_date": "2024-05-21T16:17:00.577251"
-"""
 
 def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
     try:
