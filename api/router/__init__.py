@@ -17,27 +17,45 @@ from .library import router as library
 
 
 routes = [
-    request_sub_route,
+    # Test Env
+    tools_route,
+
+    # Entity
+    student_route,
+    employee_route,
+
+
+    # User Form
+    roles_route,
+    payment_route,
+
+    # Course
     course_route,
-    course_extension_route,
     sub_course_route,
     session_route,
-    tools_route,
+    course_extension_route,
+
+    # Salary
     report_route,
-    roles_route,
+    SalaryPolicy_route,
+
+    # Employee Form
     business_trip_route,
     leave_request_route,
-    # question_route,
-    remote_request_route,
-    # response_route,
-    student_route,
-    # survey_route,
-    tardy_request_route,
-    payment_route,
     finger_scanner_router,
-    employee_route,
-    SalaryPolicy_route,
-    #
+    remote_request_route,
+
+    # Teacher Form
+    request_sub_route,
+    tardy_request_route,
+
+
+    # Survey
+    # question_route,
+    # response_route,
+    # survey_route,
+
+    # Site Form
     files,
     user,
     post,

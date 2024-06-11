@@ -19,7 +19,8 @@ async def get_all(user_id: UUID, db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
-@router.post("/salary", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Return_Salary])
+
+@router.post("/employee", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Return_Salary])
 async def add_student(Form: sch.Input, db=Depends(get_db)):
     status_code, result = dbf.employee_salary(db, Form.year, Form.month)
     if status_code != 200:

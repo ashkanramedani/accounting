@@ -362,7 +362,7 @@ class User_form(Base, Base_form):
     Status_Relation = creator_relation("Status_form")
 
     # User_Relation = relation("User_form")
-    # Salary_Relation = creator_relation("Employee_Salary_form")
+    # Salary_Relation = creator_relation("Employee_Salary_form")cd ..
 
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
     created = relationship("User_form", foreign_keys=[created_fk_by])  # , back_populates="User_Relation")

@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from time import sleep
 from typing import List
 from json import load, dump
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from redis import asyncio as redis
 from fastapi_limiter import FastAPILimiter
 from sqlalchemy.exc import OperationalError
@@ -56,8 +56,12 @@ async def app_lifespan(api: FastAPI):
 
 app = FastAPI(
         swagger_ui_parameters={"docExpansion": "none"},
-        title="Accounting V 0.1.0.0 ",
+        title="Accounting",
+        version="0.1.0.0",
         lifespan=app_lifespan)
+
+
+from fastapi.openapi.utils import get_openapi
 
 
 WHITELISTED_IPS: List[str] = []
