@@ -420,6 +420,7 @@ class Sub_Course_form(Base, InstitutionsBase):
 
     __args__ = (UniqueConstraint('sub_course_name', 'course_fk_id'),)
 
+
 class Session_form(Base, InstitutionsBase):
     __tablename__ = "session"
     session_pk_id = create_Unique_ID()
@@ -790,6 +791,16 @@ class Sub_Request_form(Base, Base_form):
     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
 
+
+class Session_Cancellation_form(Base, Base_form):
+    __tablename__ = "session_cancellation"
+
+    session_cancellation_pk_id = create_Unique_ID()
+
+    created_fk_by = create_forenKey("User_form")
+    session_fk_id = create_forenKey("Session_form")
+
+
 # class Reassign_Instructor_form(Base, Base_form):
 #     __tablename__ = "reassign_instructor"
 #
@@ -803,4 +814,3 @@ class Sub_Request_form(Base, Base_form):
 #     sessions = relationship("Session_form", foreign_keys=[sessions_fk_id])
 #     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
 #     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
-

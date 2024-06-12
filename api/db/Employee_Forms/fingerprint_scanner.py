@@ -36,7 +36,7 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
 def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_date):
     try:
         if isinstance(EnNo, UUID):
-            EnNo = db.query(dbm.User_form).filter_by(employee_pk_id=EnNo, deleted=False).first().fingerprint_scanner_user_id
+            EnNo = db.query(dbm.User_form).filter_by(user_pk_id=EnNo, deleted=False).first().fingerprint_scanner_user_id
         Fingerprint_scanner_report: List[dbm.Fingerprint_Scanner_form] = db.query(dbm.Fingerprint_Scanner_form) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
             .filter_by(deleted=False, EnNo=EnNo).all()
@@ -55,7 +55,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
             return 400, "Bad Request"
 
         data = Form.dict()
-        EnNo = db.query(dbm.User_form).filter_by(employee_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
+        EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
         if data["Enter"]:
             data["Enter"] = Fix_time(data["Enter"]).replace(second=0)
         if data["Exit"]:

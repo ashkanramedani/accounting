@@ -108,6 +108,9 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema):
             old_session.update({"deleted": True, "sub_Request": record.sub_request_pk_id})
             record.status = 1
             verified += 1
+            Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id, deleted=False).first()
+            if Session_cancellation_record:
+                Session_cancellation_record.deleted = True
 
         db.add_all(new_Record)
         db.commit()

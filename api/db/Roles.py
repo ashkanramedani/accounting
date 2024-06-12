@@ -27,13 +27,11 @@ def get_role(db: Session, role_id):
         return Return_Exception(db, e)
 
 
-
 def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Role_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)
-
 
 
 def post_role(db: Session, Form: sch.post_role_schema):
@@ -51,7 +49,6 @@ def post_role(db: Session, Form: sch.post_role_schema):
         return 200, "Record has been Added"
     except Exception as e:
         return Return_Exception(db, e)
-
 
 
 def delete_role(db: Session, role_id):
