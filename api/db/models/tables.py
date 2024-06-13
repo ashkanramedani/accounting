@@ -334,7 +334,7 @@ class User_form(Base, Base_form):
     id_card_number = Column(String, nullable=True)
     address = Column(String(5000), default=None)
 
-    fingerprint_scanner_user_id = Column(Integer, nullable=True, unique=True)
+    fingerprint_scanner_user_id = Column(Integer, nullable=False, unique=True, default=-1)
 
     is_employee = Column(Boolean, default=True, nullable=False)
     level = Column(String, index=True, nullable=True)
@@ -515,6 +515,8 @@ class Payment_Method_form(Base, Base_form):
 
 class Fingerprint_Scanner_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner"
+    __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),)
+
     fingerprint_scanner_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
     EnNo = Column(Integer, nullable=False)
@@ -523,26 +525,23 @@ class Fingerprint_Scanner_form(Base, Base_form):
     Exit = Column(TIME, nullable=True)
     duration = Column(Integer, nullable=False, default=0)
 
-    __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),)
-
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_Relation")
 
 
 class Fingerprint_Scanner_backup_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner_backup"
+    __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
+
     fingerprint_scanner_backup_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
     TMNo = Column(Integer, nullable=False)
     EnNo = Column(Integer, nullable=False)
-    Name = Column(String, nullable=False)
     GMNo = Column(Integer, nullable=False)
     Mode = Column(String)
     In_Out = Column(String)
     Antipass = Column(Integer)
     ProxyWork = Column(Integer)
     DateTime = Column(DateTime)
-
-    __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
 
     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_backup_Relation")
 
@@ -688,16 +687,17 @@ class Salary_Policy_form(Base, Base_form):
             return True
 
         return {k: str(v) for k, v in self.__dict__.items() if Validate(k)}
-
+    
 
 class Employee_Salary_form(Base, Base_form):
     __tablename__ = "employee_salary"
+    __table_args__ = (UniqueConstraint('user_fk_id', 'year', 'month'),)
     employee_salary_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
 
     year = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
-    fingerprint_scanner_user_id = Column(Integer, nullable=True, unique=True)
+    fingerprint_scanner_user_id = Column(Integer, nullable=True)
 
     present_time = Column(Integer, nullable=False)
     regular_work_time = Column(Integer, nullable=False)
@@ -723,7 +723,7 @@ class Employee_Salary_form(Base, Base_form):
     Salary_Policy = Column(JSON, nullable=False)
     Days = Column(JSON, nullable=False)
 
-    # created = relationship("User_form", foreign_keys=[user_fk_id], back_populates="SalaryPolicy_Relation")
+    created = relationship("User_form", foreign_keys=[user_fk_id])
 
 
 # ------------ Necessary for "Course" ------------

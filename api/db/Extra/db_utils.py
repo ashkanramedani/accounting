@@ -136,4 +136,5 @@ def Return_Exception(db: Session, Error: Exception):
     db.rollback()
     if "UniqueViolation" in str(Error):
         return 409, "Already Exist"
-    return 500, f'{Error.__class__.__name__}: {Error.args}'
+    # return 500, f'{Error.__class__.__name__}: {Error.args}'
+    return 500, f'{Error.__class__.__name__}: {Error.__repr__()}'

@@ -1,19 +1,71 @@
 {
-    "Sub Request": {
+    "[]": {
+        "GET": [
+            "http://localhost:5001/",
+            "http://localhost:5001/api/v1/form/count",
+            "http://localhost:5001/ping",
+            "http://localhost:5001/count"
+        ]
+    },
+    "Student": {
         "POST": [
-            "http://localhost:5001/api/v1/form/sub_request/add"
+            "http://localhost:5001/api/v1/form/student/add"
         ],
         "GET": [
-            "http://localhost:5001/api/v1/form/sub_request/search/<UUID>",
-            "http://localhost:5001/api/v1/form/sub_request/search"
+            "http://localhost:5001/api/v1/form/student/search/<UUID>",
+            "http://localhost:5001/api/v1/form/student/search"
         ],
         "DELETE": [
-            "http://localhost:5001/api/v1/form/sub_request/delete/<UUID>"
+            "http://localhost:5001/api/v1/form/student/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/sub_request/update",
-            "http://localhost:5001/api/v1/form/sub_request/updates",
-            "http://localhost:5001/api/v1/form/sub_request/verify"
+            "http://localhost:5001/api/v1/form/student/update"
+        ]
+    },
+    "Employee": {
+        "POST": [
+            "http://localhost:5001/api/v1/employee/add"
+        ],
+        "GET": [
+            "http://localhost:5001/api/v1/employee/search/<UUID>",
+            "http://localhost:5001/api/v1/employee/search"
+        ],
+        "DELETE": [
+            "http://localhost:5001/api/v1/employee/delete/<UUID>"
+        ],
+        "PUT": [
+            "http://localhost:5001/api/v1/employee/update"
+        ]
+    },
+    "role": {
+        "GET": [
+            "http://localhost:5001/api/v1/form/role/cluster",
+            "http://localhost:5001/api/v1/form/role/search/<UUID>",
+            "http://localhost:5001/api/v1/form/role/search"
+        ],
+        "POST": [
+            "http://localhost:5001/api/v1/form/role/add"
+        ],
+        "DELETE": [
+            "http://localhost:5001/api/v1/form/role/delete/<UUID>"
+        ],
+        "PUT": [
+            "http://localhost:5001/api/v1/form/role/update"
+        ]
+    },
+    "payment_method": {
+        "POST": [
+            "http://localhost:5001/api/v1/form/payment_method/add"
+        ],
+        "GET": [
+            "http://localhost:5001/api/v1/form/payment_method/search/<UUID>",
+            "http://localhost:5001/api/v1/form/payment_method/search"
+        ],
+        "DELETE": [
+            "http://localhost:5001/api/v1/form/payment_method/delete/<UUID>"
+        ],
+        "PUT": [
+            "http://localhost:5001/api/v1/form/payment_method/update"
         ]
     },
     "course": {
@@ -28,8 +80,37 @@
             "http://localhost:5001/api/v1/form/course/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/course/update",
-            "http://localhost:5001/api/v1/form/course/Report/<UUID>"
+            "http://localhost:5001/api/v1/form/course/update"
+        ]
+    },
+    "Sub Course": {
+        "POST": [
+            "http://localhost:5001/api/v1/form/sub_course/add"
+        ],
+        "GET": [
+            "http://localhost:5001/api/v1/form/sub_course/search/<UUID>",
+            "http://localhost:5001/api/v1/form/sub_course/search"
+        ],
+        "DELETE": [
+            "http://localhost:5001/api/v1/form/sub_course/delete/<UUID>"
+        ],
+        "PUT": [
+            "http://localhost:5001/api/v1/form/sub_course/update"
+        ]
+    },
+    "Sessions": {
+        "POST": [
+            "http://localhost:5001/api/v1/form/session/add"
+        ],
+        "GET": [
+            "http://localhost:5001/api/v1/form/session/search/<UUID>",
+            "http://localhost:5001/api/v1/form/session/search"
+        ],
+        "DELETE": [
+            "http://localhost:5001/api/v1/form/session/delete/<UUID>"
+        ],
+        "PUT": [
+            "http://localhost:5001/api/v1/form/session/update"
         ]
     },
     "course_Extension": {
@@ -62,67 +143,29 @@
             "http://localhost:5001/api/v1/form/course_type/update"
         ]
     },
-    "Sub Course": {
-        "POST": [
-            "http://localhost:5001/api/v1/form/sub_course/add",
-            "http://localhost:5001/api/v1/form/sub_course/teacher_replacement"
-        ],
-        "GET": [
-            "http://localhost:5001/api/v1/form/sub_course/search/<UUID>",
-            "http://localhost:5001/api/v1/form/sub_course/search"
-        ],
-        "DELETE": [
-            "http://localhost:5001/api/v1/form/sub_course/delete/<UUID>"
-        ],
-        "PUT": [
-            "http://localhost:5001/api/v1/form/sub_course/update"
-        ]
-    },
-    "Sessions": {
-        "POST": [
-            "http://localhost:5001/api/v1/form/session/add"
-        ],
-        "GET": [
-            "http://localhost:5001/api/v1/form/session/search/<UUID>",
-            "http://localhost:5001/api/v1/form/session/search"
-        ],
-        "DELETE": [
-            "http://localhost:5001/api/v1/form/session/delete/<UUID>"
-        ],
-        "PUT": [
-            "http://localhost:5001/api/v1/form/session/update"
-        ]
-    },
-    "[]": {
-        "GET": [
-            "http://localhost:5001/",
-            "http://localhost:5001/api/v1/form/count",
-            "http://localhost:5001/ping",
-            "http://localhost:5001/count"
-        ]
-    },
     "report": {
         "GET": [
+            "http://localhost:5001/api/v1/form/salary/permissions/<UUID>",
             "http://localhost:5001/api/v1/form/salary/employee/<UUID>"
         ],
         "POST": [
-            "http://localhost:5001/api/v1/form/salary/teacher/<UUID>"
+            "http://localhost:5001/api/v1/form/salary/employee",
+            "http://localhost:5001/api/v1/form/salary/teacher"
         ]
     },
-    "role": {
-        "GET": [
-            "http://localhost:5001/api/v1/form/role/cluster",
-            "http://localhost:5001/api/v1/form/role/search/<UUID>",
-            "http://localhost:5001/api/v1/form/role/search"
-        ],
+    "SalaryPolicy": {
         "POST": [
-            "http://localhost:5001/api/v1/form/role/add"
+            "http://localhost:5001/api/v1/form/SalaryPolicy/add"
+        ],
+        "GET": [
+            "http://localhost:5001/api/v1/form/SalaryPolicy/search/<UUID>",
+            "http://localhost:5001/api/v1/form/SalaryPolicy/search"
         ],
         "DELETE": [
-            "http://localhost:5001/api/v1/form/role/delete/<UUID>"
+            "http://localhost:5001/api/v1/form/SalaryPolicy/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/role/update"
+            "http://localhost:5001/api/v1/form/SalaryPolicy/update"
         ]
     },
     "Business Trip": {
@@ -131,13 +174,15 @@
         ],
         "GET": [
             "http://localhost:5001/api/v1/form/business_trip/search/<UUID>",
+            "http://localhost:5001/api/v1/form/business_trip/report/<UUID>",
             "http://localhost:5001/api/v1/form/business_trip/search"
         ],
         "DELETE": [
             "http://localhost:5001/api/v1/form/business_trip/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/business_trip/update"
+            "http://localhost:5001/api/v1/form/business_trip/update",
+            "http://localhost:5001/api/v1/form/business_trip/verify"
         ]
     },
     "Leave Forms": {
@@ -146,13 +191,32 @@
         ],
         "GET": [
             "http://localhost:5001/api/v1/form/leave_request/search/<UUID>",
+            "http://localhost:5001/api/v1/form/leave_request/report/<UUID>",
             "http://localhost:5001/api/v1/form/leave_request/search"
         ],
         "DELETE": [
             "http://localhost:5001/api/v1/form/leave_request/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/leave_request/update"
+            "http://localhost:5001/api/v1/form/leave_request/update",
+            "http://localhost:5001/api/v1/form/leave_request/verify"
+        ]
+    },
+    "fingerprint_scanner": {
+        "POST": [
+            "http://localhost:5001/api/v1/form/fingerprint_scanner/add",
+            "http://localhost:5001/api/v1/form/fingerprint_scanner/bulk_add/<UUID>"
+        ],
+        "GET": [
+            "http://localhost:5001/api/v1/form/fingerprint_scanner/search/<UUID>",
+            "http://localhost:5001/api/v1/form/fingerprint_scanner/search",
+            "http://localhost:5001/api/v1/form/fingerprint_scanner/report/<UUID>"
+        ],
+        "DELETE": [
+            "http://localhost:5001/api/v1/form/fingerprint_scanner/delete/<UUID>"
+        ],
+        "PUT": [
+            "http://localhost:5001/api/v1/form/fingerprint_scanner/update"
         ]
     },
     "Remote Request": {
@@ -161,28 +225,32 @@
         ],
         "GET": [
             "http://localhost:5001/api/v1/form/remote_request/search/<UUID>",
-            "http://localhost:5001/api/v1/form/remote_request/search"
+            "http://localhost:5001/api/v1/form/remote_request/search",
+            "http://localhost:5001/api/v1/form/remote_request/report/<UUID>"
         ],
         "DELETE": [
             "http://localhost:5001/api/v1/form/remote_request/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/remote_request/update"
+            "http://localhost:5001/api/v1/form/remote_request/update",
+            "http://localhost:5001/api/v1/form/remote_request/verify"
         ]
     },
-    "Student": {
+    "Sub Request": {
         "POST": [
-            "http://localhost:5001/api/v1/form/student/add"
+            "http://localhost:5001/api/v1/form/sub_request/add"
         ],
         "GET": [
-            "http://localhost:5001/api/v1/form/student/search/<UUID>",
-            "http://localhost:5001/api/v1/form/student/search"
+            "http://localhost:5001/api/v1/form/sub_request/search/<UUID>",
+            "http://localhost:5001/api/v1/form/sub_request/search"
         ],
         "DELETE": [
-            "http://localhost:5001/api/v1/form/student/delete/<UUID>"
+            "http://localhost:5001/api/v1/form/sub_request/delete/<UUID>"
         ],
         "PUT": [
-            "http://localhost:5001/api/v1/form/student/update"
+            "http://localhost:5001/api/v1/form/sub_request/update",
+            "http://localhost:5001/api/v1/form/sub_request/updates",
+            "http://localhost:5001/api/v1/form/sub_request/verify"
         ]
     },
     "Tardy Request": {
@@ -199,67 +267,6 @@
         "PUT": [
             "http://localhost:5001/api/v1/form/tardy_request/update",
             "http://localhost:5001/api/v1/form/tardy_request/updates"
-        ]
-    },
-    "payment_method": {
-        "POST": [
-            "http://localhost:5001/api/v1/form/payment_method/add"
-        ],
-        "GET": [
-            "http://localhost:5001/api/v1/form/payment_method/search/<UUID>",
-            "http://localhost:5001/api/v1/form/payment_method/search"
-        ],
-        "DELETE": [
-            "http://localhost:5001/api/v1/form/payment_method/delete/<UUID>"
-        ],
-        "PUT": [
-            "http://localhost:5001/api/v1/form/payment_method/update"
-        ]
-    },
-    "fingerprint_scanner": {
-        "POST": [
-            "http://localhost:5001/api/v1/form/fingerprint_scanner/add",
-            "http://localhost:5001/api/v1/form/fingerprint_scanner/bulk_add/<UUID>"
-        ],
-        "GET": [
-            "http://localhost:5001/api/v1/form/fingerprint_scanner/search/<UUID>",
-            "http://localhost:5001/api/v1/form/fingerprint_scanner/search"
-        ],
-        "DELETE": [
-            "http://localhost:5001/api/v1/form/fingerprint_scanner/delete/<UUID>"
-        ],
-        "PUT": [
-            "http://localhost:5001/api/v1/form/fingerprint_scanner/update"
-        ]
-    },
-    "Employee": {
-        "POST": [
-            "http://localhost:5001/api/v1/employee/add"
-        ],
-        "GET": [
-            "http://localhost:5001/api/v1/employee/search/<UUID>",
-            "http://localhost:5001/api/v1/employee/search"
-        ],
-        "DELETE": [
-            "http://localhost:5001/api/v1/employee/delete/<UUID>"
-        ],
-        "PUT": [
-            "http://localhost:5001/api/v1/employee/update"
-        ]
-    },
-    "SalaryPolicy": {
-        "POST": [
-            "http://localhost:5001/api/v1/form/SalaryPolicy/add"
-        ],
-        "GET": [
-            "http://localhost:5001/api/v1/form/SalaryPolicy/search/<UUID>",
-            "http://localhost:5001/api/v1/form/SalaryPolicy/search"
-        ],
-        "DELETE": [
-            "http://localhost:5001/api/v1/form/SalaryPolicy/delete/<UUID>"
-        ],
-        "PUT": [
-            "http://localhost:5001/api/v1/form/SalaryPolicy/update"
         ]
     },
     "File": {

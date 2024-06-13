@@ -24,7 +24,7 @@ def setUp_admin(db: Session):
         emp = db.query(dbm.User_form).filter_by(name=ADMIN["name"]).first()
         if not emp:
             UID = "308e2744-833c-4b94-8e27-44833c2b940f"
-            admin_user = dbm.User_form(user_pk_id=UID, created_fk_by=UID, name=ADMIN["name"], last_name=ADMIN["lastname"], status=1)  # type: ignore[call-arg]
+            admin_user = dbm.User_form(user_pk_id=UID, created_fk_by=UID, name=ADMIN["name"], last_name=ADMIN["lastname"], email="Admin@Admin.com", status=1)  # type: ignore[call-arg]
             db.add(admin_user)
             db.commit()
             db.refresh(admin_user)

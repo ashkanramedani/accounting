@@ -14,8 +14,12 @@ class post_role_schema(Role):
 class update_role_schema(Role):
     role_pk_id: UUID
 
-
-class role_response(update_role_schema):
+class role_response(BaseModel):
+    role_pk_id: UUID
+    name: str
+    cluster: str
+    status: int
+    description: str
     created: export_employee
 
     class Config:

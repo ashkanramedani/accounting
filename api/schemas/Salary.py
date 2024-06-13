@@ -12,13 +12,12 @@ class salary_type(Enum):
 
 
 # ---------------------- Employee_Salary_form ----------------------
-class SalaryPolicy(BaseModel):
-    created_fk_by: UUID
+class SalaryPolicy(Base_form):
     user_fk_id: UUID
 
-    day_starting_time: time | str | None = None
-    day_ending_time: time | str | None = None
-    Regular_hours_cap: int | None = None
+    day_starting_time: Optional[time | str | None] = None
+    day_ending_time: Optional[time | str | None] = None
+    Regular_hours_cap: Optional[int | None] = None
     Salary_Type: str
 
     # finger_print

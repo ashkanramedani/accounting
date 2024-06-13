@@ -111,12 +111,12 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
         report_summary["total_earning"] = sum(report_summary[key] for key in [key for key in report_summary.keys() if "earning" in key])
 
-        salary_obj = dbm.Employee_Salary_form(user_fk_id=user_fk_id, Days=days_metadata, Salary_Policy=Salary_Policy.summery(), **report_summary)  # type: ignore[call-arg]
+        salary_obj = dbm.Employee_Salary_form(user_fk_id=user_fk_id, year=year, month=month,fingerprint_scanner_user_id=EnNo, Days=days_metadata, Salary_Policy=Salary_Policy.summery(), **report_summary)  # type: ignore[call-arg]
         db.add(salary_obj)
         db.commit()
         db.refresh(salary_obj)
 
-        return 200, report_summary
+        return 200, salary_obj
     except Exception as e:
         return Return_Exception(db, e)
 

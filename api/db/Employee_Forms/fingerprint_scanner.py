@@ -13,6 +13,7 @@ from .Salary_Utils import generate_daily_report, calculate_duration
 from ..Extra import *
 from uuid import UUID
 
+
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, form_id):
     try:
@@ -36,7 +37,13 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
 def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_date):
     try:
         if isinstance(EnNo, UUID):
-            EnNo = db.query(dbm.User_form).filter_by(user_pk_id=EnNo, deleted=False).first().fingerprint_scanner_user_id
+            User = db.query(dbm.User_form).filter_by(user_pk_id=EnNo, deleted=False).first()
+            if not User:
+                return 400, "Employee Nor Found"
+            if User.fingerprint_scanner_user_id == -1 or not User.fingerprint_scanner_user_id:
+                return 400, "Selected Employee Doesnt have FingerPrint scanner identifier. ( edit employee or provide EnNo Manually)"
+            EnNo = User.fingerprint_scanner_user_id
+
         Fingerprint_scanner_report: List[dbm.Fingerprint_Scanner_form] = db.query(dbm.Fingerprint_Scanner_form) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
             .filter_by(deleted=False, EnNo=EnNo).all()
@@ -55,13 +62,20 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
             return 400, "Bad Request"
 
         data = Form.dict()
-        EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
+        # EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
+        User = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first()
+        if not User:
+            return 400, "Employee Not Found"
+        if User.fingerprint_scanner_user_id == -1 or not User.fingerprint_scanner_user_id:
+            return 400, "Selected Employee Doesnt have FingerPrint scanner identifier. ( edit employee or provide EnNo Manually)"
+        EnNo = User.fingerprint_scanner_user_id
+
         if data["Enter"]:
             data["Enter"] = Fix_time(data["Enter"]).replace(second=0)
         if data["Exit"]:
             data["Exit"] = Fix_time(data["Exit"]).replace(second=0)
 
-        Back_up_Body = {"TMNo": 0, "EnNo": EnNo, "Name": data["Name"], "GMNo": 0, "Mode": "Manually", "In_Out": "Normal", "Antipass": 0, "ProxyWork": 0}
+        Back_up_Body = {"TMNo": 0, "EnNo": EnNo, "GMNo": 0, "Mode": "Manually", "In_Out": "Normal", "Antipass": 0, "ProxyWork": 0}
 
         OBJs = [
             dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Enter"]}'),  # type: ignore[call-arg]
@@ -105,7 +119,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: p
             Processed += 1
             OBJs.append(dbm.Fingerprint_Scanner_backup_form(created_fk_by=created_fk_by, **record))  # type: ignore[call-arg]
             record_time = record["DateTime"]
-            EMP = record['Name']
+            EMP = record['EnNo']
             if EMP not in ID:
                 ID[EMP] = record['EnNo']
             D, T = record_time.date(), record_time.time()
@@ -123,7 +137,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: p
                     duration = calculate_duration(hour[H], hour[H + 1])
                     hour[H] = Fix_time(hour[H]) if hour[H] else None
                     hour[H + 1] = Fix_time(hour[H + 1]) if hour[H + 1] else None
-                    OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=ID[EMP], Name=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
+                    OBJs.append(dbm.Fingerprint_Scanner_form(created_fk_by=created_fk_by, EnNo=EMP, Date=day, Enter=hour[H], Exit=hour[H + 1], duration=duration))  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()

@@ -38,6 +38,12 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
         return Return_Exception(db, e)
 
 
+
+"""
+"Fixed"
+"Split"
+"Hourly"
+"""
 def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
     try:
         if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
@@ -45,19 +51,27 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
 
         data = Form.dict()
 
-        if data["day_starting_time"] is None and data["Regular_hours_cap"] is None:
-            return 400, "Bad Request: one of the following must have values: day_starting_time or Regular_hours_cap"
+        if Form.Salary_Type == "Fixed":
+            start, end = data["day_starting_time"], data["day_ending_time"]
+            if not start or not end:
+                return 400, "Bad Request: one of the following Doesn't have values: (day_starting_time, day_ending_time)"
 
-        if data["day_ending_time"] and data["day_starting_time"]:
-            if Fix_time(data["day_ending_time"]) < Fix_time(data["day_starting_time"]):
+            start, end = Fix_time(start), Fix_time(end)
+            if end < start:
                 return 400, "Bad Request: End Date must be greater than Start Date"
 
-        del data["Regular_hours_cap"]
+            data["Regular_hours_cap"] = time_gap(start, end)
+
+        elif Form.Salary_Type == "Hourly" or Form.Salary_Type == "Split":
+            if not data["Regular_hours_cap"]:
+                return 400, "Bad Request: Regular_hours_cap is required"
+        else:
+            return 400, "Bad Request: Invalid Salary Type"
 
         if data["undertime_factor"] > 0:
             data["undertime_factor"] *= -1
 
-        OBJ = dbm.Salary_Policy_form(Regular_hours_cap=Working_hour, **data)  # type: ignore[call-arg]
+        OBJ = dbm.Salary_Policy_form(**data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
