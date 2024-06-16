@@ -55,7 +55,6 @@ cover/
 *.pot
 
 # Django stuff:
-*.log
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
@@ -144,10 +143,6 @@ dmypy.json
 cython_debug/
 
 # PyCharm
-#  JetBrains specific template is maintainted in a separate JetBrains.gitignore that can
-#  be found at https://github.com/github/gitignore/blob/main/Global/JetBrains.gitignore
-#  and can be added to the global gitignore or merged into this file.  For a more nuclear
-#  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 api/.DS_Store
 /Notes/
@@ -168,17 +163,18 @@ db/__pycache__
 db/__pycache__/teacher_replacement.cpython-311.pyc
 ignore
 lib/__pycache__/
-log/Log.log
 router/.DS_Store
 router/__pycache__
 api/sand.admin.api.ieltsdaily.ir.tar
-/api/log
-/api/log
-/api/log
-api/log/Log.csv
 api/configs/site_org_config.json
 api/configs/test_config.json
 api/admin.api.ieltsdaily.ir.tar!/router_Dev/
 
-router_Dev/!/main2.py
 !/Diagram/
+!/db/models/tables_TMP.py
+!/log/access.log
+!/log/Log-2024-06-16.log
+!/log/uvicorn.log
+!/main2.py
+!/.lprof/
+!/db/models/tables_TMP.py

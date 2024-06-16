@@ -339,24 +339,28 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
 
 
 if __name__ == '__main__':
-    "2024-05-20T16:17:00.577242"
-    "2024-05-21T16:17:00.577251"
-    date_1 = Fix_datetime("2024-05-19T16:17:00.577242")
-    date_2 = Fix_datetime("2024-05-20T16:17:00.577251")
-    #
-    # date_11 = to_persian(2024, 5, 20)
-    # date_22 = to_persian(date_2.year, date_2.month, date_2.day)
-    res = same_month(date_1, date_2)
-    # print(res)
-    for y in range(2023, 2030):
-        for i in range(1, 13):
-            try:
-                to_persian(y, i, 1)
-            except Exception as e:
-                print(f'{e.__class__.__name__}: {e.args}')
+    start_date = "2024-06-13T14:20:56.666871"
+    end_date = "2024-06-14T14:20:56.666880"
+
+    print(start_date, Fix_datetime(start_date))
+    print(end_date, Fix_datetime(end_date))
+    a = same_month(Fix_datetime(start_date), Fix_datetime(end_date))
+    print(a)
 
 
-
-
-
+"""
+{
+  "created_fk_by":"b23ff8ea-7aa5-4b9a-b7f2-94c066f47e4c",
+  "description":"string",
+  "status":0,
+  "visible":true,
+  "priority":5,
+  "can_update":true,
+  "can_deleted":true,
+  "user_fk_id":"b23ff8ea-7aa5-4b9a-b7f2-94c066f47e4c",
+  "leave_type":"vacation",
+  "start_date":"2024-06-13T14:20:56.666871",
+  "end_date":"2024-06-14T14:20:56.666880"
+}
+"""
 

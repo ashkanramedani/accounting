@@ -79,7 +79,7 @@ class EducationalInstitutions(Base, BaseTable):
 #     authentication_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
 #     username = Column(String, index=True, unique=True, nullable=False)
 #     password = Column(String, nullable=False)
-#     auth_users = relationship("Users")
+#     auth_users = relationship("Users", back_populates="auth")
 #
 #     def __repr__(self):
 #         return f'<Authentication "{self.username}">'
@@ -116,21 +116,21 @@ class Users(Base, BaseTable):
     # birth_date = Column(DateTime(timezone=True), default=None)
     # birth_place = Column(String(250), default=None)  
 
-    # departments_user = relationship('Departments', secondary=users_departments_association)
-    # users_roles = relationship("UserRole")
-    # posts_user_speaker = relationship("Posts", secondary=users_posts_speaker_association)
-    # posts_user_writer = relationship("Posts", secondary=users_posts_writer_association)
-    # posts_user_actor = relationship("Posts", secondary=users_posts_actor_association)
-    # # products_user = relationship('Products', secondary=products_users_association)
-    # # user_classs_role = relationship('classs', secondary=class_user_role_association)
+    # departments_user = relationship('Departments', secondary=users_departments_association, back_populates="users_department")
+    # users_roles = relationship("UserRole", back_populates="user")
+    # posts_user_speaker = relationship("Posts", secondary=users_posts_speaker_association, back_populates="users_post_speaker")    
+    # posts_user_writer = relationship("Posts", secondary=users_posts_writer_association, back_populates="users_post_writer")    
+    # posts_user_actor = relationship("Posts", secondary=users_posts_actor_association, back_populates="users_post_actor")    
+    # # products_user = relationship('Products', secondary=products_users_association, back_populates="users_product")
+    # # user_classs_role = relationship('classs', secondary=class_user_role_association, back_populates="class_users_roles")
 
-    # auth = relationship("Authentications")
+    # auth = relationship("Authentications", back_populates="auth_users")
 
     # gender_fk_id = Column(BigInteger, ForeignKey("tbl_genders.gender_pk_id"))
-    # gender = relationship("Genders")
+    # gender = relationship("Genders", back_populates="gender_user_list")
 
     # branch_fk_id = Column(BigInteger, ForeignKey("tbl_branches.branch_pk_id"))
-    # branch = relationship("Branchs")
+    # branch = relationship("Branchs", back_populates="branch_user_list")
 
     # teaching_start_date = Column(DateTime(timezone=True), default=None)
     # teaching_languages = Column(JSONB, server_default='{}')
@@ -138,8 +138,8 @@ class Users(Base, BaseTable):
     # meta_data = Column(JSONB, server_default='{}')     
 
     # authentication_fk_id = Column(BigInteger, ForeignKey("tbl_authentications.authentication_pk_id"))  
-    # classs_user = relationship('class', secondary=classs_users_association)
-    # exams_user = relationship('Exam', secondary=exams_users_association)
+    # classs_user = relationship('class', secondary=classs_users_association, back_populates="users_class")
+    # exams_user = relationship('Exam', secondary=exams_users_association, back_populates="users_exam")
 
     # educational_institution_fk_id = Column(BigInteger, ForeignKey("tbl_educational_institutions.educational_institution_pk_id"), nullable=True)
     # user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
@@ -192,10 +192,10 @@ class Posts(Base, BaseTable):
     post_direction = Column(String)
     post_status = Column(Integer, default=5, nullable=False)
 
-    # users_post_speaker = relationship("Users", secondary=users_posts_speaker_association)
-    # users_post_writer = relationship("Users", secondary=users_posts_writer_association)
-    # users_post_actor = relationship("Users", secondary=users_posts_actor_association)
-    # post_viwe = relationship("Users", secondary=users_posts_writer_association)
+    # users_post_speaker = relationship("Users", secondary=users_posts_speaker_association, back_populates="posts_user_speaker")  
+    # users_post_writer = relationship("Users", secondary=users_posts_writer_association, back_populates="posts_user_writer")  
+    # users_post_actor = relationship("Users", secondary=users_posts_actor_association, back_populates="posts_user_actor")  
+    # post_viwe = relationship("Users", secondary=users_posts_writer_association, back_populates="posts_user_writer")  
 
     # post_category_id = Column(Integer, ForeignKey('tbl_categories.category_pk_id'))
     # tags_post = relationship("Tag", secondary=tags_posts_association, backref="posts_tag")  
@@ -339,8 +339,33 @@ class User_form(Base, Base_form):
     is_employee = Column(Boolean, default=True, nullable=False)
     level = Column(String, index=True, nullable=True)
 
+    Tag_Relation = creator_relation("Tag_form")
+    Category_Relation = creator_relation("Category_form")
+    Language_Relation = creator_relation("Language_form")
+    course_type_Relation = creator_relation("Course_Type_form")
+    course_Relation = creator_relation("Course_form")
+    sub_course_Relation = creator_relation("Sub_Course_form")
+    Session_Relation = creator_relation("Session_form")
+    Roles_Relation = creator_relation("Role_form")
+    # User_Relation = relation("User_form")
+    sub_request_Relation = creator_relation("Sub_Request_form")
+    Survey_Relation = creator_relation("Survey_form")
+    Questions_Relation = creator_relation("Question_form")
+    Business_Trip_Relation = creator_relation("Business_Trip_form")
+    Leave_request_Relation = creator_relation("Leave_Request_form")
+    Remote_Request_Relation = creator_relation("Remote_Request_form")
+    payment_method_Relation = creator_relation("Payment_Method_form")
+    fingerprint_scanner_Relation = creator_relation("Fingerprint_Scanner_form")
+    fingerprint_scanner_backup_Relation = creator_relation("Fingerprint_Scanner_backup_form")
+    Teacher_tardy_reports_Relation = creator_relation("Teacher_Tardy_report_form")
+    SalaryPolicy_Relation = creator_relation("Salary_Policy_form")
+    Status_Relation = creator_relation("Status_form")
+
+    # User_Relation = relation("User_form")
+    # Salary_Relation = creator_relation("Employee_Salary_form")cd ..
+
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by])  # , back_populates="User_Relation")
 
     __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name", "is_employee"),)
 
@@ -366,7 +391,7 @@ class Course_form(Base, InstitutionsBase):
     tags = relationship("Tag_form", secondary=CourseTag, backref="course_tag")
     categories = relationship("Category_form", secondary=CourseCategory, backref="course_category")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="course_Relation")
     language = relationship("Language_form", foreign_keys=[course_language])
     type = relationship("Course_Type_form", foreign_keys=[course_type])
 
@@ -389,7 +414,7 @@ class Sub_Course_form(Base, InstitutionsBase):
     sub_course_capacity = Column(Integer, nullable=False)
     sub_course_available_seat = Column(Integer, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="sub_course_Relation")
     teacher = relationship("User_form", foreign_keys=[sub_course_teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
 
@@ -414,7 +439,7 @@ class Session_form(Base, InstitutionsBase):
     session_duration = Column(Integer, nullable=False)
     days_of_week = Column(Integer, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Session_Relation")
     course = relationship("Course_form", foreign_keys=[course_fk_id])
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
     teacher = relationship("User_form", foreign_keys=[session_teacher_fk_id])
@@ -436,7 +461,7 @@ class Leave_Request_form(Base, Base_form):
 
     leave_type = Column(String, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Leave_request_Relation")
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
     # __args__ = (UniqueConstraint('user_fk_id', 'start_date', 'end_date'),)
@@ -454,7 +479,7 @@ class Business_Trip_form(Base, Base_form):
 
     destination = Column(String, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Business_Trip_Relation")
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
     __args__ = (UniqueConstraint('user_fk_id', 'start_date', 'end_date'),)
@@ -471,7 +496,7 @@ class Remote_Request_form(Base, Base_form):
     end_date = Column(DateTime, index=True)
     duration = Column(Integer, nullable=False, default=0)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Remote_Request_Relation")
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
 
@@ -484,7 +509,7 @@ class Payment_Method_form(Base, Base_form):
     card_number = Column(String(16), nullable=True)
     active = Column(Boolean, default=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="payment_method_Relation")
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
 
@@ -500,7 +525,7 @@ class Fingerprint_Scanner_form(Base, Base_form):
     Exit = Column(TIME, nullable=True)
     duration = Column(Integer, nullable=False, default=0)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_Relation")
 
 
 class Fingerprint_Scanner_backup_form(Base, Base_form):
@@ -518,7 +543,7 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
     ProxyWork = Column(Integer)
     DateTime = Column(DateTime)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="fingerprint_scanner_backup_Relation")
 
 
 # ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++
@@ -532,7 +557,7 @@ class Teacher_Tardy_report_form(Base, Base_form):
     sub_course_fk_id = create_forenKey("Sub_Course_form")
     delay = Column(Integer, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Teacher_tardy_reports_Relation")
     teacher = relationship("User_form", foreign_keys=[teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
@@ -562,7 +587,7 @@ class Survey_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
     title = Column(String, index=True)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Survey_Relation")
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
     questions = relationship('Question_form', secondary=survey_questions, backref='surveys')
 
@@ -574,7 +599,7 @@ class Question_form(Base, InstitutionsBase):
     text = Column(String, unique=True)
     language = Column(String, index=True)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Questions_Relation")
 
 
 class Response_form(Base, Base_form):
@@ -601,7 +626,7 @@ class Role_form(Base, Base_form):
     name = Column(String, index=True, nullable=False, unique=True)
     cluster = Column(String, index=True, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Roles_Relation")
 
 
 # ++++++++++++++++++++++++++ Salary_Policy_form +++++++++++++++++++++++++++
@@ -651,7 +676,7 @@ class Salary_Policy_form(Base, Base_form):
     business_trip_factor = Column(Float, nullable=False)
     business_trip_cap = Column(Integer, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="SalaryPolicy_Relation")
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
     def summery(self) -> dict:
@@ -709,7 +734,7 @@ class Tag_form(Base, Base_form):
     tag_name = Column(String, index=True, nullable=False, unique=True)
     created_fk_by = create_forenKey("User_form")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Tag_Relation")
 
 
 class Category_form(Base, Base_form):
@@ -719,7 +744,7 @@ class Category_form(Base, Base_form):
     category_name = Column(String, index=True, nullable=False, unique=True)
     created_fk_by = create_forenKey("User_form")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Category_Relation")
 
 
 class Language_form(Base, Base_form):
@@ -729,7 +754,7 @@ class Language_form(Base, Base_form):
     language_name = Column(String, index=True, nullable=False, unique=True)
     created_fk_by = create_forenKey("User_form")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Language_Relation")
 
 
 class Course_Type_form(Base, Base_form):
@@ -739,7 +764,7 @@ class Course_Type_form(Base, Base_form):
     course_type_name = Column(String, index=True, nullable=False, unique=True)
     created_fk_by = create_forenKey("User_form")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="course_type_Relation")
 
 
 class Status_form(Base, Base_form):  # NC: 002
@@ -749,7 +774,7 @@ class Status_form(Base, Base_form):  # NC: 002
     status_name = Column(String, index=True, nullable=False, unique=True)
     created_fk_by = create_forenKey("User_form")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Status_Relation")
 
 
 class Sub_Request_form(Base, Base_form):
@@ -761,7 +786,7 @@ class Sub_Request_form(Base, Base_form):
     main_teacher_fk_id = create_forenKey("User_form")
     sub_teacher_fk_id = create_forenKey("User_form")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="sub_request_Relation")
     sessions = relationship("Session_form", foreign_keys=[session_fk_id])
     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
@@ -775,6 +800,7 @@ class Session_Cancellation_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
     session_fk_id = create_forenKey("Session_form")
 
+
 # class Reassign_Instructor_form(Base, Base_form):
 #     __tablename__ = "reassign_instructor"
 #
@@ -784,7 +810,7 @@ class Session_Cancellation_form(Base, Base_form):
 #     main_teacher_fk_id = create_forenKey("User_form")
 #     sub_teacher_fk_id = create_forenKey("User_form")
 #
-#     created = relationship("User_form", foreign_keys=[created_fk_by])
+#     created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="sub_request_Relation")
 #     sessions = relationship("Session_form", foreign_keys=[sessions_fk_id])
 #     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
 #     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])

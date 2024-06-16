@@ -1,0 +1,30 @@
+@startuml
+start
+note
+request Session Cancellation
+end note
+:Submit a Form;
+if (Accepted) then (Yes)
+    :Current session -> deleted = True
+    New session ----> is-sub = True;
+else (No)
+endif
+:Notify the Teacher;
+stop
+
+
+start
+note
+replace subCourse teacher
+end note
+:Submit a Replacement Form;
+if (Teacher Leave the class) then (yes)
+    :ALl sessions -> deleted = True;
+else (No)
+    :upcoming sessions - > deleted = True;
+endif
+    :assign the new teacher for upcoming sessions;
+    :subCourse teacher = New Teacher;
+
+stop
+@enduml

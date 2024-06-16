@@ -1,19 +1,10 @@
-import traceback
+import sys
+from datetime import datetime
 from os.path import normpath, dirname, join
 
 from loguru import logger as L
 from lib.requester import requester
-from json import load, dump
-
-
-def empty_sink(logger_obj: L, remove_std: bool = False):
-    i = 0 if remove_std else 1
-    while True:
-        try:
-            logger_obj.remove(i)
-            i += 1
-        except ValueError:
-            return logger_obj
+from json import load
 
 
 class Log:
@@ -21,33 +12,27 @@ class Log:
         self.Info_Status = [200, 201]
         self.Warn_Status = [400]
         self.ERR_Statis = [500]
-        self._path = None
-        if not config:
-            self.developer = True
-            self.config_path = join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")
-            config = load(open(self.config_path))
-            self._path = config["logger"]["abs_sink"] if config["logger"]["abs_sink"] else normpath(f'{dirname(__file__)}/../log/log.log')
-            config["logger"]["abs_sink"] = ""
-            dump(config, open(self.config_path, 'w'))
-            self.logger = L
-            self.logger = empty_sink(self.logger)
 
-            self.logger.add(sink=self._path, level=config["logger"]["level"], format=config["logger"]["format"])
-        else:
-            self.developer = config["logger"]['developer_log']
+        self.config_path = join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")
+        self.config_path = "configs/config.json"
+        config = load(open(self.config_path))
+
+        self.developer = True
+        self.logger = L
+        self.logger.remove()
+
+        self.logger.add("log/Log-{time:YYYY-MM-DD}.log", rotation=config["logger"]["rotation"], level=config["logger"]["level"])
+        self.logger.add(sys.stdout, level=config["logger"]["level"])
+        self.logger.info(f" ------------ Logger has been created [{datetime.now()}] ------------ ")
 
     @property
     def log_path(self):
-        return self._path
+        return "log/Log-[Date].log"
+
     def keep_log(self, msg, type_log, user_id, location):
         try:
             url = "logger_events"
-            payload = {
-                "username": user_id,
-                "message": msg,
-                "location": location,
-                "typ": type_log
-            }
+            payload = {"username": user_id, "message": msg, "location": location, "typ": type_log}
             _obj_requester = requester()
             _obj_requester.post(_url=url, payload=payload)
 
@@ -81,7 +66,6 @@ class Log:
 
     def error(self, msg, depth=1):
         self.logger.opt(depth=depth).error(msg)
-
 
     def on_status_code(self, status_code, msg):
         if not isinstance(msg, str):

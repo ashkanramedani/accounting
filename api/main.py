@@ -13,30 +13,18 @@ from sqlalchemy.exc import OperationalError
 from fastapi.middleware.cors import CORSMiddleware
 
 try:
-    PRJ_file = str(pathlib.Path(__file__).parent.resolve())
-    abs_config = os.path.join(PRJ_file, "configs/config.json")
-    config = load(open(abs_config))
-    if "abs_sink" not in config["logger"]:
-        config["logger"]["abs_sink"] = ""
-
-    config["logger"]["abs_sink"] = f'{PRJ_file}/{config["logger"]["sink"]}'
-    dump(config, open(abs_config, 'w'), indent=4)
-
     from db import models, save_route
     from router import routes
     from lib.log import logger
     from db.models import engine, SessionLocal
     from db import setUp_admin
 
-    logger.info("Logger Configured")
-
 except Exception as e:
     raise Exception(f"Error during importing libraries : f'{e.__class__.__name__}: {e.args}'")
 
-
 @asynccontextmanager
 async def app_lifespan(api: FastAPI):
-    logger.info(f"Starting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
+    logger.info(f"Starting {api.title} -V: {api.version} - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
     while True:
         try:
             # models.Base.metadata.drop_all(engine)
@@ -50,18 +38,10 @@ async def app_lifespan(api: FastAPI):
     await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
     yield
     logger.info(f"Shutting FastAPI - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
-    dump(config, open(abs_config, 'w'), indent=4)
     await FastAPILimiter.close()
 
 
-app = FastAPI(
-        swagger_ui_parameters={"docExpansion": "none"},
-        title="Accounting",
-        version="0.1.0.0",
-        lifespan=app_lifespan)
-
-
-from fastapi.openapi.utils import get_openapi
+app = FastAPI(swagger_ui_parameters={"docExpansion": "none"}, title="Accounting", version="0.1.0.0", lifespan=app_lifespan)
 
 
 WHITELISTED_IPS: List[str] = []
@@ -69,7 +49,8 @@ app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], 
 
 
 route_schema = save_route(routes)
-dump(route_schema, open(f'{PRJ_file}/configs/routes.json', 'w'), indent=4)
+dump(route_schema, open(f'{pathlib.Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
 
 for route in routes:
     app.include_router(route)
+

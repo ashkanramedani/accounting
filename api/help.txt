@@ -11,3 +11,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 6600 --workers 2
 source .venv/bin/activate;
 pip install -r requirements.txt;
 uvicorn main:app --reload --host 0.0.0.0 --port 6600 --workers 2
+
+
+# With Logging
+# uvicorn main:app --host 0.0.0.0 --port 5001 --reload --log-config logging_config.yaml
