@@ -14,12 +14,12 @@ handlers:
   default:
     formatter: default
     class: logging.FileHandler
-    filename: Log/uvicorn.log
+    filename: log/uvicorn.log
     mode: a
   access:
     formatter: access
     class: logging.FileHandler
-    filename: Log/access.log
+    filename: log/access.log
     mode: a
 loggers:
   uvicorn:
