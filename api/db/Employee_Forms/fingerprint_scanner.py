@@ -80,7 +80,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         OBJs = [
             dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Enter"]}'),  # type: ignore[call-arg]
             dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Exit"]}'),  # type: ignore[call-arg]
-            dbm.Fingerprint_Scanner_form(**data, duration=calculate_duration(data["Enter"], data["Exit"]))]  # type: ignore[call-arg]
+            dbm.Fingerprint_Scanner_form(**data, EnNo=EnNo, duration=calculate_duration(data["Enter"], data["Exit"]))]  # type: ignore[call-arg]
 
         db.add_all(OBJs)
         db.commit()
