@@ -75,7 +75,7 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
         if data["Exit"]:
             data["Exit"] = Fix_time(data["Exit"]).replace(second=0)
 
-        Back_up_Body = {"TMNo": 0, "EnNo": EnNo, "GMNo": 0, "Mode": "Manually", "In_Out": "Normal", "Antipass": 0, "ProxyWork": 0}
+        Back_up_Body = {"created_fk_by": data["created_fk_by"], "TMNo": 0, "EnNo": EnNo, "GMNo": 0, "Mode": "Manually", "In_Out": "Normal", "Antipass": 0, "ProxyWork": 0}
 
         OBJs = [
             dbm.Fingerprint_Scanner_backup_form(**Back_up_Body, DateTime=f'{data["Date"]} {data["Enter"]}'),  # type: ignore[call-arg]
