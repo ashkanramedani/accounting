@@ -315,6 +315,14 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
 
     Returns:
         list: A list of dictionaries containing the date and a boolean indicating if it's a holiday.
+        :param day_of_week:
+        :type day_of_week:
+        :param ending_date:
+        :type ending_date:
+        :param starting_date:
+        :type starting_date:
+        :param day_of_week:
+        :type day_of_week:
     """
     if day_of_week is None:
         day_of_week = [0, 1, 2, 3, 4, 5, 6]
@@ -329,7 +337,4 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
 
 
 if __name__ == '__main__':
-    a, b = generate_month_interval(1402, 11, False)
-    print(a, b)
-    a, b = generate_month_interval(1402, 11, True)
-    print(a, b)
+    pass

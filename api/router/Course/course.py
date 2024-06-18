@@ -1,6 +1,5 @@
 from typing import List
 
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -20,7 +19,7 @@ async def add_course(Form: sch.post_course_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.course_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.course_response)
 async def search_course(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_course(db, form_id)
     if status_code != 200:
@@ -29,8 +28,8 @@ async def search_course(form_id, db=Depends(get_db)):
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.course_response])
-async def search_all_course(course_type: str=None, db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
-    status_code, result = dbf.get_all_course(db,course_type, page, limit, order)
+async def search_all_course(course_type: str = None, db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+    status_code, result = dbf.get_all_course(db, course_type, page, limit, order)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result

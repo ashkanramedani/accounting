@@ -1,17 +1,17 @@
 import io
 from typing import List
 from uuid import UUID
+
 import pandas as pd
 from fastapi import APIRouter, Depends
-
-from lib.Date_Time import generate_month_interval
+from fastapi import File, UploadFile
 from fastapi import HTTPException
 from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
 import schemas as sch
 from db.models import get_db
-from fastapi import File, UploadFile
+from lib.Date_Time import generate_month_interval
 
 router = APIRouter(prefix='/api/v1/form/fingerprint_scanner', tags=['fingerprint_scanner'])
 

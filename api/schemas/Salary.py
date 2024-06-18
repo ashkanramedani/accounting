@@ -1,8 +1,7 @@
-import random
+from typing import Any
+from pydantic import PositiveInt
 
 from .Base import *
-
-from enum import Enum
 
 
 class salary_type(Enum):

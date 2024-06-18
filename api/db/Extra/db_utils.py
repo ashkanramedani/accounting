@@ -25,10 +25,11 @@ Tables = {
     "salarypolicy": dbm.Salary_Policy_form
 }
 
+
 def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Update_Relation], categories: List[sch.Update_Relation]):
     Errors = []
-    all_tags = [id.tag_pk_id for id in db.query(dbm.Tag_form).filter_by(deleted=False).all()]
-    all_categories = [id.category_pk_id for id in db.query(dbm.Category_form).filter_by(deleted=False).all()]
+    all_tags = [TAG.tag_pk_id for TAG in db.query(dbm.Tag_form).filter_by(deleted=False).all()]
+    all_categories = [CTG.category_pk_id for CTG in db.query(dbm.Category_form).filter_by(deleted=False).all()]
     for tag in tags:
         if existing_tag := tag.old_id:
             tag_OBJ = db.query(dbm.CourseTag).filter_by(course_fk_id=course_pk_id, tag_fk_id=existing_tag, deleted=False)
@@ -56,7 +57,6 @@ def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Up
                 course.categories.append(db.query(dbm.Category_form).filter_by(category_pk_id=new_category, deleted=False).first())
     db.commit()
     return Errors
-
 
 
 def Add_role(db, roles: List[sch.Update_Relation | Dict], UserOBJ, UserID):

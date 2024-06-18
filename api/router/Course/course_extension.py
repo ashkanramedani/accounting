@@ -1,7 +1,6 @@
 from typing import List
 
-from lib import API_Exception
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
@@ -25,7 +24,6 @@ async def search_tag(form_id, db=Depends(get_db)):
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-
 
 
 @router.get("/tag/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.tag_response])
@@ -91,6 +89,7 @@ async def update_category(Form: sch.update_category_schema, db=Depends(get_db)):
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
 
 # language
 
@@ -173,18 +172,3 @@ async def update_course_type(Form: sch.update_course_type_schema, db=Depends(get
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

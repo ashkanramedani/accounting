@@ -1,24 +1,16 @@
-import sys
-import os
-import hashlib
+import random
 import time
+from datetime import timedelta, datetime
 from os.path import dirname, normpath
+from typing import Any
 
 import requests
-import re
-import random
-from typing import Dict, Any, Tuple
-from werkzeug.utils import secure_filename
-from werkzeug.security import generate_password_hash, check_password_hash
-from dateutil import parser
-from datetime import date, timedelta, datetime
-from persiantools.jdatetime import JalaliDate
 from khayyam import JalaliDatetime
 
-from lib.json_handler import json_handler
-from lib.redis_db import Redis
-from lib.log import logger as _objLog
 from lib.hash import Hash
+from lib.json_handler import json_handler
+from lib.log import logger
+from lib.redis_db import Redis
 
 directory = normpath(f'{dirname(__file__)}/../')
 _obj_json_handler_config = json_handler(FilePath=directory + "/configs/config.json")
@@ -36,19 +28,19 @@ def send_request(url: str, method: str, headers: dict = None, body: dict | None 
 
 def get(url, headers=None):
     headers = Default_headers if headers is None else headers
-    _objLog.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
+    logger.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
     return requests.request("GET", url, headers=headers)
 
 
 def put(url, body, headers=None):
     headers = Default_headers if headers is None else headers
-    _objLog.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
+    logger.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
     return requests.request("PUT", url, json=body, headers=headers)
 
 
 def post(url, body, headers=None):
     headers = Default_headers if headers is None else headers
-    _objLog.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
+    logger.warning("Module id deprecated\nplease use module bellow instead\n>>> send_request(url: str, method: str, headers: dict, body: dict | None)\t")
     return requests.request("POST", url, json=body, headers=headers)
 
 
@@ -137,6 +129,7 @@ class ToolsForTimToBook:
         while current_date <= end_date:
             if current_date.weekday() in selected_days:
                 current_time = JalaliDatetime.combine(current_date, start_time)
+                current_time.time()
                 end_of_day = JalaliDatetime.combine(current_date, end_time)
                 while current_time < end_of_day:
                     if str(current_time)[:10] not in schedule_exceptions:
@@ -144,8 +137,8 @@ class ToolsForTimToBook:
                             "day_of_week": current_date.weekday(),
                             "start_date": str(current_time)[:10],
                             "end_date": str(current_time)[:10],
-                            "start_time": (current_time)._time,
-                            "end_time": (current_time + timedelta(minutes=time_slot_minutes))._time,
+                            "start_time": current_time.time(),
+                            "end_time": (current_time + timedelta(minutes=time_slot_minutes)).time(),
                         }
                         exam_schedule.append(x)
                     current_time += timedelta(minutes=time_slot_minutes)
@@ -168,16 +161,16 @@ class Massenger:
 
         try:
             response = post(config["fast_sms"]["url"], body=data)
-            _objLog.show_log(config["fast_sms"]["url"], 'e')
-            _objLog.show_log(data, 'e')
-            _objLog.show_log(response.json, 'e')
-            _objLog.show_log(response.status_code, 'e')
+            logger.show_log(config["fast_sms"]["url"], 'e')
+            logger.show_log(data, 'e')
+            logger.show_log(response.json, 'e')
+            logger.show_log(response.status_code, 'e')
             if response.status_code in successCode:
                 return response.status_code, response.json(), None
             else:
                 return response.status_code, [], 'Error'
         except Exception as e:
-            _objLog.show_log(e, 'e')
+            logger.show_log(e, 'e')
         return False
 
     def send_email(self, subject, messages, to):
@@ -194,5 +187,5 @@ class Massenger:
             else:
                 return response.status_code, [], 'Error'
         except Exception as e:
-            _objLog.show_log(e, 'e')
+            logger.show_log(e, 'e')
         return False

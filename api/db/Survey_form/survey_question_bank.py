@@ -2,9 +2,8 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from lib import logger
-
 from ..Extra import *
+
 
 # question
 def get_question(db: Session, question_id):

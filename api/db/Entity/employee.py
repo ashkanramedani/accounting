@@ -1,11 +1,11 @@
-from typing import List, Dict
-from uuid import UUID
-from lib import logger
+from typing import List
+
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
 from ..Extra import *
+
 
 def get_employee(db: Session, employee_id):
     try:

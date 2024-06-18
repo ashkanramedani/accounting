@@ -89,7 +89,8 @@
         ],
         "GET": [
             "http://localhost:5001/api/v1/form/sub_course/search/<UUID>",
-            "http://localhost:5001/api/v1/form/sub_course/search"
+            "http://localhost:5001/api/v1/form/sub_course/search",
+            "http://localhost:5001/api/v1/form/sub_course/course/<UUID>"
         ],
         "DELETE": [
             "http://localhost:5001/api/v1/form/sub_course/delete/<UUID>"

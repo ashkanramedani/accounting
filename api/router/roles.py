@@ -1,6 +1,5 @@
 from typing import List
 
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -10,12 +9,14 @@ from db.models import get_db
 
 router = APIRouter(prefix='/api/v1/form/role', tags=['role'])
 
-@router.get("/cluster", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])#, response_model=List[str])
+
+@router.get("/cluster", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=List[str])
 async def search_all_cluster(db=Depends(get_db)):
     status_code, result = dbf.get_all_cluster(db)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
 
 # tardy request
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
@@ -26,7 +27,7 @@ async def add_role(Form: sch.post_role_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.role_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.role_response)
 async def search_role(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_role(db, form_id)
     if status_code != 200:

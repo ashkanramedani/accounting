@@ -1,14 +1,15 @@
 import sys
 from datetime import datetime
+from json import load
 from os.path import normpath, dirname, join
 
-from loguru import logger as L
+from loguru import logger as logger_obj
+
 from lib.requester import requester
-from json import load
 
 
 class Log:
-    def __init__(self, config: dict = None):
+    def __init__(self):
         self.Info_Status = [200, 201]
         self.Warn_Status = [400]
         self.ERR_Statis = [500]
@@ -18,7 +19,7 @@ class Log:
         config = load(open(self.config_path))
 
         self.developer = True
-        self.logger = L
+        self.logger = logger_obj
         self.logger.remove()
 
         self.logger.add("log/Log-{time:YYYY-MM-DD}.log", rotation=config["logger"]["rotation"], level=config["logger"]["level"])

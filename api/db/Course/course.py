@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import logger
-from ..Extra import *
 from .sub_course import delete_subcourse
+from ..Extra import *
 
 
 def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:
@@ -49,7 +49,7 @@ def get_all_course(db: Session, course_type: str | None, page: sch.PositiveInt, 
                 courses = record_order_by(db, dbm.Course_form, page, limit, order, course_type=Course_type)
             else:
                 courses = []
-        else: 
+        else:
             courses = record_order_by(db, dbm.Course_form, page, limit, order)
         if not courses:
             return 200, []
@@ -107,7 +107,7 @@ def delete_course(db: Session, course_id):
             return 400, "Course Not Found"
 
         warnings = []
-        status, message = delete_subcourse(db, course_id, sch.delete_sub_course_schema(course_fk_id=course_id, sub_course_pk_id=get_Course_active_subcourse(db, course_id)))  # ignore type[call-arg]
+        status, message = delete_subcourse(db, course_id, get_Course_active_subcourse(db, course_id))  # ignore type[call-arg]
         if status != 200:
             return status, message
         Course.deleted = True
@@ -150,6 +150,8 @@ Base_salary = {
 TEACHER_TARDY = {"0_10": 11, "10_30": 5.5, "30_40": -5.5, "40": -16.5}
 TEACHER_LEVEL = {"regular": 0, "expert": 22, "visiting: 0, guest": 0, "exam: 30, test": 30, "master": 40, "supervisor": 55, "master_supervisor": 5.5, "director_of_education": 5.5}
 COURSE_LEVEL = {"connect": 11, "FCE": 22, "CAE": 44, "CPE": 66}
+
+
 def BaseSalary_for_SubCourse(course_cap: int, course_type: str):
     try:
         match course_cap:
@@ -175,6 +177,7 @@ def Tardy_Score(tardy: int):
             return TEACHER_TARDY["30_40"]
         case x if 40 <= x:
             return TEACHER_TARDY["40"]
+
 
 def safe_field(db: Session, Data: Dict, *fields: UUID | str) -> Dict[str, Dict]:
     """Safely add a fields to given dict if not exist"""
@@ -243,7 +246,7 @@ def SubCourse_report(db: Session, sub_course: dbm.Sub_Course_form, course_level:
                 "teacher_name": Users[field],
                 "Attended_Session": record["Attended_Session"],
                 "Cancelled_Session": Cancelled_Session,
-                "Cancelled_Session_Score":  Cancelled_Session * Cancellation_factor,
+                "Cancelled_Session_Score": Cancelled_Session * Cancellation_factor,
                 "Teacher_Level": Teacher_Level,
                 "Teacher_Level_Score": TEACHER_LEVEL.get(Teacher_Level.lower(), 0),
                 "Tardy": Tardy,
@@ -255,6 +258,7 @@ def SubCourse_report(db: Session, sub_course: dbm.Sub_Course_form, course_level:
             new_sub_course_summary[field] = record
 
     return new_sub_course_summary
+
 
 def course_report(db, course_id: UUID, Cancellation_factor):
     try:

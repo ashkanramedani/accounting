@@ -1,8 +1,8 @@
-from lib import logger, generate_month_interval, Fix_time, time_gap
-
 from sqlalchemy.orm import Session
+
 import db.models as dbm
 import schemas as sch
+from lib import generate_month_interval, Fix_time, time_gap
 from ..Extra import *
 
 
@@ -38,12 +38,13 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
         return Return_Exception(db, e)
 
 
-
 """
 "Fixed"
 "Split"
 "Hourly"
 """
+
+
 def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
     try:
         if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
@@ -101,7 +102,6 @@ def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
         record = db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=Form.salary_policy_pk_id, deleted=False)
         if not record.first():
             return 404, "Record Not Found"
-
 
         if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
             return 400, "Bad Request"

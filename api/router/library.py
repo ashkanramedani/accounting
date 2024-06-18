@@ -1,27 +1,18 @@
-from lib import logger
+from typing import Optional, List, Any
 
+from docutils.nodes import topic
+from fastapi import APIRouter, Depends, Response, status
 
 import schemas as sch
-import db.models as dbm
-import sqlalchemy.sql.expression as sse
-from datetime import datetime, timedelta
-from uuid import UUID
-from typing import Optional, List, Dict, Any, Union, Annotated
-from fastapi import APIRouter, Query, Body, Path, Depends, Response, HTTPException, status, UploadFile, File
-from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
+from db import db_library
 from db.models import get_db
-# from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
-from fastapi_limiter.depends import RateLimiter
-from lib.hash import Hash
-from lib.functions import Massenger, Tools
 
+# from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
-from db import db_library
-
 router = APIRouter(prefix='/api/v1/library', tags=['Libraries'])
+
 
 # # create libraries
 # @router.put('')
@@ -103,22 +94,23 @@ router = APIRouter(prefix='/api/v1/library', tags=['Libraries'])
 def get_library_topic() -> List:
     topics = [
         {
-            "topic_name": "magazine", 
+            "topic_name": "magazine",
             "label_name": "مجلات"
         },
         {
-            "topic_name": "story", 
+            "topic_name": "story",
             "label_name": "داستانی"
         },
         {
-            "topic_name": "educational", 
+            "topic_name": "educational",
             "label_name": "آموزشی"
         }
     ]
     return topics
 
+
 @router.get('/{topic}/read', response_model=List[sch.Library], status_code=status.HTTP_200_OK)
-def get_all_library_with_limit(topic:str, start_id:Optional[int]=0, page_number:Optional[int]=0, limit:Optional[int]=1000, db=Depends(get_db)) -> Any:
+def get_all_library_with_limit(topic: str, start_id: Optional[int] = 0, page_number: Optional[int] = 0, limit: Optional[int] = 1000, db=Depends(get_db)) -> Any:
     data = db_library.read_all_library_for_admin_panel(db, topic, start_id, page_number, limit)
 
     if data == -1:
@@ -129,8 +121,9 @@ def get_all_library_with_limit(topic:str, start_id:Optional[int]=0, page_number:
 
     return data
 
+
 @router.get('/{topic}/{pid}', response_model=sch.Library)
-def get_library_with_pid(topic:str, pid:str, db=Depends(get_db)):
+def get_library_with_pid(topic: str, pid: str, db=Depends(get_db)):
     data = db_library.get_library_with_pid(db, pid)
 
     if data == -1:
@@ -141,27 +134,32 @@ def get_library_with_pid(topic:str, pid:str, db=Depends(get_db)):
 
     return data
 
+
 # create libraries
 @router.post('', status_code=201)
 def create_library(db=Depends(get_db)):
     pass
 
+
 # update libraries
 @router.patch('/update/{lid}')
-def update_library(lid:str, db=Depends(get_db)):
+def update_library(lid: str, db=Depends(get_db)):
     pass
+
 
 @router.patch('/group-partial-modifications-in-group-library')
 def group_partial_modifications_in_group_library(db=Depends(get_db)):
     pass
 
+
 @router.patch('/group-status-modifications-in-group-library')
 def group_status_modifications_in_group_library(db=Depends(get_db)):
     pass
 
+
 # delete libraries
 @router.delete('/delete/{lid}', status_code=status.HTTP_200_OK)
-def delete_library(lid:str, db=Depends(get_db)):
+def delete_library(lid: str, db=Depends(get_db)):
     res = db_library.delete_posts(db, topic, pid)
     if res == 1:
         return Response(status_code=200, content="داده با موفقیت حذف شد")
@@ -172,13 +170,14 @@ def delete_library(lid:str, db=Depends(get_db)):
     elif res == -1:
         return Response(status_code=500, content="خطایی رخ داده است")
 
+
 @router.delete('/group-delete', status_code=status.HTTP_200_OK)
-def delete_group_library(list_post:List[sch.LibraryDelete], db=Depends(get_db)) -> Any:
+def delete_group_library(list_post: List[sch.LibraryDelete], db=Depends(get_db)) -> Any:
     res = None
     for i in list_pid:
         if res is None:
             res = {}
         if i not in res:
             res[i] = db_library.delete_libraries(db, topic, i)
-    
+
     return res

@@ -1,7 +1,6 @@
 from typing import List
 from uuid import UUID
 
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -20,7 +19,7 @@ async def add_session(Form: sch.post_session_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.session_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.session_response)
 async def search_session(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_session(db, form_id)
     if status_code != 200:

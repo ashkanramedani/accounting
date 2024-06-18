@@ -1,6 +1,5 @@
 from typing import List
 
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
@@ -20,7 +19,7 @@ async def add_question(Form: sch.post_questions_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.Question_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.Question_response)
 async def search_question(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_question(db, form_id)
     if status_code != 200:

@@ -1,12 +1,11 @@
-import schemas as sch
-import db.models as dbm
-
-from ..Extra import *
-from uuid import UUID
-from lib import logger
-
 from typing import List
+from uuid import UUID
+
 from sqlalchemy.orm import Session
+
+import db.models as dbm
+import schemas as sch
+from ..Extra import *
 
 
 # response

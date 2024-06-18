@@ -269,7 +269,7 @@ def to_persian(year, month, day, return_obj=True) -> tuple | date:
 
     if return_obj:
         return date(jy, jm, jd)
-    return (jy, jm, jd)
+    return jy, jm, jd
 
 
 def to_international(year, month, day, return_obj=True) -> tuple | date:
@@ -289,7 +289,7 @@ def to_international(year, month, day, return_obj=True) -> tuple | date:
 
     if return_obj:
         return date(year, month, day)
-    return (year, month, day)
+    return year, month, day
 
 
 def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
@@ -339,28 +339,4 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
 
 
 if __name__ == '__main__':
-    start_date = "2024-06-13T14:20:56.666871"
-    end_date = "2024-06-14T14:20:56.666880"
-
-    print(start_date, Fix_datetime(start_date))
-    print(end_date, Fix_datetime(end_date))
-    a = same_month(Fix_datetime(start_date), Fix_datetime(end_date))
-    print(a)
-
-
-"""
-{
-  "created_fk_by":"b23ff8ea-7aa5-4b9a-b7f2-94c066f47e4c",
-  "description":"string",
-  "status":0,
-  "visible":true,
-  "priority":5,
-  "can_update":true,
-  "can_deleted":true,
-  "user_fk_id":"b23ff8ea-7aa5-4b9a-b7f2-94c066f47e4c",
-  "leave_type":"vacation",
-  "start_date":"2024-06-13T14:20:56.666871",
-  "end_date":"2024-06-14T14:20:56.666880"
-}
-"""
-
+    pass

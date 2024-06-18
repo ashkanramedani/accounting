@@ -1,13 +1,11 @@
 from typing import List
 
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
 import schemas as sch
 from db.models import get_db
-
 
 router = APIRouter(prefix='/api/v1/form/survey', tags=['survey'])
 
@@ -21,7 +19,7 @@ async def add_survey(Form: sch.post_survey_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.survey_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.survey_response)
 async def search_survey(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_survey(db, form_id)
     if status_code != 200:

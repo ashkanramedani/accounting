@@ -1,7 +1,4 @@
 from sqlalchemy import and_, or_
-
-from lib import logger
-
 from sqlalchemy.orm import Session
 
 import db.models as dbm

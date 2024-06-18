@@ -1,11 +1,8 @@
-from typing import Tuple, Dict
-from datetime import time
-from lib import logger, Fix_datetime, same_month, Separate_days_by_DayCap, is_off_day
-
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from lib import logger, Fix_datetime, same_month, Separate_days_by_DayCap, is_off_day
 from ..Extra import *
 
 
@@ -146,31 +143,3 @@ def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema):
         return 200, f"{len(records)} Form Verified."
     except Exception as e:
         return Return_Exception(db, e)
-
-
-"""
-{
-  
-  "user_fk_id": "308e2744-833c-4b94-8e27-44833c2b940f",
-  "leave_type": "vacation",
-  "start_date": "2024-06-17T16:07:01.329496",
-  "end_date": "2024-06-18T16:07:01.329506"
-}
-"""
-"""
-[
-  {
-    "leave_request_pk_id": "c1fcab82-b24b-49e9-acc9-71a14014b0c6",
-    "employee": {
-      "user_pk_id": "308e2744-833c-4b94-8e27-44833c2b940f",
-      "name": "Admin",
-      "last_name": "Admin"
-    },
-    "start_date": null,
-    "end_date": null,
-    "date": "2024-06-18T00:00:00",
-    "duration": 450,
-    "leave_type": "vacation"
-  }
-]
-"""

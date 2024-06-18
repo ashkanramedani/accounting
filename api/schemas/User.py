@@ -6,13 +6,13 @@ class Role(Base_form):
     cluster: str
 
 
-
 class post_role_schema(Role):
     pass
 
 
 class update_role_schema(Role):
     role_pk_id: UUID
+
 
 class role_response(BaseModel):
     role_pk_id: UUID
@@ -39,6 +39,7 @@ class post_fingerprint_scanner_schema(fingerprint_scanner):
 
 class update_fingerprint_scanner_schema(fingerprint_scanner):
     fingerprint_scanner_pk_id: UUID
+
 
 class fingerprint_scanner_response(Base_response):
     fingerprint_scanner_pk_id: UUID

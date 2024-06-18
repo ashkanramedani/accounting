@@ -1,10 +1,8 @@
-from .Func import *
-
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, DateTime, Table, BigInteger, MetaData, Float, UniqueConstraint, DATE, TIME, Date, Time
+from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time
 from sqlalchemy.dialects.postgresql import JSONB, JSON
-from sqlalchemy.orm import relationship
 from sqlalchemy.sql import expression, func
 
+from .Func import *
 from .database import Base
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority

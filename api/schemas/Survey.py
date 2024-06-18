@@ -1,4 +1,8 @@
+from typing import List
+
 from .Base import *
+
+
 # ---------------------- question ----------------------
 class Question(Base_form):
     text: str
@@ -27,6 +31,7 @@ class export_question(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 # ---------------------- Survey_form ----------------------
 
@@ -65,9 +70,11 @@ class QuestionAnswer_pair(BaseModel):
     question_fk_id: UUID
     answer: str
 
+
 class Response(Base_form):
     user_fk_id: UUID
-    A_Q:  List[QuestionAnswer_pair]
+    A_Q: List[QuestionAnswer_pair]
+
 
 class post_response_schema(Response):
     pass
@@ -79,6 +86,7 @@ class update_response_schema(Base_form):
     survey_fk_id: UUID
     question: UUID
     answer: str
+
 
 class response_response(Base_response):
     student: export_student

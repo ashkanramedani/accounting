@@ -1,8 +1,9 @@
 import uuid
 
-from lib import logger
 from sqlalchemy.orm import Session
+
 import db.models as dbm
+from lib import logger
 
 ADMIN = {
     "name": "Admin",
@@ -19,6 +20,8 @@ DEFAULT_ROLES = [
 
 DEFAULT_LANGUAGE = ["Not_Assigned", "English", "Spanish", "Italian", "French", "German", "Chinese", "Japanese", "Korean", "Portuguese", "Russian"]
 DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
+
+
 def setUp_admin(db: Session):
     try:
         emp = db.query(dbm.User_form).filter_by(name=ADMIN["name"]).first()
@@ -66,6 +69,7 @@ def setUp_admin(db: Session):
         db.rollback()
         logger.error("Admin Setup Failed")
         logger.error(f'{e.__class__.__name__}: {e.args}')
+
 
 """
 class Language_form(Base, Base_form):

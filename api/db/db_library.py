@@ -2,8 +2,9 @@ from datetime import datetime
 
 import sqlalchemy.sql.expression as sse
 from sqlalchemy.orm import Session
-from lib import logger
+
 import db.models as dbm
+from lib import logger
 
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority

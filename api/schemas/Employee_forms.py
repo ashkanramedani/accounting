@@ -1,3 +1,6 @@
+from datetime import timedelta
+from typing import List
+
 from .Base import *
 from .Entity import *
 

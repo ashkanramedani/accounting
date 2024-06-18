@@ -1,16 +1,16 @@
+import datetime
 import os
 import pathlib
-import datetime
 from contextlib import asynccontextmanager
-
+from json import dump
 from time import sleep
 from typing import List
-from json import load, dump
-from fastapi import FastAPI, APIRouter
-from redis import asyncio as redis
-from fastapi_limiter import FastAPILimiter
-from sqlalchemy.exc import OperationalError
+
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi_limiter import FastAPILimiter
+from redis import asyncio as redis
+from sqlalchemy.exc import OperationalError
 
 try:
     from db import models, save_route
@@ -22,6 +22,7 @@ try:
 except Exception as e:
     raise Exception(f"Error during importing libraries : f'{e.__class__.__name__}: {e.args}'")
 
+
 @asynccontextmanager
 async def app_lifespan(api: FastAPI):
     logger.info(f"Starting {api.title} -V: {api.version} - {datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3, minutes=30)}")
@@ -30,8 +31,8 @@ async def app_lifespan(api: FastAPI):
             # models.Base.metadata.drop_all(engine)
             models.Base.metadata.create_all(bind=engine)
             break
-        except OperationalError as e:
-            logger.warning(f"[ Could Not Create Engine ]: {e.__repr__()}")
+        except OperationalError as OE:
+            logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
             sleep(10)
     setUp_admin(SessionLocal())
     Redis_url = os.getenv('LOCAL_REDIS') if os.getenv('LOCAL_POSTGRES') else "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
@@ -43,14 +44,11 @@ async def app_lifespan(api: FastAPI):
 
 app = FastAPI(swagger_ui_parameters={"docExpansion": "none"}, title="Accounting", version="0.1.0.0", lifespan=app_lifespan)
 
-
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
-
 
 route_schema = save_route(routes)
 dump(route_schema, open(f'{pathlib.Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
 
 for route in routes:
     app.include_router(route)
-

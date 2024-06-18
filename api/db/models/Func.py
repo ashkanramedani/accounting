@@ -12,8 +12,6 @@ class GUID(GUID_TYPE):
     cache_ok = True
 
 
-
-
 def create_Unique_ID():
     return Column(GUID, server_default=GUID_SERVER_DEFAULT_POSTGRESQL, primary_key=True, nullable=False, unique=True, index=True)
 
@@ -21,6 +19,7 @@ def create_Unique_ID():
 def create_forenKey(table: str, unique: bool = False, index: bool = False, nullable: bool = False):
     table_name = table.lower().replace("_form", "")
     return Column(GUID, ForeignKey(f'{table_name}.{table_name + "_pk_id"}', ondelete="CASCADE"), nullable=nullable, unique=unique, index=index)
+
 
 Modes_relation = {
     "created": "created_fk_by",
@@ -30,20 +29,3 @@ Modes_relation = {
 
 def creator_relation(table: str):
     return relationship(table, back_populates="created", foreign_keys=f"{table}.created_fk_by")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

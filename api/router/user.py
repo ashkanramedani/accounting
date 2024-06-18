@@ -1,31 +1,20 @@
-from lib import logger
+from typing import Optional
 
+from fastapi import APIRouter, Depends
 
-import schemas as sch
-import db.models as dbm
-import sqlalchemy.sql.expression as sse
-from datetime import datetime, timedelta
-from uuid import UUID
-from typing import Optional, List, Dict, Any, Union, Annotated
-from fastapi import APIRouter, Query, Body, Path, Depends, Response, HTTPException, status, UploadFile, File
-from fastapi.encoders import jsonable_encoder
-from pydantic import BaseModel
+from db import db_user  # , db_post, db_role, db_gender, db_branch, db_educationalInstitution
 from db.models import get_db
-# from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
-from fastapi_limiter.depends import RateLimiter
-from lib.hash import Hash
-from lib.functions import Massenger, Tools
 
+# from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
-
-from db import db_user#, db_post, db_role, db_gender, db_branch, db_educationalInstitution
 
 router = APIRouter(prefix='/api/v1/user', tags=['User'])
 
 
 @router.get("/employees")
-def get_employees_users(role: Optional[str]=None, skip: Optional[int]=0, limit: Optional[int]=1000, db=Depends(get_db)):
+def get_employees_users(role: Optional[str] = None, skip: Optional[int] = 0, limit: Optional[int] = 1000, db=Depends(get_db)):
+    users = []
     if role is None:
         users = db_user.get_users_withfilter_employes(db, skip, limit)
         # logging.error(users)
@@ -36,19 +25,19 @@ def get_employees_users(role: Optional[str]=None, skip: Optional[int]=0, limit: 
 
 # @router.post("/set_role", response_model=sch.UserWithMoreInfo)
 # def put_set_role(user_id: int, role_id: int, hash_key:str="3c456a61-4adb-4ac2-ad0c-c0adbea05fac", db=Depends(get_db)):
-    
+
 #     objeducationalInstitution = db_educationalInstitution.get_educationalInstitutions_by_educational_institution_hash(db, hash_key)
 #     if objeducationalInstitution is None:
 #         raise HTTPException(status_code=404, detail="چنین موسسه ای وجود ندارد")       
-    
+
 #     objuser = db.query(dbm.Users).filter(sse.and_(dbm.Users.user_pk_id == user_id, dbm.Users.deleted == False)).first()
 #     if objuser is None:
 #         raise HTTPException(status_code=404, detail="چنین کاربری وجود ندارد")       
-  
+
 #     objrole = db.query(dbm.Roles).filter(sse.and_(dbm.Roles.role_pk_id == role_id, dbm.Roles.deleted == False)).first()
 #     if objrole is None:
 #         raise HTTPException(status_code=404, detail="چنین نقشی وجود ندارد")       
-    
+
 #     data = db_user.put_role_for_user(db, user=objuser, role=objrole, educational_institution=objeducationalInstitution)
 
 #     if not data:
@@ -107,15 +96,15 @@ def get_employees_users(role: Optional[str]=None, skip: Optional[int]=0, limit: 
 #     educationalInstitution = db_educationalInstitution.get_educationalInstitutions_by_educational_institution_hash(db, hash_key)
 #     if educationalInstitution is None:
 #         raise HTTPException(status_code=404, detail="چنین موسسه ای وجود ندارد")       
-    
+
 #     role = db.query(dbm.Roles).filter(sse.and_(dbm.Roles.role_name == user.role_name, dbm.Roles.deleted == False)).first()
 #     if role is None:
 #         raise HTTPException(status_code=404, detail="چنین نقشی وجود ندارد")       
-    
+
 #     branch = db.query(dbm.Branchs).filter(sse.and_(dbm.Branchs.branch_name == user.branch, dbm.Branchs.deleted == False)).first()
 #     if branch is None:
 #         raise HTTPException(status_code=404, detail="چنین شعبه‌ای وجود ندارد")       
-    
+
 #     gender = db.query(dbm.Genders).filter(sse.and_(dbm.Genders.gender_name == user.gender, dbm.Genders.deleted == False)).first()
 #     if gender is None:
 #         raise HTTPException(status_code=404, detail="چنین جنسیتی وجود ندارد")       
@@ -123,7 +112,7 @@ def get_employees_users(role: Optional[str]=None, skip: Optional[int]=0, limit: 
 #     newUser = db_user.put_user(db, user, branch.branch_pk_id, gender.gender_pk_id, role, educationalInstitution)
 #     if newUser is None:
 #         raise HTTPException(status_code=500, detail="در ایجاد کاربر جدید مشکلی وجود دارد")
-    
+
 #     return newUser
 
 # 205

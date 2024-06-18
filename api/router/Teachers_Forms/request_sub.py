@@ -1,13 +1,11 @@
 from typing import List
 
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
-from db import Sub_Request
 import schemas as sch
+from db import Sub_Request
 from db.models import get_db
-
 
 router = APIRouter(prefix='/api/v1/form/sub_request', tags=['Sub Request'])
 
@@ -19,6 +17,7 @@ async def add_sub_request(Form: sch.post_Sub_request_schema, db=Depends(get_db))
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
 
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch)
 async def search_sub_request(form_id, db=Depends(get_db)):

@@ -1,4 +1,5 @@
-import random
+from typing import List, Any
+from pydantic import PositiveInt
 
 from .Base import *
 from .Entity import *
@@ -224,8 +225,8 @@ class course_type_response(Base_response):
 
 # ---------------------- course cancellation ---------------------
 class Input(BaseModel):
-    year: int
-    month: int
+    year: PositiveInt
+    month: PositiveInt
 
 
 class Return_Salary(export_employee):

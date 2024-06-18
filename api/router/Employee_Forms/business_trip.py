@@ -1,13 +1,13 @@
 from typing import List
 from uuid import UUID
 
-from lib.Date_Time import generate_month_interval
-from fastapi import APIRouter, Depends, HTTPException, Response
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
 import schemas as sch
 from db.models import get_db
+from lib.Date_Time import generate_month_interval
 
 router = APIRouter(prefix='/api/v1/form/business_trip', tags=['Business Trip'])
 
@@ -21,12 +21,13 @@ async def add_business_trip(Form: sch.post_business_trip_schema, db=Depends(get_
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=sch.business_trip_response)
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.business_trip_response)
 async def search_business_trip(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_business_trip_form(db, form_id)
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
 
 @router.get("/report/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def report_business_trip(employee_id: int | UUID, year: int, month: int, db=Depends(get_db)):

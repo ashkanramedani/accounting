@@ -1,7 +1,7 @@
-from typing import List
+from enum import Enum
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
-from enum import Enum
 
 import db as dbf
 import schemas as sch
@@ -15,7 +15,6 @@ Base_salary = {
     "10-12": {"in_person": 77, "online": 66, "hybrid": 0},
     "13": {"in_person": 77, "online": 66, "hybrid": 0},
 }
-
 
 
 class course_type_schema(Enum):
@@ -60,8 +59,7 @@ teacher_level = {
 async def get_teacher_level(employee_id, db=Depends(get_db)):
     salary_policy = db.query(dbf.SalaryPolicy).filter_by(user_pk_id=employee_id, deleted=False).first()
     salary_policy = salary_policy.dict()
-    teacher_level = salary_policy["teaching_level"]
-    return teacher_level
+    return salary_policy["teaching_level"]
 
 
 @router.get("/course_cap")

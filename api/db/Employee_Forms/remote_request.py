@@ -1,12 +1,8 @@
-from datetime import timedelta
-from typing import Tuple, Dict
-
-from lib import logger, Fix_datetime
-
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from lib import logger, Fix_datetime
 from ..Extra import *
 
 
@@ -95,6 +91,7 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
+
 
 def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema):
     try:

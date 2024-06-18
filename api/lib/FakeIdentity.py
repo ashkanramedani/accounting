@@ -1,4 +1,6 @@
 from faker import Faker
+from random import choice as r_ch
+
 
 class Person:
     def __init__(self):
@@ -16,5 +18,6 @@ class Person:
             tmp = self.iterate()
         self.unique_names.append(tmp)
         return tmp.split('-')
+
 
 person = Person()

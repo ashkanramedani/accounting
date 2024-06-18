@@ -6,8 +6,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
-from lib.json_handler import json_handler
 from lib import logger as _obj_log
+from lib.json_handler import json_handler
 
 load_dotenv()
 directory = normpath(f'{dirname(__file__)}/../../configs/config.json')

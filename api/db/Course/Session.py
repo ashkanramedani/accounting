@@ -6,10 +6,7 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import logger
-
 from ..Extra import *
-from lib.Date_Time import *
-from datetime import timedelta, datetime
 
 
 def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:

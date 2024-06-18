@@ -5,6 +5,6 @@ from .Entity import *
 from .NoCategory import *
 from .Salary import *
 from .Survey import *
-from .teacher_forms import *
-from .User import *
 from .TagsCategories import *
+from .User import *
+from .teacher_forms import *

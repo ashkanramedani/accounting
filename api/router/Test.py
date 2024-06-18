@@ -1,17 +1,15 @@
 from typing import List, Any, Optional
 
-from lib import API_Exception
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
-
-import db as dbf
-import schemas as sch
-from db.models import get_db
 from pydantic import BaseModel
 
+import schemas as sch
 from db.Salary.salary import employee_salary
+from db.models import get_db
 
 router = APIRouter(prefix='/api/Dev/test', tags=['test'])
+
 
 class Input(BaseModel):
     year: int

@@ -1,7 +1,7 @@
-import json
 import uuid
 from datetime import time, datetime
-from typing import Dict, List
+from typing import List
+from uuid import UUID
 
 import pandas as pd
 from sqlalchemy.orm import Session
@@ -9,9 +9,8 @@ from sqlalchemy.orm import Session
 import db.models as dbm
 import schemas as sch
 from lib import *
-from .Salary_Utils import generate_daily_report, calculate_duration
+from .Salary_Utils import calculate_duration
 from ..Extra import *
-from uuid import UUID
 
 
 # Teacher Replacement

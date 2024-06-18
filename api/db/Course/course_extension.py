@@ -1,18 +1,8 @@
-import traceback
-from typing import List
-from uuid import UUID
-
-import sqlalchemy
-
-from lib import logger
-
-
-
-import sqlalchemy.exc as SQLAlchemyError
 from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from lib import logger
 from ..Extra import *
 
 
@@ -147,6 +137,7 @@ def update_category(db: Session, Form: sch.update_category_schema):
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
+
 def get_language(db: Session, language_id):
     try:
         return 200, db.query(dbm.Language_form).filter_by(language_pk_id=language_id, deleted=False).first()
@@ -213,6 +204,7 @@ def update_language(db: Session, Form: sch.update_language_schema):
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
+
 def get_course_type(db: Session, course_type_id):
     try:
         return 200, db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course_type_id, deleted=False).first()
@@ -276,4 +268,3 @@ def update_course_type(db: Session, Form: sch.update_course_type_schema):
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
-

@@ -1,3 +1,7 @@
+from typing import List
+
+from pydantic import PositiveInt
+
 from .Base import *
 
 
@@ -24,7 +28,6 @@ class teacher_tardy_reports_response(Base_response):
     course: export_course
     sub_course: export_sub_course
 
-
     class Config:
         orm_mode = True
 
@@ -35,20 +38,25 @@ class Sub_teacher(Base_form):
     sub_teacher_fk_id: UUID
     session_fk_id: UUID
 
+
 class post_Sub_request_schema(Sub_teacher):
     pass
+
 
 class update_Sub_request_schema(Sub_teacher):
     sub_request_pk_id: UUID
 
+
 class Verify_Sub_request_schema(BaseModel):
     sub_request_pk_id: List[UUID]
+
 
 class Sub_teacher_Response(BaseModel):
     pass
 
     class Config:
         orm_mode = True
+
 
 # course cancellation
 
@@ -61,11 +69,14 @@ class subcourse_teacher_replacement(BaseModel):
 class Session_Cancellation(Base_form):
     session_fk_id: UUID
 
+
 class post_Session_Cancellation_schema(Session_Cancellation):
     pass
 
+
 class update_Session_Cancellation_schema(Session_Cancellation):
     session_cancellation_pk_id: UUID
+
 
 class Verify_Session_Cancellation_schema(BaseModel):
     session_cancellation_pk_id: List[UUID]

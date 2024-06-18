@@ -1,11 +1,12 @@
-import traceback
+from json import load
 from os.path import normpath, dirname, join
 
 from loguru import logger as L
-from lib.requester import requester
-from json import load, dump
 
-def empty_sink(logger_obj: L, remove_std: bool=False):
+from lib.requester import requester
+
+
+def empty_sink(logger_obj: L, remove_std: bool = False):
     i = 0 if remove_std else remove_std
     while True:
         try:
@@ -13,6 +14,7 @@ def empty_sink(logger_obj: L, remove_std: bool=False):
             i += 1
         except ValueError:
             return logger_obj
+
 
 class Log:
     def __init__(self, config: dict = None):
@@ -75,7 +77,6 @@ class Log:
 
 
 logger = log()
-
 
 if __name__ == '__main__':
     logger.info('test')
