@@ -31,10 +31,11 @@ def employee_salary(db: Session, year, month):  # NC: 003
 
         users_with_fingerprints = db.query(dbm.User_form) \
             .filter(dbm.User_form.fingerprint_scanner_user_id.in_(Unique_EnNo)) \
+            .filter_by(deleted=False) \
             .all()
 
         salaries = db \
-            .query(dbm.Employee_Salary_form.user_fk_id) \
+            .query(dbm.Employee_Salary_form.fingerprint_scanner_user_id) \
             .filter_by(year=year, month=month, deleted=False) \
             .filter(dbm.Employee_Salary_form.fingerprint_scanner_user_id.in_(Unique_EnNo)) \
             .all()
@@ -46,6 +47,8 @@ def employee_salary(db: Session, year, month):  # NC: 003
             data = user.__dict__
             data["Does_Have_Salary_Record"] = user.fingerprint_scanner_user_id in Salary_Result
             Result.append(data)
+
+        logger.warning({i["name"]: i["Does_Have_Salary_Record"] for i in Result})
 
         return 200, Result
     except Exception as e:
@@ -120,24 +123,15 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         return Return_Exception(db, e)
 
 
-"""
-if not salary_rate.remote_permission:
-    return {"remote": 0, "remote_earning": 0}
-
-Remote_Request_report = (
-    db.query(dbm.Remote_Request_form)
-    .filter_by(deleted=False, user_fk_id=user_fk_id)
-    .filter(dbm.Remote_Request_form.end_date.between(start_date, end_date))
-    .all()
-)
-
-
-"""
-
-
 def teacher_salary_report(db: Session, Form: sch.teacher_salary_report):
     try:
         status, report_summary = course_report(db, Form.course_id, Form.Cancellation_factor)
         return status, report_summary
     except Exception as e:
         return Return_Exception(db, e)
+
+"""
+11, 6, 7, 13, 9, 10, 12, 15, 17 
+6 
+5, 4, 16, 15, 6, 12, 3, 17, 11, 10, 13, 9, 7
+"""

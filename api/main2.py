@@ -30,3 +30,10 @@ else:
 #
 #     db.add_all(OBJ)
 # db.commit()
+
+#
+# Unique_EnNo = [5, 4, 16, 15, 6, 12, 3, 17, 11, 10, 13, 9, 7]
+# User_name = ['E', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'Q', 'R']
+# salaries = [(UUID('b23ff8ea-7aa5-4b9a-b7f2-94c066f47e4c'),), (UUID('faf9d261-54b3-4602-aac6-f7d3c935a716'),)]
+# Salary_Result = ['b23ff8ea-7aa5-4b9a-b7f2-94c066f47e4c', 'faf9d261-54b3-4602-aac6-f7d3c935a716']
+# Result = {'E': False, 'F': False, 'G': False, 'H': False, 'J': False, 'K': False, 'L': False, 'M': False, 'N': False, 'P': False, 'Q': False, 'R': False}
