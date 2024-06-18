@@ -151,7 +151,8 @@
         ],
         "POST": [
             "http://localhost:5001/api/v1/form/salary/employee",
-            "http://localhost:5001/api/v1/form/salary/teacher"
+            "http://localhost:5001/api/v1/form/salary/teacher",
+            "http://localhost:5001/api/v1/form/salary/search/<UUID>"
         ]
     },
     "SalaryPolicy": {

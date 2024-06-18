@@ -122,6 +122,12 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
     except Exception as e:
         return Return_Exception(db, e)
 
+def get_employee_salary(db: Session, user_fk_id, year, month):
+    try:
+        return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month, deleted=False).first()
+    except Exception as e:
+        return Return_Exception(db, e)
+
 
 def teacher_salary_report(db: Session, Form: sch.teacher_salary_report):
     try:

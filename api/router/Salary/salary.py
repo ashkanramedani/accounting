@@ -50,3 +50,11 @@ async def search_teacher_report(Form: sch.teacher_salary_report, db=Depends(get_
     if status_code != 200:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
+
+@router.post("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def search_teacher_report(employee_id: UUID, year: sch.PositiveInt, month: sch.PositiveInt, db=Depends(get_db)):
+    status_code, result = dbf.get_employee_salary(db, employee_id, year, month)
+    if status_code != 200:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
