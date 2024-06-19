@@ -4,7 +4,8 @@
   "versions":"v 3.0.0",
   "logger":{
     "rotation":"1 week",
-    "level":"INFO"
+    "level":"INFO",
+    "compression": "zip"
   },
   "db":{
     "database_type":"postgresql",

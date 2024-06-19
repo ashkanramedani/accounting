@@ -19,6 +19,10 @@ class post_leave_request_schema(leave_request):
 class update_leave_request_schema(leave_request):
     leave_request_pk_id: UUID
 
+    leave_type: Leave_type = "vacation"
+    start_date: str | datetime = datetime.now()
+    end_date: str | datetime = datetime.now() + timedelta(days=1)
+
 
 class Verify_leave_request_schema(BaseModel):
     leave_request_id: List[UUID]
