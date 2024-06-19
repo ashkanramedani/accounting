@@ -48,8 +48,8 @@ async def app_lifespan(api: FastAPI):
         logger.info(f"Shutting FastAPI - {datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=3, minutes=30)}")
         await FastAPILimiter.close()
 
-
-app = FastAPI(swagger_ui_parameters={"docExpansion": "none"}, title="Accounting", version="0.1.0.0", lifespan=app_lifespan, debug=True)
+title = getenv('ACC_NAME') if getenv('ACC_NAME') else "Accounting"
+app = FastAPI(swagger_ui_parameters={"docExpansion": "none"}, title=title, version="0.1.0.0", lifespan=app_lifespan, debug=True)
 
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
