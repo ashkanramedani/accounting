@@ -175,6 +175,7 @@ api/admin.api.ieltsdaily.ir.tar!/router_Dev/
 !/log/access.log
 !/log/Log-2024-06-16.log
 !/log/uvicorn.log
-!/main2.py
+!/Export_Tables.py
 !/.lprof/
 !/db/models/tables_TMP.py
+!/TmpFiles/

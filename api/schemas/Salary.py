@@ -95,3 +95,16 @@ class teacher_salary_report(BaseModel):
     LP_submission: str
     result_submission_to_FD: str
     ReportToStudent: str
+
+# ---------------------- course cancellation ---------------------
+class Input(BaseModel):
+    year: PositiveInt
+    month: PositiveInt
+
+
+class Return_Salary(export_employee):
+    Does_Have_Salary_Record: bool
+    role: Optional[Any] = None
+
+    class Config:
+        orm_mode = True

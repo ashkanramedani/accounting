@@ -1,3 +1,4 @@
+import json
 import re
 from datetime import datetime, timedelta, time, date
 from typing import List, Dict
@@ -339,4 +340,6 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
 
 
 if __name__ == '__main__':
-    pass
+    res = Separate_days_by_DayCap(datetime(2024, 1,1, 12), datetime(2024, 1,3, 12), Working_cap=450)
+    print(res)
+    # print(json.dumps(res, indent=4))

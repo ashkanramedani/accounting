@@ -29,14 +29,12 @@ def get_subcourse(db: Session, subcourse_id):
 
         return 200, sub_course
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_sub_courses_for_course(db: Session, course_id):
     try:
-        sub_course = db.query(dbm.Sub_Course_form).filter_by(course_pk_id=course_id, deleted=False).first()
+        sub_course = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id, deleted=False).first()
         if not sub_course:
             return 200, []
 

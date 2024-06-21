@@ -46,8 +46,6 @@ def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.sub_teacher_fk_id]):
             return 400, "Bad Request: Employee Not Found"
-        logger.warning(db.query(dbm.Session_form.session_pk_id, dbm.Session_form.session_teacher_fk_id).all())
-        logger.warning((Form.main_teacher_fk_id, Form.session_fk_id))
         if not db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id, session_teacher_fk_id=Form.main_teacher_fk_id, deleted=False).first():
             return 400, "Bad Request: session with given teacher not found"
 

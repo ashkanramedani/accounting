@@ -91,10 +91,9 @@ def post_course(db: Session, Form: sch.post_course_schema):
         db.commit()
         db.refresh(OBJ)
 
-        Errors = Add_tags_category(db, OBJ, OBJ.course_pk_id, tags, categories)
-        if Errors:
-            return 200, "Course updated but there was an error in the tags or categories: " + ", ".join(Errors)
-        return 200, "course Added"
+        Warn = Add_tags_category(db, OBJ, OBJ.course_pk_id, tags, categories)
+
+        return 201, sch.Base_record_add(Warning=' | '.join(Warn), id=OBJ.course_pk_id)
     except Exception as e:
         return Return_Exception(db, e)
 

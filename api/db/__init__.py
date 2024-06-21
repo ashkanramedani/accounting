@@ -10,10 +10,11 @@ from .Teacher_Forms import Sub_Request
 from .db_library import *
 from .db_post import *
 from .db_user import *
-from .models import setUp_admin, engine, SessionLocal
+from .models import setUp_admin, engine, SessionLocal, Base
 from .payment import *
 
 __all__ = [
+    "Base",
     "engine",
     "SessionLocal",
     "save_route",

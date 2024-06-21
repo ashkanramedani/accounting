@@ -324,11 +324,17 @@ class User_form(Base, Base_form):
     __tablename__ = "user"
     user_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form", nullable=True)
+
     name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
+    nickname = Column(String, index=True, nullable=True, default="")
+
     day_of_birth = Column(DateTime, nullable=True)
     email = Column(String(50), nullable=True, index=True)
-    mobile_number = Column(String, server_default='', nullable=False)
+
+    mobile_number = Column(String, default='', nullable=False)
+    emergency_number = Column(String, default='', nullable=True)
+
     id_card_number = Column(String, nullable=True)
     address = Column(String(5000), default=None)
 

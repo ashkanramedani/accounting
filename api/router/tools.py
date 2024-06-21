@@ -25,7 +25,7 @@ async def docs_redirect():
 @router.get("/api/v1/form/count", tags=["Ping"])
 async def count(field: str, db=Depends(get_db)):
     status_code, result = dbf.count(db, field)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
@@ -41,6 +41,6 @@ async def count(field: str, db=Depends(get_db)):
     if not field:
         raise HTTPException(status_code=400, detail="Field is required")
     status_code, result = dbf.count(db, field)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

@@ -16,7 +16,7 @@ router = APIRouter(prefix='/api/v1/form/business_trip', tags=['Business Trip'])
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def add_business_trip(Form: sch.post_business_trip_schema, db=Depends(get_db)):
     status_code, result = dbf.post_business_trip_form(db, Form)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
@@ -24,7 +24,7 @@ async def add_business_trip(Form: sch.post_business_trip_schema, db=Depends(get_
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.business_trip_response)
 async def search_business_trip(form_id, db=Depends(get_db)):
     status_code, result = dbf.get_business_trip_form(db, form_id)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
@@ -33,7 +33,7 @@ async def search_business_trip(form_id, db=Depends(get_db)):
 async def report_business_trip(employee_id: int | UUID, year: int, month: int, db=Depends(get_db)):
     start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
     status_code, result = dbf.report_business_trip(db, employee_id, start, end)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
@@ -41,7 +41,7 @@ async def report_business_trip(employee_id: int | UUID, year: int, month: int, d
 @router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.business_trip_response])
 async def search_all_business_trip(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_business_trip_form(db, page, limit, order)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
@@ -49,7 +49,7 @@ async def search_all_business_trip(db=Depends(get_db), page: sch.PositiveInt = 1
 @router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_business_trip(form_id, db=Depends(get_db)):
     status_code, result = dbf.delete_business_trip_form(db, form_id)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
@@ -57,7 +57,7 @@ async def delete_business_trip(form_id, db=Depends(get_db)):
 @router.put("/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_business_trip(Form: sch.update_business_trip_schema, db=Depends(get_db)):
     status_code, result = dbf.update_business_trip_form(db, Form)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
@@ -65,6 +65,6 @@ async def update_business_trip(Form: sch.update_business_trip_schema, db=Depends
 @router.put("/verify", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def verify_business_trip(Form: sch.Verify_business_trip_schema, db=Depends(get_db)):
     status_code, result = dbf.Verify_business_trip(db, Form)
-    if status_code != 200:
+    if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

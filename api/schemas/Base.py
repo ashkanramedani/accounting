@@ -6,6 +6,9 @@ from uuid import UUID
 from pydantic import BaseModel, EmailStr
 
 
+SUCCESS_STATUS = [200, 201]
+
+
 class Sort_Order(str, Enum):
     asc = "asc"
     desc = "desc"
@@ -160,6 +163,10 @@ class Base_response(BaseModel):
     status: int = 0
     priority: int
 
+
+class Base_record_add(BaseModel):
+    id: UUID | str
+    Warning: Optional[str] = None
 
 class Update_Relation(BaseModel):
     old_id: UUID | str

@@ -69,26 +69,3 @@ def setUp_admin(db: Session):
         db.rollback()
         logger.error("Admin Setup Failed")
         logger.error(f'{e.__class__.__name__}: {e.args}')
-
-
-"""
-class Language_form(Base, Base_form):
-    __tablename__ = "language"
-
-    language_pk_id = create_Unique_ID()
-    language_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_forenKey("User_form")
-
-    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="Language_Relation")
-
-
-class Course_Type_form(Base, Base_form):
-    __tablename__ = "course_type"
-
-    course_type_pk_id = create_Unique_ID()
-    course_type_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_forenKey("User_form")
-
-    created = relationship("User_form", foreign_keys=[created_fk_by], back_populates="course_type_Relation")
-
-"""

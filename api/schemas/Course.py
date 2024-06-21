@@ -77,7 +77,7 @@ class course_response(Base_response):
         orm_mode = True
 
 
-# ________ Session
+# ________ Session __________
 
 class Session(BaseModel):
     course_fk_id: UUID
@@ -160,19 +160,21 @@ class delete_sub_course_schema(Base_form):
 
 class sub_course_response(Base_response):
     sub_course_pk_id: UUID
-    course_fk_id: UUID
-    sub_course_teacher_fk_id: UUID
 
     sub_course_name: str
     number_of_session: int
+    sub_course_capacity: int
+    sub_course_available_seat: int
 
     sub_course_starting_date: date
     sub_course_ending_date: date
     created: export_employee
 
-    # teacher: export_employee
+
+    teacher: export_employee
     # available_seat: int
     # Sessions: List[export_session]
+    course: export_course
 
     class Config:
         orm_mode = True
@@ -223,16 +225,5 @@ class course_type_response(Base_response):
         orm_mode = True
 
 
-# ---------------------- course cancellation ---------------------
-class Input(BaseModel):
-    year: PositiveInt
-    month: PositiveInt
 
-
-class Return_Salary(export_employee):
-    Does_Have_Salary_Record: bool
-    role: Optional[Any] = None
-
-    class Config:
-        orm_mode = True
 

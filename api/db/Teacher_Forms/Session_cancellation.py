@@ -44,7 +44,7 @@ def get_all_session_cancellation(db: Session, page: sch.PositiveInt, limit: sch.
 
 def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_schema):
     try:
-        session = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_id, deleted=False)
+        session = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id, deleted=False)
         if not session:
             return 400, "Session not found"
         if not employee_exist(db, [Form.created_fk_by]):
@@ -101,12 +101,13 @@ def Verify_session_cancellation(db: Session, Form: sch.Verify_Session_Cancellati
             .all()
 
         for record in records:
-            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id, session_teacher_fk_id=record.main_teacher_fk_id, deleted=False)
+            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id, deleted=False)
             if not old_session.first():
                 Warn.append(f'{record.session_fk_id}: Session Not Found.')
                 continue
 
-            record.status = 1
+            old_session.canceled = True
+            record.status = 1   # NC: 004
             verified += 1
 
         db.add_all(new_Record)
