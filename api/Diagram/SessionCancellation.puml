@@ -10,28 +10,24 @@ start
 title request Session Cancellation
 
 :Submit a Form;
-if (Accepted) then (No)
-:Notify the Teacher;
-else (Yes)
-    :session -> cancelled = True;
+:session -> cancelled = True;
 
-    partition Sub Party {
-            repeat :Sub Party Process;
-                if (Accepted by a teacher) then (Yes)
+partition Sub Party {
+        repeat :Sub Party Process;
+            if (Accepted by a teacher) then (Yes)
 
-                    partition Sub Request {
-                        :Submit a Sub Form;
-                        if (Accepted) then (Yes)
-                            :Current session -> deleted = True
-                            New session ----> is-sub = True;
-                        else (No)
-                        endif
-                    }
-                else (No)
-                endif
-            repeat while (sub request rejected?) is (Yes) -[#blue]->
+                partition Sub Request {
+                    :Submit a Sub Form;
+                    if (Accepted) then (Yes)
+                        :Current session -> deleted = True
+                        New session ----> is-sub = True;
+                    else (No)
+                    endif
+                }
+            else (No)
+            endif
+        repeat while (sub request rejected?) is (Yes) -[#blue]->
     }
-endif
 stop
 
 @enduml

@@ -8,3 +8,4 @@ from .Survey import *
 from .TagsCategories import *
 from .User import *
 from .teacher_forms import *
+from .Configs import *

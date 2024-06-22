@@ -1,33 +1,48 @@
+import json
 import os
 from os.path import dirname, normpath
+from typing import Any
 
 from dotenv import load_dotenv
+from pydantic import ValidationError
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
 
-from lib import logger as _obj_log
-from lib.json_handler import json_handler
+from lib import logger
+from schemas import Setting
 
 load_dotenv()
 directory = normpath(f'{dirname(__file__)}/../../configs/config.json')
-_obj_json_handler_config = json_handler(FilePath=directory)
-config = _obj_json_handler_config.Data
+DB_config = json.load(open(directory)).get("db", {})
 
-if config['developer']:
-    if os.getenv('LOCAL_POSTGRES'):
-        SQLALCHEMY_DATABASE_URL = os.getenv('LOCAL_POSTGRES')
+
+def is_valid_setting(setting_data: dict) -> tuple[bool, Any]:
+    try:
+        Setting(**setting_data)
+        return True, ""
+    except (ValidationError, ValueError) as e:
+        return False, e
+
+
+def Postgres_URL(**kwargs) -> str:
+    is_Valid, msg = is_valid_setting(kwargs)
+    if is_Valid:
+        return f"{kwargs['database_type']}://{kwargs['username']}:{kwargs['password']}@{kwargs['ip']}:{kwargs['port']}/{kwargs['database']}"
     else:
-        SQLALCHEMY_DATABASE_URL = f"{config['db_test']['database_type']}://{config['db_test']['username']}{':' if config['db_test']['username'] != '' else ''}{config['db_test']['password']}{'@' if config['db_test']['username'] != '' else ''}{config['db_test']['ip']}:{config['db_test']['port']}/{config['db_test']['database_name']}"
+        raise Exception(msg)
 
-    engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=3600)  # , echo=True)
-    _obj_log.show_log(SQLALCHEMY_DATABASE_URL, 'i')
+
+if os.getenv('LOCAL_POSTGRES'):
+    SQLALCHEMY_DATABASE_URL = os.getenv('LOCAL_POSTGRES')
 else:
-    SQLALCHEMY_DATABASE_URL = f"{config['db']['database_type']}://{config['db']['username']}:{config['db']['password']}@{config['db']['ip']}:{config['db']['port']}/{config['db']['database_name']}"
-    engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_recycle=3600)
+    SQLALCHEMY_DATABASE_URL = Postgres_URL(**DB_config)
 
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+engine = create_engine(SQLALCHEMY_DATABASE_URL, **DB_config["engine"])
+SessionLocal = sessionmaker(autoflush=False, bind=engine)
 Base = declarative_base()
+
+logger.info(SQLALCHEMY_DATABASE_URL)
 
 
 # Dependency

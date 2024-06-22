@@ -1,14 +1,16 @@
 try:
-    from json import dump
     from os import getenv
     from time import sleep
     from typing import List
     from pathlib import Path
+    from json import dump, load
     from datetime import datetime, timedelta, timezone
 
+    # DB
     from redis import asyncio as redis
     from sqlalchemy.exc import OperationalError
 
+    # fastApi
     from fastapi import FastAPI
     from fastapi_limiter import FastAPILimiter
     from contextlib import asynccontextmanager
@@ -17,13 +19,9 @@ try:
 except (ImportError, ModuleNotFoundError):
     raise Exception('Requirement Not Satisfied: some_module is missing')
 
-try:
-    from lib import logger
-    from router import routes
-    from db import models, save_route, setUp_admin, engine, SessionLocal
-
-except Exception as e:
-    raise Exception(f"Error during importing libraries : f'{e.__class__.__name__}: {e.args}'")
+from lib import logger
+from router import routes
+from db import models, save_route, setUp_admin, engine, SessionLocal
 
 
 @asynccontextmanager
@@ -48,8 +46,13 @@ async def app_lifespan(api: FastAPI):
         logger.info(f"Shutting FastAPI - {datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=3, minutes=30)}")
         await FastAPILimiter.close()
 
-title = getenv('ACC_NAME') if getenv('ACC_NAME') else "Accounting"
-app = FastAPI(swagger_ui_parameters={"docExpansion": "none"}, title=title, version="0.1.0.0", lifespan=app_lifespan)#, debug=True)
+config = load(open("configs/config.json"))
+app = FastAPI(
+        lifespan=app_lifespan,
+        version=config["versions"],
+        swagger_ui_parameters={"docExpansion": "none"},
+        title=getenv('ACC_NAME') if getenv('ACC_NAME') else config["title"],
+        debug=getenv('SWAGGER_DEBUG') if getenv('SWAGGER_DEBUG') else config["debug"])
 
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])

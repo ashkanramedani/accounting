@@ -1,7 +1,8 @@
 {
-  "developer":true,
+  "title":"Accounting",
   "developer_log":true,
-  "versions":"v 3.0.0",
+  "debug": false,
+  "versions":"0.1.0.0",
   "logger":{
     "rotation":"1 week",
     "level":"INFO",
@@ -10,18 +11,14 @@
   "db":{
     "database_type":"postgresql",
     "username":"ieltsdaily",
-    "password":"AliBig+Hi",
-    "ip":"87.107.161.173",
+    "password":"Aa123456",
+    "ip":"87.107.161.240",
     "port":"15432",
-    "database_name":"test"
-  },
-  "db_test":{
-    "database_type":"postgresql",
-    "username":"ieltsdaily",
-    "password":"AliBig+Hi",
-    "ip":"87.107.161.173",
-    "port":"15432",
-    "database_name":"test"
+    "database":"test",
+    "engine": {
+      "echo": false,
+      "pool_recycle": 3600
+    }
   },
   "redis_otp":{
     "host":"87.107.161.173",
@@ -41,13 +38,9 @@
     "path":"auto",
     "bucket_name":""
   },
-  "sms":{
-    "url":"https://sms.ieltsdaily.ir/api/v1/UltraFastSend"
-  },
-  "fast_sms":{
-    "url":"https://sms.ieltsdaily.ir/api/v1/UltraFastSend"
-  },
-  "email":{
-    "url":"http://127.0.0.1:2031/api/v1/send_email"
+  "Notification": {
+    "sms":"https://sms.ieltsdaily.ir/api/v1/UltraFastSend",
+    "fast_sms": "https://sms.ieltsdaily.ir/api/v1/UltraFastSend",
+    "email": "http://127.0.0.1:2031/api/v1/send_email"
   }
 }

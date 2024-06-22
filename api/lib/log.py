@@ -1,11 +1,9 @@
 import sys
-from datetime import datetime
+
 from json import load
-from os.path import normpath, dirname, join
-
 from loguru import logger as logger_obj
-
-from lib.requester import requester
+from os.path import normpath, dirname, join
+from lib import requester
 
 
 class Log:
@@ -24,7 +22,7 @@ class Log:
 
         self.logger.add("log/Log-{time:YYYY-MM-DD}.log", **config["logger"])
         self.logger.add(sys.stdout, level=config["logger"]["level"])
-        self.logger.info(f" ------------ Logger has been created [{datetime.now().replace(microsecond=0)}] ------------ ")
+        self.logger.info(f" ------------ Logger OBJ created ------------ ")
 
     @property
     def log_path(self):
@@ -34,7 +32,7 @@ class Log:
         try:
             url = "logger_events"
             payload = {"username": user_id, "message": msg, "location": location, "typ": type_log}
-            _obj_requester = requester()
+            _obj_requester = requester.requester()
             _obj_requester.post(_url=url, payload=payload)
 
             self.show_log('keep_log', 's')

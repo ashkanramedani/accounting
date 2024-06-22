@@ -170,7 +170,6 @@ class sub_course_response(Base_response):
     sub_course_ending_date: date
     created: export_employee
 
-
     teacher: export_employee
     # available_seat: int
     # Sessions: List[export_session]
@@ -223,7 +222,3 @@ class course_type_response(Base_response):
 
     class Config:
         orm_mode = True
-
-
-
-
