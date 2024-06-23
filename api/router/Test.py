@@ -8,7 +8,7 @@ import schemas as sch
 from db.Salary.salary import employee_salary
 from db.models import get_db
 
-router = APIRouter(prefix='/api/Dev/test', tags=['test'])
+router = APIRouter(prefix='/api/Dev/test', tags=['Test'])
 
 
 class Input(BaseModel):

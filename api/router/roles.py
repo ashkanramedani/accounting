@@ -7,8 +7,7 @@ import db as dbf
 import schemas as sch
 from db.models import get_db
 
-router = APIRouter(prefix='/api/v1/form/role', tags=['role'])
-
+router = APIRouter(prefix='/api/v1/form/role', tags=['Role'])
 
 
 @router.get("/cluster", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=List[str])

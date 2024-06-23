@@ -7,7 +7,7 @@ import db as dbf
 import schemas as sch
 from db.models import get_db
 
-router = APIRouter(prefix='/api/v1/form/payment_method', tags=['payment_method'])
+router = APIRouter(prefix='/api/v1/form/payment_method', tags=['Payment_method'])
 
 
 # tardy request

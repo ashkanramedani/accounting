@@ -32,7 +32,8 @@ def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_s
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: Employee Not Found"
 
-        session.status = ""
+        # session.status = ""
+        session.canceled = True
         OBJ = dbm.Session_Cancellation_form(**Form.__dict__)  # type: ignore[call-arg]
 
         db.add(OBJ)
@@ -68,35 +69,5 @@ def update_session_cancellation(db: Session, Form: sch.update_Session_Cancellati
 
         db.commit()
         return 200, "Form Updated"
-    except Exception as e:
-        return Return_Exception(db, e)
-
-
-def Verify_session_cancellation(db: Session, Form: sch.Verify_Session_Cancellation_schema):
-    try:
-        Warn = []
-        new_Record = []
-        verified = 0
-        records = db \
-            .query(dbm.Session_Cancellation_form) \
-            .filter_by(deleted=False) \
-            .filter(dbm.Session_Cancellation_form.session_cancellation_pk_id.in_(Form.session_cancellation_pk_id)) \
-            .all()
-
-        for record in records:
-            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id, deleted=False)
-            if not old_session.first():
-                Warn.append(f'{record.session_fk_id}: Session Not Found.')
-                continue
-
-            old_session.canceled = True
-            record.status = 1   # NC: 004
-            verified += 1
-
-        db.add_all(new_Record)
-        db.commit()
-        if Warn:
-            return 200, f"{verified} Form Verified. {' | '.join(Warn)}"
-        return 200, f"{len(records)} Form Verified."
     except Exception as e:
         return Return_Exception(db, e)

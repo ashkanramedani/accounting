@@ -91,11 +91,11 @@ class Session(BaseModel):
     session_ending_time: time
     session_duration: int
     days_of_week: int
+    sub_request_threshold: int = 24  # Hour
 
 
 class post_session_schema(Session):
     pass
-
 
 class update_session_schema(Session):
     session_pk_id: UUID
@@ -139,6 +139,7 @@ class SubCourse(Base_form):
     sub_course_name: str
     number_of_session: int
 
+    sub_request_threshold: int = 24
     sub_course_starting_date: date
     sub_course_ending_date: date
 

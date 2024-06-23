@@ -64,6 +64,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
             return 400, "Bad Request: course not found"
 
         data = Form.__dict__
+        sub_request_threshold = data.pop("sub_request_threshold")
 
         session_signature = data.pop("session_signature")
         data |= {"sub_course_capacity": course.course_capacity, "sub_course_available_seat": course.course_capacity}
@@ -94,6 +95,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
             for start_time, session_duration in Session_signature[day_weekday]:
                 session_starting_time = datetime.combine(day_date, Fix_time(start_time))
                 session_ending_time = session_starting_time + timedelta(minutes=session_duration)
+                can_accept_sub = datetime.combine(day_date, session_starting_time.time()) - timedelta(hours=sub_request_threshold)
 
                 session_data = {
                     "created_fk_by": Form.created_fk_by,
@@ -104,7 +106,8 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
                     "session_starting_time": session_starting_time.time(),
                     "session_ending_time": session_ending_time.time(),
                     "session_duration": session_duration,
-                    "days_of_week": day_weekday}
+                    "days_of_week": day_weekday,
+                    "can_accept_sub": can_accept_sub}
 
                 days.append(dbm.Session_form(**session_data))  # type: ignore[call-arg]
         db.add_all(days)
@@ -159,7 +162,7 @@ def update_subcourse(db: Session, Form: sch.update_sub_course_schema):
         data = Form.__dict__
         if "session_signature" in data:
             data.pop("session_signature")
-        record.update(Form.dict(), synchronize_session=False)
+        record.update(data, synchronize_session=False)
 
         db.commit()
         return 200, "Record Updated"

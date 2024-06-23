@@ -2,16 +2,20 @@
 from typing import List, Dict, Tuple
 from uuid import UUID
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, Query
 
 import db.models as dbm
 import schemas as sch
 from lib import logger
 
 
+# key format
+#   lower().replace("_form", "").replace("_", "")
 Tables = {
     "base": dbm.Base_form,
     "user": dbm.User_form,
+    "student": dbm.User_form,
+    "employee": dbm.User_form,
     "course": dbm.Course_form,
     "subcourse": dbm.Sub_Course_form,
     "session": dbm.Session_form,
@@ -112,10 +116,11 @@ def course_exist(db: Session, FK_field: UUID):
     return True
 
 
-def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc", **filter_kwargs):
+def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc", query: Query = None, **filter_kwargs):
+    query = db.query(table).filter_by(deleted=False, **filter_kwargs) if not query else query
     if order == "desc":
-        return db.query(table).filter_by(deleted=False, **filter_kwargs).order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
-    return db.query(table).filter_by(deleted=False, **filter_kwargs).order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()
+        return query.order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
+    return query.order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
 
 
 def count(db, field: str):

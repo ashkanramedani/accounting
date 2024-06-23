@@ -7,7 +7,7 @@ import db as dbf
 import schemas as sch
 from db.models import get_db
 
-router = APIRouter(prefix='/api/v1/form', tags=['course_Extension'])
+router = APIRouter(prefix='/api/v1/form', tags=['Course_Extension'])
 
 
 @router.post("/tag/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])

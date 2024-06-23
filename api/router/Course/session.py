@@ -35,6 +35,15 @@ async def search_all_session(db=Depends(get_db), page: sch.PositiveInt = 1, limi
     return result
 
 
+@router.get("/sub_party", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.session_response])
+async def search_all_session(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+    status_code, result = dbf.get_sub_party(db, page, limit, order)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+
 @router.delete("/delete/{session_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_session(session_id: UUID, sub_course_id: UUID = None, db=Depends(get_db)):
     if not sub_course_id:

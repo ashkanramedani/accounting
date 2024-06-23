@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from typing import List
 from uuid import UUID
 
@@ -37,6 +38,16 @@ def get_all_session(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, 
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
+def get_sub_party(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+    try:
+        now = datetime.now()
+        return 200, record_order_by(db, dbm.Session_form, page, limit, order, query=db.query(dbm.Session_form).filter(dbm.Session_form.can_accept_sub >= now))
+    except Exception as e:
+        logger.error(e)
+        db.rollback()
+        return 500, f'{e.__class__.__name__}: {e.args}'
+
+
 def post_session(db: Session, Form: sch.post_session_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.session_teacher_fk_id]):
@@ -47,11 +58,13 @@ def post_session(db: Session, Form: sch.post_session_schema):
             return 400, "Bad Request: sub course not found"
 
         data = Form.__dict__
+
         current_sessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=data["sub_course_fk_id"], course_fk_id=data["course_fk_id"], deleted=False).count()
         if subcourse.number_of_session >= current_sessions:
-            return 200, "SubCourse is Full"
+            return 400, "SubCourse is Full"
 
-        OBJ = dbm.Session_form(**data)  # type: ignore[call-arg]
+        can_accept_sub = datetime.combine(data["session_date"], data["session_starting_time"]) - timedelta(hours=data.pop("sub_request_threshold"))
+        OBJ = dbm.Session_form(**data, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -107,7 +120,11 @@ def update_session(db: Session, Form: sch.update_session_schema):
         if not record.first():
             return 400, "Record Not Found"
 
-        record.update(Form.dict(), synchronize_session=False)
+        data = Form.dict()
+        data["can_accept_sub"] = datetime.combine(data["session_date"], data["session_starting_time"]) - timedelta(hours=data.pop("sub_request_threshold"))
+        OBJ = dbm.Session_form(**data, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
+
+        record.update(data, synchronize_session=False)
         db.commit()
         return 200, "Record Updated"
     except Exception as e:

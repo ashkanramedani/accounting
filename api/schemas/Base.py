@@ -137,7 +137,7 @@ class export_categories(BaseModel):
 class Base_form(BaseModel):
     created_fk_by: UUID = "308e2744-833c-4b94-8e27-44833c2b940f"
     description: str | None = None
-    status: int = 0
+    # status: int = 0
 
     visible: Optional[bool] = True
     priority: Optional[int] = 5

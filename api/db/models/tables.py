@@ -418,6 +418,10 @@ class Session_form(Base, InstitutionsBase):
     session_ending_time = Column(Time, nullable=False)
     session_duration = Column(Integer, nullable=False)
     days_of_week = Column(Integer, nullable=False)
+    can_accept_sub = Column(DateTime, nullable=False)
+
+
+
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     course = relationship("Course_form", foreign_keys=[course_fk_id])

@@ -9,7 +9,7 @@ import db as dbf
 import schemas as sch
 from db.models import get_db
 
-router = APIRouter(prefix='/api/v1/form/salary', tags=['report'])
+router = APIRouter(prefix='/api/v1/form/salary', tags=['Report'])
 
 
 @router.get("/permissions/{user_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
