@@ -12,7 +12,6 @@ from lib import logger
 # key format
 #   lower().replace("_form", "").replace("_", "")
 Tables = {
-    "base": dbm.Base_form,
     "user": dbm.User_form,
     "student": dbm.User_form,
     "employee": dbm.User_form,
