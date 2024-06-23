@@ -23,33 +23,16 @@ def get_all_session_cancellation(db: Session, page: sch.PositiveInt, limit: sch.
         return Return_Exception(db, e)
 
 
-# @not_implemented
-# def report_session_cancellation(db: Session, Form: sch.teacher_report):
-#     try:
-#         result = (
-#             db.query(dbm.Session_Cancellation_form)
-#             .join(dbm.Course_form, dbm.Course_form.course_pk_id == dbm.Session_Cancellation_form.course_fk_id)
-#             .filter_by(deleted=False, teacher_fk_id=Form.teacher_fk_id)
-#             .filter(dbm.Course_form.course_time.between(Form.start_date, Form.end_date))
-#             .options(joinedload(dbm.Session_Cancellation_form.course))
-#             .all()
-#         )
-#
-#         return 200, sum(row.delay for row in result)
-#     except Exception as e:
-#         logger.error(e)
-#         db.rollback()
-#         return 500, f'{e.__class__.__name__}: {e.args}'
-
 
 def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_schema):
     try:
-        session = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id, deleted=False)
+        session = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id, deleted=False).first()
         if not session:
             return 400, "Session not found"
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: Employee Not Found"
 
+        session.status = ""
         OBJ = dbm.Session_Cancellation_form(**Form.__dict__)  # type: ignore[call-arg]
 
         db.add(OBJ)

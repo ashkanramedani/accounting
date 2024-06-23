@@ -8,21 +8,35 @@ import db.models as dbm
 import schemas as sch
 from lib import logger
 
+
 Tables = {
-    "survey": dbm.Survey_form,
-    "role": dbm.Role_form,
-    "remote_request": dbm.Remote_Request_form,
-    "question": dbm.Question_form,
-    "response": dbm.Response_form,
-    "business_trip": dbm.Business_Trip_form,
-    "employee": dbm.User_form,
-    "tardy_request": dbm.Teacher_Tardy_report_form,
-    "student": dbm.User_form,
+    "base": dbm.Base_form,
+    "user": dbm.User_form,
     "course": dbm.Course_form,
-    "fingerprint_scanner": dbm.Fingerprint_Scanner_form,
-    "payment_method": dbm.Payment_Method_form,
-    "leave_forms": dbm.Leave_Request_form,
-    "salarypolicy": dbm.Salary_Policy_form
+    "subcourse": dbm.Sub_Course_form,
+    "session": dbm.Session_form,
+    "leaverequest": dbm.Leave_Request_form,
+    "businesstrip": dbm.Business_Trip_form,
+    "remoterequest": dbm.Remote_Request_form,
+    "paymentmethod": dbm.Payment_Method_form,
+    "fingerprintscanner": dbm.Fingerprint_Scanner_form,
+    "fingerprintscannerbackup": dbm.Fingerprint_Scanner_backup_form,
+    "teachertardyreport": dbm.Teacher_Tardy_report_form,
+    "teachersreport": dbm.Teachers_Report_form,
+    # "survey": dbm.Survey_form,
+    # "question": dbm.Question_form,
+    # "response": dbm.Response_form,
+    "role": dbm.Role_form,
+    "salarypolicy": dbm.Salary_Policy_form,
+    "employeesalary": dbm.Employee_Salary_form,
+    "tag": dbm.Tag_form,
+    "category": dbm.Category_form,
+    "language": dbm.Language_form,
+    "coursetype": dbm.Course_Type_form,
+    # "status": dbm.Status_form,
+    "subrequest": dbm.Sub_Request_form,
+    "sessioncancellation": dbm.Session_Cancellation_form,
+    # "reassigninstructor": dbm.Reassign_Instructor_form
 }
 
 
@@ -105,10 +119,10 @@ def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.Positi
 
 
 def count(db, field: str):
-    field = field.lower().replace(" ", "_")
-    if field not in Tables:
-        return 400, "field Not Found"
-    return 200, len(db.query(Tables[field]).filter_by(deleted=False).all())
+    table = Tables.get(field.lower().replace("_form", "").replace("_", ""), None)
+    if not table:
+        return 404, f"{field} Not Found"
+    return 200, db.query(table).filter_by(deleted=False).count()
 
 
 def prepare_param(key, val):

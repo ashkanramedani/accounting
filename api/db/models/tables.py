@@ -276,6 +276,7 @@ class BaseTable:
 class Base_form(BaseTable):
     description = Column(String, nullable=True, default="")
     status = Column(Integer, nullable=False, default=0)
+    # status = create_forenKey("Status_form")
     # note = Column(JSON, nullable=True)
 
 
@@ -748,11 +749,14 @@ class Course_Type_form(Base, Base_form):
 
 class Status_form(Base, Base_form):  # NC: 002
     __tablename__ = "status"
+    __table_args__ = (UniqueConstraint('status_name', 'status_cluster'),)
 
     status_pk_id = create_Unique_ID()
-    status_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_forenKey("User_form")
 
+    status_name = Column(String, index=True, nullable=False)
+    status_cluster = Column(String, index=True, nullable=False)
+
+    created_fk_by = create_forenKey("User_form")
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
 

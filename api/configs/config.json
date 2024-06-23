@@ -9,7 +9,7 @@
     "compression": "zip"
   },
   "db":{
-    "database_type":"postgresql",
+    "target_DB":"postgresql",
     "username":"ieltsdaily",
     "password":"Aa123456",
     "ip":"87.107.161.240",

@@ -1,10 +1,10 @@
 from enum import Enum
 from pydantic import BaseModel, constr
 
-IP_PATTERN = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
+IPV4_PATTERN = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"
 
 
-class DatabaseType(str, Enum):
+class DB(str, Enum):
     POSTGRESQL = 'postgresql'
 
 
@@ -14,8 +14,8 @@ class Engine(BaseModel):
 
 
 class Setting(BaseModel):
-    database_type: DatabaseType
-    ip: constr(regex=IP_PATTERN)
+    target_DB: DB
+    ip: constr(regex=IPV4_PATTERN)
     port: int
     username: str
     password: str

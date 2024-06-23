@@ -18,6 +18,12 @@ DEFAULT_ROLES = [
     {"name": "Teacher", "cluster": "Teachers"}
 ]
 
+
+DEFAULT_STATUS = {
+    "form": ["submitted", "approved", "rejected", "pending", "cancelled"],
+    "payment": []
+}
+
 DEFAULT_LANGUAGE = ["Not_Assigned", "English", "Spanish", "Italian", "French", "German", "Chinese", "Japanese", "Korean", "Portuguese", "Russian"]
 DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
 
