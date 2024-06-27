@@ -1,6 +1,7 @@
 from typing import List
 
 from sqlalchemy.orm import Session
+from starlette.testclient import TestClient
 
 import db.models as dbm
 import schemas as sch

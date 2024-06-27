@@ -4,7 +4,7 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+from db import models as dbm
 import schemas as sch
 from lib import logger
 from ..Extra import *
@@ -43,9 +43,7 @@ def get_sub_party(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, or
         now = datetime.now()
         return 200, record_order_by(db, dbm.Session_form, page, limit, order, query=db.query(dbm.Session_form).filter(dbm.Session_form.can_accept_sub >= now))
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_session(db: Session, Form: sch.post_session_schema):

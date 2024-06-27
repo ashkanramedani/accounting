@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+from db import models as dbm
 import schemas as sch
 from lib import generate_month_interval, Fix_time, time_gap
 from ..Extra import *

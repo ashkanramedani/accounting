@@ -1,9 +1,9 @@
 from datetime import timedelta, date, time, datetime
 from typing import List, Tuple, Dict
 
-import db.models as dbm
+from db import models as dbm
 from lib import *
-from ..Extra import *
+from db.Extra import *
 
 Day_Schema: dict
 
@@ -19,10 +19,10 @@ def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
         return {"Regular_earning": 0, "Overtime_earning": 0, "Undertime_earning": 0, "Off_Day_earning": 0}
 
     rates = {
-        "Regular_earning": salary_rate.Base_salary * salary_rate.Regular_hours_factor * (Total_activity["regular_work_time"] / 60),
-        "Overtime_earning": salary_rate.Base_salary * salary_rate.overtime_factor * (Total_activity["overtime"] / 60),
-        "Undertime_earning": salary_rate.Base_salary * salary_rate.undertime_factor * (Total_activity["undertime"] / 60),
-        "Off_Day_earning": salary_rate.Base_salary * salary_rate.off_day_factor * (Total_activity["off_Day_work_time"] / 60)
+        "Regular_earning": salary_rate.Base_salary * salary_rate.Regular_hours_factor * Total_activity["regular_work_time"],
+        "Overtime_earning": salary_rate.Base_salary * salary_rate.overtime_factor * Total_activity["overtime"],
+        "Undertime_earning": salary_rate.Base_salary * salary_rate.undertime_factor * Total_activity["undertime"],
+        "Off_Day_earning": salary_rate.Base_salary * salary_rate.off_day_factor * Total_activity["off_Day_work_time"]
     }
     return rates
 

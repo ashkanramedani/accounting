@@ -58,7 +58,6 @@ class Sub_teacher_Response(BaseModel):
         orm_mode = True
 
 
-
 # course cancellation
 class Session_Cancellation(Base_form):
     session_fk_id: UUID

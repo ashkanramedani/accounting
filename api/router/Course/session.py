@@ -43,7 +43,6 @@ async def search_all_session(db=Depends(get_db), page: sch.PositiveInt = 1, limi
     return result
 
 
-
 @router.delete("/delete/{session_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_session(session_id: UUID, sub_course_id: UUID = None, db=Depends(get_db)):
     if not sub_course_id:

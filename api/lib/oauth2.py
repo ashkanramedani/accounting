@@ -8,10 +8,10 @@
 # from sqlalchemy.orm import Session
 # from jose.exceptions import JWTError
 # from fastapi.exceptions import HTTPException
-# import db.models as dbm
+# from db import models as dbm
 # import logging
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
+ 
 # JWT_REFRESH_SECRET_KEY = "3946a14269deb47560ca933372a5ebeef35f65c14fdcb6562ed8f670ffb8056b"
 # ALGORITHM = "HS256"
 # ACCESS_TOKEN_EXPIRE_MINUTES = 30  # 30 minutes

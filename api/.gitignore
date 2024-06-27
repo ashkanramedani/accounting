@@ -151,7 +151,7 @@ api/.DS_Store
 /Postgress/
 /api/configs/config_back.json
 /api/configs/config copy.json
-/api/Test/
+
 
 .DS_Store
 .idea
@@ -179,3 +179,4 @@ api/admin.api.ieltsdaily.ir.tar!/router_Dev/
 !/.lprof/
 !/db/models/tables_TMP.py
 !/TmpFiles/
+

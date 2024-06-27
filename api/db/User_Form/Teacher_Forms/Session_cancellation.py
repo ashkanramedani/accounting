@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+from db import models as dbm
 import schemas as sch
 from lib import logger
-from ..Extra import *
+from db.Extra import *
 
 
 # Sub Request
@@ -11,9 +11,7 @@ def get_session_cancellation(db: Session, form_id):
     try:
         return 200, db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=form_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_session_cancellation(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
@@ -21,7 +19,6 @@ def get_all_session_cancellation(db: Session, page: sch.PositiveInt, limit: sch.
         return 200, record_order_by(db, dbm.Session_Cancellation_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)
-
 
 
 def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_schema):
@@ -57,6 +54,7 @@ def delete_session_cancellation(db: Session, form_id):
 
 
 def update_session_cancellation(db: Session, Form: sch.update_Session_Cancellation_schema):
+    return 400, f'Session Cancellation form cant be Updated.'
     try:
         record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=Form.session_cancellation_pk_id, deleted=False)
 

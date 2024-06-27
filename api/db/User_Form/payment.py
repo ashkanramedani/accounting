@@ -1,8 +1,8 @@
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+from db import models as dbm
 import schemas as sch
-from .Extra import *
+from db.Extra import *
 
 
 def get_payment_method(db: Session, payment_method_id):

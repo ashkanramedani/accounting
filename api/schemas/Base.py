@@ -1,10 +1,9 @@
 from datetime import time, datetime, date
 from enum import Enum
-from typing import Optional
+from typing import Optional, Any, List
 from uuid import UUID
 
 from pydantic import BaseModel, EmailStr
-
 
 SUCCESS_STATUS = [200, 201]
 
@@ -168,9 +167,18 @@ class Base_record_add(BaseModel):
     id: UUID | str
     Warning: Optional[str] = None
 
+
 class Update_Relation(BaseModel):
     old_id: UUID | str
     new_id: UUID | str
 
     class Config:
         orm_mode = True
+
+
+class Route_Result(BaseModel):
+    route: str
+    status: int
+    body: Any
+
+

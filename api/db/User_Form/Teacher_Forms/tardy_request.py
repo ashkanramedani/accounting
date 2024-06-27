@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session, joinedload
 
-import db.models as dbm
+from db import models as dbm
 import schemas as sch
 from lib import logger
-from ..Extra import *
+from db.Extra import *
 
 
 # Tardy Form - get_tardy_request

@@ -8,7 +8,6 @@ import db.models as dbm
 import schemas as sch
 from lib import logger
 
-
 # key format
 #   lower().replace("_form", "").replace("_", "")
 Tables = {
@@ -155,4 +154,12 @@ def Return_Exception(db: Session, Error: Exception):
     if "UniqueViolation" in str(Error):
         return 409, "Already Exist"
     # return 500, f'{Error.__class__.__name__}: {Error.args}'
+    return 500, f'{Error.__class__.__name__}: {Error.__repr__()}'
+
+
+def Return_Test_Exception(Error: Exception):
+    logger.error(Error, depth=2)
+    if "UniqueViolation" in str(Error):
+        return 409, "Already Exist"
+    logger.error(Error)
     return 500, f'{Error.__class__.__name__}: {Error.__repr__()}'

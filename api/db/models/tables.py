@@ -420,9 +420,6 @@ class Session_form(Base, InstitutionsBase):
     days_of_week = Column(Integer, nullable=False)
     can_accept_sub = Column(DateTime, nullable=False)
 
-
-
-
     created = relationship("User_form", foreign_keys=[created_fk_by])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])

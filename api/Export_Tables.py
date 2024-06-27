@@ -9,7 +9,6 @@ session = Session()
 inspector = inspect(engine)
 schemas = inspector.get_schema_names()
 
-
 INVALID_KEYS = ["description", "priority", "visible", "deleted", "can_update", "can_deleted", "create_date", "update_date", "delete_date", "expire_date"]
 RES = {}
 for table_name in inspector.get_table_names(schema="public"):

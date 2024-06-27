@@ -1,5 +1,4 @@
-from typing import List, Any
-from pydantic import PositiveInt
+from typing import List
 
 from .Base import *
 from .Entity import *
@@ -96,6 +95,7 @@ class Session(BaseModel):
 
 class post_session_schema(Session):
     pass
+
 
 class update_session_schema(Session):
     session_pk_id: UUID

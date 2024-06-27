@@ -1,9 +1,9 @@
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+from db import models as dbm
 import schemas as sch
-from ..Extra import *
+from db.Extra import *
 
 
 # Teacher Replacement

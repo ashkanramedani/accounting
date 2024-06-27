@@ -2,7 +2,7 @@ import uuid
 
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+from db import models as dbm
 from lib import logger
 
 ADMIN = {

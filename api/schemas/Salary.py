@@ -25,7 +25,7 @@ class SalaryPolicy(Base_form):
 
     overtime_permission: bool
     overtime_factor: float
-    overtime_cap: int
+    overtime_cap: float
     overtime_threshold: int
 
     undertime_factor: float
@@ -34,24 +34,24 @@ class SalaryPolicy(Base_form):
     # off_Day
     off_day_permission: bool
     off_day_factor: float
-    off_day_cap: int
+    off_day_cap: float
 
     # Remote
     remote_permission: bool
     remote_factor: float
-    remote_cap: int
+    remote_cap: float
 
     # Leave_form
     medical_leave_factor: float
-    medical_leave_cap: int
+    medical_leave_cap: float
 
     vacation_leave_factor: float
-    vacation_leave_cap: int
+    vacation_leave_cap: float
 
     # business_Trip
     business_trip_permission: bool
     business_trip_factor: float
-    business_trip_cap: int
+    business_trip_cap: float
 
 
 class post_SalaryPolicy_schema(SalaryPolicy):
@@ -95,6 +95,7 @@ class teacher_salary_report(BaseModel):
     LP_submission: str
     result_submission_to_FD: str
     ReportToStudent: str
+
 
 # ---------------------- course cancellation ---------------------
 class Input(BaseModel):

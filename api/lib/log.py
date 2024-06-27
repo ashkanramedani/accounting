@@ -12,9 +12,12 @@ class Log:
         self.Warn_Status = [400]
         self.ERR_Statis = [500]
 
-        self.config_path = join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")
-        self.config_path = "configs/config.json"
-        config = load(open(self.config_path))
+        try:
+            self.config_path = "configs/config.json"
+            config = load(open(self.config_path))
+        except FileNotFoundError:
+            self.config_path = join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")
+            config = load(open(self.config_path))
 
         self.developer = True
         self.logger = logger_obj

@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
+from fastapi.testclient import TestClient
 
 import db as dbf
 import schemas as sch
@@ -45,6 +46,14 @@ async def delete_employee(form_id, db=Depends(get_db)):
 @router.put("/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_employee(Form: sch.update_employee_schema, db=Depends(get_db)):
     status_code, result = dbf.update_employee(db, Form)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.get("/Test")  # , response_model=List[sch.Route_Result])
+async def test_employee():
+    status_code, result = dbf.Test_CRUD(router)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

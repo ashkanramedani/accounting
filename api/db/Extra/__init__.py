@@ -1,8 +1,10 @@
 from lib.Date_Time import *
 from .db_utils import *
 from .tools import *
+from .Test import *
 
 __all__ = [
+    "Test_CRUD",
     "employee_exist",
     "course_exist",
     'record_order_by',
@@ -10,6 +12,7 @@ __all__ = [
     'safe_run',
     'log_on_status',
     'Return_Exception',
+    'Return_Test_Exception',
     "not_implemented",
     "NOT_AVAILABLE",
     "out_of_service",

@@ -1,7 +1,6 @@
 from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy.ext.declarative import declarative_base
 
-
 import json
 import os
 from os.path import dirname, normpath
@@ -30,6 +29,7 @@ def Postgres_URL(**kwargs) -> str:
     else:
         raise Exception(msg)
 
+
 def Create_engine():
     load_dotenv()
     directory = normpath(f'{dirname(__file__)}/../../configs/config.json')
@@ -42,7 +42,6 @@ def Create_engine():
 
     logger.info(SQLALCHEMY_DATABASE_URL)
     return create_engine(SQLALCHEMY_DATABASE_URL, **DB_config["engine"])
-
 
 
 engine = Create_engine()

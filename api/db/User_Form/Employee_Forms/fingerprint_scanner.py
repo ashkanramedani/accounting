@@ -10,7 +10,7 @@ import db.models as dbm
 import schemas as sch
 from lib import *
 from .Salary_Utils import calculate_duration
-from ..Extra import *
+from db.Extra import *
 
 
 # Teacher Replacement
@@ -173,6 +173,8 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
 
         data = Form.dict()
 
+        EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
+        data["EnNo"] = EnNo
         s, e = data["Enter"], data["Exit"]
         data["duration"] = 0 if s == e else time_gap(Fix_time(s), Fix_time(s))
 

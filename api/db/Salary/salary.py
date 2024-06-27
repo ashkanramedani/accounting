@@ -1,9 +1,5 @@
-from lib.Date_Time import generate_month_interval
-from .. import generate_daily_report
-
-from ..Course import course_report
-from ..Employee_Forms import report_leave_request, report_remote_request, report_business_trip, report_fingerprint_scanner
-from ..Teacher_Forms import *
+from db.Course import course_report
+from db.User_Form import *
 
 
 def permissions(db: Session, User_ID):
@@ -84,7 +80,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
                 return status, Remote_Request_report
             total_remote = sum(row.duration for row in Remote_Request_report)
             remote = min(total_remote, Salary_Policy.remote_cap)
-            report_summary |= {"remote": remote, "remote_earning": (remote / 60) * Salary_Policy.remote_factor * Salary_Policy.Base_salary}
+            report_summary |= {"remote": remote, "remote_earning": remote * Salary_Policy.remote_factor * Salary_Policy.Base_salary}
         else:
             report_summary |= {"remote": 0, "remote_earning": 0}
 
@@ -95,7 +91,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
                 return status, Business_Trip_report
             total_business_trip = sum(row.duration for row in Business_Trip_report)
             business_trip = min(total_business_trip, Salary_Policy.business_trip_cap)
-            report_summary |= {"business_trip": business_trip, "business_trip_earning": (business_trip / 60) * Salary_Policy.business_trip_factor * Salary_Policy.Base_salary}
+            report_summary |= {"business_trip": business_trip, "business_trip_earning": business_trip * Salary_Policy.business_trip_factor * Salary_Policy.Base_salary}
         else:
             report_summary |= {"business_trip": 0, "business_trip_earning": 0}
 
@@ -108,8 +104,9 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         medical = Salary_Policy.medical_leave_cap - sum(row.duration for row in leave_report["Medical"]) if leave_report["Medical"] else 0
 
         report_summary |= {
-            "vacation_leave": vacation, "vacation_leave_earning": (vacation / 60) * Salary_Policy.vacation_leave_factor * Salary_Policy.Base_salary,
-            "medical_leave": medical, "medical_leave_earning": (min(medical, 0) / 60) * Salary_Policy.medical_leave_factor * Salary_Policy.Base_salary}
+            "vacation_leave": vacation, "vacation_leave_earning": vacation * Salary_Policy.vacation_leave_factor * Salary_Policy.Base_salary,
+            "medical_leave": medical, "medical_leave_earning": min(medical, 0) * Salary_Policy.medical_leave_factor * Salary_Policy.Base_salary
+        }
 
         report_summary["total_earning"] = sum(report_summary[key] for key in [key for key in report_summary.keys() if "earning" in key])
 
@@ -121,6 +118,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         return 200, salary_obj
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def get_employee_salary(db: Session, user_fk_id, year, month):
     try:
@@ -135,9 +133,3 @@ def teacher_salary_report(db: Session, Form: sch.teacher_salary_report):
         return status, report_summary
     except Exception as e:
         return Return_Exception(db, e)
-
-"""
-11, 6, 7, 13, 9, 10, 12, 15, 17 
-6 
-5, 4, 16, 15, 6, 12, 3, 17, 11, 10, 13, 9, 7
-"""

@@ -11,18 +11,14 @@ def get_tag(db: Session, tag_id):
         return 200, db.query(dbm.Tag_form).filter_by(tag_pk_id=tag_id, deleted=False).first()
 
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_tag(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Tag_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_tag(db: Session, Form: sch.post_tag_schema):
@@ -37,9 +33,7 @@ def post_tag(db: Session, Form: sch.post_tag_schema):
         return 200, " Tag Created"
 
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_tag(db: Session, tag_id):
@@ -51,9 +45,7 @@ def delete_tag(db: Session, tag_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_tag(db: Session, Form: sch.update_tag_schema):
@@ -67,27 +59,21 @@ def update_tag(db: Session, Form: sch.update_tag_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_category(db: Session, category_id):
     try:
         return 200, db.query(dbm.Category_form).filter_by(category_pk_id=category_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_category(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Category_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_category(db: Session, Form: sch.post_category_schema):
@@ -103,9 +89,7 @@ def post_category(db: Session, Form: sch.post_category_schema):
 
         return 200, f'category Added. ID: {OBJ.category_pk_id}'
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_category(db: Session, category_id):
@@ -117,9 +101,7 @@ def delete_category(db: Session, category_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_category(db: Session, Form: sch.update_category_schema):
@@ -133,27 +115,21 @@ def update_category(db: Session, Form: sch.update_category_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_language(db: Session, language_id):
     try:
         return 200, db.query(dbm.Language_form).filter_by(language_pk_id=language_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_language(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Language_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_language(db: Session, Form: sch.post_language_schema):
@@ -170,9 +146,7 @@ def post_language(db: Session, Form: sch.post_language_schema):
 
         return 200, f'language Added'
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_language(db: Session, language_id):
@@ -184,9 +158,7 @@ def delete_language(db: Session, language_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_language(db: Session, Form: sch.update_language_schema):
@@ -200,27 +172,21 @@ def update_language(db: Session, Form: sch.update_language_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_course_type(db: Session, course_type_id):
     try:
         return 200, db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course_type_id, deleted=False).first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_course_type(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Course_Type_form, page, limit, order)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_course_type(db: Session, Form: sch.post_course_type_schema):
@@ -235,9 +201,7 @@ def post_course_type(db: Session, Form: sch.post_course_type_schema):
 
         return 200, f'course_type Added'
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_course_type(db: Session, course_type_id):
@@ -249,9 +213,7 @@ def delete_course_type(db: Session, course_type_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_course_type(db: Session, Form: sch.update_course_type_schema):
@@ -265,6 +227,4 @@ def update_course_type(db: Session, Form: sch.update_course_type_schema):
         db.commit()
         return 200, "Record Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
