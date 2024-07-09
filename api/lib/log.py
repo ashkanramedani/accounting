@@ -1,8 +1,9 @@
 import sys
-
 from json import load
-from loguru import logger as logger_obj
 from os.path import normpath, dirname, join
+
+from loguru import logger as logger_obj
+
 from lib import requester
 
 
@@ -68,6 +69,9 @@ class Log:
 
     def error(self, msg, depth=1):
         self.logger.opt(depth=depth).error(msg)
+
+    def debug(self, msg):
+        self.logger.opt(depth=1).debug(msg)
 
     def on_status_code(self, status_code, msg):
         if not isinstance(msg, str):
