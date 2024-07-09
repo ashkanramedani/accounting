@@ -5,10 +5,9 @@ from sqlalchemy.orm import Session
 from db import models as dbm
 from lib import logger
 
-ADMIN = {
-    "name": "Admin",
-    "lastname": "Admin",
-    "role": {"name": "Administrator", "cluster": "Administrator"}}
+DEFAULT_USER = [
+    {"name": "Admin", "lastname": "Admin", "email": "Admin@Admin.com", "role": {"name": "Administrator", "cluster": "Administrator"}}
+]
 
 DEFAULT_ROLES = [
     {"name": "Manager", "cluster": "Manager"},
@@ -18,9 +17,15 @@ DEFAULT_ROLES = [
     {"name": "Teacher", "cluster": "Teachers"}
 ]
 
-
 DEFAULT_STATUS = {
-    "form": ["submitted", "approved", "rejected", "pending", "cancelled"],
+    "form": [
+        "submitted",
+        "approved",
+        "rejected",
+        "pending",
+        "cancelled",
+        "deleted"
+    ],
     "payment": []
 }
 
@@ -30,41 +35,56 @@ DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
 
 def setUp_admin(db: Session):
     try:
-        emp = db.query(dbm.User_form).filter_by(name=ADMIN["name"]).first()
-        if not emp:
-            UID = "308e2744-833c-4b94-8e27-44833c2b940f"
-            admin_user = dbm.User_form(user_pk_id=UID, created_fk_by=UID, name=ADMIN["name"], last_name=ADMIN["lastname"], email="Admin@Admin.com", status=1)  # type: ignore[call-arg]
+        Existing_users = [user[0] for user in db.query(dbm.User_form.name).filter(dbm.User_form.name.in_([user["name"] for user in DEFAULT_USER])).all()]
+
+        for User in DEFAULT_USER:
+            if User["name"] in Existing_users:
+                continue
+            UID = "308e2744-833c-4b94-8e27-44833c2b940f" if User["name"] == "Admin" else uuid.uuid4()
+            data = {"user_pk_id": UID, "name": User["name"], "last_name": User["lastname"], "email": User["email"], "status": "approved"}
+
+            admin_user = dbm.User_form(**data)  # type: ignore[call-arg]
             db.add(admin_user)
             db.commit()
             db.refresh(admin_user)
+
+            admin_user.created_fk_by = "308e2744-833c-4b94-8e27-44833c2b940f"
+            db.add(admin_user)
+            db.commit()
+            db.refresh(admin_user)
+
             emp = admin_user
 
-            admin_role = db.query(dbm.Role_form).filter_by(name=ADMIN["role"]["name"]).first()
+            admin_role = db.query(dbm.Role_form).filter_by(name=User["role"]["name"]).first()
             if not admin_role:
-                admin_role = dbm.Role_form(created_fk_by=emp.user_pk_id, name=ADMIN["role"]["name"], cluster=ADMIN["role"]["cluster"], status=1)  # type: ignore[call-arg]
+                admin_role = dbm.Role_form(created_fk_by=emp.user_pk_id, name=User["role"]["name"], cluster=User["role"]["cluster"], status="approved")  # type: ignore[call-arg]
                 db.add(admin_role)
                 db.commit()
 
             emp.roles.append(admin_role)
 
+        ADMIN_ID = db.query(dbm.User_form).filter_by(name="Admin").first().user_pk_id
         existing_role_names = [role.name for role in db.query(dbm.Role_form).filter(dbm.Role_form.name.in_([r["name"] for r in DEFAULT_ROLES])).all()]
         new_OBJ = []
 
         for role_data in DEFAULT_ROLES:
             if role_data["name"] not in existing_role_names:
-                new_OBJ.append(dbm.Role_form(created_fk_by=emp.user_pk_id, **role_data, status=1))  # type: ignore[call-arg]
+                OBJ = dbm.Role_form(created_fk_by=ADMIN_ID, status="approved", **role_data)  # type: ignore[call-arg]
+                new_OBJ.append(OBJ)
 
         existing_role_names = [language.language_name for language in db.query(dbm.Language_form).filter(dbm.Language_form.language_name.in_(DEFAULT_LANGUAGE)).all()]
         for language in DEFAULT_LANGUAGE:
             if language not in existing_role_names:
                 UID = "7f371975-e397-4fc5-b719-75e3978fc547" if language == "Not_Assigned" else uuid.uuid4()
-                new_OBJ.append(dbm.Language_form(language_pk_id=UID, created_fk_by=emp.user_pk_id, language_name=language, status=1))  # type: ignore[call-arg]
+                OBJ = dbm.Language_form(language_pk_id=UID, created_fk_by=ADMIN_ID, language_name=language, status="approved")  # type: ignore[call-arg]
+                new_OBJ.append(OBJ)
 
         existing_course_type = [course_type.course_type_name for course_type in db.query(dbm.Course_Type_form).filter(dbm.Course_Type_form.course_type_name.in_(DEFAULT_COURSE_TYPE)).all()]
         for course_type in DEFAULT_COURSE_TYPE:
             if course_type not in existing_course_type:
                 UID = "7f485938-f59f-401f-8859-38f59f201f3e" if course_type == "Not_Assigned" else uuid.uuid4()
-                new_OBJ.append(dbm.Course_Type_form(course_type_pk_id=UID, created_fk_by=emp.user_pk_id, course_type_name=course_type, status=1))  # type: ignore[call-arg]
+                OBJ = dbm.Course_Type_form(course_type_pk_id=UID, created_fk_by=ADMIN_ID, course_type_name=course_type, status="approved")  # type: ignore[call-arg]
+                new_OBJ.append(OBJ)
 
         if new_OBJ:
             db.bulk_save_objects(new_OBJ)

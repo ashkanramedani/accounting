@@ -77,6 +77,7 @@ class Response(Base_form):
 
 
 class post_response_schema(Response):
+    survey_fk_id: UUID
     pass
 
 

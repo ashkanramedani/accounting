@@ -1,19 +1,19 @@
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 import schemas as sch
+from db import models as dbm
 from ..Extra import *
 
 
 # question
 def get_question(db: Session, question_id):
     try:
-        return 200, db.query(dbm.Question_form).filter_by(question_pk_id=question_id, deleted=False).first()
+        return 200, db.query(dbm.Question_form).filter_by(question_pk_id=question_id).filter(dbm.Question_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_question(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Question_form, page, limit, order)
     except Exception as e:
@@ -22,7 +22,7 @@ def get_all_question(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt,
 
 def post_question(db: Session, Form: sch.post_questions_schema):
     try:
-        if not db.query(dbm.Language_form).filter_by(deleted=False).count():
+        if not db.query(dbm.Language_form).filter(dbm.Language_form.status != "deleted").count():
             return 400, "Bad Request: No language found"
         OBJ = dbm.Question_form(**Form.dict())  # type: ignore[call-arg]
 
@@ -36,10 +36,11 @@ def post_question(db: Session, Form: sch.post_questions_schema):
 
 def delete_question(db: Session, question_id):
     try:
-        record = db.query(dbm.Question_form).filter_by(question_pk_id=question_id, deleted=False).first()
+        record = db.query(dbm.Question_form).filter_by(question_pk_id=question_id).filter(dbm.Question_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -48,7 +49,7 @@ def delete_question(db: Session, question_id):
 
 def update_question(db: Session, Form: sch.update_questions_schema):
     try:
-        record = db.query(dbm.Question_form).filter_by(question_pk_id=Form.question_pk_id, deleted=False)
+        record = db.query(dbm.Question_form).filter_by(question_pk_id=Form.question_pk_id).filter(dbm.Question_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 
@@ -63,6 +64,6 @@ def update_question(db: Session, Form: sch.update_questions_schema):
 # survey
 def get_survey(db: Session, survey_id):
     try:
-        return 200, db.query(dbm.Survey_form).filter_by(survey_pk_id=survey_id, deleted=False).first()
+        return 200, db.query(dbm.Survey_form).filter_by(survey_pk_id=survey_id).filter(dbm.Survey_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)

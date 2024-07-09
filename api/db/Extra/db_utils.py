@@ -10,6 +10,8 @@ from lib import logger
 
 # key format
 #   lower().replace("_form", "").replace("_", "")
+# Value format]
+#   dbm.<Table_name>
 Tables = {
     "user": dbm.User_form,
     "student": dbm.User_form,
@@ -44,11 +46,11 @@ Tables = {
 
 def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Update_Relation], categories: List[sch.Update_Relation]):
     Errors = []
-    all_tags = [TAG.tag_pk_id for TAG in db.query(dbm.Tag_form).filter_by(deleted=False).all()]
-    all_categories = [CTG.category_pk_id for CTG in db.query(dbm.Category_form).filter_by(deleted=False).all()]
+    all_tags = [TAG.tag_pk_id for TAG in db.query(dbm.Tag_form).filter(dbm.Tag_form.status != "deleted").all()]
+    all_categories = [CTG.category_pk_id for CTG in db.query(dbm.Category_form).filter(dbm.Category_form.status != "deleted").all()]
     for tag in tags:
         if existing_tag := tag.old_id:
-            tag_OBJ = db.query(dbm.CourseTag).filter_by(course_fk_id=course_pk_id, tag_fk_id=existing_tag, deleted=False)
+            tag_OBJ = db.query(dbm.CourseTag).filter_by(course_fk_id=course_pk_id, tag_fk_id=existing_tag).filter(dbm.CourseTag.status != "deleted")
             if not tag_OBJ.first():
                 Errors.append(f'Course does not have this tag {existing_tag}')
             else:
@@ -57,11 +59,11 @@ def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Up
             if new_tag not in all_tags:
                 Errors.append(f'this tag does not exist {new_tag}')
             else:
-                course.tags.append(db.query(dbm.Tag_form).filter_by(tag_pk_id=new_tag, deleted=False).first())
+                course.tags.append(db.query(dbm.Tag_form).filter_by(tag_pk_id=new_tag).filter(dbm.Tag_form.status != "deleted").first())
 
     for category in categories:
         if existing_category := category.old_id:
-            category_OBJ = db.query(dbm.CourseCategory).filter_by(course_fk_id=course_pk_id, category_fk_id=existing_category, deleted=False)
+            category_OBJ = db.query(dbm.CourseCategory).filter_by(course_fk_id=course_pk_id, category_fk_id=existing_category).filter(dbm.CourseCategory.status != "deleted")
             if not category_OBJ.first():
                 Errors.append(f'Course does not have this category {existing_category}')
             else:
@@ -70,14 +72,14 @@ def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Up
             if new_category not in all_categories:
                 Errors.append(f'this category does not exist {new_category}')
             else:
-                course.categories.append(db.query(dbm.Category_form).filter_by(category_pk_id=new_category, deleted=False).first())
+                course.categories.append(db.query(dbm.Category_form).filter_by(category_pk_id=new_category).filter(dbm.Category_form.status != "deleted").first())
     db.commit()
     return Errors
 
 
 def Add_role(db, roles: List[sch.Update_Relation | Dict], UserOBJ, UserID):
     Errors = []
-    role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Role_form).filter_by(deleted=False).all()]
+    role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Role_form).filter(dbm.Role_form.status != "deleted").all()]
     Roles = []
     for role in roles:
         if not isinstance(role, dict):
@@ -87,7 +89,7 @@ def Add_role(db, roles: List[sch.Update_Relation | Dict], UserOBJ, UserID):
 
     for r_id in Roles:
         if existing_role := r_id["old_id"]:
-            role_obj = db.query(dbm.UserRole).filter_by(role_fk_id=existing_role, user_fk_id=UserID, deleted=False)
+            role_obj = db.query(dbm.UserRole).filter_by(role_fk_id=existing_role, user_fk_id=UserID).filter(dbm.UserRole.status != "deleted")
             if not role_obj.first():
                 Errors.append(f'Employee does not have this role {existing_role}')
             else:
@@ -96,36 +98,49 @@ def Add_role(db, roles: List[sch.Update_Relation | Dict], UserOBJ, UserID):
             if new_role not in role_ID:
                 Errors.append(f'this role does not exist {new_role}')
             else:
-                UserOBJ.roles.append(db.query(dbm.Role_form).filter_by(role_pk_id=new_role, deleted=False).first())
+                UserOBJ.roles.append(db.query(dbm.Role_form).filter_by(role_pk_id=new_role).filter(dbm.Role_form.status != "deleted").first())
+    db.add(UserOBJ)
     db.commit()
+    db.refresh(UserOBJ)
     return Errors
 
 
 def employee_exist(db: Session, FK_fields: List[UUID]):
     for FK_field in FK_fields:
-        if not db.query(dbm.User_form).filter_by(user_pk_id=FK_field, deleted=False).first():
+        if not db.query(dbm.User_form).filter_by(user_pk_id=FK_field).filter(dbm.User_form.status != "deleted").first():
             return False
     return True
 
 
 def course_exist(db: Session, FK_field: UUID):
-    if not db.query(dbm.Course_form).filter_by(course_pk_id=FK_field, deleted=False).first():
+    if not db.query(dbm.Course_form).filter_by(course_pk_id=FK_field).filter(dbm.Course_form.status != "deleted").first():
         return False
     return True
 
 
-def record_order_by(db: Session, table, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc", query: Query = None, **filter_kwargs):
-    query = db.query(table).filter_by(deleted=False, **filter_kwargs) if not query else query
-    if order == "desc":
-        return query.order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
-    return query.order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
+def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", query: Query = None, **filter_kwargs):
+    try:
+        query = db.query(table).filter(table.status != "deleted").filter_by(**filter_kwargs) if not query else query
+
+        match page, order:
+            case 0, "desc":
+                return query.order_by(table.create_date.desc()).all()
+            case 0, "asc":
+                return query.order_by(table.create_date.asc()).all()
+            case _, "desc":
+                return query.order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
+            case _, "asc":
+                return query.order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()
+
+    except Exception as e:
+        return Return_Exception(db, e)
 
 
 def count(db, field: str):
     table = Tables.get(field.lower().replace("_form", "").replace("_", ""), None)
     if not table:
         return 404, f"{field} Not Found"
-    return 200, db.query(table).filter_by(deleted=False).count()
+    return 200, db.query(table).filter(table.status != "deleted").count()
 
 
 def prepare_param(key, val):
@@ -149,7 +164,7 @@ def Exist(db: Session, Form: Dict) -> Tuple[bool, str]:
 
 
 def Return_Exception(db: Session, Error: Exception):
-    logger.error(Error, depth=2)
+    logger.error(f'{Error.__class__.__name__}: {Error.__repr__()}', depth=1)
     db.rollback()
     if "UniqueViolation" in str(Error):
         return 409, "Already Exist"
@@ -163,3 +178,11 @@ def Return_Test_Exception(Error: Exception):
         return 409, "Already Exist"
     logger.error(Error)
     return 500, f'{Error.__class__.__name__}: {Error.__repr__()}'
+
+
+def Primary_key(Obj):
+    try:
+        data = Obj if isinstance(Obj, Dict) else Obj.__dict__
+        return next((val for key, val in data.items() if "_pk_" in key), None)
+    except Exception as Error:
+        return f'{Error.__class__.__name__}: {Error.__repr__()}'

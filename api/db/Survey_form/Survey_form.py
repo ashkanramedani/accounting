@@ -3,12 +3,12 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 import schemas as sch
+from db import models as dbm
 from ..Extra import *
 
 
-def get_all_survey(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_survey(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Survey_form, page, limit, order)
 
@@ -18,7 +18,7 @@ def get_all_survey(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, o
 
 def post_survey(db: Session, Form: sch.post_survey_schema):
     try:
-        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id, deleted=False).first():
+        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first():
             return 400, "Bad Request: Sub Course not found"
 
         data = Form.dict()
@@ -32,12 +32,12 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
         if not questions:
             return 200, "Empty survey added"
 
-        question_ID: List[UUID] = [ID.question_pk_id for ID in db.query(dbm.Question_form).filter_by(deleted=False).all()]
+        question_ID: List[UUID] = [ID.question_pk_id for ID in db.query(dbm.Question_form).filter(dbm.Question_form.status != "deleted").all()]
 
         for q_id in questions:
             if q_id not in question_ID:
                 return 400, "Bad Request"
-            OBJ.questions.append(db.query(dbm.Question_form).filter_by(question_pk_id=q_id, deleted=False).first())
+            OBJ.questions.append(db.query(dbm.Question_form).filter_by(question_pk_id=q_id).filter(dbm.Question_form.status != "deleted").first())
         db.commit()
         return 200, "Record has been Added"
     except Exception as e:
@@ -46,10 +46,11 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
 
 def delete_survey(db: Session, survey_id):
     try:
-        record = db.query(dbm.Survey_form).filter_by(survey_id_pk_id=survey_id, deleted=False).first()
+        record = db.query(dbm.Survey_form).filter_by(survey_id_pk_id=survey_id).filter(dbm.Survey_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
 
         db.commit()
         return 200, "Deleted"
@@ -59,7 +60,7 @@ def delete_survey(db: Session, survey_id):
 
 def update_survey(db: Session, Form: sch.update_survey_schema):
     try:
-        record = db.query(dbm.Survey_form).filter_by(survey_pk_id=Form.survey_pk_id, deleted=False)
+        record = db.query(dbm.Survey_form).filter_by(survey_pk_id=Form.survey_pk_id).filter(dbm.Survey_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 

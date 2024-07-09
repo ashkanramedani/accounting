@@ -1,4 +1,5 @@
 from .Base import *
+from .Configs import *
 from .Course import *
 from .Employee_forms import *
 from .Entity import *
@@ -8,4 +9,3 @@ from .Survey import *
 from .TagsCategories import *
 from .User import *
 from .teacher_forms import *
-from .Configs import *

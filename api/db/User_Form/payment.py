@@ -1,18 +1,18 @@
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 import schemas as sch
+from db import models as dbm
 from db.Extra import *
 
 
 def get_payment_method(db: Session, payment_method_id):
     try:
-        return 200, db.query(dbm.Payment_Method_form).filter_by(payment_method_pk_id=payment_method_id, deleted=False).first()
+        return 200, db.query(dbm.Payment_Method_form).filter_by(payment_method_pk_id=payment_method_id).filter(dbm.Payment_Method_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_payment_method(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_payment_method(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         # Records = record_order_by(db, dbm.Payment_Method_form, page, limit, order)
         # New = []
@@ -46,10 +46,11 @@ def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
 
 def delete_payment_method(db: Session, payment_method_id):
     try:
-        record = db.query(dbm.Payment_Method_form).filter_by(payment_method_pk_id=payment_method_id, deleted=False).first()
+        record = db.query(dbm.Payment_Method_form).filter_by(payment_method_pk_id=payment_method_id).filter(dbm.Payment_Method_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:

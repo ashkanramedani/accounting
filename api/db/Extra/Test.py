@@ -1,14 +1,12 @@
 from contextlib import contextmanager
 
 from fastapi import APIRouter
-from fastapi import FastAPI, Request
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 from starlette.testclient import TestClient
 
-from db.Extra import Return_Test_Exception
 from lib import logger
 from schemas import Route_Result
+
 
 @contextmanager
 def create_client(router: APIRouter) -> TestClient:
@@ -19,6 +17,7 @@ def create_client(router: APIRouter) -> TestClient:
         yield client
     finally:
         client.close()
+
 
 def Test_CRUD(router: APIRouter):
     Result_Obj = []

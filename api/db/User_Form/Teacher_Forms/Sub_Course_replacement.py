@@ -1,8 +1,8 @@
 from sqlalchemy import and_, or_
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 import schemas as sch
+from db import models as dbm
 from db.Extra import *
 
 
@@ -20,15 +20,15 @@ def sub_course_teacher_replacement(db: Session, Form: sch.subcourse_teacher_repl
         if not employee_exist(db, [Form.sub_teacher_fk_id]):
             return 400, "Bad Request"
 
-        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.subcourse_fk_id, deleted=False).first():
+        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.subcourse_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first():
             return 400, "Bad Request: subcourse not found"
 
         replacement_date = Fix_datetime(Form.replacement_date)
 
-        All_sub_course_sessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.subcourse_fk_id, deleted=False)
+        All_sub_course_sessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.subcourse_fk_id).filter(dbm.Session_form.status != "deleted")
         Not_Started_session = (
             db.query(dbm.Session_form)
-            .filter_by(sub_course_fk_id=Form.subcourse_fk_id, deleted=False)
+            .filter_by(sub_course_fk_id=Form.subcourse_fk_id).filter(dbm.Session_form.status != "deleted")
             .filter(
                     or_(
                             dbm.Session_form.session_date > replacement_date.date(),

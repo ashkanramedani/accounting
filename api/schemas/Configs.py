@@ -1,4 +1,5 @@
 from enum import Enum
+
 from pydantic import BaseModel, constr
 
 IPV4_PATTERN = r"^(?:[0-9]{1,3}\.){3}[0-9]{1,3}$"

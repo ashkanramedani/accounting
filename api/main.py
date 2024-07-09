@@ -1,3 +1,5 @@
+import json
+
 try:
     from os import getenv
     from time import sleep
@@ -19,9 +21,12 @@ try:
 except (ImportError, ModuleNotFoundError):
     raise Exception('Requirement Not Satisfied: some_module is missing')
 
-from lib import logger
+from lib import logger, JSONEncoder
 from router import routes
-from db import models, save_route, setUp_admin, engine, SessionLocal
+from db import models, save_route, setUp_admin, engine, SessionLocal, Create_Redis_URL
+import schemas
+
+config = load(open("configs/config.json"))
 
 
 @asynccontextmanager
@@ -36,17 +41,16 @@ async def app_lifespan(api: FastAPI):
             except OperationalError as OE:
                 logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
                 sleep(10)
-        setUp_admin(SessionLocal())
-        Redis_url = getenv('LOCAL_REDIS') if getenv('LOCAL_POSTGRES') else "redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324@87.107.161.173:6379/0"
-        await FastAPILimiter.init(redis=redis.from_url(Redis_url, encoding="utf8"))
+        with SessionLocal() as db:
+            setUp_admin(db)
+
+        await FastAPILimiter.init(redis=redis.from_url(Create_Redis_URL(), encoding="utf8"))
         yield
     except KeyboardInterrupt:
         logger.info(f'Exited')
-    finally:
-        logger.info(f"Shutting FastAPI - {datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=3, minutes=30)}")
-        await FastAPILimiter.close()
+    logger.info(f"Shutting FastAPI - {datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=3, minutes=30)}")
+    await FastAPILimiter.close()
 
-config = load(open("configs/config.json"))
 app = FastAPI(
         lifespan=app_lifespan,
         version=config["versions"],
@@ -57,8 +61,8 @@ app = FastAPI(
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
 
-# route_schema = save_route(routes)
-# dump(route_schema, open(f'{Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
+route_schema = save_route(routes)
+dump(route_schema, open(f'{Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
 
 for route in routes:
     app.include_router(route)

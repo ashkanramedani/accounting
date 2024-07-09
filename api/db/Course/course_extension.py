@@ -2,19 +2,18 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
-from lib import logger
 from ..Extra import *
 
 
 def get_tag(db: Session, tag_id):
     try:
-        return 200, db.query(dbm.Tag_form).filter_by(tag_pk_id=tag_id, deleted=False).first()
+        return 200, db.query(dbm.Tag_form).filter_by(tag_pk_id=tag_id).filter(dbm.Tag_form.status != "deleted").first()
 
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_tag(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_tag(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Tag_form, page, limit, order)
     except Exception as e:
@@ -38,10 +37,11 @@ def post_tag(db: Session, Form: sch.post_tag_schema):
 
 def delete_tag(db: Session, tag_id):
     try:
-        record = db.query(dbm.Tag_form).filter_by(tag_pk_id=tag_id, deleted=False).first()
+        record = db.query(dbm.Tag_form).filter_by(tag_pk_id=tag_id).filter(dbm.Tag_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -50,7 +50,7 @@ def delete_tag(db: Session, tag_id):
 
 def update_tag(db: Session, Form: sch.update_tag_schema):
     try:
-        record = db.query(dbm.Tag_form).filter_by(tag_pk_id=Form.tag_pk_id, deleted=False)
+        record = db.query(dbm.Tag_form).filter_by(tag_pk_id=Form.tag_pk_id).filter(dbm.Tag_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 
@@ -64,12 +64,12 @@ def update_tag(db: Session, Form: sch.update_tag_schema):
 
 def get_category(db: Session, category_id):
     try:
-        return 200, db.query(dbm.Category_form).filter_by(category_pk_id=category_id, deleted=False).first()
+        return 200, db.query(dbm.Category_form).filter_by(category_pk_id=category_id).filter(dbm.Category_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_category(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_category(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Category_form, page, limit, order)
     except Exception as e:
@@ -94,10 +94,11 @@ def post_category(db: Session, Form: sch.post_category_schema):
 
 def delete_category(db: Session, category_id):
     try:
-        record = db.query(dbm.Category_form).filter_by(category_pk_id=category_id, deleted=False).first()
+        record = db.query(dbm.Category_form).filter_by(category_pk_id=category_id).filter(dbm.Category_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -106,7 +107,7 @@ def delete_category(db: Session, category_id):
 
 def update_category(db: Session, Form: sch.update_category_schema):
     try:
-        record = db.query(dbm.Category_form).filter_by(category_pk_id=Form.category_pk_id, deleted=False)
+        record = db.query(dbm.Category_form).filter_by(category_pk_id=Form.category_pk_id).filter(dbm.Category_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 
@@ -120,12 +121,12 @@ def update_category(db: Session, Form: sch.update_category_schema):
 
 def get_language(db: Session, language_id):
     try:
-        return 200, db.query(dbm.Language_form).filter_by(language_pk_id=language_id, deleted=False).first()
+        return 200, db.query(dbm.Language_form).filter_by(language_pk_id=language_id).filter(dbm.Language_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_language(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_language(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Language_form, page, limit, order)
     except Exception as e:
@@ -151,10 +152,11 @@ def post_language(db: Session, Form: sch.post_language_schema):
 
 def delete_language(db: Session, language_id):
     try:
-        record = db.query(dbm.Language_form).filter_by(language_pk_id=language_id, deleted=False).first()
+        record = db.query(dbm.Language_form).filter_by(language_pk_id=language_id).filter(dbm.Language_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -163,7 +165,7 @@ def delete_language(db: Session, language_id):
 
 def update_language(db: Session, Form: sch.update_language_schema):
     try:
-        record = db.query(dbm.Language_form).filter_by(language_pk_id=Form.language_pk_id, deleted=False)
+        record = db.query(dbm.Language_form).filter_by(language_pk_id=Form.language_pk_id).filter(dbm.Language_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 
@@ -177,12 +179,12 @@ def update_language(db: Session, Form: sch.update_language_schema):
 
 def get_course_type(db: Session, course_type_id):
     try:
-        return 200, db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course_type_id, deleted=False).first()
+        return 200, db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course_type_id).filter(dbm.Course_Type_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_course_type(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_course_type(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Course_Type_form, page, limit, order)
     except Exception as e:
@@ -206,10 +208,11 @@ def post_course_type(db: Session, Form: sch.post_course_type_schema):
 
 def delete_course_type(db: Session, course_type_id):
     try:
-        record = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course_type_id, deleted=False).first()
+        record = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course_type_id).filter(dbm.Course_Type_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -218,7 +221,7 @@ def delete_course_type(db: Session, course_type_id):
 
 def update_course_type(db: Session, Form: sch.update_course_type_schema):
     try:
-        record = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=Form.course_type_pk_id, deleted=False)
+        record = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=Form.course_type_pk_id).filter(dbm.Course_Type_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 

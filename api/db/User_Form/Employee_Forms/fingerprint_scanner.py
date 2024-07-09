@@ -8,22 +8,22 @@ from sqlalchemy.orm import Session
 
 import db.models as dbm
 import schemas as sch
+from db.Extra import *
 from lib import *
 from .Salary_Utils import calculate_duration
-from db.Extra import *
 
 
 # Teacher Replacement
 def get_fingerprint_scanner(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id).filter(dbm.Fingerprint_Scanner_form.status != "deleted").first()
     except Exception as e:
         logger.error(e)
         db.rollback()
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
+def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
     try:
 
         return 200, record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
@@ -36,7 +36,7 @@ def get_all_fingerprint_scanner(db: Session, page: sch.PositiveInt, limit: sch.P
 def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_date):
     try:
         if isinstance(EnNo, UUID):
-            User = db.query(dbm.User_form).filter_by(user_pk_id=EnNo, deleted=False).first()
+            User = db.query(dbm.User_form).filter_by(user_pk_id=EnNo).filter(dbm.User_form.status != "deleted").first()
             if not User:
                 return 400, "Employee Nor Found"
             if not User.fingerprint_scanner_user_id:
@@ -45,7 +45,7 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
 
         Fingerprint_scanner_report: List[dbm.Fingerprint_Scanner_form] = db.query(dbm.Fingerprint_Scanner_form) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
-            .filter_by(deleted=False, EnNo=EnNo).all()
+            .filter_by(EnNo=EnNo).filter(dbm.Fingerprint_Scanner_form.status != "deleted").all()
 
         if not Fingerprint_scanner_report:
             return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
@@ -61,8 +61,8 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
             return 400, "Bad Request"
 
         data = Form.dict()
-        # EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
-        User = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first()
+        # EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
+        User = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first()
         if not User:
             return 400, "Employee Not Found"
         if not User.fingerprint_scanner_user_id:
@@ -97,7 +97,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: p
         end = datetime.combine(Data.iloc[-1]["DateTime"] + pd.Timedelta(days=1), time())
         history_query = (
             db.query(dbm.Fingerprint_Scanner_backup_form.EnNo, dbm.Fingerprint_Scanner_backup_form.DateTime)
-            .filter_by(deleted=False)
+            .filter(dbm.Fingerprint_Scanner_backup_form.status != "deleted")
             .filter(dbm.Fingerprint_Scanner_backup_form.DateTime.between(start, end))
             .all()
         )
@@ -150,10 +150,11 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: p
 
 def delete_fingerprint_scanner(db: Session, form_id):
     try:
-        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id, deleted=False).first()
+        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id).filter(dbm.Fingerprint_Scanner_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -164,7 +165,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
     try:
-        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=Form.fingerprint_scanner_pk_id, deleted=False)
+        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=Form.fingerprint_scanner_pk_id).filter(dbm.Fingerprint_Scanner_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 
@@ -173,7 +174,7 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
 
         data = Form.dict()
 
-        EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id"), deleted=False).first().fingerprint_scanner_user_id
+        EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         data["EnNo"] = EnNo
         s, e = data["Enter"], data["Exit"]
         data["duration"] = 0 if s == e else time_gap(Fix_time(s), Fix_time(s))

@@ -1,14 +1,14 @@
-from sqlalchemy.orm import sessionmaker, Session
-from sqlalchemy.ext.declarative import declarative_base
-
 import json
 import os
+from os import getenv
 from os.path import dirname, normpath
 from typing import Any
 
 from dotenv import load_dotenv
 from pydantic import ValidationError
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
 
 from lib import logger
 from schemas import Setting
@@ -40,8 +40,21 @@ def Create_engine():
     else:
         SQLALCHEMY_DATABASE_URL = Postgres_URL(**DB_config)
 
-    logger.info(SQLALCHEMY_DATABASE_URL)
+    logger.info(f'Postgres: {SQLALCHEMY_DATABASE_URL}')
     return create_engine(SQLALCHEMY_DATABASE_URL, **DB_config["engine"])
+
+
+def Create_Redis_URL() -> str:
+    load_dotenv()
+    directory = normpath(f'{dirname(__file__)}/../../configs/config.json')
+    Config = json.load(open(directory)).get("redis", {})
+
+    if getenv('LOCAL_REDIS'):
+        Redis_url = getenv('LOCAL_REDIS')
+    else:
+        Redis_url = f"redis://:{Config['password']}@{Config['host']}:{Config['port']}/{Config['db']}"
+    logger.info(f'Redis: {Redis_url}')
+    return Redis_url
 
 
 engine = Create_engine()

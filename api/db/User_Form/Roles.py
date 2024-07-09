@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 import schemas as sch
-from lib import logger
+from db import models as dbm
 from db.Extra import *
+from lib import logger
 
 
 def get_all_cluster(db: Session):
@@ -20,12 +20,12 @@ def get_all_cluster(db: Session):
 
 def get_role(db: Session, role_id):
     try:
-        return 200, db.query(dbm.Role_form).filter_by(role_pk_id=role_id, deleted=False).first()
+        return 200, db.query(dbm.Role_form).filter_by(role_pk_id=role_id).filter(dbm.Role_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_role(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_role(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Role_form, page, limit, order)
     except Exception as e:
@@ -51,12 +51,13 @@ def post_role(db: Session, Form: sch.post_role_schema):
 
 def delete_role(db: Session, role_id):
     try:
-        record = db.query(dbm.Role_form).filter_by(role_pk_id=role_id, deleted=False).first()
+        record = db.query(dbm.Role_form).filter_by(role_pk_id=role_id).filter(dbm.Role_form.status != "deleted").first()
         if not record:
             return 400, "Role Record Not Found"
         if record.name == "Administrator":
             return 400, "Administrator role cant be deleted"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -65,7 +66,7 @@ def delete_role(db: Session, role_id):
 
 def update_role(db: Session, Form: sch.update_role_schema):
     try:
-        record = db.query(dbm.Role_form).filter_by(role_pk_id=Form.role_pk_id, deleted=False)
+        record = db.query(dbm.Role_form).filter_by(role_pk_id=Form.role_pk_id).filter(dbm.Role_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 

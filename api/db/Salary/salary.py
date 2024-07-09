@@ -1,3 +1,5 @@
+from sqlalchemy import func
+
 from db.Course import course_report
 from db.User_Form import *
 
@@ -6,7 +8,7 @@ def permissions(db: Session, User_ID):
     try:
         return 200, db. \
             query(dbm.Salary_Policy_form.remote_permission, dbm.Salary_Policy_form.business_trip_permission) \
-            .filter_by(user_fk_id=User_ID, deleted=False) \
+            .filter_by(user_fk_id=User_ID).filter(dbm.Salary_Policy_form.status != "deleted") \
             .order_by(dbm.Salary_Policy_form.create_date.desc()) \
             .first()
     except Exception as e:
@@ -19,7 +21,7 @@ def employee_salary(db: Session, year, month):  # NC: 003
         Finger_Scanner_Result: list = db \
             .query(dbm.Fingerprint_Scanner_form.EnNo) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start, end)) \
-            .filter_by(deleted=False) \
+            .filter(dbm.Fingerprint_Scanner_form.status != "deleted") \
             .distinct() \
             .all()
 
@@ -27,12 +29,12 @@ def employee_salary(db: Session, year, month):  # NC: 003
 
         users_with_fingerprints = db.query(dbm.User_form) \
             .filter(dbm.User_form.fingerprint_scanner_user_id.in_(Unique_EnNo)) \
-            .filter_by(deleted=False) \
+            .filter(dbm.User_form.status != "deleted") \
             .all()
 
         salaries = db \
             .query(dbm.Employee_Salary_form.fingerprint_scanner_user_id) \
-            .filter_by(year=year, month=month, deleted=False) \
+            .filter_by(year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted") \
             .filter(dbm.Employee_Salary_form.fingerprint_scanner_user_id.in_(Unique_EnNo)) \
             .all()
 
@@ -44,21 +46,66 @@ def employee_salary(db: Session, year, month):  # NC: 003
             data["Does_Have_Salary_Record"] = user.fingerprint_scanner_user_id in Salary_Result
             Result.append(data)
 
-        logger.warning({i["name"]: i["Does_Have_Salary_Record"] for i in Result})
-
         return 200, Result
     except Exception as e:
         return Return_Exception(db, e)
 
 
+def Get_Report(db: Session, Salary_Policy: dbm.Salary_Policy_form, user_fk_id: UUID, start, end) -> Dict:
+    Remote_Request_report = []
+    Business_Trip_report = []
+
+    # Remote
+    if Salary_Policy.remote_permission:
+        Remote_Request_report: List = db \
+            .query(dbm.Remote_Request_form.date, func.sum(dbm.Remote_Request_form.duration).label('duration')) \
+            .filter_by(user_fk_id=user_fk_id).filter(dbm.Remote_Request_form.status != "deleted") \
+            .filter(dbm.Remote_Request_form.date.between(start, end)) \
+            .group_by(dbm.Remote_Request_form.date) \
+            .all()
+
+    if Salary_Policy.business_trip_permission:
+        Business_Trip_report: List = db \
+            .query(dbm.Business_Trip_form.date, func.sum(dbm.Business_Trip_form.duration).label('duration')) \
+            .filter_by(user_fk_id=user_fk_id).filter(dbm.Business_Trip_form.status != "deleted") \
+            .filter(dbm.Business_Trip_form.date.between(start, end)) \
+            .group_by(dbm.Business_Trip_form.date) \
+            .all()
+
+    Vacation_leave_report: List = db \
+        .query(dbm.Leave_Request_form.date, func.sum(dbm.Leave_Request_form.duration).label('duration')) \
+        .filter_by(user_fk_id=user_fk_id, leave_type="vacation").filter(dbm.Leave_Request_form.status != "deleted") \
+        .filter(dbm.Leave_Request_form.date.between(start, end)) \
+        .group_by(dbm.Leave_Request_form.date) \
+        .all()
+
+    Medical_leave_report: List = db \
+        .query(dbm.Leave_Request_form.date, func.sum(dbm.Leave_Request_form.duration).label('duration')) \
+        .filter_by(user_fk_id=user_fk_id, leave_type="medical").filter(dbm.Leave_Request_form.status != "deleted") \
+        .filter(dbm.Leave_Request_form.date.between(start, end)) \
+        .group_by(dbm.Leave_Request_form.date) \
+        .all()
+
+    return {
+        "remote":
+            {str(record["date"]): record["duration"] for record in Remote_Request_report},
+        "business_trip":
+            {str(record["date"]): record["duration"] for record in Business_Trip_report},
+        "vacation_leave":
+            {str(record["date"]): record["duration"] for record in Vacation_leave_report},
+        "medical_leave":
+            {str(record["date"]): record["duration"] for record in Medical_leave_report},
+    }
+
+
 def employee_salary_report(db: Session, user_fk_id, year, month):
     try:
-        Salary_Policy = db.query(dbm.Salary_Policy_form).filter_by(deleted=False, user_fk_id=user_fk_id).first()
+        Salary_Policy = db.query(dbm.Salary_Policy_form).filter_by(user_fk_id=user_fk_id).filter(dbm.Salary_Policy_form.status != "deleted").first()
         if not Salary_Policy:
             return 400, "Bad Request: Target Employee has no salary record"
 
         start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
-        EnNo = db.query(dbm.User_form).filter_by(deleted=False, user_pk_id=user_fk_id).first().fingerprint_scanner_user_id
+        EnNo = db.query(dbm.User_form).filter_by(user_pk_id=user_fk_id).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
 
@@ -66,7 +113,10 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if status != 200:
             return status, report_summary
 
-        status, report_summary = generate_daily_report(Salary_Policy, report_summary)
+        status, report_summary = generate_daily_report(
+                Salary_Policy=Salary_Policy,
+                Fingerprint_scanner_report=report_summary,
+                Activities=Get_Report(db, Salary_Policy, user_fk_id, start, end))
 
         if status != 200:
             return status, report_summary
@@ -90,8 +140,8 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
             if status != 200:
                 return status, Business_Trip_report
             total_business_trip = sum(row.duration for row in Business_Trip_report)
-            business_trip = min(total_business_trip, Salary_Policy.business_trip_cap)
-            report_summary |= {"business_trip": business_trip, "business_trip_earning": business_trip * Salary_Policy.business_trip_factor * Salary_Policy.Base_salary}
+            business_trip_minute = min(total_business_trip, Salary_Policy.business_trip_cap)
+            report_summary |= {"business_trip": business_trip_minute, "business_trip_earning": business_trip_minute * Salary_Policy.business_trip_factor * Salary_Policy.Base_salary}
         else:
             report_summary |= {"business_trip": 0, "business_trip_earning": 0}
 
@@ -122,7 +172,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
 def get_employee_salary(db: Session, user_fk_id, year, month):
     try:
-        return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month, deleted=False).first()
+        return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 

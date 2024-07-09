@@ -4,8 +4,8 @@ from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 import schemas as sch
+from db import models as dbm
 from lib import logger
 from lib.Date_Time import *
 from .Session import delete_session
@@ -13,17 +13,17 @@ from ..Extra import *
 
 
 def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:
-    return [session.session_pk_id for session in db.query(dbm.Session_form).filter_by(sub_course_fk_id=SubCourse, deleted=False).all()]
+    return [session.session_pk_id for session in db.query(dbm.Session_form).filter_by(sub_course_fk_id=SubCourse).filter(dbm.Session_form.status != "deleted").all()]
 
 
 def get_Course_active_subcourse(db: Session, Course: UUID) -> List[UUID]:
-    return [subcourse.sub_course_pk_id for subcourse in db.query(dbm.Sub_Course_form).filter_by(course_fk_id=Course, deleted=False).all()]
+    return [subcourse.sub_course_pk_id for subcourse in db.query(dbm.Sub_Course_form).filter_by(course_fk_id=Course).filter(dbm.Sub_Course_form.status != "deleted").all()]
 
 
 # ------ sub course -------
 def get_subcourse(db: Session, subcourse_id):
     try:
-        sub_course = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=subcourse_id, deleted=False).first()
+        sub_course = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=subcourse_id).filter(dbm.Sub_Course_form.status != "deleted").first()
         if not sub_course:
             return 200, []
 
@@ -34,7 +34,7 @@ def get_subcourse(db: Session, subcourse_id):
 
 def get_sub_courses_for_course(db: Session, course_id):
     try:
-        sub_course = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id, deleted=False).first()
+        sub_course = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted").first()
         if not sub_course:
             return 200, []
 
@@ -45,7 +45,7 @@ def get_sub_courses_for_course(db: Session, course_id):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_subcourse(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_subcourse(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Sub_Course_form, page, limit, order)
     except Exception as e:
@@ -59,12 +59,12 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         if not employee_exist(db, [Form.created_fk_by, Form.sub_course_teacher_fk_id]):
             return 400, "Bad Request: employee not found"
 
-        course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id, deleted=False).first()
+        course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id).filter(dbm.Course_form.status != "deleted").first()
         if not course:
             return 400, "Bad Request: course not found"
 
         data = Form.__dict__
-        sub_request_threshold = data.pop("sub_request_threshold")
+        sub_request_threshold = data["sub_request_threshold"]
 
         session_signature = data.pop("session_signature")
         data |= {"sub_course_capacity": course.course_capacity, "sub_course_available_seat": course.course_capacity}
@@ -155,7 +155,7 @@ def update_subcourse(db: Session, Form: sch.update_sub_course_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: employee not found"
-        record = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_pk_id, deleted=False)
+        record = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_pk_id).filter(dbm.Sub_Course_form.status != "deleted")
         if not record.first():
             return 400, "Record Not Found"
 

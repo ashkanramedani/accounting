@@ -55,7 +55,7 @@ users_posts_speaker_association = Table(
 )
 
 
-###### TMP @@@@@@@
+# TMP @@@@@@@
 class Department(Base):
     __tablename__ = 'tbl_departments'
     department_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)

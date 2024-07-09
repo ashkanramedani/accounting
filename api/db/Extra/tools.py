@@ -66,12 +66,13 @@ def safe_run(func):
 def save_route(routes):
     Rotes_Schema = {}
     for route in routes:
-        tag = route.tags.__str__().replace("['", "").replace("']", "")
-        Rotes_Schema[tag] = {}
+        tag = f'{route.tags}'[2:-2] if route.tags else "[]"
+        if tag not in Rotes_Schema:
+            Rotes_Schema[tag] = []
         for route_signature in route.routes:
-            methods = route_signature.methods.__str__().replace("{'", "").replace("'}", "")
-            if methods not in Rotes_Schema[tag]:
-                Rotes_Schema[tag][methods] = []
+            methods = f'{route_signature.methods}'[2:-2]
             url = route_signature.path.split("{")[0] + "<UUID>" if "{" in route_signature.path else route_signature.path
-            Rotes_Schema[tag][methods].append(f"http://localhost:5001{url}")
+            FullURL = f'[{methods: <6}] {url}'
+            if FullURL not in Rotes_Schema[tag]:
+                Rotes_Schema[tag].append(FullURL)
     return Rotes_Schema

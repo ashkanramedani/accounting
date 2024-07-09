@@ -11,7 +11,7 @@ from .database import Base
 metadata_obj = MetaData()
 
 
-class BaseTable:
+class Base_form:
     priority = Column(Integer, default=5, nullable=True)
 
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
@@ -23,6 +23,12 @@ class BaseTable:
     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
     delete_date = Column(DateTime(timezone=True), default=None)
     expire_date = Column(DateTime(timezone=True), default=None)
+
+    status = Column(String, nullable=False, default="submitted")  # NC: 006
+    description = Column(String, nullable=True, default="")
+    note = Column(JSON, nullable=True, default={})
+    # status = Column(String, nullable=False, default="approved")  # NC: 006
+
 
 
 users_departments_association = Table(
@@ -61,7 +67,7 @@ class Department(Base):
     department_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
 
 
-class EducationalInstitutions(Base, BaseTable):
+class EducationalInstitutions(Base, Base_form):
     __tablename__ = "tbl_educational_institutions"
 
     educational_institution_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
@@ -82,7 +88,7 @@ class EducationalInstitutions(Base, BaseTable):
 #     def __repr__(self):
 #         return f'<Authentication "{self.username}">'
 
-class Users(Base, BaseTable):
+class Users(Base, Base_form):
     __tablename__ = "tbl_users"
 
     user_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
@@ -152,7 +158,7 @@ class Users(Base, BaseTable):
         return f'<User "{self.user_pk_id}">'
 
 
-class PostViwes(Base, BaseTable):
+class PostViwes(Base, Base_form):
     __tablename__ = "tbl_post_viwes"
 
     post_viwe_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
@@ -169,7 +175,7 @@ class PostViwes(Base, BaseTable):
         return f'<PostViwe "{self.post_viwe_pk_id}">'
 
 
-class Posts(Base, BaseTable):
+class Posts(Base, Base_form):
     __tablename__ = "tbl_posts"
 
     post_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
@@ -257,29 +263,6 @@ class Libraries(Base):
     def __repr__(self):
         return f'<Library "{self.library_pk_id}">'
 
-
-# Base
-class BaseTable:
-    priority = Column(Integer, default=5, nullable=True)
-
-    visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
-    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
-
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    delete_date = Column(DateTime(timezone=True), default=None)
-    expire_date = Column(DateTime(timezone=True), default=None)
-
-
-class Base_form(BaseTable):
-    description = Column(String, nullable=True, default="")
-    status = Column(Integer, nullable=False, default=0)
-    # status = create_forenKey("Status_form")
-    # note = Column(JSON, nullable=True)
-
-
 class InstitutionsBase(Base_form):
     pass
 
@@ -320,6 +303,15 @@ CourseCategory = Table(
 
 
 # ========================== Entity ===========================
+# ++++++++++++++++++++++++++ DEFAULT +++++++++++++++++++++++++++
+class DEFAULT(Base):
+    __tablename__ = "DEFAULT"
+
+    id = create_Unique_ID()
+    table = Column(String, nullable=False)
+    data = Column(JSON, nullable=False)
+
+
 # ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
 class User_form(Base, Base_form):
     __tablename__ = "user"
@@ -339,7 +331,7 @@ class User_form(Base, Base_form):
     id_card_number = Column(String, nullable=True)
     address = Column(String(5000), default=None)
 
-    fingerprint_scanner_user_id = Column(Integer, nullable=True)
+    fingerprint_scanner_user_id = Column(Integer, nullable=True, unique=True, default=None)
 
     is_employee = Column(Boolean, default=True, nullable=False)
     level = Column(String, index=True, nullable=True)
@@ -391,6 +383,7 @@ class Sub_Course_form(Base, InstitutionsBase):
     sub_course_starting_date = Column(Date, nullable=False)
     sub_course_ending_date = Column(Date, nullable=False)
 
+    sub_request_threshold = Column(Integer, nullable=False, default=24)
     sub_course_capacity = Column(Integer, nullable=False)
     sub_course_available_seat = Column(Integer, nullable=False)
 
@@ -435,9 +428,9 @@ class Leave_Request_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
     user_fk_id = create_forenKey("User_form")
 
-    start_date = Column(TIME, index=True, nullable=True, default=None)
-    end_date = Column(TIME, index=True, nullable=True, default=None)
-    date = Column(DateTime, index=True)
+    start = Column(TIME, index=True, nullable=True, default=None)
+    end = Column(TIME, index=True, nullable=True, default=None)
+    date = Column(Date, index=True)
     duration = Column(Integer, nullable=False, default=0)
 
     leave_type = Column(String, nullable=False)
@@ -445,7 +438,7 @@ class Leave_Request_form(Base, Base_form):
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
-    # __args__ = (UniqueConstraint('user_fk_id', 'start_date', 'end_date'),)
+    __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
 
 class Business_Trip_form(Base, Base_form):
@@ -454,8 +447,9 @@ class Business_Trip_form(Base, Base_form):
     user_fk_id = create_forenKey("User_form")
     created_fk_by = create_forenKey("User_form")
 
-    start_date = Column(DateTime, index=True)
-    end_date = Column(DateTime, index=True)
+    start = Column(TIME, index=True, nullable=True, default=None)
+    end = Column(TIME, index=True, nullable=True, default=None)
+    date = Column(Date, index=True)
     duration = Column(Integer, nullable=False, default=0)
 
     destination = Column(String, nullable=False)
@@ -463,7 +457,7 @@ class Business_Trip_form(Base, Base_form):
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
-    __args__ = (UniqueConstraint('user_fk_id', 'start_date', 'end_date'),)
+    __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
 
 class Remote_Request_form(Base, Base_form):
@@ -471,14 +465,17 @@ class Remote_Request_form(Base, Base_form):
     remote_request_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
     created_fk_by = create_forenKey("User_form")
+
     working_location = Column(String, nullable=False)
 
-    start_date = Column(DateTime, index=True)
-    end_date = Column(DateTime, index=True)
+    start = Column(TIME, index=True, nullable=True, default=None)
+    end = Column(TIME, index=True, nullable=True, default=None)
+    date = Column(Date, index=True)
     duration = Column(Integer, nullable=False, default=0)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
+    __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
 
 class Payment_Method_form(Base, Base_form):

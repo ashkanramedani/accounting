@@ -1,4 +1,7 @@
+import random
+from datetime import timedelta, datetime
 from typing import List
+from uuid import uuid4
 
 from .Base import *
 from .Entity import *
@@ -15,11 +18,11 @@ class Session_signature(BaseModel):
 
 # ---------------------- class ----------------------
 class course(Base_form):
-    course_name: str
+    course_name: str = f'Course_{uuid4().hex[0:8]}'
 
-    starting_date: date
-    ending_date: date
-    course_capacity: int
+    starting_date: date = datetime.now().date()
+    ending_date: date = (datetime.now() + timedelta(days=30)).date()
+    course_capacity: int = random.randint(10, 30)
 
     course_language: UUID = "7f371975-e397-4fc5-b719-75e3978fc547"
     course_type: UUID = "7f485938-f59f-401f-8859-38f59f201f3e"
@@ -150,8 +153,14 @@ class post_sub_course_schema(SubCourse):
     pass
 
 
-class update_sub_course_schema(SubCourse):
+class update_sub_course_schema(Base_form):
     sub_course_pk_id: UUID
+    sub_course_teacher_fk_id: UUID
+
+    sub_course_name: str
+    number_of_session: int
+    sub_course_starting_date: date
+    sub_course_ending_date: date
 
 
 class delete_sub_course_schema(Base_form):
@@ -163,9 +172,9 @@ class sub_course_response(Base_response):
     sub_course_pk_id: UUID
 
     sub_course_name: str
-    number_of_session: int
-    sub_course_capacity: int
-    sub_course_available_seat: int
+    number_of_session: NonNegativeInt
+    sub_course_capacity: NonNegativeInt
+    sub_course_available_seat: NonNegativeInt
 
     sub_course_starting_date: date
     sub_course_ending_date: date

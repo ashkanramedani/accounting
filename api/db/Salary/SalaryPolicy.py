@@ -1,20 +1,20 @@
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 import schemas as sch
-from lib import generate_month_interval, Fix_time, time_gap
+from db import models as dbm
+from lib import generate_month_interval, time_gap
 from ..Extra import *
 
 
 # Salary_Policy_form
 def get_SalaryPolicy(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=form_id, deleted=False).first()
+        return 200, db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=form_id).filter(dbm.Salary_Policy_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 
 
-def get_all_SalaryPolicy(db: Session, page: sch.PositiveInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_SalaryPolicy(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
         return 200, record_order_by(db, dbm.Salary_Policy_form, page, limit, order)
     except Exception as e:
@@ -27,8 +27,8 @@ def report_SalaryPolicy(db: Session, Form: sch.salary_report):
 
         result = (
             db.query(dbm.Salary_Policy_form)
-            .filter_by(deleted=False, user_fk_id=Form.user_fk_id)
-            .filter(dbm.Salary_Policy_form.end_date.between(start, end))
+            .filter_by(user_fk_id=Form.user_fk_id)
+            .filter(dbm.Salary_Policy_form.end_date.between(start, end), dbm.Salary_Policy_form.status != "deleted")
             .all()
         )
 
@@ -84,13 +84,11 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
 
 def delete_SalaryPolicy(db: Session, form_id):
     try:
-        record = db.query(dbm.Salary_Policy_form).filter_by(
-                salary_policy_pk_id=form_id,
-                deleted=False
-        ).first()
+        record = db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=form_id).filter(dbm.Salary_Policy_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
+        record.status = Set_Status(db, "form", "deleted")
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -99,7 +97,7 @@ def delete_SalaryPolicy(db: Session, form_id):
 
 def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
     try:
-        record = db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=Form.salary_policy_pk_id, deleted=False)
+        record = db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=Form.salary_policy_pk_id).filter(dbm.Salary_Policy_form.status != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 

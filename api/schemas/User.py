@@ -18,7 +18,7 @@ class role_response(BaseModel):
     role_pk_id: UUID
     name: str
     cluster: str
-    status: int
+    status: str
     description: str
     created: export_employee
 

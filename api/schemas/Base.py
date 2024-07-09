@@ -1,11 +1,13 @@
-from datetime import time, datetime, date
+from datetime import time, date
 from enum import Enum
-from typing import Optional, Any, List
+from typing import Optional, Any
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from faker import Faker
+from pydantic import BaseModel, EmailStr, NonNegativeInt
 
 SUCCESS_STATUS = [200, 201]
+identity: Faker = Faker()
 
 
 class Sort_Order(str, Enum):
@@ -88,12 +90,12 @@ class export_sub_course(BaseModel):
     sub_course_pk_id: UUID
 
     sub_course_name: str
-    number_of_session: int
+    number_of_session: NonNegativeInt
     sub_course_starting_date: date
     sub_course_ending_date: date
 
-    sub_course_capacity: int
-    sub_course_available_seat: int
+    sub_course_capacity: NonNegativeInt
+    sub_course_available_seat: NonNegativeInt
 
     teacher: export_employee
 
@@ -145,26 +147,26 @@ class Base_form(BaseModel):
 
 
 class Entity(BaseModel):
-    name: str
-    last_name: str
-    email: EmailStr
+    name: str = identity.first_name()
+    last_name: str = identity.last_name()
+    email: EmailStr = identity.email()
 
     level: Optional[str] = ""
     address: Optional[str] = None
-    mobile_number: Optional[str] = None
-    id_card_number: Optional[str] = None
-    day_of_birth: Optional[date | str] = datetime.now().date()
+    id_card_number: Optional[str] = ""
+    mobile_number: Optional[str] = identity.phone_number()
+    day_of_birth: Optional[date | str] = identity.date_this_century()
 
 
 class Base_response(BaseModel):
-    created: export_employee
+    created: Optional[export_employee] = {}
     description: str | None = None
-    status: int = 0
+    status: str = "None"
     priority: int
 
 
 class Base_record_add(BaseModel):
-    id: UUID | str
+    id: UUID | str | None
     Warning: Optional[str] = None
 
 
@@ -180,5 +182,3 @@ class Route_Result(BaseModel):
     route: str
     status: int
     body: Any
-
-
