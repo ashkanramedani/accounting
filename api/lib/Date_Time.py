@@ -135,6 +135,7 @@ __all__ = [
     "Fix_datetime",
     "Separate_days_by_DayCap",
     "Separate_days_by_Time",
+    "Separate_days",
     "generate_month_interval",
     "generate_time_table",
     "same_month",
@@ -237,6 +238,19 @@ def Separate_days_by_DayCap(start, end, Working_cap: int) -> List[Dict]:
     return daily
 
 
+def Separate_days(start, end):
+    start, end = Fix_datetime(start), Fix_datetime(end)
+    daily = []
+
+    while start.date() < end.date():
+        daily.append({"date": start.date(), "start": start.time(), "end": time(23, 59, 59), "duration": time_gap(start.time(), time(23, 59, 59))})
+        start += timedelta(days=1)
+        start = datetime.combine(start.date(), time())
+
+    daily.append({"date": start.date(), "start": start.time(), "end": end.time(), "duration": time_gap(start.time(), time(23, 59, 59))})
+    return daily
+
+
 def to_persian(year, month, day, return_obj=True) -> tuple | date:
     d_4 = year % 4
     g_a = [0, 0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334]
@@ -336,4 +350,3 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
             Days.append((starting_date, week_day))
         starting_date += timedelta(days=1)
     return Days
-

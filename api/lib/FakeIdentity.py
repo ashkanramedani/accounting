@@ -1,5 +1,6 @@
-from faker import Faker
 from random import choice as r_ch
+
+from faker import Faker
 
 
 class Person:

@@ -17,7 +17,7 @@ for table_name in inspector.get_table_names(schema="public"):
         if column["name"] not in INVALID_KEYS:
             RES[table_name].append(column["name"])
 
-MAX_l = max([len(l) for l in RES.values()])
+MAX_l = max([len(table_len) for table_len in RES.values()])
 
 for k, v in RES.items():
     while len(v) < MAX_l:
