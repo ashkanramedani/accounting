@@ -5,7 +5,7 @@
   "versions":"0.1.0.0",
   "logger":{
     "rotation":"1 week",
-    "level":"INFO",
+    "level":"DEBUG",
     "compression": "zip"
   },
   "db":{
@@ -20,7 +20,7 @@
       "pool_recycle": 3600
     }
   },
-  "redis_otp":{
+  "redis":{
     "host":"87.107.161.173",
     "port":6379,
     "password":"eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324",
