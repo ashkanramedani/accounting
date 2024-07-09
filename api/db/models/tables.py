@@ -303,14 +303,6 @@ CourseCategory = Table(
 
 
 # ========================== Entity ===========================
-# ++++++++++++++++++++++++++ DEFAULT +++++++++++++++++++++++++++
-class DEFAULT(Base):
-    __tablename__ = "DEFAULT"
-
-    id = create_Unique_ID()
-    table = Column(String, nullable=False)
-    data = Column(JSON, nullable=False)
-
 
 # ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
 class User_form(Base, Base_form):
