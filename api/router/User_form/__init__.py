@@ -13,6 +13,3 @@ __all__ = [
     "payment_route",
     "roles_route"
 ]
-
-
-

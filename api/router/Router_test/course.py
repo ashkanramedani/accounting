@@ -1,9 +1,11 @@
 from typing import Any, List
 
 from fastapi.testclient import TestClient
-from router.Course import course_route
 from pydantic import BaseModel
+
 from lib import logger
+from router.Course import course_route
+
 
 class Route_Result(BaseModel):
     route: str
@@ -18,6 +20,7 @@ class Result(BaseModel):
 def Course_Get_All(Course_client: TestClient):
     res = Course_client.get("/search")
     return Route_Result(route="/search", status=res.status_code, body=res.json)
+
 
 def Course():
     logger.info("[DEV] Course Started")

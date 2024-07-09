@@ -106,7 +106,7 @@ for path in [FILE_INFO_PATH, DOWNLOAD_LOG_DIR]:
 
 
 def update_file_info(filename):
-    with open(FILE_INFO_PATH, "r") as f:
+    with open(FILE_INFO_PATH) as f:
         file_info = json.load(f)
 
     file_info.append({"filename": filename, "path": f"{UPLOAD_DIR}/{filename}"})

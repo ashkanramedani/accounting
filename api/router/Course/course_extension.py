@@ -27,7 +27,7 @@ async def search_tag(form_id, db=Depends(get_db)):
 
 
 @router.get("/tag/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.tag_response])
-async def search_all_tag(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+async def search_all_tag(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_tag(db, page, limit, order)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
@@ -68,7 +68,7 @@ async def search_category(form_id, db=Depends(get_db)):
 
 
 @router.get("/category/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.category_response])
-async def search_all_category(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+async def search_all_category(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_category(db, page, limit, order)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
@@ -110,7 +110,7 @@ async def search_language(form_id, db=Depends(get_db)):
 
 
 @router.get("/language/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.language_response])
-async def search_all_language(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+async def search_all_language(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_language(db, page, limit, order)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
@@ -151,7 +151,7 @@ async def search_course_type(form_id, db=Depends(get_db)):
 
 
 @router.get("/course_type/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.course_type_response])
-async def search_all_course_type(db=Depends(get_db), page: sch.PositiveInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
+async def search_all_course_type(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
     status_code, result = dbf.get_all_course_type(db, page, limit, order)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)

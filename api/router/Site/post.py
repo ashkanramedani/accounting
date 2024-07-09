@@ -89,7 +89,7 @@ def delete_post(pid: int, db=Depends(get_db)) -> Any:
 @router.delete('/group-delete', status_code=status.HTTP_200_OK)
 def group_delete_post(list_post: List[sch.PostDelete], db=Depends(get_db)) -> Any:
     res = None
-    for i in list_pid:
+    for i in list_post:
         if res is None:
             res = {}
         if i not in res:

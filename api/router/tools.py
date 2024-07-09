@@ -1,10 +1,10 @@
 from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from starlette.responses import RedirectResponse
 
-import schemas as sch
 import db as dbf
-
+import schemas as sch
 from db.models import get_db
 from lib import logger
 

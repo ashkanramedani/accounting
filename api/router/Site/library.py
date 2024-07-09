@@ -158,8 +158,8 @@ def group_status_modifications_in_group_library(db=Depends(get_db)):
 
 
 # delete libraries
-@router.delete('/delete/{lid}', status_code=status.HTTP_200_OK)
-def delete_library(lid: str, db=Depends(get_db)):
+@router.delete('/delete/{pid}', status_code=status.HTTP_200_OK)
+def delete_library(pid: str, db=Depends(get_db)):
     res = db_library.delete_posts(db, topic, pid)
     if res == 1:
         return Response(status_code=200, content="داده با موفقیت حذف شد")
@@ -174,7 +174,7 @@ def delete_library(lid: str, db=Depends(get_db)):
 @router.delete('/group-delete', status_code=status.HTTP_200_OK)
 def delete_group_library(list_post: List[sch.LibraryDelete], db=Depends(get_db)) -> Any:
     res = None
-    for i in list_pid:
+    for i in list_post:
         if res is None:
             res = {}
         if i not in res:
