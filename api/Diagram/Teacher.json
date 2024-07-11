@@ -52,29 +52,33 @@
         }
     },
     "From_dropDown": {
-        "Cancellation_factor": Cancellation_Factor,
-        "StudentAssignFeedback": {
+        "course": {
+            "Cancellation_factor": "Cancellation_Factor"
+        },
+        "Main_Teacher": {
+            "StudentAssignFeedback": {
             "weak": -5.5,
             "average": 0,
             "good": 5.5,
             "excellent": 11
         },
-        "LP_submission": {
+            "LP_submission": {
             "0-50%_of_LP/weak": -11,
             "50-75%_of_LP/average": 5.5,
             "75-100%_of_LP/Good": 11,
             "100%_of_LP/Excellent": 16.5
-        },
-        "result_submission_to_FD": {
-            "more_than_6_day": -5.5,
-            "4_or_5_day": 0,
-            "less_than_3_day": 5.5
-        },
-        "ReportToStudent": {
-            "more_than_3_day/weak": -5.5,
-            "2_day/average": 0,
-            "1_day/good": 5.5,
-            "no_delay/excellent": 11
+            },
+            "result_submission_to_FD": {
+                "more_than_6_day": -5.5,
+                "4_or_5_day": 0,
+                "less_than_3_day": 5.5
+            },
+            "ReportToStudent": {
+                "more_than_3_day/weak": -5.5,
+                "2_day/average": 0,
+                "1_day/good": 5.5,
+                "no_delay/excellent": 11
+            }
         }
     }
 }

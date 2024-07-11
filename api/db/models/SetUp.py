@@ -6,7 +6,20 @@ from db import models as dbm
 from lib import logger
 
 DEFAULT_USER = [
-    {"name": "Admin", "lastname": "Admin", "email": "Admin@Admin.com", "role": {"name": "Administrator", "cluster": "Administrator"}}
+    {
+        "name": "Admin",
+        "lastname": "Admin",
+        "email": "Admin@Admin.com",
+        "ID": "308e2744-833c-4b94-8e27-44833c2b940f",
+        "role": {"name": "Administrator", "cluster": "Administrator"}
+    },
+    {
+        "name": "Test",
+        "lastname": "Teacher",
+        "email": "Test@Teacher.com",
+        "ID": "01909c17-48f9-0af0-6d35-70f541d47bce",
+        "role": {"name": "Teacher", "cluster": "Teachers"}
+    }
 ]
 
 DEFAULT_ROLES = [
@@ -16,6 +29,7 @@ DEFAULT_ROLES = [
     {"name": "Support", "cluster": "Supports"},
     {"name": "Teacher", "cluster": "Teachers"}
 ]
+
 
 DEFAULT_STATUS = {
     "form": [
@@ -40,8 +54,7 @@ def setUp_admin(db: Session):
         for User in DEFAULT_USER:
             if User["name"] in Existing_users:
                 continue
-            UID = "308e2744-833c-4b94-8e27-44833c2b940f" if User["name"] == "Admin" else uuid.uuid4()
-            data = {"user_pk_id": UID, "name": User["name"], "last_name": User["lastname"], "email": User["email"], "status": "approved"}
+            data = {"user_pk_id": User["ID"], "name": User["name"], "last_name": User["lastname"], "email": User["email"], "status": "approved"}
 
             admin_user = dbm.User_form(**data)  # type: ignore[call-arg]
             db.add(admin_user)

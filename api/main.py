@@ -1,5 +1,7 @@
 import json
 
+from dotenv import load_dotenv
+
 try:
     from os import getenv
     from time import sleep
@@ -51,6 +53,7 @@ async def app_lifespan(api: FastAPI):
     logger.info(f"Shutting FastAPI - {datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=3, minutes=30)}")
     await FastAPILimiter.close()
 
+load_dotenv()
 app = FastAPI(
         lifespan=app_lifespan,
         version=config["versions"],

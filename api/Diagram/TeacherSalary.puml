@@ -1,14 +1,40 @@
 @startuml
-'https://plantuml.com/activity-diagram-beta
+split
+   -[hidden]->
+    start
+   :A;
+split again
+   -[hidden]->
+   :B;
+split again
+   -[hidden]->
+   :C;
+end split
+:D;
+@enduml
 
+@startmindmap
+* Course
+** SubCourse_1
+*** [ Teacher ]
+*** [ Sub Teachers ] = []
+** .\n.\n.
+** SubCourse_n
+*** [ Teacher ]
+*** [ Sub Teachers ] = []
+@endmindmap
+
+
+
+@startuml
 start
 :submit Salary request;
 :get the Course();
 :ceate a salary policy;
 :Course_policy
 course_level = Course.course_level
-Base_salary = Course.capacity[Course.course_type].
-;
+Base_salary = Course.capacity[Course.course_type] .
+Cancellation_factor = course_Cancellation_factor;
 
 note
 Teacher Salary

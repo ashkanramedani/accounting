@@ -8,7 +8,6 @@ end note
 repeat :while subcourse in Course (not deleted);
     :Get All subCourse sessions;
     repeat :while session in subcourse (not deleted);
-
 if (
 session.canceled
 or

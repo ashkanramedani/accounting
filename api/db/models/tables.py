@@ -244,24 +244,23 @@ class Libraries(Base):
 
     educational_institution_fk_id = Column(BigInteger, ForeignKey("tbl_educational_institutions.educational_institution_pk_id"), nullable=True)
 
+    user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+    user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+    user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
+
     priority = Column(Integer, default=5, nullable=True)
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
     expire_date = Column(DateTime(timezone=True), default=None)
-
     create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    user_creator_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    user_last_update_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
-
     deleted = Column(Boolean, server_default=expression.false(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
     delete_date = Column(DateTime(timezone=True), default=None)
-    user_delete_fk_id = Column(BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=True)
 
     def __repr__(self):
         return f'<Library "{self.library_pk_id}">'
+
 
 class InstitutionsBase(Base_form):
     pass
@@ -307,6 +306,7 @@ CourseCategory = Table(
 # ++++++++++++++++++++++++++ UserBase +++++++++++++++++++++++++++
 class User_form(Base, Base_form):
     __tablename__ = "user"
+    __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name", "is_employee"),)
     user_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form", nullable=True)
 
@@ -331,18 +331,18 @@ class User_form(Base, Base_form):
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
-    __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name", "is_employee"),)
-
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
 class Course_form(Base, InstitutionsBase):
     __tablename__ = "course"
+    __args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
+
     course_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
     course_language = create_forenKey("Language_form")
     course_type = create_forenKey("Course_Type_form")
 
-    course_name = Column(String, unique=True)
+    course_name = Column(String)
     course_image = Column(String, nullable=True)
     starting_date = Column(Date, nullable=False)
     ending_date = Column(Date, nullable=False)
@@ -358,8 +358,6 @@ class Course_form(Base, InstitutionsBase):
     created = relationship("User_form", foreign_keys=[created_fk_by])
     language = relationship("Language_form", foreign_keys=[course_language])
     type = relationship("Course_Type_form", foreign_keys=[course_type])
-
-    __args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
 
 
 class Sub_Course_form(Base, InstitutionsBase):
@@ -383,8 +381,6 @@ class Sub_Course_form(Base, InstitutionsBase):
     created = relationship("User_form", foreign_keys=[created_fk_by])
     teacher = relationship("User_form", foreign_keys=[sub_course_teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
-
-
 
 
 class Session_form(Base, InstitutionsBase):
@@ -422,6 +418,7 @@ class Leave_Request_form(Base, Base_form):
     __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     leave_request_pk_id = create_Unique_ID()
+
     created_fk_by = create_forenKey("User_form")
     user_fk_id = create_forenKey("User_form")
 
@@ -434,7 +431,6 @@ class Leave_Request_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
-
 
 
 class Business_Trip_form(Base, Base_form):
@@ -454,8 +450,6 @@ class Business_Trip_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
-
-
 
 
 class Remote_Request_form(Base, Base_form):
