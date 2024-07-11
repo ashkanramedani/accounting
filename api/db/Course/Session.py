@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 from typing import List
 from uuid import UUID
 
@@ -54,13 +54,18 @@ def post_session(db: Session, Form: sch.post_session_schema):
         if not subcourse:
             return 400, "Bad Request: sub course not found"
 
+        if not subcourse.sub_course_starting_date <= Form.session_date <= subcourse.sub_course_ending_date:
+            return 400, f"Bad Request: session is not in range of subcourse"
         data = Form.__dict__
 
         current_sessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=data["sub_course_fk_id"], course_fk_id=data["course_fk_id"]).filter(dbm.Session_form.status != "deleted").count()
-        if subcourse.number_of_session >= current_sessions:
+        if subcourse.number_of_session <= current_sessions:
             return 400, "SubCourse is Full"
 
         can_accept_sub = datetime.combine(data["session_date"], data["session_starting_time"]) - timedelta(hours=data.pop("sub_request_threshold"))
+        data["days_of_week"] = data["session_date"].weekday() + 2
+        data["session_ending_time"] = (datetime.combine(datetime.today(), Fix_time(data["session_starting_time"])) + timedelta(minutes=data["session_duration"])).time()
+
         OBJ = dbm.Session_form(**data, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
@@ -114,12 +119,22 @@ def cancel_session(db: Session, sub_course: UUID, session: List[UUID]):
 def update_session(db: Session, Form: sch.update_session_schema):
     try:
         record = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_pk_id).filter(dbm.Session_form.status != "deleted")
-        if not record.first():
+        session = record.first()
+        if not session:
             return 400, "Record Not Found"
+
+        if not employee_exist(db, [Form.session_teacher_fk_id, Form.created_fk_by]):
+            return 400, "Bad Request: employee not found"
+
+        subcourse = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=session.sub_course_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first()
+        if not subcourse:
+            return 400, "Bad Request: parrent sub course not found"
+
+        if not subcourse.sub_course_starting_date <= Form.session_date <= subcourse.sub_course_ending_date:
+            return 400, f"Bad Request: session is not in range of subcourse"
 
         data = Form.dict()
         data["can_accept_sub"] = datetime.combine(data["session_date"], data["session_starting_time"]) - timedelta(hours=data.pop("sub_request_threshold"))
-        # OBJ = dbm.Session_form(**data, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
 
         record.update(data, synchronize_session=False)
         db.commit()

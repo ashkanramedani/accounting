@@ -1,8 +1,6 @@
 from ..Base import *
 
 class Session(Base_form):
-    course_fk_id: UUID
-    sub_course_fk_id: UUID
     session_teacher_fk_id: UUID
 
     session_date: date
@@ -10,14 +8,10 @@ class Session(Base_form):
     session_duration: NonNegativeInt
     sub_request_threshold: NonNegativeInt = 24  # Hour
 
-    # Not Necceccery
-    # session_ending_time: time
-    # is_sub: bool = False
-    # days_of_week: int
-
 
 class post_session_schema(Session):
-    pass
+    course_fk_id: UUID
+    sub_course_fk_id: UUID
 
 
 class update_session_schema(Session):

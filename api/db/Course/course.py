@@ -98,7 +98,7 @@ def post_course(db: Session, Form: sch.post_course_schema):
 def delete_course(db: Session, course_id):
     try:
 
-        Course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id).filter(dbm.Course_form.status != "deleted").filter(dbm.Base_form.status).first()
+        Course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id).filter(dbm.Course_form.status != "deleted").first()
         if not Course:
             return 400, "Course Not Found"
 

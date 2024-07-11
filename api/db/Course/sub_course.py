@@ -32,13 +32,10 @@ def get_subcourse(db: Session, subcourse_id):
         return Return_Exception(db, e)
 
 
-def get_sub_courses_for_course(db: Session, course_id):
+def get_sub_courses_for_course(db: Session, course_id, page, limit, order):
     try:
-        sub_course = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted").first()
-        if not sub_course:
-            return 200, []
-
-        return 200, sub_course
+        sub_course_query = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted")
+        return 200, record_order_by(db, dbm.Sub_Course_form, page, limit, order, query=sub_course_query)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -112,7 +109,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
                 days.append(dbm.Session_form(**session_data))  # type: ignore[call-arg]
         db.add_all(days)
         db.commit()
-        return 200, "SubCourse Added ( WITH SESSION )"
+        return 200, f"SubCourse Added ( {len(days)}/{data['number_of_session']} SESSION )"
     except Exception as e:
         db.rollback()
         try:
