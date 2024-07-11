@@ -1,13 +1,17 @@
-from datetime import time, date
+from datetime import time, date, datetime, timedelta
 from enum import Enum
-from typing import Optional, Any
+from typing import Optional, Any, List
 from uuid import UUID
 
 from faker import Faker
-from pydantic import BaseModel, EmailStr, NonNegativeInt
+from pydantic import BaseModel, EmailStr, NonNegativeInt, PositiveInt
 
-SUCCESS_STATUS = [200, 201]
+SUCCESS_STATUS: List[PositiveInt] = [200, 201]
 identity: Faker = Faker()
+
+
+def NOW(Off_Set: int = 0) -> datetime:
+    return datetime.now() + timedelta(days=Off_Set)
 
 
 class Sort_Order(str, Enum):
@@ -138,7 +142,6 @@ class export_categories(BaseModel):
 class Base_form(BaseModel):
     created_fk_by: UUID = "308e2744-833c-4b94-8e27-44833c2b940f"
     description: str | None = None
-    # status: int = 0
 
     visible: Optional[bool] = True
     priority: Optional[int] = 5
