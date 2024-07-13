@@ -29,7 +29,7 @@ def report_business_trip(db: Session, user_fk_id, start_date, end_date):
     try:
         Business_Trip_report = db.query(dbm.Business_Trip_form) \
             .filter_by(user_fk_id=user_fk_id) \
-            .filter(dbm.Business_Trip_form.end_date.between(start_date, end_date)) \
+            .filter(dbm.Business_Trip_form.date.between(start_date, end_date)) \
             .filter(dbm.Business_Trip_form.status != "deleted") \
             .all()
         return 200, Business_Trip_report
@@ -84,7 +84,7 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.user_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
         record.update(Form.dict(), synchronize_session=False)
@@ -101,7 +101,7 @@ def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema):
         Warn = []
         verified = 0
         records = db.query(dbm.Business_Trip_form) \
-            .filter(dbm.Business_Trip_form.status != "deleted") \
+            .filter(dbm.Business_Trip_form.status == "submitted") \
             .filter(dbm.Business_Trip_form.business_trip_pk_id.in_(Form.business_trip_id)) \
             .all()
 

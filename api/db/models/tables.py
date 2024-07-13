@@ -611,7 +611,7 @@ class Salary_Policy_form(Base, Base_form):
     __tablename__ = "salary_policy"
     salary_policy_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
-    user_fk_id = create_forenKey("User_form", unique=True)
+    user_fk_id = create_forenKey("User_form")
 
     Base_salary = Column(Float, nullable=False)
     Salary_Type = Column(String, nullable=False, default="Fixed")  # Fixed, Hourly, Split

@@ -5,11 +5,10 @@
 - items 1
 - items 2
 
-## Removed
+### Removed
 - items 1
 - items 2
 
 ### Bug Fixes:
 - items 1
 - items 2
-

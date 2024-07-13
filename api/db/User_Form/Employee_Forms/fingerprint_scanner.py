@@ -38,7 +38,7 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
         if isinstance(EnNo, UUID):
             User = db.query(dbm.User_form).filter_by(user_pk_id=EnNo).filter(dbm.User_form.status != "deleted").first()
             if not User:
-                return 400, "Employee Nor Found"
+                return 400, "Employee Not Found"
             if not User.fingerprint_scanner_user_id:
                 return 400, "Selected Employee Doesnt have FingerPrint scanner identifier. ( edit employee or provide EnNo Manually)"
             EnNo = User.fingerprint_scanner_user_id

@@ -11,6 +11,7 @@ DEFAULT_USER = [
         "lastname": "Admin",
         "email": "Admin@Admin.com",
         "ID": "308e2744-833c-4b94-8e27-44833c2b940f",
+        "EnNo": 1000,
         "role": {"name": "Administrator", "cluster": "Administrator"}
     },
     {
@@ -18,9 +19,19 @@ DEFAULT_USER = [
         "lastname": "Teacher",
         "email": "Test@Teacher.com",
         "ID": "01909c17-48f9-0af0-6d35-70f541d47bce",
+        "EnNo": 1001,
         "role": {"name": "Teacher", "cluster": "Teachers"}
+    },
+    {
+        "name": "Test",
+        "lastname": "Employee",
+        "email": "Test@Employee.com",
+        "ID": "99bc77bd-7ec4-4b39-bc77-bd7ec4db3927",
+        "EnNo": 1002,
+        "role": {"name": "Unknown", "cluster": "Users"}
     }
 ]
+
 
 DEFAULT_ROLES = [
     {"name": "Manager", "cluster": "Manager"},
@@ -46,7 +57,6 @@ DEFAULT_STATUS = {
 DEFAULT_LANGUAGE = ["Not_Assigned", "English", "Spanish", "Italian", "French", "German", "Chinese", "Japanese", "Korean", "Portuguese", "Russian"]
 DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
 
-
 def setUp_admin(db: Session):
     try:
         Existing_users = [user[0] for user in db.query(dbm.User_form.name).filter(dbm.User_form.name.in_([user["name"] for user in DEFAULT_USER])).all()]
@@ -54,7 +64,7 @@ def setUp_admin(db: Session):
         for User in DEFAULT_USER:
             if User["name"] in Existing_users:
                 continue
-            data = {"user_pk_id": User["ID"], "name": User["name"], "last_name": User["lastname"], "email": User["email"], "status": "approved"}
+            data = {"user_pk_id": User["ID"], "fingerprint_scanner_user_id": User["EnNo"], "name": User["name"], "last_name": User["lastname"], "email": User["email"], "status": "approved"}
 
             admin_user = dbm.User_form(**data)  # type: ignore[call-arg]
             db.add(admin_user)

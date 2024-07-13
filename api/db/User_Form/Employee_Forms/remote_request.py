@@ -29,7 +29,7 @@ def report_remote_request(db: Session, user_fk_id, start_date, end_date):
     try:
         Remote_Request_report = db.query(dbm.Remote_Request_form) \
             .filter_by(user_fk_id=user_fk_id) \
-            .filter(dbm.Remote_Request_form.end_date.between(start_date, end_date), dbm.Remote_Request_form.status != "deleted") \
+            .filter(dbm.Remote_Request_form.date.between(start_date, end_date), dbm.Remote_Request_form.status != "deleted") \
             .all()
 
         return 200, Remote_Request_report
@@ -79,7 +79,7 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
         record.update(Form.dict(), synchronize_session=False)
 
@@ -96,7 +96,7 @@ def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema):
         Warn = []
         verified = 0
         records = db.query(dbm.Remote_Request_form) \
-            .filter(dbm.Remote_Request_form.status != "deleted") \
+            .filter(dbm.Business_Trip_form.status == "submitted") \
             .filter(dbm.Remote_Request_form.remote_request_pk_id.in_(Form.remote_request_id)) \
             .all()
 

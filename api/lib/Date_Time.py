@@ -125,9 +125,9 @@ holidays = [
     "2025-03-20"
 ]
 
-datetime_pattern = re.compile(r'(\d{4})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})\D(\d{2})')
+datetime_pattern = re.compile(r'(\d{4})\D(\d{2})\D(\d{2})\D(\d{2}):(\d{2}):(\d{2})')
 date_pattern = re.compile(r'(\d{4})\D(\d{2})\D(\d{2})')
-time_pattern = re.compile(r'(\d{2})\D(\d{2})\D(\d{2})')
+time_pattern = re.compile(r'(\d{2}):(\d{2}):(\d{2})')
 
 __all__ = [
     "Fix_date",

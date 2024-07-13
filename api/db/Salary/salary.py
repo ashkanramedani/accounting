@@ -100,7 +100,13 @@ def Get_Report(db: Session, Salary_Policy: dbm.Salary_Policy_form, user_fk_id: U
 
 def employee_salary_report(db: Session, user_fk_id, year, month):
     try:
-        Salary_Policy = db.query(dbm.Salary_Policy_form).filter_by(user_fk_id=user_fk_id).filter(dbm.Salary_Policy_form.status != "deleted").first()
+        Salary_Policy = db \
+            .query(dbm.Salary_Policy_form) \
+            .filter_by(user_fk_id=user_fk_id) \
+            .filter(dbm.Salary_Policy_form.status != "deleted") \
+            .order_by(dbm.Salary_Policy_form.create_date.desc()) \
+            .first()
+
         if not Salary_Policy:
             return 400, "Bad Request: Target Employee has no salary record"
 

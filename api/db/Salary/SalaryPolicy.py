@@ -21,22 +21,6 @@ def get_all_SalaryPolicy(db: Session, page: sch.NonNegativeInt, limit: sch.Posit
         return Return_Exception(db, e)
 
 
-def report_SalaryPolicy(db: Session, Form: sch.salary_report):
-    try:
-        start, end = generate_month_interval(Form.year, Form.month)
-
-        result = (
-            db.query(dbm.Salary_Policy_form)
-            .filter_by(user_fk_id=Form.user_fk_id)
-            .filter(dbm.Salary_Policy_form.end_date.between(start, end), dbm.Salary_Policy_form.status != "deleted")
-            .all()
-        )
-
-        return 200, sum(row.duration for row in result)
-
-    except Exception as e:
-        return Return_Exception(db, e)
-
 
 """
 "Fixed"

@@ -53,7 +53,7 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
         Start, End = Fix_datetime(data.pop("start_date")), Fix_datetime(data.pop("end_date"))
 
         if End < Start:
-            return 400, "Bad Request: End Date must be greater than Start Date"
+            return 400, f"Bad Request: End Date must be greater than Start Date. {End} < {Start}"
 
         if not same_month(Start, End):
             return 400, f"Bad Request: End Date must be in the same month as Start Date: {Start}, {End}"
@@ -61,7 +61,7 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
         # this part check if leave request is daily or hourly
         if End.date() == Start.date():
             if not is_off_day(Start):
-                OBJ = dbm.Leave_Request_form(start=Start.time(), end=End.time(), duration=(End - Start).total_seconds() // 60, date=record_date, **data)  # type: ignore[call-arg]
+                OBJ = dbm.Leave_Request_form(start=Start.time(), end=End.time(), duration=(End - Start).total_seconds() // 60, date=Start.date(), **data)  # type: ignore[call-arg]
                 db.add(OBJ)
             else:
                 Warn.append(f'Leave request for {Start.date()} not added due to holiday.')
@@ -104,14 +104,12 @@ def update_leave_request(db: Session, Form: sch.update_leave_request_schema):
         if not record.first():
             return 404, "Form Not Found"
 
-        # if not employee_exist(db, [Form.created_fk_by, Form.user_fk_id]):
-        #     return 400, "Bad Request"
+        if not employee_exist(db, [Form.created_fk_by]):
+            return 400, "Bad Request"
 
-        record.leave_type = Form.leave_type if Form.leave_type else record.Form.leave_type
-        record.start_time = Form.start_time if Form.start_time else record.Form.start_time
-        record.end_time = Form.end_time if Form.end_time else record.Form.end_time
-        record.duration = time_gap(record.start_time, record.end_time)
-        # record.update(Form.dict(), synchronize_session=False)
+        data = Form.__dict__
+        data["duration"] = time_gap(data["start"], data["end"])
+        record.update(Form.dict(), synchronize_session=False)
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
@@ -123,7 +121,7 @@ def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema):
         Warn = []
         verified = 0
         records = db.query(dbm.Leave_Request_form) \
-            .filter(dbm.Leave_Request_form.status != "deleted") \
+            .filter(dbm.Business_Trip_form.status == "submitted") \
             .filter(dbm.Leave_Request_form.leave_request_pk_id.in_(Form.leave_request_id)) \
             .all()
 

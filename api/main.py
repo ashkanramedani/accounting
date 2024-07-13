@@ -23,13 +23,11 @@ try:
 except (ImportError, ModuleNotFoundError):
     raise Exception('Requirement Not Satisfied: some_module is missing')
 
-from lib import logger, JSONEncoder
 from router import routes
+from lib import logger, JSONEncoder
 from db import models, save_route, setUp_admin, engine, SessionLocal, Create_Redis_URL
-import schemas
 
 config = load(open("configs/config.json"))
-
 
 @asynccontextmanager
 async def app_lifespan(api: FastAPI):

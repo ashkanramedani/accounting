@@ -2,7 +2,6 @@ from schemas.Base import *
 
 
 
-
 class fingerprint_scanner(Base_form):
     user_fk_id: UUID
     Date: date | str
@@ -24,7 +23,6 @@ class fingerprint_scanner_response(Base_response):
     Enter: time | str | None
     Exit: time | str | None
     EnNo: int
-    created: export_employee
 
     class Config:
         orm_mode = True
