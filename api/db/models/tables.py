@@ -15,7 +15,7 @@ class Base_form:
     priority = Column(Integer, default=5, nullable=True)
 
     visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    deleted = Column(Boolean, server_default=expression.false(), nullable=False)
+    deleted = Column(Boolean, server_default=expression.false(), nullable=False, index=True)
     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
 
@@ -24,11 +24,10 @@ class Base_form:
     delete_date = Column(DateTime(timezone=True), default=None)
     expire_date = Column(DateTime(timezone=True), default=None)
 
-    status = Column(String, nullable=False, default="submitted")  # NC: 006
+    status = Column(String, nullable=False, default="submitted", index=True)  # NC: 006
     description = Column(String, nullable=True, default="")
     note = Column(JSON, nullable=True, default={})
     # status = Column(String, nullable=False, default="approved")  # NC: 006
-
 
 
 users_departments_association = Table(
@@ -42,22 +41,22 @@ users_departments_association = Table(
 users_posts_actor_association = Table(
         'rel_users_posts_actor',
         Base.metadata,
-        Column("user_fk_id", BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False, primary_key=True),
-        Column("post_fk_id", Integer, ForeignKey("tbl_posts.post_pk_id"), nullable=False, primary_key=True)
+        Column("user_fk_id", BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False, primary_key=True, index=True),
+        Column("post_fk_id", Integer, ForeignKey("tbl_posts.post_pk_id"), nullable=False, primary_key=True, index=True)
 )
 
 users_posts_writer_association = Table(
         'rel_users_posts_writer',
         Base.metadata,
-        Column("user_fk_id", BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False, primary_key=True),
-        Column("post_fk_id", Integer, ForeignKey("tbl_posts.post_pk_id"), nullable=False, primary_key=True)
+        Column("user_fk_id", BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False, primary_key=True, index=True),
+        Column("post_fk_id", Integer, ForeignKey("tbl_posts.post_pk_id"), nullable=False, primary_key=True, index=True)
 )
 
 users_posts_speaker_association = Table(
         'rel_users_posts_speaker',
         Base.metadata,
-        Column("user_fk_id", BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False, primary_key=True),
-        Column("post_fk_id", Integer, ForeignKey("tbl_posts.post_pk_id"), nullable=False, primary_key=True)
+        Column("user_fk_id", BigInteger, ForeignKey("tbl_users.user_pk_id"), nullable=False, primary_key=True, index=True),
+        Column("post_fk_id", Integer, ForeignKey("tbl_posts.post_pk_id"), nullable=False, primary_key=True, index=True)
 )
 
 
@@ -310,8 +309,8 @@ class User_form(Base, Base_form):
     user_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form", nullable=True)
 
-    name = Column(String, nullable=False)
-    last_name = Column(String, nullable=False)
+    name = Column(String, nullable=False, index=True)
+    last_name = Column(String, nullable=False, index=True)
     nickname = Column(String, index=True, nullable=True, default="")
 
     day_of_birth = Column(DateTime, nullable=True)
@@ -323,9 +322,9 @@ class User_form(Base, Base_form):
     id_card_number = Column(String, nullable=True)
     address = Column(String(5000), default=None)
 
-    fingerprint_scanner_user_id = Column(Integer, nullable=True, unique=True, default=None)
+    fingerprint_scanner_user_id = Column(Integer, nullable=True, unique=True, default=None, index=True)
 
-    is_employee = Column(Boolean, default=True, nullable=False)
+    is_employee = Column(Boolean, default=True, nullable=False, index=True)
     level = Column(String, index=True, nullable=True)
 
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
@@ -351,6 +350,7 @@ class Course_form(Base, InstitutionsBase):
     course_code = Column(String, nullable=False)
 
     package_discount = Column(Float, nullable=False, default=0.0)
+    Course_price = Column(Float, nullable=False, default=0.0)
 
     tags = relationship("Tag_form", secondary=CourseTag, backref="course_tag")
     categories = relationship("Category_form", secondary=CourseCategory, backref="course_category")
@@ -492,10 +492,10 @@ class Fingerprint_Scanner_form(Base, Base_form):
 
     fingerprint_scanner_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
-    EnNo = Column(Integer, nullable=False)
-    Date = Column(DATE, nullable=False)
-    Enter = Column(TIME, nullable=False)
-    Exit = Column(TIME, nullable=True)
+    EnNo = Column(Integer, nullable=False, index=True)
+    Date = Column(DATE, nullable=False, index=True)
+    Enter = Column(TIME, nullable=False, index=True)
+    Exit = Column(TIME, nullable=True, index=True)
     duration = Column(Integer, nullable=False, default=0)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
@@ -507,14 +507,14 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
 
     fingerprint_scanner_backup_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
-    TMNo = Column(Integer, nullable=False)
-    EnNo = Column(Integer, nullable=False)
-    GMNo = Column(Integer, nullable=False)
+    TMNo = Column(Integer, nullable=False, index=True)
+    EnNo = Column(Integer, nullable=False, index=True)
+    GMNo = Column(Integer, nullable=False, index=True)
     Mode = Column(String)
     In_Out = Column(String)
     Antipass = Column(Integer)
     ProxyWork = Column(Integer)
-    DateTime = Column(DateTime)
+    DateTime = Column(DateTime, index=True)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
