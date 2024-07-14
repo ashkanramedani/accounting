@@ -15,9 +15,9 @@ def get_employee(db: Session, employee_id):
         return Return_Exception(db, e)
 
 
-def get_all_employee(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_employee(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return 200, record_order_by(db, dbm.User_form, page, limit, order, is_employee=True)
+        return record_order_by(db, dbm.User_form, page, limit, order, SortKey=SortKey, is_employee=True)
     except Exception as e:
         return Return_Exception(db, e)
 

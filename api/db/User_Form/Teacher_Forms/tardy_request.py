@@ -18,7 +18,7 @@ def get_tardy_request(db: Session, form_id):
 
 def get_all_tardy_request(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Teacher_Tardy_report_form, page, limit, order)
+        return record_order_by(db, dbm.Teacher_Tardy_report_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)
 

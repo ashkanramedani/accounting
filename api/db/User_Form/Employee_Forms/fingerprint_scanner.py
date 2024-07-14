@@ -26,7 +26,7 @@ def get_fingerprint_scanner(db: Session, form_id):
 def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
     try:
 
-        return 200, record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
+        return record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()

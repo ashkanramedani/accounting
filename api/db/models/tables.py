@@ -19,7 +19,7 @@ class Base_form:
     can_update = Column(Boolean, server_default=expression.true(), nullable=False)
     can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
 
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
     update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
     delete_date = Column(DateTime(timezone=True), default=None)
     expire_date = Column(DateTime(timezone=True), default=None)

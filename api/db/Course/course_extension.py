@@ -15,7 +15,7 @@ def get_tag(db: Session, tag_id):
 
 def get_all_tag(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Tag_form, page, limit, order)
+        return record_order_by(db, dbm.Tag_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -71,7 +71,7 @@ def get_category(db: Session, category_id):
 
 def get_all_category(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Category_form, page, limit, order)
+        return record_order_by(db, dbm.Category_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -128,7 +128,7 @@ def get_language(db: Session, language_id):
 
 def get_all_language(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Language_form, page, limit, order)
+        return record_order_by(db, dbm.Language_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -186,7 +186,7 @@ def get_course_type(db: Session, course_type_id):
 
 def get_all_course_type(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Course_Type_form, page, limit, order)
+        return record_order_by(db, dbm.Course_Type_form, page, limit, order)
     except Exception as e:
         return Return_Exception(db, e)
 

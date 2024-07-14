@@ -1,7 +1,10 @@
 # from faker import Faker
+import json
+import re
 from typing import List, Dict, Tuple
 from uuid import UUID
 
+from sqlalchemy import text, asc, desc, or_, String, Integer, Float, Boolean
 from sqlalchemy.orm import Session, Query
 
 import db.models as dbm
@@ -118,23 +121,44 @@ def course_exist(db: Session, FK_field: UUID):
     return True
 
 
-def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", query: Query = None, **filter_kwargs):
+def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None, SearchKey: str = None, query: Query = None, **filter_kwargs):
     try:
         query = db.query(table).filter(table.status != "deleted").filter_by(**filter_kwargs) if not query else query
 
-        match page, order:
-            case 0, "desc":
-                return query.order_by(table.create_date.desc()).all()
-            case 0, "asc":
-                return query.order_by(table.create_date.asc()).all()
-            case _, "desc":
-                return query.order_by(table.create_date.desc()).offset((page - 1) * limit).limit(limit).all()
-            case _, "asc":
-                return query.order_by(table.create_date.asc()).offset((page - 1) * limit).limit(limit).all()
+        # Search functionality
+        # if SearchKey is not None:
+        #     search_conditions = []
+        #     for column in table.__table__.columns:
+        #         column_type = column.type
+        #         if isinstance(column_type, (String, Integer, Float)):
+        #             search_conditions.append(column.ilike(f'%{SearchKey}%'))
+        #         elif isinstance(column_type, Boolean):
+        #             if SearchKey.lower() in ["true", "1"]:
+        #                 search_conditions.append(column.is_(True))
+        #             elif SearchKey.lower() in ["false", "0"]:
+        #                 search_conditions.append(column.is_(False))
+        #     query = query.filter(or_(*search_conditions))
+
+
+        # Sort functionality
+        if SortKey:
+            if SortKey not in table.__table__.columns.keys():
+                return Return_Exception(db, ValueError(f"Invalid key: {SortKey}"))
+
+        TargetColumn = getattr(table, SortKey) if SortKey else table.create_date
+        if order == "asc":
+            query = query.order_by(asc(TargetColumn))
+        else:
+            query = query.order_by(desc(TargetColumn))
+
+        # Pagination
+        if page > 0:
+            query = query.offset((page - 1) * limit).limit(limit)
+
+        return 200, query.all()
 
     except Exception as e:
         return Return_Exception(db, e)
-
 
 def count(db, field: str):
     table = Tables.get(field.lower().replace("_form", "").replace("_", ""), None)
@@ -163,12 +187,21 @@ def Exist(db: Session, Form: Dict) -> Tuple[bool, str]:
     return True, "Done"
 
 
+def Extract_Unique_keyPair(error_message) -> str | Dict:
+    error_message = str(error_message)
+    match = re.search(r'Key \((.*?)\)=\((.*?)\)', error_message)
+    if match:
+        return ', '.join([f'{k} -> {v}' for k, v in zip(match.group(1).split(', '), match.group(2).split(', '))]).replace('"', '')
+    else:
+        return error_message
+
+
 def Return_Exception(db: Session, Error: Exception):
-    logger.error(f'{Error.__class__.__name__}: {Error.__repr__()}', depth=1)
     db.rollback()
-    if "UniqueViolation" in str(Error):
+    if "duplicate key" in str(Error):
+        logger.warning(f'{Error.__class__.__name__}: Record Already Exist: {Extract_Unique_keyPair(Error.args)}')
         return 409, "Already Exist"
-    # return 500, f'{Error.__class__.__name__}: {Error.args}'
+    logger.error(f'{Error.__class__.__name__}: {Error.__repr__()}', depth=1)
     return 500, f'{Error.__class__.__name__}: {Error.__repr__()}'
 
 

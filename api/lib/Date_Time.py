@@ -350,3 +350,7 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
             Days.append((starting_date, week_day))
         starting_date += timedelta(days=1)
     return Days
+
+if __name__ == '__main__':
+    print(to_persian(2024, 6, 21))
+    print(to_persian(2024, 7, 23))

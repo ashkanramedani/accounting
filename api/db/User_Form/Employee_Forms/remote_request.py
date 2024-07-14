@@ -18,7 +18,7 @@ def get_remote_request_form(db: Session, form_id):
 
 def get_all_remote_request_form(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
     try:
-        return 200, record_order_by(db, dbm.Remote_Request_form, page, limit, order)
+        return record_order_by(db, dbm.Remote_Request_form, page, limit, order)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -96,8 +96,7 @@ def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema):
         Warn = []
         verified = 0
         records = db.query(dbm.Remote_Request_form) \
-            .filter(dbm.Business_Trip_form.status == "submitted") \
-            .filter(dbm.Remote_Request_form.remote_request_pk_id.in_(Form.remote_request_id)) \
+            .filter(dbm.Remote_Request_form.status == "submitted", dbm.Remote_Request_form.remote_request_pk_id.in_(Form.remote_request_id)) \
             .all()
 
         for record in records:

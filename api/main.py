@@ -1,13 +1,10 @@
-import json
-
-from dotenv import load_dotenv
-
 try:
     from os import getenv
     from time import sleep
     from typing import List
     from pathlib import Path
     from json import dump, load
+    from dotenv import load_dotenv
     from datetime import datetime, timedelta, timezone
 
     # DB
@@ -24,7 +21,7 @@ except (ImportError, ModuleNotFoundError):
     raise Exception('Requirement Not Satisfied: some_module is missing')
 
 from router import routes
-from lib import logger, JSONEncoder
+from lib import logger
 from db import models, save_route, setUp_admin, engine, SessionLocal, Create_Redis_URL
 
 config = load(open("configs/config.json"))
