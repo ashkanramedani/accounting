@@ -10,11 +10,11 @@
   },
   "db":{
     "target_DB":"postgresql",
-    "username":"ieltsdaily",
-    "password":"Aa123456",
-    "ip":"87.107.161.240",
-    "port":"15432",
-    "database":"test",
+    "username": "ieltsdaily",
+    "password": "AliBig+Hi",
+    "ip": "87.107.161.173",
+    "port": "15432",
+    "database_name": "site_org",
     "engine": {
       "echo": false,
       "pool_recycle": 3600
