@@ -12,9 +12,9 @@ def get_payment_method(db: Session, payment_method_id):
         return Return_Exception(db, e)
 
 
-def get_all_payment_method(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_payment_method(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        # Records = record_order_by(db, dbm.Payment_Method_form, page, limit, order)
+        # Records = record_order_by(db,dbm.Payment_Method_form, page, limit, order, SortKey)
         # New = []
         #
         # for record in Records:
@@ -23,7 +23,7 @@ def get_all_payment_method(db: Session, page: sch.NonNegativeInt, limit: sch.Pos
         #     record.card_number = "Edited"
         #     logger.warning(record.__dict__)
         #     New.append(record)
-        return record_order_by(db, dbm.Payment_Method_form, page, limit, order)
+        return record_order_by(db,dbm.Payment_Method_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 

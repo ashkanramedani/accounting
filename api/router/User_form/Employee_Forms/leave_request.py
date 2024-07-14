@@ -39,8 +39,8 @@ async def report_leave_request(employee_id: int | UUID, year: int, month: int, d
 
 
 @router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.leave_request_response])
-async def search_all_leave_request(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc"):
-    status_code, result = dbf.get_all_leave_request(db, page, limit, order)
+async def search_all_leave_request(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 100, order: sch.Sort_Order = "desc", SortKey: str = None):
+    status_code, result = dbf.get_all_leave_request(db, page, limit, order, SortKey)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

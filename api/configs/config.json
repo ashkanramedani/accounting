@@ -21,8 +21,8 @@
     }
   },
   "redis":{
-    "host":"87.107.161.173",
-    "port":6379,
+    "host":"87.107.161.240",
+    "port": 6378,
     "password":"eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81HBSDsdkjgasdj324",
     "db":1,
     "decode_responses":true,

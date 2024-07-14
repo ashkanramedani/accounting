@@ -159,7 +159,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
 
             # check if more than one Enter and Exit is in day
             if len(EnterExit) > 2:
-                for Enter, Exit in zip(EnterExit[2::2], EnterExit[1:-1:2]):
+                for Enter, Exit in zip(EnterExit[2:2], EnterExit[1:-1:2]):
                     day["Undertime"] += time_gap(Enter, Exit)
 
             Day_OBJ["Regular_hours"] = min(day["present_time"] - Day_OBJ["Overtime"], EMP_Salary.Regular_hours_cap)

@@ -16,9 +16,9 @@ def get_business_trip_form(db: Session, form_id):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_business_trip_form(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_business_trip_form(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.Business_Trip_form, page, limit, order)
+        return record_order_by(db,dbm.Business_Trip_form, page, limit, order, SortKey)
     except Exception as e:
         logger.error(e)
         db.rollback()

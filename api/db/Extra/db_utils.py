@@ -121,7 +121,7 @@ def course_exist(db: Session, FK_field: UUID):
     return True
 
 
-def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None, SearchKey: str = None, query: Query = None, **filter_kwargs):
+def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None, query: Query = None, **filter_kwargs):
     try:
         query = db.query(table).filter(table.status != "deleted").filter_by(**filter_kwargs) if not query else query
 

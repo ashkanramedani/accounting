@@ -16,9 +16,9 @@ def get_response(db: Session, response_id):
         return Return_Exception(db, e)
 
 
-def get_all_response(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_response(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.Response_form, page, limit, order)
+        return record_order_by(db,dbm.Response_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 

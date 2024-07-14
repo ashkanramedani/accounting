@@ -43,11 +43,11 @@ def get_all_course(db: Session, course_type: str | None, page: sch.NonNegativeIn
         if course_type:
             Course_type = db.query(dbm.Course_Type_form).filter_by(course_type_name=course_type).first().course_type_pk_id
             if Course_type:
-                courses = record_order_by(db, dbm.Course_form, page, limit, order, course_type=Course_type)
+                courses = record_order_by(db, dbm.Course_form, page, limit, order, SortKey, course_type=Course_type)
             else:
                 courses = []
         else:
-            courses = record_order_by(db, dbm.Course_form, page, limit, order)
+            courses = record_order_by(db,dbm.Course_form, page, limit, order, SortKey)
         if not courses:
             return 200, []
         Courses = []

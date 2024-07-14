@@ -13,9 +13,9 @@ def get_tag(db: Session, tag_id):
         return Return_Exception(db, e)
 
 
-def get_all_tag(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_tag(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.Tag_form, page, limit, order)
+        return record_order_by(db,dbm.Tag_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -69,9 +69,9 @@ def get_category(db: Session, category_id):
         return Return_Exception(db, e)
 
 
-def get_all_category(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_category(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.Category_form, page, limit, order)
+        return record_order_by(db,dbm.Category_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -126,9 +126,9 @@ def get_language(db: Session, language_id):
         return Return_Exception(db, e)
 
 
-def get_all_language(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_language(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.Language_form, page, limit, order)
+        return record_order_by(db,dbm.Language_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -184,9 +184,9 @@ def get_course_type(db: Session, course_type_id):
         return Return_Exception(db, e)
 
 
-def get_all_course_type(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_course_type(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.Course_Type_form, page, limit, order)
+        return record_order_by(db, dbm.Course_Type_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 

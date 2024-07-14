@@ -9,7 +9,7 @@ from lib import logger
 def get_all_cluster(db: Session):
     try:
         return 200, [dict(name)["cluster"] for name in db.query(dbm.Role_form.cluster).group_by(dbm.Role_form.cluster).all()]
-        # return record_order_by(db, dbm.Tag_form, page, limit, order)
+        # return record_order_by(db,dbm.Tag_form, page, limit, order, SortKey)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -25,9 +25,9 @@ def get_role(db: Session, role_id):
         return Return_Exception(db, e)
 
 
-def get_all_role(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_role(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.Role_form, page, limit, order)
+        return record_order_by(db,dbm.Role_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 
