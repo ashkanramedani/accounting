@@ -23,10 +23,10 @@ def get_fingerprint_scanner(db: Session, form_id):
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc"):
+def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc", SortKey: str = None):
     try:
 
-        return record_order_by(db,dbm.Fingerprint_Scanner_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order, SortKey)
     except Exception as e:
         logger.error(e)
         db.rollback()
@@ -174,8 +174,8 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
 
         data = Form.dict()
 
-        EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
-        data["EnNo"] = EnNo
+        # EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
+        # data["EnNo"] = EnNo
         s, e = data["Enter"], data["Exit"]
         data["duration"] = 0 if s == e else time_gap(Fix_time(s), Fix_time(s))
 

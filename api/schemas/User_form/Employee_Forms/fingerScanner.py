@@ -3,14 +3,13 @@ from schemas.Base import *
 
 
 class fingerprint_scanner(Base_form):
-    user_fk_id: UUID
     Date: date | str
     Enter: time | str | None
     Exit: time | str | None
 
 
 class post_fingerprint_scanner_schema(fingerprint_scanner):
-    pass
+    user_fk_id: UUID
 
 
 class update_fingerprint_scanner_schema(fingerprint_scanner):

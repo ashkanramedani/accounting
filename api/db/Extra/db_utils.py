@@ -147,7 +147,7 @@ def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.Pos
 
         TargetColumn = getattr(table, SortKey) if SortKey else table.create_date
         if order == "asc":
-            query = query.order_by(asc(TargetColumn))
+            query = query.order_by(TargetColumn)
         else:
             query = query.order_by(desc(TargetColumn))
 
