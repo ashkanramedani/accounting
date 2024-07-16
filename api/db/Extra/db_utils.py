@@ -1,7 +1,7 @@
 # from faker import Faker
 import json
 import re
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 from uuid import UUID
 
 from sqlalchemy import text, asc, desc, or_, String, Integer, Float, Boolean
@@ -121,7 +121,7 @@ def course_exist(db: Session, FK_field: UUID):
     return True
 
 
-def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None, query: Query = None, **filter_kwargs):
+def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None, query: Query = None, **filter_kwargs) -> tuple[int, str] | tuple[int, list[Any]]:
     try:
         query = db.query(table).filter(table.status != "deleted").filter_by(**filter_kwargs) if not query else query
 
@@ -199,9 +199,9 @@ def Extract_Unique_keyPair(error_message) -> str | Dict:
 def Return_Exception(db: Session, Error: Exception):
     db.rollback()
     if "duplicate key" in str(Error):
-        logger.warning(f'{Error.__class__.__name__}: Record Already Exist: {Extract_Unique_keyPair(Error.args)}')
+        logger.warning(f'{Error.__class__.__name__}: Record Already Exist: {Extract_Unique_keyPair(Error.args)}', depth=2)
         return 409, "Already Exist"
-    logger.error(f'{Error.__class__.__name__}: {Error.__repr__()}', depth=1)
+    logger.error(f'{Error.__class__.__name__}: {Error.__repr__()}', depth=2)
     return 500, f'{Error.__class__.__name__}: {Error.__repr__()}'
 
 

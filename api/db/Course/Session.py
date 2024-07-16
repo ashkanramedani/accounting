@@ -40,7 +40,7 @@ def get_all_session(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveIn
 def get_sub_party(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
         now = datetime.now()
-        return record_order_by(db, dbm.Session_form, page, limit, order, SortKey, SortKey, query=db.query(dbm.Session_form).filter(dbm.Session_form.can_accept_sub >= now))
+        return record_order_by(db, dbm.Session_form, page, limit, order, SortKey, query=db.query(dbm.Session_form).filter(dbm.Session_form.can_accept_sub >= now))
     except Exception as e:
         return Return_Exception(db, e)
 

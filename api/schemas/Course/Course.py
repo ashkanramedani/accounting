@@ -40,7 +40,7 @@ class update_course_schema(course):
 
 class Course_Calender(BaseModel):  # instant of session form (can be modify as needed)
     days_of_week: int
-    session_date: str | date
+    session_date: date | str
 
     class Config:
         orm_mode = True

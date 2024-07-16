@@ -10,8 +10,16 @@ SUCCESS_STATUS: List[PositiveInt] = [200, 201]
 identity: Faker = Faker()
 
 
-def NOW(Off_Set: int = 0) -> datetime:
+def DATETIME_NOW(Off_Set: int = 0) -> datetime:
     return datetime.now() + timedelta(days=Off_Set)
+
+
+def DATE_NOW(Off_Set: int = 0) -> date:
+    return (datetime.now() + timedelta(days=Off_Set)).date()
+
+
+def TIME_NOW(Off_Set: int = 0) -> time:
+    return (datetime.now() + timedelta(hours=Off_Set)).time()
 
 
 class Sort_Order(str, Enum):

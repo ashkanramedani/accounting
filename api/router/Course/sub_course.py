@@ -36,8 +36,8 @@ async def search_all_subcourse(db=Depends(get_db), page: sch.NonNegativeInt = 1,
 
 
 @router.get("/course/{course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.sub_course_response])
-async def search_subcourse_by_course_id(course_id: UUID, page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc", db=Depends(get_db)):
-    status_code, result = dbf.get_sub_courses_for_course(db, course_id, page, limit, order)
+async def search_subcourse_by_course_id(course_id: UUID, page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 10, order: sch.Sort_Order = "desc", SortKey: str = None, db=Depends(get_db)):
+    status_code, result = dbf.get_sub_courses_for_course(db, course_id, page, limit, order, SortKey)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

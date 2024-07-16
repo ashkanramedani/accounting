@@ -6,15 +6,15 @@ class business_trip(Base_form):
 
 class post_business_trip_schema(business_trip):
     user_fk_id: UUID
-    start_date: str | datetime = NOW(2)
-    end_date: str | datetime = NOW(1)
+    start_date: datetime | str = DATETIME_NOW(2)
+    end_date: datetime | str = DATETIME_NOW(1)
 
 
 class update_business_trip_schema(business_trip):
     business_trip_pk_id: UUID
-    start: str | time
-    end: str | time
-    date: str | date
+    start: time | str
+    end: time | str
+    date:  date | str
 
 
 
@@ -22,7 +22,7 @@ class business_trip_response(Base_response):
     business_trip_pk_id: UUID
     start: Optional[time] = None
     end: Optional[time] = None
-    date: str | date
+    date: date | str
     destination: str
     employee: export_employee
 

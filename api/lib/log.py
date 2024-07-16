@@ -61,17 +61,17 @@ class Log:
         if keep:
             self.keep_log(msg, type_log, user, location)
 
-    def info(self, msg):
-        self.logger.opt(depth=1).info(msg)
+    def info(self, msg, depth=1):
+        self.logger.opt(depth=depth).info(msg)
 
-    def warning(self, msg):
-        self.logger.opt(depth=1).warning(msg)
+    def warning(self, msg, depth=1):
+        self.logger.opt(depth=depth).warning(msg)
 
     def error(self, msg, depth=1):
         self.logger.opt(depth=depth).error(msg)
 
-    def debug(self, msg):
-        self.logger.opt(depth=1).debug(msg)
+    def debug(self, msg, depth=1):
+        self.logger.opt(depth=depth).debug(msg)
 
     def on_status_code(self, status_code, msg):
         if not isinstance(msg, str):

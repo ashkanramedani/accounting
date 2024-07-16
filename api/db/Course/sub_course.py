@@ -32,7 +32,7 @@ def get_subcourse(db: Session, subcourse_id):
         return Return_Exception(db, e)
 
 
-def get_sub_courses_for_course(db: Session, course_id, page, limit, order):
+def get_sub_courses_for_course(db: Session, course_id, page, limit, order, SortKey):
     try:
         sub_course_query = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted")
         return record_order_by(db, dbm.Sub_Course_form, page, limit, order, SortKey, query=sub_course_query)

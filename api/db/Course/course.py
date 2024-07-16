@@ -38,18 +38,18 @@ def get_course(db: Session, course_id):
         return Return_Exception(db, e)
 
 
-def get_all_course(db: Session, course_type: str | None, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc"):
+def get_all_course(db: Session, course_type: str | None, page: sch.NonNegativeInt, limit: sch.PositiveInt, SortKey: str, order: str = "desc"):
     try:
         if course_type:
             Course_type = db.query(dbm.Course_Type_form).filter_by(course_type_name=course_type).first().course_type_pk_id
             if Course_type:
-                courses = record_order_by(db, dbm.Course_form, page, limit, order, SortKey, course_type=Course_type)
+                status, courses = record_order_by(db, dbm.Course_form, page, limit, order, SortKey, course_type=Course_type)
             else:
-                courses = []
+                status, courses = 200, []
         else:
-            courses = record_order_by(db,dbm.Course_form, page, limit, order, SortKey)
-        if not courses:
-            return 200, []
+            status, courses = record_order_by(db,dbm.Course_form, page, limit, order, SortKey)
+        if status != 200:
+            return 500, courses
         Courses = []
         for course in courses:
             sub_course: List[dbm.Sub_Course_form] = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course.course_pk_id).filter(dbm.Sub_Course_form.status != "deleted").all()

@@ -7,14 +7,14 @@ class leave_request(Base_form):
 
 class post_leave_request_schema(leave_request):
     user_fk_id: UUID
-    start_date: str | datetime = NOW()
-    end_date: str | datetime = NOW(1)
+    start_date: datetime | str = DATETIME_NOW()
+    end_date: datetime | str = DATETIME_NOW(1)
 
 class update_leave_request_schema(leave_request):
     leave_request_pk_id: UUID
-    start: str | time
-    end: str | time
-    date: str | date
+    start: time | str
+    end: time | str
+    date: date | str
 
 
 class Verify_leave_request_schema(BaseModel):
@@ -27,7 +27,7 @@ class leave_request_response(Base_response):
 
     start: Optional[time] = None
     end: Optional[time] = None
-    date: str | date
+    date: date | str
     duration: NonNegativeInt
 
     leave_type: str
