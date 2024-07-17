@@ -4,6 +4,7 @@ from typing import List
 from uuid import UUID
 
 import pandas as pd
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 import db.models as dbm
@@ -49,7 +50,10 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
 
         if not Fingerprint_scanner_report:
             return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
-        return 200, Fingerprint_scanner_report
+        return 200, {
+            "Fingerprint_scanner_report": Fingerprint_scanner_report,
+            "Invalid": db.query(dbm.Fingerprint_Scanner_form).filter_by(valid=False).count(),
+            "TotalHour": db.query(func.sum(dbm.Fingerprint_Scanner_form.duration).label("Duration")).filter_by(valid=True).first().Duration}
 
     except Exception as e:
         return Return_Exception(db, e)

@@ -122,9 +122,12 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if status != 200:
             return status, report_summary
 
+        if report_summary["Invalid"] != 0:
+            return 400, "Invalid Date Found."
+
         status, report_summary = generate_daily_report(
                 Salary_Policy=Salary_Policy,
-                Fingerprint_scanner_report=report_summary,
+                Fingerprint_scanner_report=report_summary["Fingerprint_scanner_report"],
                 Activities=Get_Report(db, Salary_Policy, user_fk_id, start, end))
 
         if status != 200:

@@ -1,6 +1,7 @@
-from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time
+from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time, case
 from sqlalchemy.dialects.postgresql import JSONB, JSON
 from sqlalchemy.sql import expression, func
+from sqlalchemy.ext.hybrid import hybrid_property
 
 from .Func import *
 from .database import Base
@@ -500,6 +501,15 @@ class Fingerprint_Scanner_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
+    @hybrid_property
+    def valid(self):
+        return self.Enter is not None and self.Exit is not None
+
+    @valid.expression
+    def valid(cls):
+        return case(
+                [(cls.Enter.isnot(None) & cls.Exit.isnot(None), True)],
+                else_=False)
 
 class Fingerprint_Scanner_backup_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner_backup"
