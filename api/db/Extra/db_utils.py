@@ -161,10 +161,17 @@ def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.Pos
         return Return_Exception(db, e)
 
 def count(db, field: str):
-    table = Tables.get(field.lower().replace("_form", "").replace("_", ""), None)
+    field = field.lower().replace("_form", "").replace("_", "")
+    table = Tables.get(field, None)
     if not table:
         return 404, f"{field} Not Found"
-    return 200, db.query(table).filter(table.status != "deleted").count()
+    query: Query = db.query(table).filter(table.status != "deleted")
+    if field == "student":
+        query.filter_by(is_employee=False)
+    elif field == "employee":
+        query.filter_by(is_employee=True)
+
+    return 200, query.count()
 
 
 def prepare_param(key, val):
