@@ -98,7 +98,7 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
             .all()
 
         for record in records:
-            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id, session_teacher_fk_id=record.main_teacher_fk_id, dbm.Session_form.deleted == False, dbm.Session_form.status != "deleted")
+            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id, session_teacher_fk_id=record.main_teacher_fk_id).filter(dbm.Session_form.deleted == False, dbm.Session_form.status != "deleted")
             if not old_session.first():
                 Warn.append(f'{record.session_fk_id}: Session Not Found.')
                 continue
