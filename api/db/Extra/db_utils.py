@@ -167,9 +167,9 @@ def count(db, field: str):
         return 404, f"{field} Not Found"
     query: Query = db.query(table).filter(table.status != "deleted")
     if field == "student":
-        query.filter_by(is_employee=False)
+        query = query.filter_by(is_employee=False)
     elif field == "employee":
-        query.filter_by(is_employee=True)
+        query = query.filter_by(is_employee=True)
 
     return 200, query.count()
 
