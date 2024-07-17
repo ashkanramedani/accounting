@@ -18,7 +18,7 @@ DEFAULT_USER = [
         "name": "Test",
         "lastname": "Teacher",
         "email": "Test@Teacher.com",
-        "ID": "01909c17-48f9-0af0-6d35-70f541d47bce",
+        "ID": "00000001-48f9-0af0-6d35-70f541d47bce",
         "EnNo": 1001,
         "role": {"name": "Teacher", "cluster": "Teachers"}
     },
@@ -26,7 +26,7 @@ DEFAULT_USER = [
         "name": "Test",
         "lastname": "Employee",
         "email": "Test@Employee.com",
-        "ID": "99bc77bd-7ec4-4b39-bc77-bd7ec4db3927",
+        "ID": "00000002-7ec4-4b39-bc77-bd7ec4db3927",
         "EnNo": 1002,
         "role": {"name": "Unknown", "cluster": "Users"}
     }
