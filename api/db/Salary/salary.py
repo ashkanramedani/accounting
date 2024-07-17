@@ -6,11 +6,14 @@ from db.User_Form import *
 
 def permissions(db: Session, User_ID):
     try:
-        return 200, db. \
-            query(dbm.Salary_Policy_form.remote_permission, dbm.Salary_Policy_form.business_trip_permission) \
+        permission = db \
+            .query(dbm.Salary_Policy_form.remote_permission, dbm.Salary_Policy_form.business_trip_permission) \
             .filter_by(user_fk_id=User_ID).filter(dbm.Salary_Policy_form.status != "deleted") \
             .order_by(dbm.Salary_Policy_form.create_date.desc()) \
             .first()
+        if not permission:
+            permission = {"remote_permission": False, "business_trip_permission": False}
+        return 200, permission
     except Exception as e:
         return Return_Exception(db, e)
 

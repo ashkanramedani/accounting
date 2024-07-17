@@ -82,22 +82,22 @@ def preprocess_report(report, Activities: Dict):
     """
     Days = {}
     for i, record in enumerate(report):
-        Key = str(record["Date"])
+        Key = str(record.Date)
 
         if Key not in Days:
             # Days[Key] = {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Normal"}
-            Days[Key] = Create_Day_Schema(record["Date"], Activities)
+            Days[Key] = Create_Day_Schema(record.Date, Activities)
 
-        if not record["Enter"] or not record["Exit"]:
+        if not record.Enter or not record.Exit:
             Days[Key]["IsValid"] = False
             Days[Key]["msg"] = "invalid Enter/exit time"
 
         else:
-            Days[Key]["present_time"] += time_gap(record["Enter"], record["Exit"])
-        Days[Key]["EnterExit"].extend([record["Enter"], record["Exit"]])
+            Days[Key]["present_time"] += time_gap(record.Enter, record.Exit)
+        Days[Key]["EnterExit"].extend([record.Enter, record.Exit])
 
         for Date in add_missing_day(report[i: i + 2]):
-            Days[Date] = Create_Day_Schema(record["Date"], Activities, message="Not Present")
+            Days[Date] = Create_Day_Schema(record.Date, Activities, message="Not Present")
     return Days
 
 
@@ -105,8 +105,8 @@ def add_missing_day(seq: list) -> List[str]:
     if len(seq) < 2:
         return []
     missing_day = []
-    currentDay: date = seq[0]["Date"]
-    while currentDay < seq[1]["Date"]:
+    currentDay: date = seq[0].Date
+    while currentDay < seq[1].Date:
         currentDay += timedelta(days=1)
         missing_day.append(str(currentDay))
     return missing_day[:-1]

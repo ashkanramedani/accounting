@@ -12,7 +12,7 @@ from db.models import get_db
 router = APIRouter(prefix='/api/v1/form/salary', tags=['Report'])
 
 
-@router.get("/permissions/{user_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+@router.get("/permissions/{user_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.permission_response)
 async def get_all(user_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.permissions(db, user_id)
     if status_code not in sch.SUCCESS_STATUS:

@@ -116,7 +116,7 @@ def update_leave_request(db: Session, Form: sch.update_leave_request_schema):
         return Return_Exception(db, e)
 
 
-def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema, status: sch.ValidStatus):
+def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema, status: sch.CanUpdateStatus):
     try:
         Warn = []
         verified = 0

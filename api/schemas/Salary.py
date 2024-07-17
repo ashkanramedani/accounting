@@ -110,3 +110,11 @@ class Return_Salary(export_employee):
 
     class Config:
         orm_mode = True
+
+
+class permission_response(BaseModel):
+    remote_permission: Optional[bool] = False
+    business_trip_permission: Optional[bool] = False
+
+    class Config:
+        orm_mode = True
