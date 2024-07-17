@@ -22,7 +22,12 @@ def TIME_NOW(Off_Set: int = 0) -> time:
     return (datetime.now() + timedelta(hours=Off_Set)).time()
 
 
-# تعریف یک Enum برای وضعیت‌ها
+
+class CanUpdateStatus(str, Enum):
+    submitted = "submitted"
+    approved = "approved"
+    rejected = "rejected"
+
 class ValidStatus(str, Enum):
     submitted = "submitted"
     approved = "approved"

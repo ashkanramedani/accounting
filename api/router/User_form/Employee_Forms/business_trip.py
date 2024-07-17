@@ -63,7 +63,7 @@ async def update_business_trip(Form: sch.update_business_trip_schema, db=Depends
 
 
 @router.put("/verify/{status}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def verify_business_trip(status:sch.ValidStatus, Form: sch.Verify_business_trip_schema, db=Depends(get_db)):
+async def verify_business_trip(status:sch.CanUpdateStatus, Form: sch.Verify_business_trip_schema, db=Depends(get_db)):
     status_code, result = dbf.Verify_business_trip(db, Form, status)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
