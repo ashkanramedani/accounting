@@ -26,10 +26,11 @@ from db import models, save_route, setUp_admin, engine, SessionLocal, Create_Red
 
 config = load(open("configs/config.json"))
 
+
 @asynccontextmanager
-async def app_lifespan(api: FastAPI):
+async def app_lifespan(api):
     try:
-        logger.info(f"Starting {api.title} V: {api.version} - {datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=3, minutes=30)}")
+        logger.info(f"preparing {api.title} V: {api.version} - {datetime.now()}")
         while True:
             try:
                 # models.Base.metadata.drop_all(engine)
@@ -42,11 +43,14 @@ async def app_lifespan(api: FastAPI):
             setUp_admin(db)
 
         await FastAPILimiter.init(redis=redis.from_url(Create_Redis_URL(), encoding="utf8"))
+        logger.info(f'{api.title} V: {api.version} Has been started ...')
         yield
+
     except KeyboardInterrupt:
         logger.info(f'Exited')
-    logger.info(f"Shutting FastAPI - {datetime.now(timezone.utc).replace(microsecond=0) + timedelta(hours=3, minutes=30)}")
+    logger.info(f'Exiting from {api.title} V: {api.version} - {datetime.now()}')
     await FastAPILimiter.close()
+
 
 load_dotenv()
 app = FastAPI(

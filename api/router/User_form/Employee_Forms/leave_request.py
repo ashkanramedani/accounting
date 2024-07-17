@@ -63,7 +63,7 @@ async def update_leave_request(Form: sch.update_leave_request_schema, db=Depends
 
 
 @router.put("/verify/{status}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def verify_leave_request(status:sch.CanUpdateStatus, Form: sch.Verify_leave_request_schema, db=Depends(get_db)):
+async def verify_leave_request(status: sch.CanUpdateStatus, Form: sch.Verify_leave_request_schema, db=Depends(get_db)):
     status_code, result = dbf.Verify_leave_request(db, Form, status)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
