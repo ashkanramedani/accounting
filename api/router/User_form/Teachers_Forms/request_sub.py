@@ -60,9 +60,9 @@ async def update_sub_request(Forms: List[sch.update_Sub_request_schema], db=Depe
         return result
 
 
-@router.put("/verify", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def update_sub_request(Form: sch.Verify_Sub_request_schema, db=Depends(get_db)):
-    status_code, result = Sub_Request.Verify_sub_request(db, Form)
+@router.put("/verify/{status}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def update_sub_request(status:sch.ValidStatus, Form: sch.Verify_Sub_request_schema, db=Depends(get_db)):
+    status_code, result = Sub_Request.Verify_sub_request(db, Form, status)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

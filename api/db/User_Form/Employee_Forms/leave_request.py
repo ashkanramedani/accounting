@@ -116,21 +116,21 @@ def update_leave_request(db: Session, Form: sch.update_leave_request_schema):
         return Return_Exception(db, e)
 
 
-def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema):
+def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema, status: sch.ValidStatus):
     try:
         Warn = []
         verified = 0
         records = db.query(dbm.Leave_Request_form) \
-            .filter(dbm.Leave_Request_form.status == "submitted", dbm.Leave_Request_form.leave_request_pk_id.in_(Form.leave_request_id)) \
+            .filter(dbm.Leave_Request_form.deleted == False, dbm.Leave_Request_form.status != "deleted", dbm.Leave_Request_form.status != status, dbm.Leave_Request_form.leave_request_pk_id.in_(Form.leave_request_id)) \
             .all()
-
+            
         for record in records:
-            record.status = Set_Status(db, "form", "verified")
+            record.status = Set_Status(db, "form", status)
             verified += 1
 
         db.commit()
         if Warn:
-            return 200, f"{verified} Form Verified. {' | '.join(Warn)}"
-        return 200, f"{len(records)} Form Verified."
+            return 200, f"{verified} Form Update Status To {status}. {' | '.join(Warn)}"
+        return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)

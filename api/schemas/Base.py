@@ -22,15 +22,21 @@ def TIME_NOW(Off_Set: int = 0) -> time:
     return (datetime.now() + timedelta(hours=Off_Set)).time()
 
 
+# تعریف یک Enum برای وضعیت‌ها
+class ValidStatus(str, Enum):
+    submitted = "submitted"
+    approved = "approved"
+    canceled = "canceled"
+    rejected = "rejected"
+    deleted = "deleted"
+
 class Sort_Order(str, Enum):
     asc = "asc"
     desc = "desc"
 
-
 class Leave_type(str, Enum):
     vacation = "vacation"
     medical = "medical"
-
 
 class job_title_Enum(str, Enum):
     teacher = "teacher"
@@ -172,7 +178,7 @@ class Entity(BaseModel):
 class Base_response(BaseModel):
     created: Optional[export_employee] = {}
     description: str | None = None
-    status: str = "None"
+    status: ValidStatus = "submitted"
     priority: int
 
 

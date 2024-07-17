@@ -96,22 +96,21 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema):
+def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema, status: sch.ValidStatus):
     try:
         Warn = []
         verified = 0
         records = db.query(dbm.Business_Trip_form) \
-            .filter(dbm.Business_Trip_form.status == "submitted") \
-            .filter(dbm.Business_Trip_form.business_trip_pk_id.in_(Form.business_trip_id)) \
-            .all()
+            .filter(dbm.Business_Trip_form.deleted == False, dbm.Business_Trip_form.status != "deleted", dbm.Business_Trip_form.status != status, dbm.Business_Trip_form.business_trip_pk_id.in_(Form.business_trip_id)) \
+            .all()     
 
         for record in records:
-            record.status = Set_Status(db, "form", "verified")
+            record.status = Set_Status(db, "form", status)
             verified += 1
 
         db.commit()
         if Warn:
-            return 200, f"{verified} Form Verified. {' | '.join(Warn)}"
-        return 200, f"{len(records)} Form Verified."
+            return 200, f"{verified} Form Update Status To {status}. {' | '.join(Warn)}"
+        return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)

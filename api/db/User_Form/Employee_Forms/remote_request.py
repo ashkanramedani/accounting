@@ -91,21 +91,21 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         return 500, f'{e.__class__.__name__}: {e.args}'
 
 
-def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema):
+def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema, status: sch.ValidStatus):
     try:
         Warn = []
         verified = 0
         records = db.query(dbm.Remote_Request_form) \
-            .filter(dbm.Remote_Request_form.status == "submitted", dbm.Remote_Request_form.remote_request_pk_id.in_(Form.remote_request_id)) \
+            .filter(dbm.Remote_Request_form.deleted == False, dbm.Remote_Request_form.status != "deleted", dbm.Remote_Request_form.status != status, dbm.Remote_Request_form.remote_request_pk_id.in_(Form.remote_request_id)) \
             .all()
-
+            
         for record in records:
-            record.status = 1
+            record.status = Set_Status(db, "form", status)
             verified += 1
 
         db.commit()
         if Warn:
-            return 200, f"{verified} Form Verified. {' | '.join(Warn)}"
-        return 200, f"{len(records)} Form Verified."
+            return 200, f"{verified} Form Update Status To {status}. {' | '.join(Warn)}"
+        return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)

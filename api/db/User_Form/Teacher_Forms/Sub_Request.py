@@ -88,33 +88,36 @@ def update_sub_request(db: Session, Form: sch.update_Sub_request_schema):
         return Return_Exception(db, e)
 
 
-def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema):
+def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status: sch.ValidStatus):
     try:
         Warn = []
         new_Record = []
         verified = 0
-        records = (db.query(dbm.Sub_Request_form)
-                   .filter(dbm.Sub_Request_form.status != "deleted")
-                   .filter(dbm.Sub_Request_form.sub_request_pk_id.in_(Form.sub_request_pk_id)).all())
+        records = db.query(dbm.Sub_Request_form)
+            .filter(dbm.Sub_Request_form.deleted == False, dbm.Sub_Request_form.status != "deleted", dbm.Sub_Request_form.status != status, dbm.Sub_Request_form.sub_request_pk_id.in_(Form.sub_request_pk_id)) \
+            .all()
 
         for record in records:
-            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id, session_teacher_fk_id=record.main_teacher_fk_id).filter(dbm.Session_form.status != "deleted")
+            old_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id, session_teacher_fk_id=record.main_teacher_fk_id, dbm.Session_form.deleted == False, dbm.Session_form.status != "deleted")
             if not old_session.first():
                 Warn.append(f'{record.session_fk_id}: Session Not Found.')
                 continue
             old_session_data = {k: v for k, v in old_session.first().__dict__.items() if k not in ["_sa_instance_state", "is_sub", "session_teacher_fk_id", "session_pk_id", "sub_Request"]}
             new_Record.append(dbm.Session_form(**old_session_data, sub_Request=record.sub_request_pk_id, is_sub=True, session_teacher_fk_id=record.sub_teacher_fk_id))  # type: ignore[call-arg]
             old_session.update({"deleted": True, "sub_Request": record.sub_request_pk_id})
-            record.status = Set_Status(db, "form", "approved")
+
+            record.status = Set_Status(db, "form", status)
             verified += 1
-            Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.status != "deleted").first()
+            
+            Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
             if Session_cancellation_record:
                 Session_cancellation_record.deleted = True
+
 
         db.add_all(new_Record)
         db.commit()
         if Warn:
-            return 200, f"{verified} Form Verified. {' | '.join(Warn)}"
-        return 200, f"{len(records)} Form Verified."
+            return 200, f"{verified} Form Update Status To {status}. {' | '.join(Warn)}"
+        return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)
