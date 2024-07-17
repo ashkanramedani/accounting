@@ -59,8 +59,9 @@ app = FastAPI(
 WHITELISTED_IPS: List[str] = []
 app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
 
-route_schema = save_route(routes)
-dump(route_schema, open(f'{Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
+if getenv('CREATE_ROUTE_SCHEMA'):
+    route_schema = save_route(routes)
+    dump(route_schema, open(f'{Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
 
 for route in routes:
     app.include_router(route)
