@@ -26,12 +26,9 @@ def get_fingerprint_scanner(db: Session, form_id):
 
 def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc", SortKey: str = None):
     try:
-
         return record_order_by(db, dbm.Fingerprint_Scanner_form, page, limit, order, SortKey)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_date):
@@ -46,7 +43,9 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
 
         Fingerprint_scanner_report: List[dbm.Fingerprint_Scanner_form] = db.query(dbm.Fingerprint_Scanner_form) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
-            .filter_by(EnNo=EnNo).filter(dbm.Fingerprint_Scanner_form.status != "deleted").all()
+            .filter_by(EnNo=EnNo).filter(dbm.Fingerprint_Scanner_form.status != "deleted") \
+            .order_by(dbm.Fingerprint_Scanner_form.create_date) \
+            .all()
 
         if not Fingerprint_scanner_report:
             return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
