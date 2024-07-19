@@ -351,7 +351,7 @@ class Course_form(Base, InstitutionsBase):
     course_code = Column(String, nullable=False)
 
     package_discount = Column(Float, nullable=False, default=0.0)
-    Course_price = Column(Float, nullable=False, default=0.0)
+    Course_price = Column(Float, nullable=False)
 
     tags = relationship("Tag_form", secondary=CourseTag, backref="course_tag")
     categories = relationship("Category_form", secondary=CourseCategory, backref="course_category")

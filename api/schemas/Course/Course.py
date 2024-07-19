@@ -22,6 +22,7 @@ class course(Base_form):
 
     course_code: str
     course_image: str = ""
+    Course_price: float
 
     tags: Optional[List[Update_Relation]] = []
     categories: Optional[List[Update_Relation]] = []
