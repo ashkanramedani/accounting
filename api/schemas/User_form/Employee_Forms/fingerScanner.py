@@ -2,12 +2,12 @@ from schemas.Base import *
 
 
 class fingerprint_scanner(Base_form):
-    Date: date | str
     Enter: time | str | None = TIME_NOW()
     Exit: time | str | None = TIME_NOW()
 
 
 class post_fingerprint_scanner_schema(fingerprint_scanner):
+    Date: date | str
     user_fk_id: UUID
 
 
