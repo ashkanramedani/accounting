@@ -203,8 +203,9 @@ def Extract_Unique_keyPair(error_message) -> str | Dict:
         return error_message
 
 
-def Return_Exception(db: Session, Error: Exception):
-    db.rollback()
+def Return_Exception(db: Session = None, Error: Exception = None):
+    if db:
+        db.rollback()
     if "duplicate key" in str(Error):
         logger.warning(f'{Error.__class__.__name__}: Record Already Exist: {Extract_Unique_keyPair(Error.args)}', depth=2)
         return 409, "Already Exist"
