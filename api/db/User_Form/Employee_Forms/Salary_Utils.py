@@ -1,8 +1,9 @@
 from datetime import timedelta, date, time, datetime
 from typing import List, Dict
 
-from db import models as dbm
+from db import models as dbm, Return_Exception
 from lib import *
+from lib.Date_Time import Debug
 
 Day_Schema: dict
 
@@ -39,16 +40,18 @@ def Sum_of_Activity(salary_rate, Day_activity: List) -> Dict[str, int]:
     }
     return rates
 
-
 def Date_constructor(Date_obj: str | date | datetime):
-    Date_obj = Fix_date(Date_obj)
-    if Date_obj.year > 2000:
-        M_Date = Date_obj
-        P_Date = to_persian(Date_obj.year, Date_obj.month, Date_obj.day)
-    else:
-        M_Date = to_international(Date_obj.year, Date_obj.month, Date_obj.day)
-        P_Date = Date_obj
-    return f'{M_Date}  {P_Date}'
+    try:
+        Date_obj = Fix_date(Date_obj)
+        if Date_obj.year > 2000:
+            M_Date = Date_obj
+            P_Date = to_persian(Date_obj.year, Date_obj.month, Date_obj.day, return_obj=False)
+        else:
+            M_Date = to_international(Date_obj.year, Date_obj.month, Date_obj.day, return_obj=False)
+            P_Date = Date_obj
+        return f'{M_Date}  {P_Date}'
+    except Exception as e:
+        return f"Date_constructor: {e}"
 
 
 def Create_Day_Schema(Date: str | date | datetime, Activities: Dict, message="Created") -> Dict:
@@ -85,7 +88,6 @@ def preprocess_report(report, Activities: Dict):
         Key = str(record.Date)
 
         if Key not in Days:
-            # Days[Key] = {"present_time": 0, "EnterExit": [], "IsValid": True, "msg": "Normal"}
             Days[Key] = Create_Day_Schema(record.Date, Activities)
 
         if not record.Enter or not record.Exit:
@@ -94,8 +96,8 @@ def preprocess_report(report, Activities: Dict):
 
         else:
             Days[Key]["present_time"] += time_gap(record.Enter, record.Exit)
-        Days[Key]["EnterExit"].extend([record.Enter, record.Exit])
 
+        Days[Key]["EnterExit"].extend([record.Enter, record.Exit])
         for Date in add_missing_day(report[i: i + 2]):
             Days[Date] = Create_Day_Schema(record.Date, Activities, message="Not Present")
     return Days
@@ -114,6 +116,7 @@ def add_missing_day(seq: list) -> List[str]:
 
 def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[Dict]:
     Days = []
+    
     for Date, Day_OBJ in preprocess_Days.items():
         if Day_OBJ["Accrued_Holiday"]:
             Day_OBJ["msg"] = "Accrued_Holiday"
@@ -233,9 +236,10 @@ def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_sca
     Generate the daily report Base on Employee fingerprint scanner report
     """
     try:
+        
         final_result = {}
         report_dicts = preprocess_report(Fingerprint_scanner_report, Activities)
-
+        
         # Split schedule and Fix schedule
         if Salary_Policy.Salary_Type == "Fixed":
             final_result["Days"]: List[dict] = Fixed_schedule(Salary_Policy, report_dicts)
@@ -246,9 +250,10 @@ def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_sca
         else:
             return 400, "Invalid Salary Type"
 
+        
         Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
         final_result |= Total_Activity
         final_result |= Calculate_earning(Salary_Policy, **Total_Activity)
         return 200, final_result
     except Exception as e:
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(Error=e)
