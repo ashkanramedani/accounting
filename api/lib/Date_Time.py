@@ -1,6 +1,9 @@
 import re
 from datetime import datetime, timedelta, time, date
+from functools import wraps
 from typing import List, Dict
+
+from .log import logger
 
 DAYS_OF_WEEK = {
     2: "Monday",
@@ -146,6 +149,14 @@ __all__ = [
 ]
 
 
+def Debug(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        
+        return result
+    return wrapper
+
 def Fix_time(time_obj: str | datetime | time):
     if isinstance(time_obj, time):
         return time_obj
@@ -204,7 +215,6 @@ def is_off_day(day: date | datetime) -> bool:
         return True
     return False
 
-
 def time_gap(start: time | str, end: time | str) -> int:
     """
     return time gap in minutes
@@ -239,6 +249,7 @@ def Separate_days_by_DayCap(start, end, Working_cap: int) -> List[Dict]:
 
 
 def Separate_days(start, end):
+
     start, end = Fix_datetime(start), Fix_datetime(end)
     daily = []
 
@@ -305,7 +316,6 @@ def to_international(year, month, day, return_obj=True) -> tuple | date:
         return date(year, month, day)
     return year, month, day
 
-
 def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
     """
     this function takes a year and month and returns two date object representing the start and end of the month
@@ -352,5 +362,5 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
     return Days
 
 if __name__ == '__main__':
-    print(to_persian(2024, 6, 21))
-    print(to_persian(2024, 7, 23))
+    print(generate_month_interval(1403, 4, include_nex_month_fist_day=True))
+    print(generate_month_interval(1403, 4, include_nex_month_fist_day=False))
