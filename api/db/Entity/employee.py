@@ -37,7 +37,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         db.refresh(OBJ)
 
         if roles:
-            logger.debug(f'2: {OBJ.__dict__ = }')
+            
             Warn = Add_role(db, roles, OBJ, OBJ.user_pk_id)
         return 201, sch.Base_record_add(Warning=' | '.join(Warn), id=Primary_key(OBJ))
 
