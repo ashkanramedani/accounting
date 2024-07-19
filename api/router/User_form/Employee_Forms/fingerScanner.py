@@ -90,7 +90,7 @@ async def search_all_fingerprint_scanner(db=Depends(get_db), page: sch.NonNegati
 
 @router.get("/report/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.FingerPrint_report)
 async def report_fingerprint_scanner(employee_id: int | UUID, year: int, month: int, db=Depends(get_db)):
-    start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
+    start, end = generate_month_interval(year, month, include_nex_month_fist_day=False)
     status_code, result = dbf.report_fingerprint_scanner(db, employee_id, start, end)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
