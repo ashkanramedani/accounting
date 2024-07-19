@@ -1,3 +1,5 @@
+import dbm
+
 from sqlalchemy import func
 
 from db.Course import course_report
@@ -11,9 +13,11 @@ def permissions(db: Session, User_ID):
             .filter_by(user_fk_id=User_ID).filter(dbm.Salary_Policy_form.status != "deleted") \
             .order_by(dbm.Salary_Policy_form.create_date.desc()) \
             .first()
+
         if not permission:
-            permission = {"remote_permission": False, "business_trip_permission": False}
-        return 200, permission
+            return 200, {"remote_permission": False, "business_trip_permission": False, "salary_Policy": False}
+
+        return 200, {**permission, "salary_Policy": True}
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -103,6 +107,9 @@ def Get_Report(db: Session, Salary_Policy: dbm.Salary_Policy_form, user_fk_id: U
 
 def employee_salary_report(db: Session, user_fk_id, year, month):
     try:
+        existing = db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
+        if existing:
+            return 200, existing
         Salary_Policy = db \
             .query(dbm.Salary_Policy_form) \
             .filter_by(user_fk_id=user_fk_id) \
@@ -114,6 +121,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
             return 400, "Bad Request: Target Employee has no salary record"
 
         start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
+
         EnNo = db.query(dbm.User_form).filter_by(user_pk_id=user_fk_id).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
