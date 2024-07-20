@@ -3,8 +3,6 @@ from datetime import datetime, timedelta, time, date
 from functools import wraps
 from typing import List, Dict
 
-from .log import logger
-
 DAYS_OF_WEEK = {
     2: "Monday",
     3: "Tuesday",
@@ -153,15 +151,17 @@ def Debug(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         result = func(*args, **kwargs)
-        
+
         return result
+
     return wrapper
+
 
 def Fix_time(time_obj: str | datetime | time):
     if isinstance(time_obj, time):
-        return time_obj
+        return time_obj.replace(second=0)
     if isinstance(time_obj, datetime):
-        return time_obj.time()
+        return time_obj.time().replace(second=0)
     time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
     if " " in time_obj:
         time_obj = time_pattern.match(time_obj)
@@ -215,14 +215,16 @@ def is_off_day(day: date | datetime) -> bool:
         return True
     return False
 
+
 def time_gap(start: time | str, end: time | str) -> int:
     """
     return time gap in minutes
     """
     start, end = Fix_time(start), Fix_time(end)
-    start = datetime.combine(datetime.today(), start)
-    end = datetime.combine(datetime.today(), end)
-    return abs(int((end - start).total_seconds() // 60))
+
+    if end == time.max.replace(second=0, microsecond=0):
+        return abs(1440 - start.hour * 60 + start.minute)
+    return abs((end.hour * 60 + end.minute) - start.hour * 60 + start.minute)
 
 
 def Separate_days_by_Time(start, end, day_starting_time: time, day_ending_time: time):
@@ -249,16 +251,18 @@ def Separate_days_by_DayCap(start, end, Working_cap: int) -> List[Dict]:
 
 
 def Separate_days(start, end):
+    def Day(D: date, S: time = time.min, E: time = time.max.replace(second=0, microsecond=0)) -> Dict:
+        return {"date": D, "start": S, "end": E, "duration": time_gap(S, E)}
 
     start, end = Fix_datetime(start), Fix_datetime(end)
-    daily = []
 
-    while start.date() < end.date():
-        daily.append({"date": start.date(), "start": start.time(), "end": time(23, 59, 59), "duration": time_gap(start.time(), time(23, 59, 59))})
-        start += timedelta(days=1)
-        start = datetime.combine(start.date(), time())
+    if start.date() == end.date():
+        return [Day(start.date(), start.time(), end.time())]
 
-    daily.append({"date": start.date(), "start": start.time(), "end": end.time(), "duration": time_gap(start.time(), time(23, 59, 59))})
+    daily = [Day(D=start.date(), S=start.time())]
+    daily.extend([Day(D=(start.date() + timedelta(days=i))) for i in range(1, (end.date() - start.date()).days)])
+    daily.append(Day(D=start.date(), E=end.time()))
+
     return daily
 
 
@@ -316,6 +320,7 @@ def to_international(year, month, day, return_obj=True) -> tuple | date:
         return date(year, month, day)
     return year, month, day
 
+
 def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
     """
     this function takes a year and month and returns two date object representing the start and end of the month
@@ -361,6 +366,7 @@ def generate_time_table(starting_date: date, ending_date: date, day_of_week=None
         starting_date += timedelta(days=1)
     return Days
 
+
 if __name__ == '__main__':
-    print(generate_month_interval(1403, 4, include_nex_month_fist_day=True))
-    print(generate_month_interval(1403, 4, include_nex_month_fist_day=False))
+    print(time.max)
+    print(time_gap(time.min, time.max))

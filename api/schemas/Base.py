@@ -180,12 +180,29 @@ class Entity(BaseModel):
     day_of_birth: Optional[date | str] = identity.date_this_century()
 
 
+class Entity_Response(BaseModel):
+    name: str
+    last_name: str
+    email: str
+
+    level: Optional[str] = ""
+    address: Optional[str] = None
+    id_card_number: Optional[str] = ""
+    mobile_number: Optional[str]
+    day_of_birth: Optional[date | str]
+
+    class Config:
+        orm_mode = True
+
+
 class Base_response(BaseModel):
     created: Optional[export_employee] = {}
     description: str | None = None
     status: ValidStatus = "submitted"
     priority: int
 
+    class Config:
+        orm_mode = True
 
 class Base_record_add(BaseModel):
     id: UUID | str | None

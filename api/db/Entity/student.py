@@ -15,7 +15,7 @@ def get_student(db: Session, student_id):
 
 def get_all_student(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.User_form, page, limit, order, SortKey, SortKey, is_employee=False)
+        return record_order_by(db, dbm.User_form, page, limit, order, SortKey, is_employee=False)
     except Exception as e:
         return Return_Exception(db, e)
 

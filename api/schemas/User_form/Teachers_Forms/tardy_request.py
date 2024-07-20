@@ -12,11 +12,11 @@ class post_teacher_tardy_reports_schema(teacher_tardy_reports):
 
 
 class update_teacher_tardy_reports_schema(teacher_tardy_reports):
-    teacher_tardy_reports_pk_id: UUID
+    teacher_tardy_report_pk_id: UUID
 
 
 class teacher_tardy_reports_response(Base_response):
-    teacher_tardy_reports_pk_id: UUID
+    teacher_tardy_report_pk_id: UUID
     delay: PositiveInt
     teacher: export_employee
     course: export_course

@@ -1,4 +1,7 @@
+from typing import Dict
+
 from ..Base import *
+
 
 class Student(Entity, Base_form):
     pass
@@ -12,14 +15,14 @@ class update_student_schema(Student):
     user_pk_id: UUID
 
 
-class student_response(BaseModel):
-    description: str | None = None
-    status: int = 0
+class student_response(Entity_Response):
+    deleted: bool
+    note: Optional[Dict]
     user_pk_id: UUID
-    name: str
-    last_name: str
-    level: str
-    day_of_birth: date | datetime | str
+    emergency_number: Optional[int | str]
+    # create_date: str
+    created_fk_by: UUID
+    nickname: Optional[str]
 
     class Config:
         orm_mode = True
