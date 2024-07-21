@@ -34,7 +34,6 @@ async def search_all_student(db=Depends(get_db), page: sch.NonNegativeInt = 1, l
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
-
 @router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_student(form_id, db=Depends(get_db)):
     status_code, result = dbf.delete_student(db, form_id)

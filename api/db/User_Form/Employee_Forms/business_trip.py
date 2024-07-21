@@ -58,10 +58,7 @@ def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema) ->
         db.commit()
         return 200, "Record has been Added"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
-
+        return Return_Exception(db, e)
 
 def delete_business_trip_form(db: Session, form_id):
     try:
