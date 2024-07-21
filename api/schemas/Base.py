@@ -167,6 +167,12 @@ class Base_form(BaseModel):
     can_update: Optional[bool] = True
     can_deleted: Optional[bool] = True
 
+class user_dropdown(BaseModel):
+    name: str
+    last_name: str
+    user_pk_id: UUID
+    class Config:
+        orm_mode = True
 
 class Entity(BaseModel):
     name: str = identity.first_name()
