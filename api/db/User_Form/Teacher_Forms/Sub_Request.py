@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session, joinedload
 import schemas as sch
 from db import models as dbm
 from db.Extra import *
-from lib import logger
 
 
 # Sub Request
@@ -11,14 +10,12 @@ def get_sub_request(db: Session, form_id):
     try:
         return 200, db.query(dbm.Sub_Request_form).filter_by(sub_request_pk_id=form_id).filter(dbm.Sub_Request_form.status != "deleted").first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_sub_request(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Sub_Request_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Sub_Request_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -37,9 +34,7 @@ def report_sub_request(db: Session, Form: sch.teacher_report):
 
         return 200, sum(row.delay for row in result)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
@@ -88,7 +83,7 @@ def update_sub_request(db: Session, Form: sch.update_Sub_request_schema):
         return Return_Exception(db, e)
 
 
-def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status: sch.ValidStatus):
+def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status: sch.CanUpdateStatus):
     try:
         Warn = []
         new_Record = []
@@ -117,11 +112,10 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
 
             record.status = Set_Status(db, "form", status)
             verified += 1
-            
+
             Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
             if Session_cancellation_record:
                 Session_cancellation_record.deleted = True
-
 
         db.add_all(new_Record)
         db.commit()

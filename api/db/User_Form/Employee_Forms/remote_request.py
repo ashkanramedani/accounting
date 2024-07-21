@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 import schemas as sch
 from db import models as dbm
 from db.Extra import *
-from lib import logger, Separate_days
+from lib import Separate_days
 
 
 # remote_request
@@ -11,18 +11,14 @@ def get_remote_request_form(db: Session, form_id):
     try:
         return 200, db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=form_id).filter(dbm.Remote_Request_form.status != "deleted").first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_remote_request_form(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Remote_Request_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Remote_Request_form, page, limit, order, SortKey)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def report_remote_request(db: Session, user_fk_id, start_date, end_date):
@@ -68,9 +64,7 @@ def delete_remote_request_form(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_remote_request_form(db: Session, Form: sch.update_remote_request_schema):
@@ -86,19 +80,17 @@ def update_remote_request_form(db: Session, Form: sch.update_remote_request_sche
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema, status: sch.ValidStatus):
+def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema, status: sch.CanUpdateStatus):
     try:
         Warn = []
         verified = 0
         records = db.query(dbm.Remote_Request_form) \
             .filter(dbm.Remote_Request_form.deleted == False, dbm.Remote_Request_form.status != "deleted", dbm.Remote_Request_form.status != status, dbm.Remote_Request_form.remote_request_pk_id.in_(Form.remote_request_id)) \
             .all()
-            
+
         for record in records:
             record.status = Set_Status(db, "form", status)
             verified += 1

@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 import schemas as sch
 from db import models as dbm
 from db.Extra import *
-from lib import logger
 
 
 def get_all_cluster(db: Session):
@@ -11,9 +10,7 @@ def get_all_cluster(db: Session):
         return 200, [dict(name)["cluster"] for name in db.query(dbm.Role_form.cluster).group_by(dbm.Role_form.cluster).all()]
         # return record_order_by(db,dbm.Tag_form, page, limit, order, SortKey)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 # role
@@ -27,7 +24,7 @@ def get_role(db: Session, role_id):
 
 def get_all_role(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Role_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Role_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 

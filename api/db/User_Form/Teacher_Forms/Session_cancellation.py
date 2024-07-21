@@ -15,7 +15,7 @@ def get_session_cancellation(db: Session, form_id):
 
 def get_all_session_cancellation(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Session_Cancellation_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Session_Cancellation_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 

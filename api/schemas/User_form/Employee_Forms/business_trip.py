@@ -1,5 +1,6 @@
 from schemas.Base import *
 
+
 class business_trip(Base_form):
     destination: str
 
@@ -14,8 +15,7 @@ class update_business_trip_schema(business_trip):
     business_trip_pk_id: UUID
     start: time | str
     end: time | str
-    date:  date | str
-
+    date: date | str
 
 
 class business_trip_response(Base_response):

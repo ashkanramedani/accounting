@@ -1,5 +1,6 @@
 from ..Base import *
 
+
 class Session(Base_form):
     session_teacher_fk_id: UUID
 

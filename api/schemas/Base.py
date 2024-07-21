@@ -22,11 +22,11 @@ def TIME_NOW(Off_Set: int = 0) -> time:
     return (datetime.now() + timedelta(hours=Off_Set)).time()
 
 
-
 class CanUpdateStatus(str, Enum):
     submitted = "submitted"
     approved = "approved"
     rejected = "rejected"
+
 
 class ValidStatus(str, Enum):
     submitted = "submitted"
@@ -35,13 +35,16 @@ class ValidStatus(str, Enum):
     rejected = "rejected"
     deleted = "deleted"
 
+
 class Sort_Order(str, Enum):
     asc = "asc"
     desc = "desc"
 
+
 class Leave_type(str, Enum):
     vacation = "vacation"
     medical = "medical"
+
 
 class job_title_Enum(str, Enum):
     teacher = "teacher"
@@ -167,12 +170,15 @@ class Base_form(BaseModel):
     can_update: Optional[bool] = True
     can_deleted: Optional[bool] = True
 
+
 class user_dropdown(BaseModel):
     name: str
     last_name: str
     user_pk_id: UUID
+
     class Config:
         orm_mode = True
+
 
 class Entity(BaseModel):
     name: str = identity.first_name()
@@ -209,6 +215,7 @@ class Base_response(BaseModel):
 
     class Config:
         orm_mode = True
+
 
 class Base_record_add(BaseModel):
     id: UUID | str | None

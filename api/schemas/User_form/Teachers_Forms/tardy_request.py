@@ -1,5 +1,6 @@
 from schemas.Base import *
 
+
 class teacher_tardy_reports(Base_form):
     teacher_fk_id: UUID
     course_fk_id: UUID

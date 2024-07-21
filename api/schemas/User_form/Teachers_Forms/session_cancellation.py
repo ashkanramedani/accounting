@@ -1,5 +1,6 @@
 from schemas.Base import *
 
+
 class Session_Cancellation(Base_form):
     session_fk_id: UUID
 

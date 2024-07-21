@@ -16,7 +16,7 @@ def get_leave_request(db: Session, form_id):
 
 def get_all_leave_request(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Leave_Request_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Leave_Request_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -123,7 +123,7 @@ def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema, sta
         records = db.query(dbm.Leave_Request_form) \
             .filter(dbm.Leave_Request_form.deleted == False, dbm.Leave_Request_form.status != "deleted", dbm.Leave_Request_form.status != status, dbm.Leave_Request_form.leave_request_pk_id.in_(Form.leave_request_id)) \
             .all()
-            
+
         for record in records:
             record.status = Set_Status(db, "form", status)
             verified += 1

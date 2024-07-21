@@ -19,9 +19,7 @@ def get_fingerprint_scanner(db: Session, form_id):
     try:
         return 200, db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id).filter(dbm.Fingerprint_Scanner_form.status != "deleted").first()
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: sch.Sort_Order = "desc", SortKey: str = None):
@@ -156,9 +154,7 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: p
         return 200, f"{Processed} from {total} record added"
 
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def delete_fingerprint_scanner(db: Session, form_id):
@@ -171,9 +167,7 @@ def delete_fingerprint_scanner(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner_schema):
@@ -197,6 +191,4 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)

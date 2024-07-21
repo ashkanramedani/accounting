@@ -15,6 +15,7 @@ class Sub_Course(Base_form):
 
     sub_course_name: str
 
+
 class post_sub_course_schema(Sub_Course):
     course_fk_id: UUID
 

@@ -10,7 +10,7 @@ from ..Extra import *
 
 def get_all_survey(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Survey_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Survey_form, page, limit, order, SortKey)
 
     except Exception as e:
         return Return_Exception(db, e)

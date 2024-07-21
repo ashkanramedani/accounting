@@ -1,7 +1,5 @@
 import dbm
 
-from sqlalchemy import func
-
 from db.Course import course_report
 from db.User_Form import *
 

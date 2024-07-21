@@ -2,7 +2,7 @@ from sqlalchemy.orm import Session
 
 import schemas as sch
 from db import models as dbm
-from lib import generate_month_interval, time_gap
+from lib import time_gap
 from ..Extra import *
 
 
@@ -16,7 +16,7 @@ def get_SalaryPolicy(db: Session, form_id):
 
 def get_all_SalaryPolicy(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Salary_Policy_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Salary_Policy_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
 

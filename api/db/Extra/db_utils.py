@@ -1,10 +1,9 @@
 # from faker import Faker
-import json
 import re
 from typing import List, Dict, Tuple, Any
 from uuid import UUID
 
-from sqlalchemy import text, asc, desc, or_, String, Integer, Float, Boolean
+from sqlalchemy import desc
 from sqlalchemy.orm import Session, Query
 
 import db.models as dbm
@@ -139,7 +138,6 @@ def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.Pos
         #                 search_conditions.append(column.is_(False))
         #     query = query.filter(or_(*search_conditions))
 
-
         # Sort functionality
         if SortKey:
             if SortKey not in table.__table__.columns.keys():
@@ -159,6 +157,7 @@ def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.Pos
 
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def count(db, field: str):
     field = field.lower().replace("_form", "").replace("_", "")

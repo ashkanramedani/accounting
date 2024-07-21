@@ -32,7 +32,6 @@ DEFAULT_USER = [
     }
 ]
 
-
 DEFAULT_ROLES = [
     {"name": "Manager", "cluster": "Manager"},
     {"name": "Unknown", "cluster": "Users"},
@@ -40,7 +39,6 @@ DEFAULT_ROLES = [
     {"name": "Support", "cluster": "Supports"},
     {"name": "Teacher", "cluster": "Teachers"}
 ]
-
 
 DEFAULT_STATUS = {
     "form": [
@@ -56,6 +54,7 @@ DEFAULT_STATUS = {
 
 DEFAULT_LANGUAGE = ["Not_Assigned", "English", "Spanish", "Italian", "French", "German", "Chinese", "Japanese", "Korean", "Portuguese", "Russian"]
 DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
+
 
 def setUp_admin(db: Session):
     try:

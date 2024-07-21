@@ -10,6 +10,7 @@ class post_leave_request_schema(leave_request):
     start_date: datetime | str = DATETIME_NOW()
     end_date: datetime | str = DATETIME_NOW(1)
 
+
 class update_leave_request_schema(leave_request):
     leave_request_pk_id: UUID
     start: time | str

@@ -18,11 +18,9 @@ def get_business_trip_form(db: Session, form_id):
 
 def get_all_business_trip_form(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Business_Trip_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Business_Trip_form, page, limit, order, SortKey)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def report_business_trip(db: Session, user_fk_id, start_date, end_date):
@@ -60,6 +58,7 @@ def post_business_trip_form(db: Session, Form: sch.post_business_trip_schema) ->
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def delete_business_trip_form(db: Session, form_id):
     try:
         record = db.query(dbm.Business_Trip_form).filter_by(business_trip_pk_id=form_id).filter(dbm.Business_Trip_form.status != "deleted").first()
@@ -70,9 +69,7 @@ def delete_business_trip_form(db: Session, form_id):
         db.commit()
         return 200, "Deleted"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema):
@@ -88,18 +85,16 @@ def update_business_trip_form(db: Session, Form: sch.update_business_trip_schema
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
-def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema, status: sch.ValidStatus):
+def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema, status: sch.CanUpdateStatus):
     try:
         Warn = []
         verified = 0
         records = db.query(dbm.Business_Trip_form) \
             .filter(dbm.Business_Trip_form.deleted == False, dbm.Business_Trip_form.status != "deleted", dbm.Business_Trip_form.status != status, dbm.Business_Trip_form.business_trip_pk_id.in_(Form.business_trip_id)) \
-            .all()     
+            .all()
 
         for record in records:
             record.status = Set_Status(db, "form", status)

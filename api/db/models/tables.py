@@ -511,6 +511,7 @@ class Fingerprint_Scanner_form(Base, Base_form):
                 [(cls.Enter.isnot(None) & cls.Exit.isnot(None), True)],
                 else_=False)
 
+
 class Fingerprint_Scanner_backup_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner_backup"
     __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
@@ -666,6 +667,7 @@ class Salary_Policy_form(Base, Base_form):
 
     employee = relationship("User_form", foreign_keys=[user_fk_id])
     created = relationship("User_form", foreign_keys=[created_fk_by])
+
     def summery(self) -> dict:
         def Validate(key: str):
             for invalid_key in ["_fk_", "_pk_", "_sa_instance_"]:
@@ -680,7 +682,6 @@ class Employee_Salary_form(Base, Base_form):
     __tablename__ = "employee_salary"
     __table_args__ = (UniqueConstraint('user_fk_id', 'year', 'month'),)
     employee_salary_pk_id = create_Unique_ID()
-
 
     user_fk_id = create_forenKey("User_form")
 
@@ -713,6 +714,7 @@ class Employee_Salary_form(Base, Base_form):
     Days = Column(JSON, nullable=False)
 
     employee = relationship("User_form", foreign_keys=[user_fk_id])
+
 
 # ------------ Necessary for "Course" ------------
 class Tag_form(Base, Base_form):

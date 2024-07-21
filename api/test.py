@@ -1,6 +1,7 @@
+from sqlalchemy import create_engine
 from sqlalchemy import or_, Float, Integer, String, Boolean
-from sqlalchemy import create_engine, MetaData, Table
 from sqlalchemy.orm import sessionmaker
+
 try:
     from os import getenv
     from time import sleep
@@ -23,9 +24,7 @@ try:
 except (ImportError, ModuleNotFoundError):
     raise Exception('Requirement Not Satisfied: some_module is missing')
 
-from router import routes
-from lib import logger
-from db import models, save_route, setUp_admin, engine, SessionLocal, Create_Redis_URL
+from db import models
 
 config = load(open("configs/config.json"))
 
@@ -70,8 +69,7 @@ def search_keyword_in_table(table_name, keyword):
     query = session.query(table).filter(or_(*like_conditions))
 
     print(query)
-    results = query.all()
-    return results
+    return query.all()
 
 
 results = search_keyword_in_table("user", "Ad")

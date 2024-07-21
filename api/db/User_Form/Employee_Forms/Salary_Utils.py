@@ -3,7 +3,6 @@ from typing import List, Dict
 
 from db import models as dbm, Return_Exception
 from lib import *
-from lib.Date_Time import Debug
 
 Day_Schema: dict
 
@@ -39,6 +38,7 @@ def Sum_of_Activity(salary_rate, Day_activity: List) -> Dict[str, int]:
         "off_Day_work_time": min(sum(day["off_Day_Overtime"] for day in Day_activity), salary_rate.off_day_cap)
     }
     return rates
+
 
 def Date_constructor(Date_obj: str | date | datetime):
     try:
@@ -116,7 +116,7 @@ def add_missing_day(seq: list) -> List[str]:
 
 def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[Dict]:
     Days = []
-    
+
     for Date, Day_OBJ in preprocess_Days.items():
         if Day_OBJ["Accrued_Holiday"]:
             Day_OBJ["msg"] = "Accrued_Holiday"
@@ -236,10 +236,10 @@ def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_sca
     Generate the daily report Base on Employee fingerprint scanner report
     """
     try:
-        
+
         final_result = {}
         report_dicts = preprocess_report(Fingerprint_scanner_report, Activities)
-        
+
         # Split schedule and Fix schedule
         if Salary_Policy.Salary_Type == "Fixed":
             final_result["Days"]: List[dict] = Fixed_schedule(Salary_Policy, report_dicts)
@@ -250,7 +250,6 @@ def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_sca
         else:
             return 400, "Invalid Salary Type"
 
-        
         Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
         final_result |= Total_Activity
         final_result |= Calculate_earning(Salary_Policy, **Total_Activity)

@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta
 from typing import List
 from uuid import UUID
 
@@ -6,7 +6,6 @@ from sqlalchemy.orm import Session
 
 import schemas as sch
 from db import models as dbm
-from lib import logger
 from ..Extra import *
 
 
@@ -23,18 +22,14 @@ def get_session(db: Session, session_id):
 
         return 200, session
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_all_session(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db,dbm.Session_form, page, limit, order, SortKey)
+        return record_order_by(db, dbm.Session_form, page, limit, order, SortKey)
     except Exception as e:
-        logger.error(e)
-        db.rollback()
-        return 500, f'{e.__class__.__name__}: {e.args}'
+        return Return_Exception(db, e)
 
 
 def get_sub_party(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):

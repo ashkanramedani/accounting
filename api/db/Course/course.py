@@ -47,7 +47,7 @@ def get_all_course(db: Session, course_type: str | None, page: sch.NonNegativeIn
             else:
                 status, courses = 200, []
         else:
-            status, courses = record_order_by(db,dbm.Course_form, page, limit, order, SortKey)
+            status, courses = record_order_by(db, dbm.Course_form, page, limit, order, SortKey)
         if status != 200:
             return 500, courses
         Courses = []
