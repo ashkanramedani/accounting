@@ -56,9 +56,9 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
             .first() \
             .Duration
 
-
         if not Report:
             return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
+
         return 200, {
             "Fingerprint_scanner_report": Report,
             "Invalid": Queary.filter_by(valid=False).count(),
