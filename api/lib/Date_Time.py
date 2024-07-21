@@ -222,7 +222,7 @@ def time_gap(start: time | str, end: time | str) -> int:
     """
     start, end = Fix_time(start), Fix_time(end)
 
-    if end == time.max.replace(second=0, microsecond=0):
+    if end == time.max:
         return abs(1440 - start.hour * 60 + start.minute)
     return abs((end.hour * 60 + end.minute) - start.hour * 60 + start.minute)
 
@@ -251,7 +251,7 @@ def Separate_days_by_DayCap(start, end, Working_cap: int) -> List[Dict]:
 
 
 def Separate_days(start, end):
-    def Day(D: date, S: time = time.min, E: time = time.max.replace(second=0, microsecond=0)) -> Dict:
+    def Day(D: date, S: time = time.min, E: time = time.max) -> Dict:
         return {"date": D, "start": S, "end": E, "duration": time_gap(S, E)}
 
     start, end = Fix_datetime(start), Fix_datetime(end)
