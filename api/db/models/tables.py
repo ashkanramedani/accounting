@@ -335,7 +335,7 @@ class User_form(Base, Base_form):
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
 class Course_form(Base, InstitutionsBase):
     __tablename__ = "course"
-    __args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
+    __table_args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
 
     course_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
@@ -363,7 +363,7 @@ class Course_form(Base, InstitutionsBase):
 
 class Sub_Course_form(Base, InstitutionsBase):
     __tablename__ = "sub_course"
-    __args__ = (UniqueConstraint('sub_course_name', 'course_fk_id'),)
+    __table_args__ = (UniqueConstraint('sub_course_name', 'course_fk_id'),)
 
     sub_course_pk_id = create_Unique_ID()
     course_fk_id = create_forenKey("Course_form")
@@ -386,7 +386,7 @@ class Sub_Course_form(Base, InstitutionsBase):
 
 class Session_form(Base, InstitutionsBase):
     __tablename__ = "session"
-    __args__ = (UniqueConstraint('session_date', 'session_starting_time', 'sub_course_fk_id'),)
+    __table_args__ = (UniqueConstraint('session_date', 'session_starting_time', 'sub_course_fk_id'),)
 
     session_pk_id = create_Unique_ID()
 
@@ -416,7 +416,7 @@ class Session_form(Base, InstitutionsBase):
 
 class Leave_Request_form(Base, Base_form):
     __tablename__ = "leave_request"
-    __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
+    __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     leave_request_pk_id = create_Unique_ID()
 
@@ -436,7 +436,7 @@ class Leave_Request_form(Base, Base_form):
 
 class Business_Trip_form(Base, Base_form):
     __tablename__ = "business_trip"
-    __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
+    __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     business_trip_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
@@ -455,7 +455,7 @@ class Business_Trip_form(Base, Base_form):
 
 class Remote_Request_form(Base, Base_form):
     __tablename__ = "remote_request"
-    __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
+    __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     remote_request_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
@@ -474,7 +474,7 @@ class Remote_Request_form(Base, Base_form):
 
 class Payment_Method_form(Base, Base_form):
     __tablename__ = "payment_method"
-    __args__ = (UniqueConstraint('user_fk_id', 'shaba', 'card_number'),)
+    __table_args__ = (UniqueConstraint('user_fk_id', 'shaba', 'card_number'),)
 
     payment_method_pk_id = create_Unique_ID()
     user_fk_id = create_forenKey("User_form")
@@ -533,7 +533,7 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
 
 class Teacher_Tardy_report_form(Base, Base_form):
     __tablename__ = "teacher_tardy_report"
-    __args__ = (UniqueConstraint('teacher_fk_id', 'sub_course_fk_id', 'delay'),)
+    __table_args__ = (UniqueConstraint('teacher_fk_id', 'sub_course_fk_id', 'delay'),)
 
     teacher_tardy_report_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
@@ -550,7 +550,7 @@ class Teacher_Tardy_report_form(Base, Base_form):
 
 class Teachers_Report_form(Base, Base_form):
     __tablename__ = "teachers_report"
-    # __args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
+    # __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     teachers_report_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
@@ -680,6 +680,8 @@ class Employee_Salary_form(Base, Base_form):
     __tablename__ = "employee_salary"
     __table_args__ = (UniqueConstraint('user_fk_id', 'year', 'month'),)
     employee_salary_pk_id = create_Unique_ID()
+
+    created_fk_by = create_forenKey("User_form")
     user_fk_id = create_forenKey("User_form")
 
     year = Column(Integer, nullable=False)
@@ -710,8 +712,8 @@ class Employee_Salary_form(Base, Base_form):
     Salary_Policy = Column(JSON, nullable=False)
     Days = Column(JSON, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[user_fk_id])
-
+    created = relationship("User_form", foreign_keys=[created_fk_by])
+    employee = relationship("User_form", foreign_keys=[user_fk_id])
 
 # ------------ Necessary for "Course" ------------
 class Tag_form(Base, Base_form):
