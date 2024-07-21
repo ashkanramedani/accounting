@@ -21,21 +21,13 @@ def get_all_SalaryPolicy(db: Session, page: sch.NonNegativeInt, limit: sch.Posit
         return Return_Exception(db, e)
 
 
-
-"""
-"Fixed"
-"Split"
-"Hourly"
-"""
-
-
 def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
     try:
         if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
             return 400, "Bad Request: Employee Does Not Exist"
 
         data = Form.dict()
-
+        # "Fixed" "Split" "Hourly"
         if Form.Salary_Type == "Fixed":
             start, end = data["day_starting_time"], data["day_ending_time"]
             if not start or not end:

@@ -620,6 +620,7 @@ class Role_form(Base, Base_form):
 class Salary_Policy_form(Base, Base_form):
     __tablename__ = "salary_policy"
     salary_policy_pk_id = create_Unique_ID()
+
     created_fk_by = create_forenKey("User_form")
     user_fk_id = create_forenKey("User_form")
 
@@ -663,9 +664,8 @@ class Salary_Policy_form(Base, Base_form):
     business_trip_factor = Column(Float, nullable=False)
     business_trip_cap = Column(Integer, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
-
+    created = relationship("User_form", foreign_keys=[created_fk_by])
     def summery(self) -> dict:
         def Validate(key: str):
             for invalid_key in ["_fk_", "_pk_", "_sa_instance_"]:
@@ -681,7 +681,7 @@ class Employee_Salary_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'year', 'month'),)
     employee_salary_pk_id = create_Unique_ID()
 
-    created_fk_by = create_forenKey("User_form")
+
     user_fk_id = create_forenKey("User_form")
 
     year = Column(Integer, nullable=False)
@@ -712,7 +712,6 @@ class Employee_Salary_form(Base, Base_form):
     Salary_Policy = Column(JSON, nullable=False)
     Days = Column(JSON, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
 # ------------ Necessary for "Course" ------------
