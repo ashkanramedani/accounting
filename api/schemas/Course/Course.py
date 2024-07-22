@@ -8,8 +8,8 @@ from ..Entity import *
 class course(Base_form):
     course_name: str = f'Course_{uuid4().hex[0:8]}'
 
-    starting_date: date = datetime.now().date()
-    ending_date: date = (datetime.now() + timedelta(days=30)).date()
+    starting_date: date | str = datetime.now().date()
+    ending_date: date | str = (datetime.now() + timedelta(days=30)).date()
     course_capacity: int = random.randint(10, 30)
 
     course_language: UUID = "7f371975-e397-4fc5-b719-75e3978fc547"
