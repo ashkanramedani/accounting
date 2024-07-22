@@ -1,3 +1,5 @@
+from typing import Dict
+
 from .Base import *
 
 
@@ -85,6 +87,44 @@ class employee_report(BaseModel):
     end_date: datetime | str
 
 
+
+class employee_salary_Response(Base_response):
+    employee_salary_pk_id: UUID
+    employee: Employee_salary
+    fingerprint_scanner_user_id: int
+
+    present_time: int
+    Regular_hours: int
+    Overtime: int
+    Undertime: int
+    off_Day_Overtime: int
+
+    delay: int
+    haste: int
+    attendance_points: int
+
+    Regular_earning: float
+    Overtime_earning: float
+    Off_Day_earning: float
+
+    Undertime_deductions: float
+    insurance_deductions: float
+    tax_deductions: float
+
+    remote: int
+    vacation_leave: int
+    medical_leave: int
+    business_trip: int
+
+    remote_earning: float
+    vacation_leave_earning: int
+    medical_leave_earning: float
+    business_trip_earning: float
+
+    total_earning: float
+    total_deduction: float
+    total_income: float
+
 class teacher_salary_report(BaseModel):
     course_id: UUID
     Cancellation_factor: float
@@ -102,6 +142,7 @@ class Input(BaseModel):
 
 class Return_Salary(export_employee):
     Does_Have_Salary_Record: bool
+    Does_Have_Salary_Policy: bool
     role: Optional[Any] = None
 
     class Config:
