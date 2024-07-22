@@ -184,7 +184,7 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         # EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         # data["EnNo"] = EnNo
         s, e = data["Enter"], data["Exit"]
-        data["duration"] = 0 if s == e else time_gap(Fix_time(s), Fix_time(s))
+        data["duration"] = 0 if s == e else time_gap(Fix_time(s), Fix_time(e))
 
         record.update(data, synchronize_session=False)
 
