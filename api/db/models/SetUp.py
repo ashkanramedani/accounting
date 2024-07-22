@@ -58,10 +58,9 @@ DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
 
 def setUp_admin(db: Session):
     try:
-        Existing_users = [user[0] for user in db.query(dbm.User_form.name).filter(dbm.User_form.name.in_([user["name"] for user in DEFAULT_USER])).all()]
-
+        Existing_users = [user[0] for user in db.query(dbm.User_form.email).filter(dbm.User_form.email.in_([user["email"] for user in DEFAULT_USER])).all()]
         for User in DEFAULT_USER:
-            if User["name"] in Existing_users:
+            if User["email"] in Existing_users:
                 continue
             data = {"user_pk_id": User["ID"], "fingerprint_scanner_user_id": User["EnNo"], "name": User["name"], "last_name": User["lastname"], "email": User["email"], "status": "approved"}
 
