@@ -3,9 +3,10 @@ from typing import List, Dict
 
 from db import models as dbm, Return_Exception
 from lib import *
+from lib import _io
 
 Day_Schema: dict
-
+INF: int = 3000
 
 def calculate_duration(time_1: time | None, time_2: time | None):
     if time_1 is None or time_2 is None or time_1 == time_2:
@@ -13,30 +14,55 @@ def calculate_duration(time_1: time | None, time_2: time | None):
     return time_gap(time_1, time_2)
 
 
-def Calculate_earning(salary_rate: dbm.Salary_Policy_form, **Total_activity):
-    if not Total_activity:
-        return {"Regular_earning": 0, "Overtime_earning": 0, "Undertime_earning": 0, "Off_Day_earning": 0}
-
-    rates = {
-        "Regular_earning": salary_rate.Base_salary * salary_rate.Regular_hours_factor * Total_activity["regular_work_time"],
-        "Overtime_earning": salary_rate.Base_salary * salary_rate.overtime_factor * Total_activity["overtime"],
-        "Undertime_earning": salary_rate.Base_salary * salary_rate.undertime_factor * Total_activity["undertime"],
-        "Off_Day_earning": salary_rate.Base_salary * salary_rate.off_day_factor * Total_activity["off_Day_work_time"]
+def Calculate_income(salary_rate: dbm.Salary_Policy_form, **Total_activity):
+    Base_Salary = salary_rate.Base_salary
+    earning = {
+        "Regular_earning": Base_Salary * salary_rate.Regular_hours_factor * Total_activity.get("Regular_hours", 0),
+        "Overtime_earning": Base_Salary * salary_rate.overtime_factor * Total_activity.get("overtime", 0),
+        "Off_Day_earning": Base_Salary * salary_rate.off_day_factor * Total_activity.get("off_Day_work_time", 0),
+        "remote_earning": Base_Salary * salary_rate.remote_factor * Total_activity.get("remote", 0),
+        "vacation_leave_earning": Base_Salary * salary_rate.vacation_leave_factor * Total_activity.get("vacation_leave", 0),
+        "medical_leave_earning": Base_Salary * salary_rate.medical_leave_factor * Total_activity.get("medical_leave", 0),
+        "business_trip_earning": Base_Salary * salary_rate.business_trip_factor * Total_activity.get("business_trip", 0),
     }
-    return rates
+    deduction = {
+        "Undertime_deductions": salary_rate.Base_salary * salary_rate.undertime_factor * Total_activity.get("undertime", 0),
+        "insurance_deductions": 0,
+        "tax_deductions": 0
+    }
+
+    total_earning = sum(earning.values())
+    total_deduction = abs(sum(deduction.values()))
+    return {**earning, **deduction,
+            "total_earning": total_earning,
+            "total_deduction": total_deduction,
+            "total_income": total_earning - total_deduction}
 
 
 def Sum_of_Activity(salary_rate, Day_activity: List) -> Dict[str, int]:
-    if not Day_activity:
-        return {"present_time": 0, "regular_work_time": 0, "overtime": 0, "undertime": 0, "off_Day_work_time": 0}
+    caps = {
+        "overtime": salary_rate.overtime_cap,
+        "off_Day_work_time": salary_rate.off_day_cap
+    }
 
     rates = {
-        "present_time": sum(day["present_time"] for day in Day_activity),
-        "regular_work_time": sum(day["Regular_hours"] for day in Day_activity),
-        "overtime": min(sum(day["Overtime"] for day in Day_activity), salary_rate.overtime_cap),
-        "undertime": sum(day["Undertime"] for day in Day_activity),
-        "off_Day_work_time": min(sum(day["off_Day_Overtime"] for day in Day_activity), salary_rate.off_day_cap)
+        key: min(sum(day[key] for day in Day_activity), caps.get(key, INF))
+        for key in [
+            "present_time",
+            "Regular_hours",
+            "Overtime",
+            "Undertime",
+            "off_Day_Overtime",
+            "delay",
+            "haste",
+            "attendance_points",
+            "remote",
+            "vacation_leave",
+            "medical_leave",
+            "business_trip"
+        ]
     }
+
     return rates
 
 
@@ -76,6 +102,7 @@ def Create_Day_Schema(Date: str | date | datetime, Activities: Dict, message="Cr
         "msg": message}
 
 
+# @_io()
 def preprocess_report(report, Activities: Dict):
     """
     This Function Preprocesses the Report on each Enter/Exit.
@@ -169,6 +196,8 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
 
             Day_OBJ["Regular_hours"] = min(Day_OBJ["present_time"] - Day_OBJ["Overtime"], EMP_Salary.Regular_hours_cap)
 
+        Day_OBJ["Undertime"] = max(0, Day_OBJ["Undertime"] - (Day_OBJ["remote"] + Day_OBJ["vacation_leave"] + Day_OBJ["medical_leave"] + Day_OBJ["business_trip"]))
+
         Day_OBJ["EnterExit"] = ' '.join([str(t) for t in Day_OBJ.pop("EnterExit", [])])
         Day_OBJ["msg"] = "Finished"
         Days.append(Day_OBJ)
@@ -202,6 +231,8 @@ def Split_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
             Day_OBJ["Regular_hours"] = min(EMP_Salary.Regular_hours_cap, Day_OBJ["present_time"])
 
             Day_OBJ["msg"] = "Finished"
+
+        Day_OBJ["Undertime"] = max(0, Day_OBJ["Undertime"] - (Day_OBJ["remote"] + Day_OBJ["vacation_leave"] + Day_OBJ["medical_leave"] + Day_OBJ["business_trip"]))
         Days.append(Day_OBJ)
     return Days
 
@@ -226,6 +257,7 @@ def Hourly_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List
                 Day_OBJ["attendance_points"] -= 1
             Day_OBJ["Regular_hours"] = min(EMP_Salary.Regular_hours_cap, Day_OBJ["present_time"])
 
+        Day_OBJ["Undertime"] = max(0, Day_OBJ["Undertime"] - (Day_OBJ["remote"] + Day_OBJ["vacation_leave"] + Day_OBJ["medical_leave"] + Day_OBJ["business_trip"]))
         Day_OBJ["msg"] = "Finished"
         Days.append(Day_OBJ)
     return Days
@@ -238,6 +270,7 @@ def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_sca
     try:
 
         final_result = {}
+        Days_Report = []
         report_dicts = preprocess_report(Fingerprint_scanner_report, Activities)
 
         # Split schedule and Fix schedule
@@ -252,7 +285,8 @@ def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_sca
 
         Total_Activity = Sum_of_Activity(Salary_Policy, final_result["Days"])
         final_result |= Total_Activity
-        final_result |= Calculate_earning(Salary_Policy, **Total_Activity)
+        final_result |= Calculate_income(Salary_Policy, **Total_Activity)
+
         return 200, final_result
     except Exception as e:
         return Return_Exception(Error=e)
