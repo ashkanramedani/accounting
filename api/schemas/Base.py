@@ -234,3 +234,10 @@ class Route_Result(BaseModel):
     route: str
     status: int
     body: Any
+
+
+class Employee_salary(Entity):
+    user_pk_id: UUID
+
+    class Config:
+        orm_mode = True
