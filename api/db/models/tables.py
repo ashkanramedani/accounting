@@ -690,26 +690,37 @@ class Employee_Salary_form(Base, Base_form):
     fingerprint_scanner_user_id = Column(Integer, nullable=True)
 
     present_time = Column(Integer, nullable=False)
-    regular_work_time = Column(Integer, nullable=False)
-    overtime = Column(Integer, nullable=False)
-    undertime = Column(Integer, nullable=False)
-    off_Day_work_time = Column(Integer, nullable=False)
+    Regular_hours = Column(Integer, nullable=False)
+    Overtime = Column(Integer, nullable=False)
+    Undertime = Column(Integer, nullable=False)
+    off_Day_Overtime = Column(Integer, nullable=False)
+
+    delay = Column(Integer, nullable=False)
+    haste = Column(Integer, nullable=False)
+    attendance_points = Column(Integer, nullable=False, default=0)
 
     Regular_earning = Column(Float, nullable=False)
     Overtime_earning = Column(Float, nullable=False)
-    Undertime_earning = Column(Float, nullable=False)
     Off_Day_earning = Column(Float, nullable=False)
 
+    Undertime_deductions = Column(Float, nullable=False)
+    insurance_deductions = Column(Float, nullable=False)
+    tax_deductions = Column(Float, nullable=False)
+
     remote = Column(Integer, nullable=False)
-    remote_earning = Column(Float, nullable=False)
     vacation_leave = Column(Integer, nullable=False)
-    vacation_leave_earning = Column(Integer, nullable=False)
     medical_leave = Column(Integer, nullable=False)
-    medical_leave_earning = Column(Float, nullable=False)
     business_trip = Column(Integer, nullable=False)
+
+    remote_earning = Column(Float, nullable=False)
+    vacation_leave_earning = Column(Integer, nullable=False)
+    medical_leave_earning = Column(Float, nullable=False)
     business_trip_earning = Column(Float, nullable=False)
 
     total_earning = Column(Float, nullable=False)
+    total_deduction = Column(Float, nullable=False)
+    total_income = Column(Float, nullable=False)
+
     Salary_Policy = Column(JSON, nullable=False)
     Days = Column(JSON, nullable=False)
 
