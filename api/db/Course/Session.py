@@ -58,7 +58,7 @@ def post_session(db: Session, Form: sch.post_session_schema):
             return 400, "SubCourse is Full"
 
         can_accept_sub = datetime.combine(data["session_date"], data["session_starting_time"]) - timedelta(hours=data.pop("sub_request_threshold"))
-        data["days_of_week"] = data["session_date"].weekday() + 2
+        data["days_of_week"] = (data["session_date"].weekday() + 2) % 7
         data["session_ending_time"] = (datetime.combine(datetime.today(), Fix_time(data["session_starting_time"])) + timedelta(minutes=data["session_duration"])).time()
 
         OBJ = dbm.Session_form(**data, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
