@@ -252,7 +252,7 @@ def Separate_days_by_DayCap(start, end, Working_cap: int) -> List[Dict]:
 
 def Separate_days(start, end):
     def Day(D: date, S: time = time.min, E: time = time.max) -> Dict:
-        return {"date": D, "start": S, "end": E, "duration": time_gap(S, E)}
+        return {"date": D, "start": S, "end": E.replace(second=0, microsecond=0), "duration": time_gap(S, E)}
 
     start, end = Fix_datetime(start), Fix_datetime(end)
 
