@@ -45,10 +45,18 @@ def employee_salary(db: Session, year, month):  # NC: 003
 
         Salary_Result = [obj[0] for obj in salaries]
 
+        Salry_policies = db \
+            .query(dbm.Salary_Policy_form.user_fk_id) \
+            .filter(dbm.Salary_Policy_form.status != "deleted", dbm.Salary_Policy_form.user_fk_id.in_([user.user_pk_id for user in users_with_fingerprints])) \
+            .all()
+
+        Salary_Policy_Result = [obj[0] for obj in Salry_policies]
+
         Result = []
         for user in users_with_fingerprints:
             data = user.__dict__
             data["Does_Have_Salary_Record"] = user.fingerprint_scanner_user_id in Salary_Result
+            data["Does_Have_Salary_Policy"] = user.user_pk_id in Salary_Policy_Result
             Result.append(data)
 
         return 200, Result
@@ -141,7 +149,33 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
         days_metadata = report_summary.pop('Days') if "Days" in report_summary else {"detail": "No data for Day Report"}
 
-        # Remote Request
+        salary_obj = dbm.Employee_Salary_form(user_fk_id=user_fk_id, year=year, month=month, fingerprint_scanner_user_id=EnNo, Days=days_metadata, Salary_Policy=Salary_Policy.summery(), **report_summary)  # type: ignore[call-arg]
+        db.add(salary_obj)
+        db.commit()
+        db.refresh(salary_obj)
+
+        return 200, salary_obj
+    except Exception as e:
+        return Return_Exception(db, e)
+
+
+def get_employee_salary(db: Session, user_fk_id, year, month):
+    try:
+        return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
+    except Exception as e:
+        return Return_Exception(db, e)
+
+
+def teacher_salary_report(db: Session, Form: sch.teacher_salary_report):
+    try:
+        status, report_summary = course_report(db, Form.course_id, Form.Cancellation_factor)
+        return status, report_summary
+    except Exception as e:
+        return Return_Exception(db, e)
+
+
+"""  Previus algorithm
+# Remote Request
         if Salary_Policy.remote_permission:
             status, Remote_Request_report = report_remote_request(db, user_fk_id, start, end)
             if status != 200:
@@ -178,26 +212,4 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
         report_summary["total_earning"] = sum(report_summary[key] for key in [key for key in report_summary.keys() if "earning" in key])
 
-        salary_obj = dbm.Employee_Salary_form(user_fk_id=user_fk_id, year=year, month=month, fingerprint_scanner_user_id=EnNo, Days=days_metadata, Salary_Policy=Salary_Policy.summery(), **report_summary)  # type: ignore[call-arg]
-        db.add(salary_obj)
-        db.commit()
-        db.refresh(salary_obj)
-
-        return 200, salary_obj
-    except Exception as e:
-        return Return_Exception(db, e)
-
-
-def get_employee_salary(db: Session, user_fk_id, year, month):
-    try:
-        return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
-    except Exception as e:
-        return Return_Exception(db, e)
-
-
-def teacher_salary_report(db: Session, Form: sch.teacher_salary_report):
-    try:
-        status, report_summary = course_report(db, Form.course_id, Form.Cancellation_factor)
-        return status, report_summary
-    except Exception as e:
-        return Return_Exception(db, e)
+"""
