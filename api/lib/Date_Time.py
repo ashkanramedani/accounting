@@ -224,7 +224,7 @@ def time_gap(start: time | str, end: time | str) -> int:
 
     if end == time.max:
         return abs(1440 - start.hour * 60 + start.minute)
-    return abs((end.hour * 60 + end.minute) - start.hour * 60 + start.minute)
+    return abs((end.hour * 60 + end.minute) - (start.hour * 60 + start.minute))
 
 
 def Separate_days_by_Time(start, end, day_starting_time: time, day_ending_time: time):
