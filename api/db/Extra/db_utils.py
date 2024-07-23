@@ -82,20 +82,16 @@ def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Up
 def Add_role(db, roles: List[sch.Update_Relation | Dict], UserOBJ, UserID):
     Errors = []
     role_ID: List[UUID] = [ID.role_pk_id for ID in db.query(dbm.Role_form).filter(dbm.Role_form.status != "deleted").all()]
-    Roles = []
-    for role in roles:
-        if not isinstance(role, dict):
-            Roles.append(role.__dict__)
-        else:
-            Roles.append(role)
+
+    Roles = [role.__dict__ if not isinstance(role, dict) else role for role in roles]
 
     for r_id in Roles:
         if existing_role := r_id["old_id"]:
-            role_obj = db.query(dbm.UserRole).filter_by(role_fk_id=existing_role, user_fk_id=UserID).filter(dbm.UserRole.status != "deleted")
+            role_obj = db.query(dbm.UserRole).filter_by(role_fk_id=existing_role, user_fk_id=UserID, deleted=False)
             if not role_obj.first():
                 Errors.append(f'Employee does not have this role {existing_role}')
             else:
-                role_obj.update({"deleted": True}, synchronize_session=False)
+                role_obj.delete()
         if new_role := r_id["new_id"]:
             if new_role not in role_ID:
                 Errors.append(f'this role does not exist {new_role}')

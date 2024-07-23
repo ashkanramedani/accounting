@@ -223,8 +223,8 @@ class Base_record_add(BaseModel):
 
 
 class Update_Relation(BaseModel):
-    old_id: UUID | str
-    new_id: UUID | str
+    old_id: UUID | str = ""
+    new_id: UUID | str = ""
 
     class Config:
         orm_mode = True
