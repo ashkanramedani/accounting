@@ -777,7 +777,7 @@ class Status_form(Base, Base_form):  # NC: 002
     status_name = Column(String, index=True, nullable=False)
     status_cluster = Column(String, index=True, nullable=False)
 
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_forenKey("User_form", nullable=True)
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
 
