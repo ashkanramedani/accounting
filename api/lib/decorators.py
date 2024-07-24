@@ -10,9 +10,9 @@ def _io():
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            file_path = f"TmpFiles/{func.__name__}.json"
+            file_path = f"./TmpFiles/{func.__name__}.json"
             data = {'inputs': {'args': args, 'kwargs': kwargs}, 'output': func(*args, **kwargs)}
-            if os.path.exists("TmpFiles"):
+            if os.path.exists("./TmpFiles"):
                 json.dump(data, open(file_path, 'w'), indent=4, cls=JSONEncoder)
 
             return data['output']
