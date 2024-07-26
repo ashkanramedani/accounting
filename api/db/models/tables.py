@@ -1,8 +1,11 @@
+import json
+
 from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time, case
 from sqlalchemy.dialects.postgresql import JSONB, JSON
-from sqlalchemy.sql import expression, func
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.sql import expression, func
 
+from lib import JSONEncoder
 from .Func import *
 from .database import Base
 
@@ -10,6 +13,14 @@ from .database import Base
 #    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 metadata_obj = MetaData()
+
+
+def Remove_Base_Data(OBJ) -> str:
+    for i in ["created_fk_by", "_sa_instance_state", "priority", "visible", "deleted", "can_update", "can_deleted", "create_date", "update_date", "delete_date", "expire_date", "status", "description", "note"]:
+        if i in OBJ:
+            OBJ.pop(i)
+    return json.dumps(OBJ, cls=JSONEncoder).replace('\\"', "").replace('"\\', "")
+
 
 
 class Base_form:
@@ -78,7 +89,7 @@ class EducationalInstitutions(Base, Base_form):
         return f'<EducationalInstitution "{self.educational_institution_pk_id}">'
 
 
-# class Authentications(Base, Base_form):
+#class Authentications(Base, Base_form):
 #     __tablename__ = "tbl_authentications"
 #     authentication_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
 #     username = Column(String, index=True, unique=True, nullable=False)
@@ -87,6 +98,7 @@ class EducationalInstitutions(Base, Base_form):
 #
 #     def __repr__(self):
 #         return f'<Authentication "{self.username}">'
+
 
 class Users(Base, Base_form):
     __tablename__ = "tbl_users"
@@ -331,8 +343,12 @@ class User_form(Base, Base_form):
     roles = relationship('Role_form', secondary=UserRole, backref='user_role')
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
+
 class Course_form(Base, InstitutionsBase):
     __tablename__ = "course"
     __table_args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
@@ -360,6 +376,9 @@ class Course_form(Base, InstitutionsBase):
     language = relationship("Language_form", foreign_keys=[course_language])
     type = relationship("Course_Type_form", foreign_keys=[course_type])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Sub_Course_form(Base, InstitutionsBase):
     __tablename__ = "sub_course"
@@ -382,6 +401,9 @@ class Sub_Course_form(Base, InstitutionsBase):
     created = relationship("User_form", foreign_keys=[created_fk_by])
     teacher = relationship("User_form", foreign_keys=[sub_course_teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Session_form(Base, InstitutionsBase):
@@ -410,9 +432,13 @@ class Session_form(Base, InstitutionsBase):
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
     teacher = relationship("User_form", foreign_keys=[session_teacher_fk_id])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 # ======================== Forms =============================
 # ++++++++++++++++++++++++++ EmployeeBase +++++++++++++++++++++++++++
+
 
 class Leave_Request_form(Base, Base_form):
     __tablename__ = "leave_request"
@@ -433,6 +459,9 @@ class Leave_Request_form(Base, Base_form):
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Business_Trip_form(Base, Base_form):
     __tablename__ = "business_trip"
@@ -451,6 +480,9 @@ class Business_Trip_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Remote_Request_form(Base, Base_form):
@@ -471,6 +503,9 @@ class Remote_Request_form(Base, Base_form):
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Payment_Method_form(Base, Base_form):
     __tablename__ = "payment_method"
@@ -485,6 +520,9 @@ class Payment_Method_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Fingerprint_Scanner_form(Base, Base_form):
@@ -511,6 +549,9 @@ class Fingerprint_Scanner_form(Base, Base_form):
                 [(cls.Enter.isnot(None) & cls.Exit.isnot(None), True)],
                 else_=False)
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Fingerprint_Scanner_backup_form(Base, Base_form):
     __tablename__ = "fingerprint_scanner_backup"
@@ -529,8 +570,11 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
+    # ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++
 
-# ++++++++++++++++++++++++++ TeacherBase +++++++++++++++++++++++++++
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Teacher_Tardy_report_form(Base, Base_form):
     __tablename__ = "teacher_tardy_report"
@@ -547,6 +591,9 @@ class Teacher_Tardy_report_form(Base, Base_form):
     teacher = relationship("User_form", foreign_keys=[teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Teachers_Report_form(Base, Base_form):
@@ -565,8 +612,11 @@ class Teachers_Report_form(Base, Base_form):
     ends_at = Column(DateTime)
     teacher_sheet_score = Column(Float, nullable=True)
 
+    # ++++++++++++++++++++++++++ Survey +++++++++++++++++++++++++++
 
-# ++++++++++++++++++++++++++ Survey +++++++++++++++++++++++++++
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Survey_form(Base, Base_form):
     __tablename__ = "survey"
@@ -579,6 +629,9 @@ class Survey_form(Base, Base_form):
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
     questions = relationship('Question_form', secondary=survey_questions, backref='surveys')
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Question_form(Base, InstitutionsBase):
     __tablename__ = "question"
@@ -588,6 +641,9 @@ class Question_form(Base, InstitutionsBase):
     language = Column(String, index=True)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Response_form(Base, Base_form):
@@ -602,8 +658,11 @@ class Response_form(Base, Base_form):
     question = relationship("Question_form", foreign_keys=[question_fk_id])
     survey = relationship("Survey_form", foreign_keys=[survey_fk_id])
 
+    # Roles
 
-# Roles
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Role_form(Base, Base_form):
     __tablename__ = "role"
@@ -616,8 +675,11 @@ class Role_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
+    # ++++++++++++++++++++++++++ Salary_Policy_form +++++++++++++++++++++++++++
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
-# ++++++++++++++++++++++++++ Salary_Policy_form +++++++++++++++++++++++++++
+
 class Salary_Policy_form(Base, Base_form):
     __tablename__ = "salary_policy"
     salary_policy_pk_id = create_Unique_ID()
@@ -677,6 +739,9 @@ class Salary_Policy_form(Base, Base_form):
 
         return {k: str(v) for k, v in self.__dict__.items() if Validate(k)}
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Employee_Salary_form(Base, Base_form):
     __tablename__ = "employee_salary"
@@ -726,8 +791,11 @@ class Employee_Salary_form(Base, Base_form):
 
     employee = relationship("User_form", foreign_keys=[user_fk_id])
 
+    # ------------ Necessary for "Course" ------------
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
-# ------------ Necessary for "Course" ------------
+
 class Tag_form(Base, Base_form):
     __tablename__ = "tag"
 
@@ -736,6 +804,9 @@ class Tag_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Category_form(Base, Base_form):
@@ -747,6 +818,9 @@ class Category_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Language_form(Base, Base_form):
     __tablename__ = "language"
@@ -757,6 +831,9 @@ class Language_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Course_Type_form(Base, Base_form):
     __tablename__ = "course_type"
@@ -766,6 +843,9 @@ class Course_Type_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Status_form(Base, Base_form):  # NC: 002
@@ -779,6 +859,9 @@ class Status_form(Base, Base_form):  # NC: 002
 
     created_fk_by = create_forenKey("User_form", nullable=True)
     created = relationship("User_form", foreign_keys=[created_fk_by])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
 
 
 class Sub_Request_form(Base, Base_form):
@@ -795,6 +878,9 @@ class Sub_Request_form(Base, Base_form):
     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
 
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 
 class Session_Cancellation_form(Base, Base_form):
     __tablename__ = "session_cancellation"
@@ -804,7 +890,10 @@ class Session_Cancellation_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
     session_fk_id = create_forenKey("Session_form")
 
-# class Reassign_Instructor_form(Base, Base_form):
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
+#class Reassign_Instructor_form(Base, Base_form):
 #     __tablename__ = "reassign_instructor"
 #
 #     reassign_instructor_pk_id = create_Unique_ID()
