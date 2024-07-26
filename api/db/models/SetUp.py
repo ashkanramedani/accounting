@@ -1,118 +1,171 @@
-import uuid
-
+import re
+from uuid import UUID
+from typing import Dict, List
 from sqlalchemy.orm import Session
 
-from db import models as dbm
 from lib import logger
+from db import models as dbm
 
-DEFAULT_USER = [
-    {
-        "name": "Admin",
-        "lastname": "Admin",
-        "email": "Admin@Admin.com",
-        "ID": "308e2744-833c-4b94-8e27-44833c2b940f",
-        "EnNo": 1000,
-        "role": {"name": "Administrator", "cluster": "Administrator"}
-    },
-    {
-        "name": "Test",
-        "lastname": "Teacher",
-        "email": "Test@Teacher.com",
-        "ID": "00000001-48f9-0af0-6d35-70f541d47bce",
-        "EnNo": 1001,
-        "role": {"name": "Teacher", "cluster": "Teachers"}
-    },
-    {
-        "name": "Test",
-        "lastname": "Employee",
-        "email": "Test@Employee.com",
-        "ID": "00000002-7ec4-4b39-bc77-bd7ec4db3927",
-        "EnNo": 1002,
-        "role": {"name": "Unknown", "cluster": "Users"}
-    }
+
+def Extract_Unique_keyPair(error_message) -> str | Dict:
+    error_message = str(error_message)
+    match = re.search(r'Key \((.*?)\)=\((.*?)\)', error_message)
+    if match:
+        return ', '.join([f'{k} -> {v}' for k, v in zip(match.group(1).split(', '), match.group(2).split(', '))]).replace('"', '')
+    else:
+        return error_message
+
+
+def Exception_handler(db, Error, Cluster: str = "Admin_Setup") -> None:
+    db.rollback()
+    if "duplicate key" in Error.__repr__() or "UniqueViolation" in Error.__repr__():
+        logger.warning(f'[ {Cluster} / 409 ]{Error.__class__.__name__}: Record Already Exist: {Extract_Unique_keyPair(Error.args)}', depth=2)
+        return
+    logger.error(f'[ {Cluster} / 500 ]{Error.__class__.__name__}: {Error.__repr__()}', depth=2)
+
+
+ADMIN: Dict = {"user_pk_id": "00000000-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": None, "name": "Admin", "last_name": "Admin", "email": "Admin@Admin.com"}
+
+DEFAULT_USER: List[Dict] = [
+    {"user_pk_id": "00000001-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": 1000, "name": "Test", "last_name": "Teacher", "email": "Test@Teacher.com"},
+    {"user_pk_id": "00000002-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": 1001, "name": "Test", "last_name": "Employee", "email": "Test@Employee.com"}
 ]
 
-DEFAULT_ROLES = [
-    {"name": "Manager", "cluster": "Manager"},
-    {"name": "Unknown", "cluster": "Users"},
-    {"name": "Student", "cluster": "Users"},
-    {"name": "Support", "cluster": "Supports"},
-    {"name": "Teacher", "cluster": "Teachers"}
+DEFAULT_ROLE: List[Dict] = [
+    {"role_pk_id": "00000000-0001-4b94-8e27-44833c2b940f", "status": "approved", "name": "Administrator", "cluster": "Administrator"},
+    {"role_pk_id": "00000001-0001-4b94-8e27-44833c2b940f", "status": "approved", "name": "Teacher", "cluster": "Teachers"},
+    {"role_pk_id": "00000002-0001-4b94-8e27-44833c2b940f", "status": "approved", "name": "Student", "cluster": "Students"},
+    {"role_pk_id": "00000003-0001-4b94-8e27-44833c2b940f", "status": "approved", "name": "Unknown", "cluster": "Users"}
 ]
 
-DEFAULT_STATUS = {
-    "form": [
-        "submitted",
-        "approved",
-        "rejected",
-        "pending",
-        "cancelled",
-        "deleted"
-    ],
-    "payment": []
-}
+USER_ROLE: List[Dict] = [
+    {"user_fk_id": "00000000-0000-4b94-8e27-44833c2b940f", "status": "approved", "role_fk_id": "00000000-0001-4b94-8e27-44833c2b940f"},
+    {"user_fk_id": "00000001-0000-4b94-8e27-44833c2b940f", "status": "approved", "role_fk_id": "00000001-0001-4b94-8e27-44833c2b940f"},
+    {"user_fk_id": "00000002-0000-4b94-8e27-44833c2b940f", "status": "approved", "role_fk_id": "00000003-0001-4b94-8e27-44833c2b940f"}
+]
 
-DEFAULT_LANGUAGE = ["Not_Assigned", "English", "Spanish", "Italian", "French", "German", "Chinese", "Japanese", "Korean", "Portuguese", "Russian"]
-DEFAULT_COURSE_TYPE = ["Not_Assigned", "Online", "Offline", "OnSite"]
+DEFAULT_STATUS: List[Dict] = [
+    {"status_pk_id": "00000000-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "submitted"},
+    {"status_pk_id": "00000001-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "approved"},
+    {"status_pk_id": "00000002-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "rejected"},
+    {"status_pk_id": "00000003-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "pending"},
+    {"status_pk_id": "00000004-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "cancelled"},
+    {"status_pk_id": "00000005-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "deleted"},
+]
+
+DEFAULT_LANGUAGE: List[Dict] = [
+    {"language_pk_id": "00000000-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "English"},
+    {"language_pk_id": "00000001-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "Spanish"},
+    {"language_pk_id": "00000002-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "Italian"},
+    {"language_pk_id": "00000003-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "French"},
+    {"language_pk_id": "00000004-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "German"},
+    {"language_pk_id": "00000005-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "Chinese"},
+    {"language_pk_id": "00000006-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "Japanese"},
+    {"language_pk_id": "00000007-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "Korean"},
+    {"language_pk_id": "00000008-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "Portuguese"},
+    {"language_pk_id": "00000009-0003-4b94-8e27-44833c2b940f", "status": "approved", "language_name": "Russian"}
+]
+
+DEFAULT_COURSE_TYPE: List[Dict] = [
+    {"course_type_pk_id": "00000000-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "online"},
+    {"course_type_pk_id": "00000001-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "Offline"},
+    {"course_type_pk_id": "00000002-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "OnSite"}
+]
 
 
-def setUp_admin(db: Session):
+def Create_Admin(db: Session) -> UUID:
     try:
-        Existing_users = [user[0] for user in db.query(dbm.User_form.email).filter(dbm.User_form.email.in_([user["email"] for user in DEFAULT_USER])).all()]
-        for User in DEFAULT_USER:
-            if User["email"] in Existing_users:
-                continue
-            data = {"user_pk_id": User["ID"], "fingerprint_scanner_user_id": User["EnNo"], "name": User["name"], "last_name": User["lastname"], "email": User["email"], "status": "approved"}
-
-            admin_user = dbm.User_form(**data)  # type: ignore[call-arg]
-            db.add(admin_user)
+        Admin_OBJ = db.query(dbm.User_form).filter_by(name="Admin", last_name="Admin").first()
+        if not Admin_OBJ:
+            Admin_OBJ = dbm.User_form(**ADMIN)  # type: ignore[call-arg]
+            db.add(Admin_OBJ)
             db.commit()
-            db.refresh(admin_user)
-
-            admin_user.created_fk_by = "308e2744-833c-4b94-8e27-44833c2b940f"
-            db.add(admin_user)
-            db.commit()
-            db.refresh(admin_user)
-
-            emp = admin_user
-
-            admin_role = db.query(dbm.Role_form).filter_by(name=User["role"]["name"]).first()
-            if not admin_role:
-                admin_role = dbm.Role_form(created_fk_by=emp.user_pk_id, name=User["role"]["name"], cluster=User["role"]["cluster"], status="approved")  # type: ignore[call-arg]
-                db.add(admin_role)
-                db.commit()
-
-            emp.roles.append(admin_role)
-
-        ADMIN_ID = db.query(dbm.User_form).filter_by(name="Admin").first().user_pk_id
-        existing_role_names = [role.name for role in db.query(dbm.Role_form).filter(dbm.Role_form.name.in_([r["name"] for r in DEFAULT_ROLES])).all()]
-        new_OBJ = []
-
-        for role_data in DEFAULT_ROLES:
-            if role_data["name"] not in existing_role_names:
-                OBJ = dbm.Role_form(created_fk_by=ADMIN_ID, status="approved", **role_data)  # type: ignore[call-arg]
-                new_OBJ.append(OBJ)
-
-        existing_role_names = [language.language_name for language in db.query(dbm.Language_form).filter(dbm.Language_form.language_name.in_(DEFAULT_LANGUAGE)).all()]
-        for language in DEFAULT_LANGUAGE:
-            if language not in existing_role_names:
-                UID = "7f371975-e397-4fc5-b719-75e3978fc547" if language == "Not_Assigned" else uuid.uuid4()
-                OBJ = dbm.Language_form(language_pk_id=UID, created_fk_by=ADMIN_ID, language_name=language, status="approved")  # type: ignore[call-arg]
-                new_OBJ.append(OBJ)
-
-        existing_course_type = [course_type.course_type_name for course_type in db.query(dbm.Course_Type_form).filter(dbm.Course_Type_form.course_type_name.in_(DEFAULT_COURSE_TYPE)).all()]
-        for course_type in DEFAULT_COURSE_TYPE:
-            if course_type not in existing_course_type:
-                UID = "7f485938-f59f-401f-8859-38f59f201f3e" if course_type == "Not_Assigned" else uuid.uuid4()
-                OBJ = dbm.Course_Type_form(course_type_pk_id=UID, created_fk_by=ADMIN_ID, course_type_name=course_type, status="approved")  # type: ignore[call-arg]
-                new_OBJ.append(OBJ)
-
-        if new_OBJ:
-            db.bulk_save_objects(new_OBJ)
-            db.commit()
-
-        logger.info('Admin Setup Finished')
+            db.refresh(Admin_OBJ)
+        return Admin_OBJ.user_pk_id
     except Exception as e:
-        db.rollback()
-        logger.error("Admin Setup Failed")
-        logger.error(f'{e.__class__.__name__}: {e.args}')
+        Exception_handler(db, e, "Create_Admin")
+
+
+def Default_user(db: Session, ADIMN_ID: UUID):
+    try:
+        ExistingUsers = [str(user.user_pk_id) for user in db.query(dbm.User_form).filter(dbm.User_form.user_pk_id.in_([User["user_pk_id"] for User in DEFAULT_USER])).all()]
+        New_Users = []
+        for User in DEFAULT_USER:
+            if User["user_pk_id"] not in ExistingUsers:
+                New_Users.append(dbm.User_form(created_fk_by=ADIMN_ID, **User))  # type: ignore[call-arg]
+        db.add_all(New_Users)
+        db.commit()
+    except Exception as Error:
+        Exception_handler(db, Error, "Default_user")
+
+
+def Default_Role(db: Session, ADIMN_ID: UUID):
+    try:
+        Existing = [str(role.role_pk_id) for role in db.query(dbm.Role_form).filter(dbm.Role_form.role_pk_id.in_([r["role_pk_id"] for r in DEFAULT_ROLE])).all()]
+        New_Roles = []
+
+        for Role in DEFAULT_ROLE:
+            if Role["role_pk_id"] not in Existing:
+                New_Roles.append(dbm.Role_form(created_fk_by=ADIMN_ID, **Role))  # type: ignore[call-arg]
+        db.add_all(New_Roles)
+        db.commit()
+    except Exception as Error:
+        Exception_handler(db, Error, "Default_role")
+
+
+def Assign_Roles(db: Session):
+    try:
+        for record in USER_ROLE:
+            User = db.query(dbm.User_form).filter_by(user_pk_id=record["user_fk_id"]).first()
+            if Role := db.query(dbm.Role_form).filter_by(role_pk_id=record["role_fk_id"]).filter(dbm.Role_form.status != "deleted").first():
+                User.roles.append(Role)
+    except Exception as Error:
+        Exception_handler(db, Error, "Assign_Roles")
+
+
+def Default_Language(db: Session, ADIMN_ID: UUID):
+    try:
+        Existing = [str(record.language_pk_id) for record in db.query(dbm.Language_form).filter(dbm.Language_form.language_pk_id.in_([l["language_pk_id"] for l in DEFAULT_LANGUAGE])).all()]
+        New_Languages = []
+
+        for Language in DEFAULT_LANGUAGE:
+            if Language["language_pk_id"] not in Existing:
+                New_Languages.append(dbm.Language_form(created_fk_by=ADIMN_ID, **Language))  # type: ignore[call-arg]
+        db.add_all(New_Languages)
+        db.commit()
+    except Exception as Error:
+        Exception_handler(db, Error, "Default_language")
+
+
+def Default_Course_type(db: Session, ADIMN_ID: UUID):
+    try:
+        Existing = [str(record.course_type_pk_id) for record in db.query(dbm.Course_Type_form).filter(dbm.Course_Type_form.course_type_pk_id.in_([c["course_type_pk_id"] for c in DEFAULT_COURSE_TYPE])).all()]
+        New_Course_Type = []
+
+        for course_type in DEFAULT_COURSE_TYPE:
+            if course_type["course_type_pk_id"] not in Existing:
+                New_Course_Type.append(dbm.Course_Type_form(created_fk_by=ADIMN_ID, **course_type))  # type: ignore[call-arg]
+        db.add_all(New_Course_Type)
+        db.commit()
+    except Exception as Error:
+        Exception_handler(db, Error, "Default_new_course_type")
+
+
+def SetUp(db: Session):
+    logger.info('Admin Setup Started')
+    ADMIN_ID = Create_Admin(db)
+    Default_user(db, ADMIN_ID)
+    Default_Role(db, ADMIN_ID)
+    Assign_Roles(db)
+    Default_Language(db, ADMIN_ID)
+    Default_Course_type(db, ADMIN_ID)
+    logger.info('Admin Setup Finished')
+
+"""
+Create_Admin:85 - [ Create_Admin / 500 ]InvalidRequestError: InvalidRequestError('Entity namespace for "user" has no property "last_name"')
+Default_user:98 - [ Default_user / 500 ]KeyError: KeyError('ID')
+Default_Role:112 - [ Default_role / 500 ]IntegrityError: IntegrityError('(psycopg2.errors.NotNullViolation) null value in column "created_fk_by" of relation "role" violates not-null constraint\nDETAIL:  Failing row contains (5, t, f, t, t, 2024-07-25 07:11:15.628665+00, null, null, null, approved, , {}, 00000000-0001-4b94-8e27-44833c2b940f, null, Administrator, Administrator).\n')
+Assign_Roles:122 - [ Assign_Roles / 500 ]InvalidRequestError: InvalidRequestError('Entity namespace for "user" has no property "user_fk_id"')
+Default_Language:136 - [ Default_language / 500 ]IntegrityError: IntegrityError('(psycopg2.errors.NotNullViolation) null value in column "created_fk_by" of relation "language" violates not-null constraint\nDETAIL:  Failing row contains (5, t, f, t, t, 2024-07-25 07:11:15.840421+00, null, null, null, approved, , {}, 00000000-0003-4b94-8e27-44833c2b940f, English, null).\n')
+Default_Course_type:150 - [ Default_new_course_type / 500 ]KeyError: KeyError('language_pk_id')
+"""
