@@ -3,10 +3,11 @@ from typing import List, Dict
 
 from db import models as dbm, Return_Exception
 from lib import *
-from lib import _io
+from lib import DEV_io
 
 Day_Schema: dict
-INF: int = 3000
+INF: int = 50000
+
 
 def calculate_duration(time_1: time | None, time_2: time | None):
     if time_1 is None or time_2 is None or time_1 == time_2:
@@ -47,20 +48,7 @@ def Sum_of_Activity(salary_rate, Day_activity: List) -> Dict[str, int]:
 
     rates = {
         key: min(sum(day[key] for day in Day_activity), caps.get(key, INF))
-        for key in [
-            "present_time",
-            "Regular_hours",
-            "Overtime",
-            "Undertime",
-            "off_Day_Overtime",
-            "delay",
-            "haste",
-            "attendance_points",
-            "remote",
-            "vacation_leave",
-            "medical_leave",
-            "business_trip"
-        ]
+        for key in ["present_time", "Regular_hours", "Overtime", "Undertime", "off_Day_Overtime", "delay", "haste", "attendance_points", "remote", "vacation_leave", "medical_leave", "business_trip"]
     }
 
     return rates
@@ -102,7 +90,7 @@ def Create_Day_Schema(Date: str | date | datetime, Activities: Dict, message="Cr
         "msg": message}
 
 
-# @_io()
+@DEV_io()
 def preprocess_report(report, Activities: Dict):
     """
     This Function Preprocesses the Report on each Enter/Exit.
@@ -115,7 +103,7 @@ def preprocess_report(report, Activities: Dict):
         Key = str(record.Date)
 
         if Key not in Days:
-            Days[Key] = Create_Day_Schema(record.Date, Activities)
+            Days[Key] = Create_Day_Schema(Key, Activities)
 
         if not record.Enter or not record.Exit:
             Days[Key]["IsValid"] = False
@@ -125,22 +113,15 @@ def preprocess_report(report, Activities: Dict):
             Days[Key]["present_time"] += time_gap(record.Enter, record.Exit)
 
         Days[Key]["EnterExit"].extend([record.Enter, record.Exit])
-        for Date in add_missing_day(report[i: i + 2]):
-            Days[Date] = Create_Day_Schema(record.Date, Activities, message="Not Present")
+        missing_seq = report[i: i + 2]
+        if len(missing_seq) == 2:
+            start_date = missing_seq[0].Date
+            for Date in [str(start_date + timedelta(days=i)) for i in range(1, (missing_seq[1].Date - start_date).days)]:
+                Days[Date] = Create_Day_Schema(Date, Activities, message="Not Present")
     return Days
 
 
-def add_missing_day(seq: list) -> List[str]:
-    if len(seq) < 2:
-        return []
-    missing_day = []
-    currentDay: date = seq[0].Date
-    while currentDay < seq[1].Date:
-        currentDay += timedelta(days=1)
-        missing_day.append(str(currentDay))
-    return missing_day[:-1]
-
-
+@DEV_io()
 def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[Dict]:
     Days = []
 
@@ -158,7 +139,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
         if Day_OBJ["Holiday"]:
             if EMP_Salary.off_day_permission:
                 Day_OBJ["off_Day_Overtime"] = Day_OBJ["present_time"]
-                Day_OBJ["Regular_hours"] = max(0, EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"])
+                # Day_OBJ["Regular_hours"] = max(0, EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"])
 
 
         # Not Present on working day
@@ -168,33 +149,52 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
         # Present on working day
         else:
             EnterExit = Day_OBJ["EnterExit"]
+            WorkingHours, NonWorkingHours = [], []
+            END = EMP_Salary.day_ending_time
             EnterExit.sort()
 
-            first_enter, last_exit = max(EnterExit[0], EMP_Salary.day_starting_time), EnterExit[-1]
+            for H in EnterExit:
+                (WorkingHours if H <= END else NonWorkingHours).append(H)
+
+            if len(WorkingHours) % 2:
+                WorkingHours.append(END)
+            if len(NonWorkingHours) % 2:
+                NonWorkingHours.append(END)
+
+            WorkingHours.sort()
+            NonWorkingHours.sort()
+
+
+
+            WorkingHours[0] = max(WorkingHours[0], EMP_Salary.day_starting_time)
 
             # UnderTime
-            tmp_undertime = time_gap(EMP_Salary.day_starting_time, first_enter)
+            tmp_undertime = time_gap(EMP_Salary.day_starting_time, WorkingHours[0])
+            Day_OBJ["delay"] = tmp_undertime
             if tmp_undertime > EMP_Salary.undertime_threshold:
                 Day_OBJ["Undertime"] = tmp_undertime
-                Day_OBJ["delay"] = tmp_undertime
 
-            if last_exit < EMP_Salary.day_ending_time:
-                tmp_undertime = time_gap(last_exit, EMP_Salary.day_ending_time)
+            if WorkingHours[-1] < EMP_Salary.day_ending_time:
+                tmp_undertime = time_gap(WorkingHours[-1], EMP_Salary.day_ending_time)
+                Day_OBJ["haste"] = tmp_undertime
                 if tmp_undertime > EMP_Salary.undertime_threshold:
                     Day_OBJ["Undertime"] += tmp_undertime
-                    Day_OBJ["haste"] = tmp_undertime
-            else:
-                tmp_overtime = time_gap(EMP_Salary.day_ending_time, last_exit)
-                if tmp_overtime > EMP_Salary.overtime_threshold:
-                    Day_OBJ["Overtime"] = tmp_overtime
+
 
             # check if more than one Enter and Exit is in day
-            EnterExit = EnterExit[1:-1]
-            if EnterExit:
-                for Enter, Exit in zip(EnterExit[1:2], EnterExit[:2]):
-                    Day_OBJ["Undertime"] += time_gap(Enter, Exit)
+            if WorkingHours:
+                for Enter, Exit in zip(WorkingHours[:-1], WorkingHours[1:]):
+                    Day_OBJ["Regular_hours"] += time_gap(Enter, Exit)
 
-            Day_OBJ["Regular_hours"] = min(Day_OBJ["present_time"] - Day_OBJ["Overtime"], EMP_Salary.Regular_hours_cap)
+            Day_OBJ["Undertime"] = EMP_Salary.Regular_hours_cap - Day_OBJ["Regular_hours"]
+
+            possible_overtime = 0
+            if NonWorkingHours:
+                for Enter, Exit in zip(NonWorkingHours[:-1], NonWorkingHours[1:]):
+                    possible_overtime += time_gap(Enter, Exit)
+
+            if possible_overtime > EMP_Salary.overtime_threshold:
+                Day_OBJ["Overtime"] = possible_overtime
 
         Day_OBJ["Undertime"] = max(0, Day_OBJ["Undertime"] - (Day_OBJ["remote"] + Day_OBJ["vacation_leave"] + Day_OBJ["medical_leave"] + Day_OBJ["business_trip"]))
 
@@ -233,10 +233,12 @@ def Split_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
             Day_OBJ["msg"] = "Finished"
 
         Day_OBJ["Undertime"] = max(0, Day_OBJ["Undertime"] - (Day_OBJ["remote"] + Day_OBJ["vacation_leave"] + Day_OBJ["medical_leave"] + Day_OBJ["business_trip"]))
+        Day_OBJ["EnterExit"] = ' '.join([str(t) for t in Day_OBJ.pop("EnterExit", [])])
         Days.append(Day_OBJ)
     return Days
 
 
+@DEV_io()
 def Hourly_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[Dict]:
     Days = []
     for Date, Day_OBJ in preprocess_Days.items():
@@ -256,13 +258,16 @@ def Hourly_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List
             if EMP_Salary.Regular_hours_cap > Day_OBJ["present_time"]:
                 Day_OBJ["attendance_points"] -= 1
             Day_OBJ["Regular_hours"] = min(EMP_Salary.Regular_hours_cap, Day_OBJ["present_time"])
+            Day_OBJ["Overtime"] = max(0, Day_OBJ["present_time"] - EMP_Salary.Regular_hours_cap)
 
         Day_OBJ["Undertime"] = max(0, Day_OBJ["Undertime"] - (Day_OBJ["remote"] + Day_OBJ["vacation_leave"] + Day_OBJ["medical_leave"] + Day_OBJ["business_trip"]))
+        Day_OBJ["EnterExit"] = ' '.join([str(t) for t in Day_OBJ.pop("EnterExit", [])])
         Day_OBJ["msg"] = "Finished"
         Days.append(Day_OBJ)
     return Days
 
 
+@DEV_io()
 def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_scanner_report: List[dbm.Fingerprint_Scanner_form], Activities: Dict):
     """
     Generate the daily report Base on Employee fingerprint scanner report
@@ -270,7 +275,6 @@ def generate_daily_report(Salary_Policy: dbm.Salary_Policy_form, Fingerprint_sca
     try:
 
         final_result = {}
-        Days_Report = []
         report_dicts = preprocess_report(Fingerprint_scanner_report, Activities)
 
         # Split schedule and Fix schedule
