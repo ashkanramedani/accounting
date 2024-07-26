@@ -12,6 +12,7 @@ import schemas as sch
 from db.Extra import *
 from lib import *
 from .Salary_Utils import calculate_duration
+from lib.decorators import DEV_io
 
 
 # Teacher Replacement
@@ -29,6 +30,7 @@ def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sc
         return Return_Exception(db, e)
 
 
+@DEV_io()
 def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_date):
     try:
         if isinstance(EnNo, UUID):
@@ -45,7 +47,7 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
             .filter_by(EnNo=EnNo) \
             .filter(dbm.Fingerprint_Scanner_form.status != "deleted")
 
-        Report: List = Queary.order_by(dbm.Fingerprint_Scanner_form.create_date).all()
+        Report: List = Queary.order_by(dbm.Fingerprint_Scanner_form.Date).all()
 
         TotalHour = db \
             .query(func.sum(dbm.Fingerprint_Scanner_form.duration).label("Duration")) \
