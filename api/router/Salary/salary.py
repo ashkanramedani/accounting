@@ -43,7 +43,6 @@ async def search_report(employee_id: UUID, year: sch.PositiveInt, month: sch.Pos
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
-
 # Form: sch.teacher_salary_report
 
 @router.post("/teacher", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])

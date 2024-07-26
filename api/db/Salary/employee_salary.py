@@ -155,7 +155,6 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         days_metadata = report_summary.pop('Days') if "Days" in report_summary else {"detail": "No data for Day Report"}
 
         salary_obj = dbm.Employee_Salary_form(user_fk_id=user_fk_id, year=year, month=month, fingerprint_scanner_user_id=EnNo, Days=days_metadata, Salary_Policy=Salary_Policy.summery(), **report_summary)  # type: ignore[call-arg]
-
         db.add(salary_obj)
         db.commit()
         db.refresh(salary_obj)

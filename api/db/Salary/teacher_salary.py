@@ -17,7 +17,7 @@ def teacher_salary(db: Session):
     try:
         AllCourses = db \
             .query(dbm.Course_form) \
-            .filter(dbm.Course_form.ending_date >= date.today(), dbm.Course_form.status != "deleted") \
+            .filter(dbm.Course_form.ending_date < date.today(), dbm.Course_form.status != "deleted") \
             .order_by(dbm.Course_form.ending_date.desc()) \
             .all()
         return 200, AllCourses
