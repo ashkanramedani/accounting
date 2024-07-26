@@ -5,7 +5,7 @@ from .Salary import *
 from .Site import *
 from .Survey_form import *
 from .User_Form import *
-from .models import setUp_admin, engine, SessionLocal, Base, Create_Redis_URL
+from .models import SetUp, engine, SessionLocal, Base, Create_Redis_URL
 
 __all__ = [
     "Base",
@@ -13,7 +13,7 @@ __all__ = [
     "Create_Redis_URL",
     "SessionLocal",
     "save_route",
-    "setUp_admin",
+    "SetUp",
     "count",
     'tardy_request',
     # Tag_category.py
@@ -27,7 +27,7 @@ __all__ = [
     "post_category",
     "delete_category",
     "update_category",
-    # salary.py
+    # teacher_salary.py
     "employee_salary_report",
     # Salary_Policy_form.py
     "get_SalaryPolicy",

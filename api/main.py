@@ -22,7 +22,7 @@ except (ImportError, ModuleNotFoundError):
 
 from router import routes
 from lib import logger
-from db import models, save_route, setUp_admin, engine, SessionLocal, Create_Redis_URL
+from db import models, save_route, SetUp, engine, SessionLocal, Create_Redis_URL
 
 config = load(open("configs/config.json"))
 
@@ -40,7 +40,7 @@ async def app_lifespan(api):
                 logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
                 sleep(10)
         with SessionLocal() as db:
-            setUp_admin(db)
+            SetUp(db)
 
         await FastAPILimiter.init(redis=redis.from_url(Create_Redis_URL(), encoding="utf8"))
         logger.info(f'{api.title} V: {api.version} Has been started ...')
