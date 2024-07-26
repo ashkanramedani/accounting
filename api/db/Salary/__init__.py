@@ -1,2 +1,3 @@
 from .SalaryPolicy import *
-from .salary import *
+from .teacher_salary import *
+from .employee_salary import *
