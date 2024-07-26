@@ -182,5 +182,6 @@ api/configs/test_config.json
 api/admin.api.ieltsdaily.ir.tar
 api/configs
 /api/TmpFiles
+/api/DBug_IO
 /api/Diagram
 /api/.lprof
