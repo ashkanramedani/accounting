@@ -156,3 +156,31 @@ class permission_response(BaseModel):
 
     class Config:
         orm_mode = True
+
+#  Teacher
+class Teacher_course_report(Base_response):
+    course_pk_id: UUID
+    course_name: str
+    course_image: str
+    starting_date: date
+    ending_date: date
+    course_capacity: int
+    course_level: str
+    course_code: str | int
+
+    language: export_language
+    type: export_course_type
+
+
+class Teacher_subcourse_report(Base_response):
+    sub_course_pk_id: UUID
+    sub_course_name: str
+    create_date: datetime
+
+    sub_course_starting_date: date
+    sub_course_ending_date: date
+    note: Dict
+
+    sub_teachers: List[export_employee]
+    teacher: export_employee
+    course: export_course
