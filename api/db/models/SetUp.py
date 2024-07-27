@@ -28,7 +28,8 @@ ADMIN: Dict = {"user_pk_id": "00000000-0000-4b94-8e27-44833c2b940f", "status": "
 
 DEFAULT_USER: List[Dict] = [
     {"user_pk_id": "00000001-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": 1000, "name": "Test", "last_name": "Teacher", "email": "Test@Teacher.com"},
-    {"user_pk_id": "00000002-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": 1001, "name": "Test", "last_name": "Employee", "email": "Test@Employee.com"}
+    {"user_pk_id": "00000002-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": 1001, "name": "Test", "last_name": "Employee", "email": "Test@Employee.com"},
+    {"user_pk_id": "00000003-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": 1003, "name": "Test", "last_name": "Teacher2", "email": "Test@Teacher2.com"}
 ]
 
 DEFAULT_ROLE: List[Dict] = [

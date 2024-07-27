@@ -141,7 +141,6 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
                 Day_OBJ["off_Day_Overtime"] = Day_OBJ["present_time"]
                 Day_OBJ["Regular_hours"] = max(0, EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"])
 
-
         # Not Present on working day
         elif not Day_OBJ["EnterExit"]:
             Day_OBJ["Undertime"] = EMP_Salary.Regular_hours_cap

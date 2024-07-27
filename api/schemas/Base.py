@@ -162,7 +162,7 @@ class export_categories(BaseModel):
 
 # Base Entry
 class Base_form(BaseModel):
-    created_fk_by: UUID = "308e2744-833c-4b94-8e27-44833c2b940f"
+    created_fk_by: UUID = "00000000-0000-4b94-8e27-44833c2b940f"
     description: str | None = None
 
     visible: Optional[bool] = True

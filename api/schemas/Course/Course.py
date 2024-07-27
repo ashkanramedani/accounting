@@ -12,8 +12,8 @@ class course(Base_form):
     ending_date: date | str = (datetime.now() + timedelta(days=30)).date()
     course_capacity: int = random.randint(10, 30)
 
-    course_language: UUID = "7f371975-e397-4fc5-b719-75e3978fc547"
-    course_type: UUID = "7f485938-f59f-401f-8859-38f59f201f3e"
+    course_language: UUID
+    course_type: UUID
 
     course_code: str
     course_image: str = ""
