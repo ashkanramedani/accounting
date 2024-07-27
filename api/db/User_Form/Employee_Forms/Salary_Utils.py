@@ -139,7 +139,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
         if Day_OBJ["Holiday"]:
             if EMP_Salary.off_day_permission:
                 Day_OBJ["off_Day_Overtime"] = Day_OBJ["present_time"]
-                # Day_OBJ["Regular_hours"] = max(0, EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"])
+                Day_OBJ["Regular_hours"] = max(0, EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"])
 
 
         # Not Present on working day
@@ -164,8 +164,6 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
             WorkingHours.sort()
             NonWorkingHours.sort()
 
-
-
             WorkingHours[0] = max(WorkingHours[0], EMP_Salary.day_starting_time)
 
             # UnderTime
@@ -179,7 +177,6 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
                 Day_OBJ["haste"] = tmp_undertime
                 if tmp_undertime > EMP_Salary.undertime_threshold:
                     Day_OBJ["Undertime"] += tmp_undertime
-
 
             # check if more than one Enter and Exit is in day
             if WorkingHours:
@@ -255,10 +252,15 @@ def Hourly_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List
             if EMP_Salary.off_day_permission:
                 Day_OBJ["off_Day_Overtime"] = Day_OBJ["present_time"]
         else:  # NC: 005
-            if EMP_Salary.Regular_hours_cap > Day_OBJ["present_time"]:
+            if Day_OBJ["present_time"] >= EMP_Salary.Regular_hours_cap:
+                possible_Overtime = Day_OBJ["present_time"] - EMP_Salary.Regular_hours_cap
+                Day_OBJ["Overtime"] = possible_Overtime if possible_Overtime >= EMP_Salary.overtime_threshold else 0
+            else:
+                possible_undertime = EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"]
+                Day_OBJ["Undertime"] = possible_undertime if possible_undertime >= EMP_Salary.undertime_threshold else 0
                 Day_OBJ["attendance_points"] -= 1
+
             Day_OBJ["Regular_hours"] = min(EMP_Salary.Regular_hours_cap, Day_OBJ["present_time"])
-            Day_OBJ["Overtime"] = max(0, Day_OBJ["present_time"] - EMP_Salary.Regular_hours_cap)
 
         Day_OBJ["Undertime"] = max(0, Day_OBJ["Undertime"] - (Day_OBJ["remote"] + Day_OBJ["vacation_leave"] + Day_OBJ["medical_leave"] + Day_OBJ["business_trip"]))
         Day_OBJ["EnterExit"] = ' '.join([str(t) for t in Day_OBJ.pop("EnterExit", [])])
