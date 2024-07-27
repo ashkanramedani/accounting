@@ -21,11 +21,5 @@ def create_forenKey(table: str, unique: bool = False, index: bool = True, nullab
     return Column(GUID, ForeignKey(f'{table_name}.{table_name + "_pk_id"}', ondelete="CASCADE"), nullable=nullable, unique=unique, index=index)
 
 
-Modes_relation = {
-    "created": "created_fk_by",
-    "student": "user_fk_id"
-}
-
-
 def creator_relation(table: str):
-    return relationship(table, back_populates="created", foreign_keys=f"{table}.created_fk_by")
+    return relationship(table, back_populates="created", foreign_keys=f"{table}.created_fk_by", cascade="all, delete-orphan")
