@@ -764,7 +764,11 @@ class Employee_Salary_form(Base, Base_form):
 
     delay = Column(Integer, nullable=False)
     haste = Column(Integer, nullable=False)
+
     attendance_points = Column(Integer, nullable=False, default=0)
+    rewards_earning = Column(Float, nullable=False, default=0)
+    punishment_deductions = Column(Float, nullable=False, default=0)
+    Fix_pay = Column(Float, nullable=False, default=0)
 
     Regular_earning = Column(Float, nullable=False)
     Overtime_earning = Column(Float, nullable=False)
