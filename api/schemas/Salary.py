@@ -98,11 +98,15 @@ class employee_salary_Response(Base_response):
     Regular_hours: int
     Overtime: int
     Undertime: int
-    off_Day_Overtime: int
+    Off_Day: int
 
     delay: int
     haste: int
     attendance_points: int
+
+    rewards_earning: float
+    Fix_pay: float
+    punishment_deductions: float
 
     Regular_earning: float
     Overtime_earning: float
