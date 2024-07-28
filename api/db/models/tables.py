@@ -274,9 +274,6 @@ class Libraries(Base):
         return f'<Library "{self.library_pk_id}">'
 
 
-class InstitutionsBase(Base_form):
-    pass
-
 
 # +++++++++++++++++++++++ association +++++++++++++++++++++++++++
 survey_questions = Table(
@@ -349,7 +346,7 @@ class User_form(Base, Base_form):
 
 # +++++++++++++++++++++++ InstitutionsBase +++++++++++++++++++++++++++
 
-class Course_form(Base, InstitutionsBase):
+class Course_form(Base, Base_form):
     __tablename__ = "course"
     __table_args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
 
@@ -380,7 +377,7 @@ class Course_form(Base, InstitutionsBase):
         return Remove_Base_Data(self.__dict__)
 
 
-class Sub_Course_form(Base, InstitutionsBase):
+class Sub_Course_form(Base, Base_form):
     __tablename__ = "sub_course"
     __table_args__ = (UniqueConstraint('sub_course_name', 'course_fk_id'),)
 
@@ -406,9 +403,9 @@ class Sub_Course_form(Base, InstitutionsBase):
         return Remove_Base_Data(self.__dict__)
 
 
-class Session_form(Base, InstitutionsBase):
+class Session_form(Base, Base_form):
     __tablename__ = "session"
-    __table_args__ = (UniqueConstraint('session_date', 'session_starting_time', 'sub_course_fk_id'),)
+    __table_args__ = (UniqueConstraint('session_date', 'session_starting_time', 'session_pk_id'),)
 
     session_pk_id = create_Unique_ID()
 
@@ -578,19 +575,23 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
 
 class Teacher_Tardy_report_form(Base, Base_form):
     __tablename__ = "teacher_tardy_report"
-    __table_args__ = (UniqueConstraint('teacher_fk_id', 'sub_course_fk_id', 'delay'),)
+    __table_args__ = (UniqueConstraint('teacher_fk_id', 'session_fk_id', 'delay'),)
 
     teacher_tardy_report_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
+
     teacher_fk_id = create_forenKey("User_form")
     course_fk_id = create_forenKey("Course_form")
     sub_course_fk_id = create_forenKey("Sub_Course_form")
+    session_fk_id = create_forenKey("Session_form")
+
     delay = Column(Integer, nullable=False)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     teacher = relationship("User_form", foreign_keys=[teacher_fk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
     sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
+    session = relationship("Session_form", foreign_keys=[session_fk_id])
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
@@ -633,7 +634,7 @@ class Survey_form(Base, Base_form):
         return Remove_Base_Data(self.__dict__)
 
 
-class Question_form(Base, InstitutionsBase):
+class Question_form(Base, Base_form):
     __tablename__ = "question"
     question_pk_id = create_Unique_ID()
     created_fk_by = create_forenKey("User_form")
@@ -688,6 +689,7 @@ class Salary_Policy_form(Base, Base_form):
     user_fk_id = create_forenKey("User_form")
 
     Base_salary = Column(Float, nullable=False)
+    Fix_pay = Column(Float, nullable=False, default=0)
     Salary_Type = Column(String, nullable=False, default="Fixed")  # Fixed, Hourly, Split
 
     day_starting_time = Column(TIME, nullable=True, default=None)
@@ -758,7 +760,7 @@ class Employee_Salary_form(Base, Base_form):
     Regular_hours = Column(Integer, nullable=False)
     Overtime = Column(Integer, nullable=False)
     Undertime = Column(Integer, nullable=False)
-    off_Day_Overtime = Column(Integer, nullable=False)
+    off_Day = Column(Integer, nullable=False)
 
     delay = Column(Integer, nullable=False)
     haste = Column(Integer, nullable=False)
