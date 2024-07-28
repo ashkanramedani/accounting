@@ -15,21 +15,30 @@ def calculate_duration(time_1: time | None, time_2: time | None):
     return time_gap(time_1, time_2)
 
 
+@DEV_io()
 def Calculate_income(salary_rate: dbm.Salary_Policy_form, **Total_activity):
     Base_Salary = salary_rate.Base_salary
+
+    V = salary_rate.vacation_leave_cap - Total_activity.get("vacation_leave", 0)
+    M = min(0, salary_rate.medical_leave_cap - Total_activity.get("medical_leave", 0))
+
     earning = {
         "Regular_earning": Base_Salary * salary_rate.Regular_hours_factor * Total_activity.get("Regular_hours", 0),
-        "Overtime_earning": Base_Salary * salary_rate.overtime_factor * Total_activity.get("overtime", 0),
-        "Off_Day_earning": Base_Salary * salary_rate.off_day_factor * Total_activity.get("off_Day_work_time", 0),
+        "Overtime_earning": Base_Salary * salary_rate.overtime_factor * Total_activity.get("Overtime", 0),
+        "Off_Day_earning": Base_Salary * salary_rate.off_day_factor * Total_activity.get("Off_Day", 0),
         "remote_earning": Base_Salary * salary_rate.remote_factor * Total_activity.get("remote", 0),
-        "vacation_leave_earning": Base_Salary * salary_rate.vacation_leave_factor * Total_activity.get("vacation_leave", 0),
-        "medical_leave_earning": Base_Salary * salary_rate.medical_leave_factor * Total_activity.get("medical_leave", 0),
+        "vacation_leave_earning": Base_Salary * salary_rate.vacation_leave_factor * V,
+        "medical_leave_earning": Base_Salary * salary_rate.medical_leave_factor * M,
         "business_trip_earning": Base_Salary * salary_rate.business_trip_factor * Total_activity.get("business_trip", 0),
+        "rewards_earning": 0,
+        "Fix_pay": salary_rate.Fix_pay
     }
+
     deduction = {
-        "Undertime_deductions": salary_rate.Base_salary * salary_rate.undertime_factor * Total_activity.get("undertime", 0),
+        "Undertime_deductions": Base_Salary * salary_rate.undertime_factor * Total_activity.get("Undertime", 0),
         "insurance_deductions": 0,
-        "tax_deductions": 0
+        "tax_deductions": 0,
+        "punishment_deductions": 0
     }
 
     total_earning = sum(earning.values())
@@ -40,15 +49,16 @@ def Calculate_income(salary_rate: dbm.Salary_Policy_form, **Total_activity):
             "total_income": total_earning - total_deduction}
 
 
+@DEV_io()
 def Sum_of_Activity(salary_rate, Day_activity: List) -> Dict[str, int]:
     caps = {
-        "overtime": salary_rate.overtime_cap,
-        "off_Day_work_time": salary_rate.off_day_cap
+        "Overtime": salary_rate.overtime_cap,
+        "Off_Day_earning": salary_rate.off_day_cap
     }
 
     rates = {
         key: min(sum(day[key] for day in Day_activity), caps.get(key, INF))
-        for key in ["present_time", "Regular_hours", "Overtime", "Undertime", "off_Day_Overtime", "delay", "haste", "attendance_points", "remote", "vacation_leave", "medical_leave", "business_trip"]
+        for key in ["present_time", "Regular_hours", "Overtime", "Undertime", "Off_Day", "delay", "haste", "attendance_points", "remote", "vacation_leave", "medical_leave", "business_trip"]
     }
 
     return rates
@@ -78,7 +88,7 @@ def Create_Day_Schema(Date: str | date | datetime, Activities: Dict, message="Cr
         "Regular_hours": 0,
         "Overtime": 0,
         "Undertime": 0,
-        "off_Day_Overtime": 0,
+        "Off_Day": 0,
         "delay": 0,
         "haste": 0,
         "attendance_points": 0,
@@ -138,7 +148,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
         # present on Holiday
         if Day_OBJ["Holiday"]:
             if EMP_Salary.off_day_permission:
-                Day_OBJ["off_Day_Overtime"] = Day_OBJ["present_time"]
+                Day_OBJ["Off_Day"] = Day_OBJ["present_time"]
                 Day_OBJ["Regular_hours"] = max(0, EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"])
 
         # Not Present on working day
@@ -169,7 +179,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
             tmp_undertime = time_gap(EMP_Salary.day_starting_time, WorkingHours[0])
             Day_OBJ["delay"] = tmp_undertime
             if tmp_undertime > EMP_Salary.undertime_threshold:
-                Day_OBJ["Undertime"] = tmp_undertime
+                Day_OBJ["Undertime"] += tmp_undertime
 
             if WorkingHours[-1] < EMP_Salary.day_ending_time:
                 tmp_undertime = time_gap(WorkingHours[-1], EMP_Salary.day_ending_time)
@@ -215,7 +225,7 @@ def Split_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
 
         if Day_OBJ["Holiday"]:
             if EMP_Salary.off_day_permission:
-                Day_OBJ["off_Day_Overtime"] = Day_OBJ["present_time"]
+                Day_OBJ["Off_Day"] = Day_OBJ["present_time"]
                 Day_OBJ["Regular_hours"] = max(0, EMP_Salary.Regular_hours_cap - Day_OBJ["present_time"])
         else:
             if Day_OBJ["present_time"] >= EMP_Salary.Regular_hours_cap:
@@ -249,7 +259,7 @@ def Hourly_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List
 
         if Day_OBJ["Holiday"]:
             if EMP_Salary.off_day_permission:
-                Day_OBJ["off_Day_Overtime"] = Day_OBJ["present_time"]
+                Day_OBJ["Off_Day"] = Day_OBJ["present_time"]
         else:  # NC: 005
             if Day_OBJ["present_time"] >= EMP_Salary.Regular_hours_cap:
                 possible_Overtime = Day_OBJ["present_time"] - EMP_Salary.Regular_hours_cap

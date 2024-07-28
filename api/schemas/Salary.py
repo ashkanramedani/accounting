@@ -65,6 +65,7 @@ class SalaryPolicy_response(Base_response, update_SalaryPolicy_schema):
     employee: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -146,6 +147,7 @@ class Return_Salary(export_employee):
     role: Optional[Any] = None
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -155,6 +157,7 @@ class permission_response(BaseModel):
     salary_Policy: bool
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 #  Teacher
