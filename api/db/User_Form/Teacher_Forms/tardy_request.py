@@ -39,12 +39,22 @@ def report_tardy_request(db: Session, Form: sch.teacher_report):
 
 def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema):
     try:
-        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: Employee Not Found"
-        if not db.query(dbm.Sub_Course_form).filter_by(course_fk_id=Form.course_fk_id, sub_course_pk_id=Form.sub_course_fk_id, sub_course_teacher_fk_id=Form.teacher_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first():
-            return 400, "Bad Request: subcourse with given course and teacher not found"
 
-        OBJ = dbm.Teacher_Tardy_report_form(**Form.dict())  # type: ignore[call-arg]
+        # removed the teacher from query --> , sub_course_teacher_fk_id=Form.teacher_fk_id
+        target_session = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id).filter(dbm.Session_form.status != "deleted").first()
+        if not target_session:
+            return 400, "Bad Request: subcourse not found"
+
+        Full_Details = {
+            "teacher_fk_id": target_session.session_teacher_fk_id,
+            "course_fk_id": target_session.course_fk_id,
+            "sub_course_fk_id": target_session.sub_course_fk_id,
+            "session_fk_id": target_session.session_pk_id
+        }
+
+        OBJ = dbm.Teacher_Tardy_report_form(delay=Form.delay, created_fk_by=Form.created_fk_by, **Full_Details)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -71,16 +81,11 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
     try:
         record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_report_pk_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted")
 
-        if not employee_exist(db, [Form.created_fk_by, Form.teacher_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
-        if not db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id).filter(dbm.Course_form.status != "deleted").first():
-            return 400, "Bad Request: course not found"
-        if not db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first():
-            return 400, "Bad Request: subcourse not found"
-
-        record.update(Form.dict(), synchronize_session=False)
-
+        # record.update(Form.dict(), synchronize_session=False)
+        record.first().delay = Form.delay
         db.commit()
         return 200, "Form Updated"
     except Exception as e:
