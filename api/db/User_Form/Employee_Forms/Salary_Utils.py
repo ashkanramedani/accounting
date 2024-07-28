@@ -18,17 +18,13 @@ def calculate_duration(time_1: time | None, time_2: time | None):
 @DEV_io()
 def Calculate_income(salary_rate: dbm.Salary_Policy_form, **Total_activity):
     Base_Salary = salary_rate.Base_salary
-
-    V = salary_rate.vacation_leave_cap - Total_activity.get("vacation_leave", 0)
-    M = min(0, salary_rate.medical_leave_cap - Total_activity.get("medical_leave", 0))
-
     earning = {
         "Regular_earning": Base_Salary * salary_rate.Regular_hours_factor * Total_activity.get("Regular_hours", 0),
         "Overtime_earning": Base_Salary * salary_rate.overtime_factor * Total_activity.get("Overtime", 0),
         "Off_Day_earning": Base_Salary * salary_rate.off_day_factor * Total_activity.get("Off_Day", 0),
         "remote_earning": Base_Salary * salary_rate.remote_factor * Total_activity.get("remote", 0),
-        "vacation_leave_earning": Base_Salary * salary_rate.vacation_leave_factor * V,
-        "medical_leave_earning": Base_Salary * salary_rate.medical_leave_factor * M,
+        "vacation_leave_earning": Base_Salary * salary_rate.vacation_leave_factor * (salary_rate.vacation_leave_cap - Total_activity.get("vacation_leave", 0)),
+        "medical_leave_earning": Base_Salary * salary_rate.medical_leave_factor * (min(0, salary_rate.medical_leave_cap - Total_activity.get("medical_leave", 0))),
         "business_trip_earning": Base_Salary * salary_rate.business_trip_factor * Total_activity.get("business_trip", 0),
         "rewards_earning": 0,
         "Fix_pay": salary_rate.Fix_pay

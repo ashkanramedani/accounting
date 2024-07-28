@@ -760,7 +760,7 @@ class Employee_Salary_form(Base, Base_form):
     Regular_hours = Column(Integer, nullable=False)
     Overtime = Column(Integer, nullable=False)
     Undertime = Column(Integer, nullable=False)
-    off_Day = Column(Integer, nullable=False)
+    Off_Day = Column(Integer, nullable=False)
 
     delay = Column(Integer, nullable=False)
     haste = Column(Integer, nullable=False)
