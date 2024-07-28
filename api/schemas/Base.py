@@ -60,6 +60,7 @@ class export_role(BaseModel):
     cluster: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -71,6 +72,7 @@ class export_employee(BaseModel):
     # roles: List[export_role] | None
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -82,6 +84,7 @@ class export_course(BaseModel):
     course_level: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -91,6 +94,7 @@ class export_student(BaseModel):
     last_name: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -100,6 +104,7 @@ class export_language(BaseModel):
     # created: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -109,6 +114,7 @@ class export_course_type(BaseModel):
     # created: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -126,6 +132,7 @@ class export_sub_course(BaseModel):
     teacher: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -147,6 +154,7 @@ class export_tag(BaseModel):
     tag_name: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -157,6 +165,7 @@ class export_categories(BaseModel):
     # created: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -177,6 +186,7 @@ class user_dropdown(BaseModel):
     user_pk_id: UUID
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -204,6 +214,7 @@ class Entity_Response(BaseModel):
     day_of_birth: Optional[date | str]
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -214,6 +225,7 @@ class Base_response(BaseModel):
     priority: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -227,6 +239,7 @@ class Update_Relation(BaseModel):
     new_id: UUID | str = ""
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -240,4 +253,5 @@ class Employee_salary(Entity):
     user_pk_id: UUID
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

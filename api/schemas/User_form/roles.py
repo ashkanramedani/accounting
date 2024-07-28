@@ -23,4 +23,5 @@ class role_response(BaseModel):
     created: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

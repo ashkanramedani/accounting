@@ -39,6 +39,7 @@ class Course_Calender(BaseModel):  # instant of session form (can be modify as n
     session_date: date | str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -65,4 +66,5 @@ class course_response(Base_response):
     type: export_course_type
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

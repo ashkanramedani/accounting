@@ -23,4 +23,5 @@ class Sub_teacher_Response(BaseModel):
     pass
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

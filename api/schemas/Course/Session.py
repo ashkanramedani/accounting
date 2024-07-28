@@ -34,6 +34,7 @@ class session_response(Base_response):
     teacher: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -46,4 +47,5 @@ class export_session(BaseModel):
     teacher: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

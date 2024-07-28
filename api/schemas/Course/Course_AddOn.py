@@ -20,6 +20,7 @@ class language_response(Base_response):
     language_pk_id: UUID
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -43,4 +44,5 @@ class course_type_response(Base_response):
     course_type_pk_id: UUID
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

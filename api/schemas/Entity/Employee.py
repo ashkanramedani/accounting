@@ -20,4 +20,5 @@ class employee_response(Entity):
     fingerprint_scanner_user_id: Optional[int | str] = None
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

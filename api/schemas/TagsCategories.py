@@ -18,6 +18,7 @@ class tag_response(update_tag_schema):
     created: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -38,4 +39,5 @@ class category_response(update_category_schema):
     created: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

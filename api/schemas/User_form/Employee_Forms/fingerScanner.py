@@ -23,6 +23,7 @@ class fingerprint_scanner_response(Base_response):
     EnNo: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 

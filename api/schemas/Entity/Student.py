@@ -25,4 +25,5 @@ class student_response(Entity_Response):
     nickname: Optional[str]
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

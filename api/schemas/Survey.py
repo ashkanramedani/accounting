@@ -19,6 +19,7 @@ class Question_response(update_questions_schema):
     created: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -28,6 +29,7 @@ class export_question(BaseModel):
     language: UUID
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -51,6 +53,7 @@ class survey_response(Base_response, update_survey_schema):
     questions: List[export_question]
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -59,6 +62,7 @@ class export_survey(BaseModel):
     title: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -94,4 +98,5 @@ class response_response(Base_response):
     answer: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

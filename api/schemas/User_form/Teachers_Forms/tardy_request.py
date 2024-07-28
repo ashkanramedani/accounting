@@ -2,18 +2,24 @@ from schemas.Base import *
 
 
 class teacher_tardy_reports(Base_form):
-    teacher_fk_id: UUID
-    course_fk_id: UUID
-    sub_course_fk_id: UUID
     delay: PositiveInt
+
+    class Config:
+        extra = 'ignore'
 
 
 class post_teacher_tardy_reports_schema(teacher_tardy_reports):
-    pass
+    session_fk_id: UUID
+
+    class Config:
+        extra = 'ignore'
 
 
 class update_teacher_tardy_reports_schema(teacher_tardy_reports):
     teacher_tardy_report_pk_id: UUID
+
+    class Config:
+        extra = 'ignore'
 
 
 class teacher_tardy_reports_response(Base_response):
@@ -24,4 +30,5 @@ class teacher_tardy_reports_response(Base_response):
     sub_course: export_sub_course
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

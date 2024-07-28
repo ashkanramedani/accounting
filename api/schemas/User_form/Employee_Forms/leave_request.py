@@ -34,4 +34,5 @@ class leave_request_response(Base_response):
     leave_type: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

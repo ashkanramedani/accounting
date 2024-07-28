@@ -19,4 +19,5 @@ class payment_method_response(Base_response, update_payment_method_schema):
     employee: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

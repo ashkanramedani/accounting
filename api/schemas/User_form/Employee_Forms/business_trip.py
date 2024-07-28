@@ -27,6 +27,7 @@ class business_trip_response(Base_response):
     employee: export_employee
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 

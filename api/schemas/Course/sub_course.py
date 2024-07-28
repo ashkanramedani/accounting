@@ -7,6 +7,7 @@ class Session_signature(BaseModel):
     duration: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -53,4 +54,5 @@ class sub_course_response(Base_form):
     course: export_course
 
     class Config:
+        extra = 'ignore'
         orm_mode = True

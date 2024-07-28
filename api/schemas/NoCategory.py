@@ -102,6 +102,7 @@ class UserCreate(BaseModel):
     # user_creator_fk_id: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -113,6 +114,7 @@ class User(UserBase):
     # authentication_fk_id: int = None
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -123,6 +125,7 @@ class ProductUsers(BaseModel):
     image: str
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -155,6 +158,7 @@ class PostViwesBase(BaseModel):
 
 class PostViwesCreate(PostViwesBase):
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -162,6 +166,7 @@ class PostViwes(PostViwesBase):
     post_viwe_pk_id: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -174,6 +179,7 @@ class UserInPost(BaseModel):
     deleted: bool
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -216,11 +222,13 @@ class PostCreate(PostBase):
     user_creator_fk_id: Optional[int] = 1
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
 class PostUpdateData(BaseModel):
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -237,6 +245,7 @@ class Post(PostBase):
     create_date: datetime
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -250,6 +259,7 @@ class Posts(PostBase):
     users_post_actor: Optional[List[str]] = []
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -258,6 +268,7 @@ class PostStatus(BaseModel):
     post_status: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -265,6 +276,7 @@ class PostDelete(BaseModel):
     post_pk_id: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
         # users_post = relationship("Users", secondary=users_posts_association, backref="posts_user")
 
@@ -304,6 +316,7 @@ class LibraryCreate(LibraryBase):
     pass
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -312,6 +325,7 @@ class Library(LibraryBase):
     download_count: Optional[int] = 0
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
 
 
@@ -319,4 +333,5 @@ class LibraryDelete(BaseModel):
     library_pk_id: int
 
     class Config:
+        extra = 'ignore'
         orm_mode = True
