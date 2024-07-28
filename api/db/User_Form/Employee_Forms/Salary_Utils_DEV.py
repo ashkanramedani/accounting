@@ -35,7 +35,7 @@ def Sum_of_Activity(salary_rate, Day_activity: List) -> Dict[str, int]:
         "regular_work_time": sum(day["Regular_hours"] for day in Day_activity),
         "overtime": min(sum(day["Overtime"] for day in Day_activity), salary_rate.overtime_cap),
         "undertime": sum(day["Undertime"] for day in Day_activity),
-        "off_Day_work_time": min(sum(day["off_Day_Overtime"] for day in Day_activity), salary_rate.off_day_cap)
+        "off_Day_work_time": min(sum(day["off_Day"] for day in Day_activity), salary_rate.off_day_cap)
     }
     return rates
 
@@ -61,7 +61,7 @@ def Create_Day_Schema(Date: str | date | datetime, day: dict, Holiday: bool) -> 
         "Overtime": 0,
         "delay": 0,
         "haste": 0,
-        "off_Day_Overtime": 0,
+        "off_Day": 0,
         "remote": 0,
         "vacation_leave": 0,
         "medical_leave": 0,
@@ -130,7 +130,7 @@ def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> List[
         # present on Holiday
         if Holiday:
             if EMP_Salary.off_day_permission:
-                Day_OBJ["off_Day_Overtime"] = day["present_time"]
+                Day_OBJ["off_Day"] = day["present_time"]
 
         # Not Present on working day
         elif not day["EnterExit"]:
@@ -179,7 +179,7 @@ def Split_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
                     Regular_hours: int
                     Overtime: int
                     Undertime: int
-                    off_Day_Overtime: int
+                    off_Day: int
                     IsValid: bool
                     EnterExit: str
                     msg: str}]
@@ -203,7 +203,7 @@ def Split_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
         Day_OBJ["present_time"] = day["present_time"]
         if Holiday:
             if EMP_Salary.off_day_permission:
-                Day_OBJ["off_Day_Overtime"] = day["present_time"]
+                Day_OBJ["off_Day"] = day["present_time"]
         else:
             if Day_OBJ["present_time"] >= EMP_Salary.Regular_hours_cap:
                 posible_Overtime = Day_OBJ["present_time"] - EMP_Salary.Regular_hours_cap
@@ -228,7 +228,7 @@ def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
                     Regular_hours: int
                     Overtime: int
                     Undertime: int
-                    off_Day_Overtime: int
+                    off_Day: int
                     IsValid: bool
                     EnterExit: str
                     msg: str}]
@@ -251,7 +251,7 @@ def Hourly_schedule(EMP_Salary, preprocess_Days) -> List[Dict]:
         Day_OBJ["present_time"] = day["present_time"]
         if Holiday:
             if EMP_Salary.off_day_permission:
-                Day_OBJ["off_Day_Overtime"] = day["present_time"]
+                Day_OBJ["off_Day"] = day["present_time"]
         else:
             Day_OBJ["Regular_hours"] = min(EMP_Salary.Regular_hours_cap, day["present_time"])
 

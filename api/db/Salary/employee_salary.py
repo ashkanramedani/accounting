@@ -23,7 +23,7 @@ def permissions(db: Session, User_ID):
 
 def employee_salary(db: Session, year, month):  # NC: 003
     try:
-        start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
+        start, end = generate_month_interval(year, month)
         Finger_Scanner_Result: list = db \
             .query(dbm.Fingerprint_Scanner_form.EnNo) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start, end)) \
@@ -46,12 +46,12 @@ def employee_salary(db: Session, year, month):  # NC: 003
 
         Salary_Result = [obj[0] for obj in salaries]
 
-        Salry_policies = db \
+        Salary_policies = db \
             .query(dbm.Salary_Policy_form.user_fk_id) \
             .filter(dbm.Salary_Policy_form.status != "deleted", dbm.Salary_Policy_form.user_fk_id.in_([user.user_pk_id for user in users_with_fingerprints])) \
             .all()
 
-        Salary_Policy_Result = [obj[0] for obj in Salry_policies]
+        Salary_Policy_Result = [obj[0] for obj in Salary_policies]
 
         Result = []
         for user in users_with_fingerprints:
@@ -113,7 +113,6 @@ def Get_Report(db: Session, Salary_Policy: dbm.Salary_Policy_form, user_fk_id: U
 
 
 def employee_salary_report(db: Session, user_fk_id, year, month):
-
     try:
         existing = db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
         if existing:
@@ -130,11 +129,9 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
 
         start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
 
-
         EnNo = db.query(dbm.User_form).filter_by(user_pk_id=user_fk_id).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         if EnNo is None:
             return 400, "Bad Request: Target Employee Has no fingerprint scanner ID"
-
 
         status, report_summary = report_fingerprint_scanner(db, EnNo, start, end)
         if status != 200:
@@ -148,12 +145,11 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
                 Fingerprint_scanner_report=report_summary["Fingerprint_scanner_report"],
                 Activities=Get_Report(db, Salary_Policy, user_fk_id, start, end))
 
-
         if status != 200:
             return status, report_summary
 
         days_metadata = report_summary.pop('Days') if "Days" in report_summary else {"detail": "No data for Day Report"}
-        # return 400, report_summary
+        return 400, report_summary
 
         salary_obj = dbm.Employee_Salary_form(user_fk_id=user_fk_id, year=year, month=month, fingerprint_scanner_user_id=EnNo, Days=days_metadata, Salary_Policy=Salary_Policy.summery(), **report_summary)  # type: ignore[call-arg]
         db.add(salary_obj)

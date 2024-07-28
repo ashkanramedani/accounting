@@ -1,4 +1,3 @@
-
 # from lib.decorators import DEV_io
 import db.models as dbm
 from db.models import SessionLocal
@@ -21,7 +20,7 @@ def Set_Status(db: Session, cluster: str, status: str) -> str:
         db.refresh(Status_OBJ)
         return status
 
-    return Status_OBJ.status_name
+    return status
 
 
 if __name__ == '__main__':
@@ -31,4 +30,5 @@ if __name__ == '__main__':
         ('active', 'teacher'),
         ('inactive', 'student'),
         ('inactive', 'teacher')]:
-        Set_Status(SessionLocal(), s, c)
+        s = Set_Status(SessionLocal(), s, c)
+        print(s)
