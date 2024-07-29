@@ -76,6 +76,13 @@ class export_employee(BaseModel):
         orm_mode = True
 
 
+class export_payment:
+    payment_method_pk_id: UUID
+    shaba: str
+    card_number: str
+    active: bool
+
+
 class export_course(BaseModel):
     course_pk_id: UUID
     course_name: str

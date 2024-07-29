@@ -35,7 +35,7 @@ async def search_report(employee_id: UUID, year: sch.PositiveInt, month: sch.Pos
 #     return result
 
 
-@router.put("/employee/update/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+@router.put("/employee/update/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.employee_salary_Response)
 async def update_teacher_report(form_id: UUID, Form: sch.update_employee_salary, db=Depends(get_db)):
     status_code, result = dbf.update_employee_salary(db, form_id, Form)
     if status_code not in sch.SUCCESS_STATUS:

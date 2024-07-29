@@ -174,12 +174,11 @@ def update_employee_salary(db: Session, form_id, Form: sch.update_employee_salar
         if not salary_data:
             return 400, "Bad Request: Target salary record not found"
 
-        data = Form.__dict__
         new_total_earning = salary_data.total_earning + Form.rewards_earning
         new_total_deduction = salary_data.total_deduction + (Form.punishment_deductions + Form.loan_installment)
         new_total_income = new_total_earning - new_total_deduction
 
-        changes = {**data, "total_earning": new_total_earning, "total_deduction": new_total_deduction, "total_income": new_total_income}
+        changes = {**Form.__dict__, "total_earning": new_total_earning, "total_deduction": new_total_deduction, "total_income": new_total_income}
 
         existing.update({**changes}, synchronize_session=False)
         db.commit()

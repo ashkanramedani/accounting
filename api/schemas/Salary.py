@@ -132,6 +132,12 @@ class employee_salary_Response(Base_response):
     total_deduction: NonNegativeFloat
     total_income: NonNegativeFloat
 
+    card: export_payment
+    payment_date: date
+
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
 
 class teacher_salary_report(BaseModel):
     course_id: UUID
@@ -196,11 +202,15 @@ class Teacher_subcourse_report(Base_response):
     teacher: export_employee
     course: export_course
 
+
 ###
 
 class update_employee_salary(BaseModel):
     rewards_earning: NonNegativeFloat = 0
     punishment_deductions: NonNegativeFloat = 0
     loan_installment: NonNegativeFloat = 0
+    payment: UUID
+    payment_date: date | str
+
     class Config:
         extra = 'ignore'

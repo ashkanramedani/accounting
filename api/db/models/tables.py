@@ -756,6 +756,9 @@ class Employee_Salary_form(Base, Base_form):
     month = Column(Integer, nullable=False)
     fingerprint_scanner_user_id = Column(Integer, nullable=True)
 
+    payment = create_forenKey("Payment_Method_form", nullable=True)
+    payment_date = Column(Date, nullable=True)
+
     present_time = Column(Integer, nullable=False)
     Regular_hours = Column(Integer, nullable=False)
     Overtime = Column(Integer, nullable=False)
@@ -797,6 +800,7 @@ class Employee_Salary_form(Base, Base_form):
     Days = Column(JSON, nullable=False)
 
     employee = relationship("User_form", foreign_keys=[user_fk_id])
+    card = relationship("Payment_Method_form", foreign_keys=[payment])
 
     # ------------ Necessary for "Course" ------------
     def __repr__(self):
