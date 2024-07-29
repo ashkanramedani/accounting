@@ -132,8 +132,8 @@ class employee_salary_Response(Base_response):
     total_deduction: NonNegativeFloat
     total_income: NonNegativeFloat
 
-    card: export_payment
-    payment_date: date
+    card: Optional[export_payment]
+    payment_date: Optional[date]
 
     class Config:
         extra = 'ignore'
