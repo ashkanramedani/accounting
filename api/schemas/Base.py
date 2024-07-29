@@ -76,11 +76,14 @@ class export_employee(BaseModel):
         orm_mode = True
 
 
-class export_payment:
+class export_payment(BaseModel):
     payment_method_pk_id: UUID
     shaba: str
     card_number: str
     active: bool
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
 
 
 class export_course(BaseModel):
