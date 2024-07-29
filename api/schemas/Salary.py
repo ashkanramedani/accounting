@@ -1,5 +1,7 @@
 from typing import Dict
 
+from pydantic import NonNegativeFloat, NonPositiveFloat
+
 from .Base import *
 
 
@@ -19,38 +21,39 @@ class SalaryPolicy(Base_form):
     Salary_Type: str
 
     # finger_print
-    Base_salary: float
-    Regular_hours_factor: float
+    Base_salary: NonNegativeFloat
+    Regular_hours_factor: NonNegativeFloat
+    Fix_pay: NonNegativeFloat
 
     overtime_permission: bool
-    overtime_factor: float
-    overtime_cap: float
+    overtime_factor: NonNegativeFloat
+    overtime_cap: NonNegativeFloat
     overtime_threshold: int
 
-    undertime_factor: float
+    undertime_factor: NonNegativeFloat
     undertime_threshold: int
 
     # off_Day
     off_day_permission: bool
-    off_day_factor: float
-    off_day_cap: float
+    off_day_factor: NonNegativeFloat
+    off_day_cap: NonNegativeFloat
 
     # Remote
     remote_permission: bool
-    remote_factor: float
-    remote_cap: float
+    remote_factor: NonNegativeFloat
+    remote_cap: NonNegativeFloat
 
     # Leave_form
-    medical_leave_factor: float
-    medical_leave_cap: float
+    medical_leave_factor: NonNegativeFloat
+    medical_leave_cap: NonNegativeFloat
 
-    vacation_leave_factor: float
-    vacation_leave_cap: float
+    vacation_leave_factor: NonNegativeFloat
+    vacation_leave_cap: NonNegativeFloat
 
     # business_Trip
     business_trip_permission: bool
-    business_trip_factor: float
-    business_trip_cap: float
+    business_trip_factor: NonNegativeFloat
+    business_trip_cap: NonNegativeFloat
 
 
 class post_SalaryPolicy_schema(SalaryPolicy):
@@ -88,7 +91,6 @@ class employee_report(BaseModel):
     end_date: datetime | str
 
 
-
 class employee_salary_Response(Base_response):
     employee_salary_pk_id: UUID
     employee: Employee_salary
@@ -104,35 +106,36 @@ class employee_salary_Response(Base_response):
     haste: int
     attendance_points: int
 
-    rewards_earning: float
-    Fix_pay: float
-    punishment_deductions: float
+    rewards_earning: NonNegativeFloat
+    Fix_pay: NonNegativeFloat
+    punishment_deductions: NonNegativeFloat
 
-    Regular_earning: float
-    Overtime_earning: float
-    Off_Day_earning: float
+    Regular_earning: NonNegativeFloat
+    Overtime_earning: NonNegativeFloat
+    Off_Day_earning: NonNegativeFloat
 
-    Undertime_deductions: float
-    insurance_deductions: float
-    tax_deductions: float
+    Undertime_deductions: NonNegativeFloat
+    insurance_deductions: NonNegativeFloat
+    tax_deductions: NonNegativeFloat
 
     remote: int
     vacation_leave: int
     medical_leave: int
     business_trip: int
 
-    remote_earning: float
+    remote_earning: NonNegativeFloat
     vacation_leave_earning: int
-    medical_leave_earning: float
-    business_trip_earning: float
+    medical_leave_earning: NonNegativeFloat
+    business_trip_earning: NonNegativeFloat
 
-    total_earning: float
-    total_deduction: float
-    total_income: float
+    total_earning: NonNegativeFloat
+    total_deduction: NonNegativeFloat
+    total_income: NonNegativeFloat
+
 
 class teacher_salary_report(BaseModel):
     course_id: UUID
-    Cancellation_factor: float
+    Cancellation_factor: NonNegativeFloat
     StudentAssignFeedback: str
     LP_submission: str
     result_submission_to_FD: str
@@ -164,6 +167,7 @@ class permission_response(BaseModel):
         extra = 'ignore'
         orm_mode = True
 
+
 #  Teacher
 class Teacher_course_report(Base_response):
     course_pk_id: UUID
@@ -171,9 +175,9 @@ class Teacher_course_report(Base_response):
     course_image: str
     starting_date: date
     ending_date: date
-    course_capacity: int
+    course_capacity: NonNegativeInt
     course_level: str
-    course_code: str | int
+    course_code: int
 
     language: export_language
     type: export_course_type
@@ -191,3 +195,12 @@ class Teacher_subcourse_report(Base_response):
     sub_teachers: List[export_employee]
     teacher: export_employee
     course: export_course
+
+###
+
+class update_employee_salary(BaseModel):
+    rewards_earning: NonNegativeFloat = 0
+    punishment_deductions: NonNegativeFloat = 0
+    loan_installment: NonNegativeFloat = 0
+    class Config:
+        extra = 'ignore'

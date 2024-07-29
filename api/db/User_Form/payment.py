@@ -5,8 +5,10 @@ from db import models as dbm
 from db.Extra import *
 
 
-def get_payment_method(db: Session, payment_method_id):
+def get_payment_method(db: Session, payment_method_id, user: bool = False):
     try:
+        if user:
+            return 200, db.query(dbm.Payment_Method_form).filter_by(user_fk_id=payment_method_id).filter(dbm.Payment_Method_form.status != "deleted").all()
         return 200, db.query(dbm.Payment_Method_form).filter_by(payment_method_pk_id=payment_method_id).filter(dbm.Payment_Method_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
@@ -14,15 +16,6 @@ def get_payment_method(db: Session, payment_method_id):
 
 def get_all_payment_method(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        # Records = record_order_by(db,dbm.Payment_Method_form, page, limit, order, SortKey)
-        # New = []
-        #
-        # for record in Records:
-        #
-        #     record.shaba = "Edited"
-        #     record.card_number = "Edited"
-        #     logger.warning(record.__dict__)
-        #     New.append(record)
         return record_order_by(db, dbm.Payment_Method_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)

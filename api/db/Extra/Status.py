@@ -11,6 +11,9 @@ def preprocess_keys(*args) -> list[str]:
 # @_io()
 def Set_Status(db: Session, cluster: str, status: str) -> str:
     status, cluster = preprocess_keys(status, cluster)
+    if status == "verified":
+        status = "approved"
+
     Status_OBJ: dbm.Status_form = db.query(dbm.Status_form).filter_by(status_name=status, status_cluster=cluster).first()
 
     if not Status_OBJ:

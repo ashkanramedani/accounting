@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
@@ -20,8 +21,8 @@ async def add_payment_method(Form: sch.post_payment_method_schema, db=Depends(ge
 
 
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.payment_method_response)
-async def search_payment_method(form_id, db=Depends(get_db)):
-    status_code, result = dbf.get_payment_method(db, form_id)
+async def search_payment_method(form_id: UUID, user: bool = False, db=Depends(get_db)):
+    status_code, result = dbf.get_payment_method(db, form_id, user)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

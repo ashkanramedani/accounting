@@ -186,3 +186,7 @@ api/configs
 /api/Diagram
 /api/.lprof
 MainTest
+api/.lprof
+api/.env
+api/db/PlayGround/
+api/schemas/PlayGround

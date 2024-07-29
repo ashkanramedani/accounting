@@ -30,6 +30,7 @@ def Calculate_income(salary_rate: dbm.Salary_Policy_form, **Total_activity):
         "Fix_pay": salary_rate.Fix_pay
     }
 
+    # Should be all Positive
     deduction = {
         "Undertime_deductions": Base_Salary * salary_rate.undertime_factor * Total_activity.get("Undertime", 0),
         "insurance_deductions": 0,

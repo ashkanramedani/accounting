@@ -41,6 +41,7 @@ routes = [
     # Teacher Form
     request_sub_route,
     tardy_request_route,
+    session_cancellation_route,
 
     # Survey
     # question_route,

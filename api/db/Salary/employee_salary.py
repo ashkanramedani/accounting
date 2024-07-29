@@ -166,3 +166,26 @@ def get_employee_salary(db: Session, user_fk_id, year, month):
         return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
+
+def update_employee_salary(db: Session, form_id, Form: sch.update_employee_salary):
+    try:
+        existing = db.query(dbm.Employee_Salary_form).filter_by(employee_salary_pk_id=form_id).filter(dbm.Employee_Salary_form.status != "deleted")
+        salary_data = existing.first()
+        if not salary_data:
+            return 400, "Bad Request: Target salary record not found"
+
+        data = Form.__dict__
+        new_total_earning = salary_data.total_earning + Form.rewards_earning
+        new_total_deduction = salary_data.total_deduction + (Form.punishment_deductions + Form.loan_installment)
+        new_total_income = new_total_earning - new_total_deduction
+
+        changes = {**data, "total_earning": new_total_earning, "total_deduction": new_total_deduction, "total_income": new_total_income}
+
+        existing.update({**changes}, synchronize_session=False)
+        db.commit()
+        return 200, existing.first()
+
+
+
+    except Exception as e:
+        return Return_Exception(db, e)

@@ -45,8 +45,6 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         else:
             return 400, "Bad Request: Invalid Salary Type"
 
-        if data["undertime_factor"] > 0:
-            data["undertime_factor"] *= -1
 
         OBJ = dbm.Salary_Policy_form(**data)  # type: ignore[call-arg]
 
@@ -81,8 +79,6 @@ def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
             return 400, "Bad Request"
 
         data = Form.dict()
-        if data["undertime_factor"] > 0:
-            data["undertime_factor"] *= -1
         record.update(data, synchronize_session=False)
 
         db.commit()

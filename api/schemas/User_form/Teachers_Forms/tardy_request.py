@@ -22,6 +22,13 @@ class update_teacher_tardy_reports_schema(teacher_tardy_reports):
         extra = 'ignore'
 
 
+class Verify_teacher_tardy_reports_schema(BaseModel):
+    teacher_tardy_report_pk_id: List[UUID]
+
+    class Config:
+        extra = 'ignore'
+
+
 class teacher_tardy_reports_response(Base_response):
     teacher_tardy_report_pk_id: UUID
     delay: PositiveInt

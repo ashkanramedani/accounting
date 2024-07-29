@@ -90,3 +90,14 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
         return 200, "Form Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
+def verify_tardy_request(db: Session, form_id):
+    try:
+        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
+        if not record:
+            return 404, "Record Not Found"
+        record.status = Set_Status(db, "form", "verified")
+        db.commit()
+        return 200, "Verified"
+    except Exception as e:
+        return Return_Exception(db, e)

@@ -58,3 +58,11 @@ async def update_tardy_request(Forms: List[sch.update_teacher_tardy_reports_sche
         if status_code not in sch.SUCCESS_STATUS:
             raise HTTPException(status_code=status_code, detail=result)
         return result
+
+
+@router.put("/verify/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def verify_tardy_request(form_id, db=Depends(get_db)):
+    status_code, result = dbf.verify_tardy_request(db, form_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result

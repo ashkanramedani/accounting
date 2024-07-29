@@ -1,3 +1,6 @@
+from datetime import datetime
+
+from pytz import timezone
 from sqlalchemy.orm import Session, joinedload
 
 import schemas as sch
@@ -41,8 +44,17 @@ def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.sub_teacher_fk_id]):
             return 400, "Bad Request: Employee Not Found"
-        if not db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id, session_teacher_fk_id=Form.main_teacher_fk_id).filter(dbm.Session_form.status != "deleted").first():
-            return 400, "Bad Request: session with given teacher not found"
+
+        target_session = db \
+            .query(dbm.Session_form) \
+            .filter_by(
+                session_pk_id=Form.session_fk_id) \
+            .filter(
+                dbm.Session_form.status != "deleted",
+                dbm.Session_form.session_date >= datetime.now(timezone('Asia/Tehran')).date()) \
+            .first()
+        if not target_session:
+            return 400, "Bad Request: session not found"
 
         OBJ = dbm.Sub_Request_form(**Form.__dict__)  # type: ignore[call-arg]
 
@@ -69,12 +81,21 @@ def delete_sub_request(db: Session, form_id):
 
 def update_sub_request(db: Session, Form: sch.update_Sub_request_schema):
     try:
+
         record = db.query(dbm.Sub_Request_form).filter_by(sub_request_pk_id=Form.sub_request_pk_id).filter(dbm.Sub_Request_form.status != "deleted")
 
-        if not employee_exist(db, [Form.created_fk_by, Form.main_teacher_fk_id, Form.sub_teacher_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by, Form.sub_teacher_fk_id]):
             return 400, "Bad Request"
-        if not db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id, session_teacher_fk_id=Form.main_teacher_fk_id).filter(dbm.Session_form.status != "deleted").first():
-            return 400, "Bad Request: session with given teacher not found"
+        target_session = db \
+            .query(dbm.Session_form) \
+            .filter_by(
+                session_pk_id=Form.session_fk_id) \
+            .filter(
+                dbm.Session_form.status != "deleted",
+                dbm.Session_form.can_accept_sub > datetime.now(timezone('Asia/Tehran'))) \
+            .first()
+        if not target_session:
+            return 400, "Bad Request: session  not found or expired"
         record.update(Form.dict(), synchronize_session=False)
 
         db.commit()

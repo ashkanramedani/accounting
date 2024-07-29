@@ -30,8 +30,7 @@ def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_s
 
         session.status = Set_Status(db, "form", "canceled")
         session.canceled = True
-        OBJ = dbm.Session_Cancellation_form(**Form.__dict__)  # type: ignore[call-arg]
-        OBJ.status = Set_Status(db, "form", "approved")
+        OBJ = dbm.Session_Cancellation_form(**Form.__dict__, status=Set_Status(db, "form", "approved"))  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

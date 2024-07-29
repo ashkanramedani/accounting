@@ -230,7 +230,7 @@ class Base_response(BaseModel):
 
 
 class Base_record_add(BaseModel):
-    id: UUID | str | None
+    id: UUID
     Warning: Optional[str] = None
 
 

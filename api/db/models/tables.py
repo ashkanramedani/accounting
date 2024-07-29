@@ -513,7 +513,7 @@ class Payment_Method_form(Base, Base_form):
     created_fk_by = create_forenKey("User_form")
     shaba = Column(String(24), nullable=False, unique=True)
     card_number = Column(String(16), nullable=True, unique=True)
-    active = Column(Boolean, default=False)
+    active = Column(Boolean, default=True)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     employee = relationship("User_form", foreign_keys=[user_fk_id])
@@ -768,6 +768,7 @@ class Employee_Salary_form(Base, Base_form):
     attendance_points = Column(Integer, nullable=False, default=0)
     rewards_earning = Column(Float, nullable=False, default=0)
     punishment_deductions = Column(Float, nullable=False, default=0)
+    loan_installment = Column(Float, nullable=False, default=0)
     Fix_pay = Column(Float, nullable=False, default=0)
 
     Regular_earning = Column(Float, nullable=False)
@@ -892,6 +893,9 @@ class Session_Cancellation_form(Base, Base_form):
     __tablename__ = "session_cancellation"
 
     session_cancellation_pk_id = create_Unique_ID()
+
+    main_teacher_fk_id = create_forenKey("User_form")
+    sub_teacher_fk_id = create_forenKey("User_form")
 
     created_fk_by = create_forenKey("User_form")
     session_fk_id = create_forenKey("Session_form")

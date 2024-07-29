@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from typing import List
 from uuid import UUID
 
+from pytz import timezone
 from sqlalchemy.orm import Session
 
 import schemas as sch
@@ -34,7 +35,7 @@ def get_all_session(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveIn
 
 def get_sub_party(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        now = datetime.now()
+        now = datetime.now(timezone('Asia/Tehran'))
         return record_order_by(db, dbm.Session_form, page, limit, order, SortKey, query=db.query(dbm.Session_form).filter(dbm.Session_form.can_accept_sub >= now))
     except Exception as e:
         return Return_Exception(db, e)

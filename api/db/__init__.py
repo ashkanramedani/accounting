@@ -29,7 +29,7 @@ __all__ = [
     "post_category",
     "delete_category",
     "update_category",
-    # teacher_salary.py
+    # teacher_salary_policy.py
     "employee_salary_report",
     # Salary_Policy_form.py
     "get_SalaryPolicy",
