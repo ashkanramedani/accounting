@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -19,8 +19,15 @@ async def add_subcourse(Form: sch.post_sub_course_schema, db=Depends(get_db)):
     return result
 
 
-@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.sub_course_response)
-async def search_subcourse(form_id, db=Depends(get_db)):
+@router.get("/teacher_subcourse/{user_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=Union[sch.sub_course_response_notJoined, List[sch.sub_course_response_notJoined]])
+async def search_teacher_subcourse(user_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.get_teacher_subcourse(db, user_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+@router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  #, response_model=Union[sch.sub_course_response_notJoined, List[sch.sub_course_response_notJoined]])
+async def search_subcourse(form_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.get_subcourse(db, form_id)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)

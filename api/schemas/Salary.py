@@ -125,7 +125,7 @@ class employee_salary_Response(Base_response):
 
     remote_earning: NonNegativeFloat
     vacation_leave_earning: int
-    medical_leave_earning: NonNegativeFloat
+    medical_leave_earning: int
     business_trip_earning: NonNegativeFloat
 
     total_earning: NonNegativeFloat

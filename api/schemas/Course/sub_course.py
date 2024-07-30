@@ -1,3 +1,5 @@
+from typing import Dict
+
 from ..Base import *
 
 
@@ -51,6 +53,16 @@ class sub_course_response(Base_form):
     teacher: export_employee
     # available_seat: int
     # Sessions: List[export_session]
+    course: export_course
+
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
+
+
+class sub_course_response_notJoined(Base_response):
+    sub_course_teacher_fk_id: UUID
+    sub_course_name: str
     course: export_course
 
     class Config:

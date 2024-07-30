@@ -22,11 +22,14 @@ def get_Course_active_subcourse(db: Session, Course: UUID) -> List[UUID]:
 # ------ sub course -------
 def get_subcourse(db: Session, subcourse_id):
     try:
-        sub_course = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=subcourse_id).filter(dbm.Sub_Course_form.status != "deleted").first()
-        if not sub_course:
-            return 200, []
+        return 200, db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=subcourse_id).filter(dbm.Sub_Course_form.status != "deleted").first()
+    except Exception as e:
+        return Return_Exception(db, e)
 
-        return 200, sub_course
+
+def get_teacher_subcourse(db: Session, teacher_id):
+    try:
+        return 200, db.query(dbm.Sub_Course_form).filter_by(sub_course_teacher_fk_id=teacher_id).filter(dbm.Sub_Course_form.status != "deleted").all()
     except Exception as e:
         return Return_Exception(db, e)
 
