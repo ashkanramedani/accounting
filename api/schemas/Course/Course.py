@@ -57,7 +57,7 @@ class course_response(Base_response):
     ending_date: date
 
     teachers: List[export_employee | UUID] = None
-    session_signature: List[Course_Calender] = []
+    session_signature: List = []
     available_seat: int = None
 
     tags: List[export_tag] = []
