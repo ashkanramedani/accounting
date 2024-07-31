@@ -29,8 +29,15 @@ def get_course(db: Session, course_id):
             course.available_seat = course.course_capacity
             return 200, course
 
+        Unique_signature: List = db \
+            .query(dbm.Session_form.days_of_week) \
+            .filter_by(course_fk_id=course_id) \
+            .filter(dbm.Session_form.status != "deleted") \
+            .distinct(dbm.Session_form.days_of_week) \
+            .all()
+
         course.teachers = [sub_course.teacher for sub_course in sub_course]
-        course.session_signature = []
+        course.session_signature = [day["days_of_week"] for day in Unique_signature]
         course.available_seat = min([SB.sub_course_available_seat for SB in sub_course])
 
         return 200, course
@@ -63,8 +70,16 @@ def get_all_course(db: Session, course_type: str | None, page: sch.NonNegativeIn
                 continue
 
             course.teachers = [OBJ.teacher for OBJ in sub_course]
-            course.course_signature = db.query(dbm.Session_form.days_of_week, dbm.Session_form.session_date).filter_by(course_fk_id=course.course_pk_id).filter(dbm.Session_form.status != "deleted").distinct().all()
 
+
+            Unique_signature: List = db \
+                .query(dbm.Session_form.days_of_week) \
+                .filter_by(course_fk_id=course.course_pk_id) \
+                .filter(dbm.Session_form.status != "deleted") \
+                .distinct(dbm.Session_form.days_of_week) \
+                .all()
+
+            course.session_signature = [day["days_of_week"] for day in Unique_signature]
             course.available_seat = min([OBJ.sub_course_available_seat for OBJ in sub_course])
             Courses.append(course)
 

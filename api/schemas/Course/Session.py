@@ -48,6 +48,18 @@ class session_response(Base_response):
         orm_mode = True
 
 
+class session_for_subcourse_response(BaseModel):
+    session_pk_id: UUID
+    course_fk_id: UUID
+    sub_course_fk_id: UUID
+    days_of_week: int
+    session_date: date
+
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
+
+
 class export_session(BaseModel):
     session_pk_id: UUID
     session_starting_time: time

@@ -35,7 +35,7 @@ async def search_all_session(db=Depends(get_db), page: sch.NonNegativeInt = 1, l
     return result
 
 
-@router.get("/subcourse/{subcourse_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.session_response])
+@router.get("/subcourse/{subcourse_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.session_for_subcourse_response])
 async def search_session_by_id(subcourse_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.get_subcourse_session(db, subcourse_id)
     if status_code not in sch.SUCCESS_STATUS:
