@@ -45,14 +45,16 @@ class sub_course_response(Base_form):
 
     sub_course_name: str
 
+    number_of_session: int
+    sub_course_starting_date: date
+    sub_course_ending_date: date
+
+    sub_request_threshold: int
     sub_course_capacity: NonNegativeInt
     sub_course_available_seat: NonNegativeInt
 
     created: export_employee
-
     teacher: export_employee
-    # available_seat: int
-    # Sessions: List[export_session]
     course: export_course
 
     class Config:

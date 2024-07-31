@@ -22,7 +22,7 @@ def get_all_session_cancellation(db: Session, page: sch.NonNegativeInt, limit: s
 
 def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_schema):
     try:
-        session = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id).filter(dbm.Session_form.status != "deleted").first()
+        session: dbm.Session_form = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id).filter(dbm.Session_form.status != "deleted").first()
         if not session:
             return 400, "Session not found"
         if not employee_exist(db, [Form.created_fk_by]):
@@ -30,7 +30,9 @@ def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_s
 
         session.status = Set_Status(db, "form", "canceled")
         session.canceled = True
-        OBJ = dbm.Session_Cancellation_form(**Form.__dict__, status=Set_Status(db, "form", "approved"))  # type: ignore[call-arg]
+
+        data = {**Form.__dict__, "course_fk_id": session.course_fk_id, "sub_course_fk_id": session.sub_course_fk_id}
+        OBJ = dbm.Session_Cancellation_form(**data, status=Set_Status(db, "form", "approved"))  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()

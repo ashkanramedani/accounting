@@ -158,6 +158,10 @@ class export_session(BaseModel):
     sub_course: export_sub_course
     teacher: export_employee
 
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
+
 
 class export_tag(BaseModel):
     tag_pk_id: UUID

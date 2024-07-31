@@ -405,7 +405,7 @@ class Sub_Course_form(Base, Base_form):
 
 class Session_form(Base, Base_form):
     __tablename__ = "session"
-    __table_args__ = (UniqueConstraint('session_date', 'session_starting_time', 'session_pk_id'),)
+    __table_args__ = (UniqueConstraint('session_date', 'session_starting_time', 'session_teacher_fk_id'),)
 
     session_pk_id = create_Unique_ID()
 
@@ -417,12 +417,12 @@ class Session_form(Base, Base_form):
 
     is_sub = Column(Boolean, nullable=False, default=False)
     canceled = Column(Boolean, nullable=False, default=False)
-    session_date = Column(Date, nullable=False)
-    session_starting_time = Column(Time, nullable=False)
-    session_ending_time = Column(Time, nullable=False)
+    session_date = Column(Date, nullable=False, index=True)
+    session_starting_time = Column(Time, nullable=False, index=True)
+    session_ending_time = Column(Time, nullable=False, index=True)
     session_duration = Column(Integer, nullable=False)
     days_of_week = Column(Integer, nullable=False)
-    can_accept_sub = Column(DateTime, nullable=False)
+    can_accept_sub = Column(DateTime, nullable=False, index=True)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
@@ -573,28 +573,7 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
         return Remove_Base_Data(self.__dict__)
 
 
-class Teacher_Tardy_report_form(Base, Base_form):
-    __tablename__ = "teacher_tardy_report"
-    __table_args__ = (UniqueConstraint('teacher_fk_id', 'session_fk_id', 'delay'),)
 
-    teacher_tardy_report_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
-
-    teacher_fk_id = create_forenKey("User_form")
-    course_fk_id = create_forenKey("Course_form")
-    sub_course_fk_id = create_forenKey("Sub_Course_form")
-    session_fk_id = create_forenKey("Session_form")
-
-    delay = Column(Integer, nullable=False)
-
-    created = relationship("User_form", foreign_keys=[created_fk_by])
-    teacher = relationship("User_form", foreign_keys=[teacher_fk_id])
-    course = relationship("Course_form", foreign_keys=[course_fk_id])
-    sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
-    session = relationship("Session_form", foreign_keys=[session_fk_id])
-
-    def __repr__(self):
-        return Remove_Base_Data(self.__dict__)
 
 
 class Teachers_Report_form(Base, Base_form):
@@ -875,16 +854,46 @@ class Status_form(Base, Base_form):  # NC: 002
         return Remove_Base_Data(self.__dict__)
 
 
+class Teacher_Tardy_report_form(Base, Base_form):
+    __tablename__ = "teacher_tardy_report"
+    __table_args__ = (UniqueConstraint('teacher_fk_id', 'session_fk_id', 'delay'),)
+
+    teacher_tardy_report_pk_id = create_Unique_ID()
+    created_fk_by = create_forenKey("User_form")
+
+    teacher_fk_id = create_forenKey("User_form")
+    course_fk_id = create_forenKey("Course_form")
+    sub_course_fk_id = create_forenKey("Sub_Course_form")
+    session_fk_id = create_forenKey("Session_form")
+
+    delay = Column(Integer, nullable=False)
+
+    created = relationship("User_form", foreign_keys=[created_fk_by])
+    teacher = relationship("User_form", foreign_keys=[teacher_fk_id])
+    course = relationship("Course_form", foreign_keys=[course_fk_id])
+    sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
+    session = relationship("Session_form", foreign_keys=[session_fk_id])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
 class Sub_Request_form(Base, Base_form):
     __tablename__ = "sub_request"
 
     sub_request_pk_id = create_Unique_ID()
+
     created_fk_by = create_forenKey("User_form")
+
+    course_fk_id = create_forenKey("Course_form")
+    sub_course_fk_id = create_forenKey("Sub_Course_form")
     session_fk_id = create_forenKey("Session_form")
+
     main_teacher_fk_id = create_forenKey("User_form")
     sub_teacher_fk_id = create_forenKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
+    course = relationship("Course_form", foreign_keys=[course_fk_id])
+    sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
     sessions = relationship("Session_form", foreign_keys=[session_fk_id])
     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
@@ -898,11 +907,16 @@ class Session_Cancellation_form(Base, Base_form):
 
     session_cancellation_pk_id = create_Unique_ID()
 
-    main_teacher_fk_id = create_forenKey("User_form")
-    sub_teacher_fk_id = create_forenKey("User_form")
-
     created_fk_by = create_forenKey("User_form")
+
+    course_fk_id = create_forenKey("Course_form")
+    sub_course_fk_id = create_forenKey("Sub_Course_form")
     session_fk_id = create_forenKey("Session_form")
+
+    created = relationship("User_form", foreign_keys=[created_fk_by])
+    course = relationship("Course_form", foreign_keys=[course_fk_id])
+    sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
+    session = relationship("Session_form", foreign_keys=[session_fk_id])
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)

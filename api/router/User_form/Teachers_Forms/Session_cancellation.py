@@ -27,7 +27,7 @@ async def search_session_cancellation(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.teacher_tardy_reports_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Session_Cancellation_Response])
 async def search_all_session_cancellation(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 100, order: sch.Sort_Order = "desc", SortKey: str = None):
     status_code, result = dbf.get_all_session_cancellation(db, page, limit, order, SortKey)
     if status_code not in sch.SUCCESS_STATUS:

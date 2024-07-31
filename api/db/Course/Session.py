@@ -35,15 +35,15 @@ def get_all_session(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveIn
 
 def get_sub_party(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        now = datetime.now(timezone('Asia/Tehran'))
-        return record_order_by(db, dbm.Session_form, page, limit, order, SortKey, query=db.query(dbm.Session_form).filter(dbm.Session_form.can_accept_sub >= now))
+        QUERY = db.query(dbm.Session_form).filter(dbm.Session_form.status != "deleted", dbm.Session_form.can_accept_sub >= datetime.now(timezone('Asia/Tehran')))
+        return record_order_by(db, dbm.Session_form, page, limit, order, SortKey, query=QUERY)
     except Exception as e:
         return Return_Exception(db, e)
 
 
 def post_session(db: Session, Form: sch.post_session_schema):
     try:
-        if not employee_exist(db, [Form.created_fk_by, Form.session_teacher_fk_id]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: employee not found"
 
         subcourse = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first()
@@ -59,8 +59,10 @@ def post_session(db: Session, Form: sch.post_session_schema):
             return 400, "SubCourse is Full"
 
         can_accept_sub = datetime.combine(Form.session_date, Form.session_starting_time) - timedelta(hours=data.pop("sub_request_threshold"))
+
         data["days_of_week"] = (Form.session_date.weekday() + 2) % 7
         data["session_ending_time"] = (datetime.combine(datetime.today(), Fix_time(Form.session_starting_time)) + timedelta(minutes=Form.session_duration)).time()
+        data["session_teacher_fk_id"] = subcourse.sub_course_teacher_fk_id
 
         OBJ = dbm.Session_form(**data, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
         db.add(OBJ)

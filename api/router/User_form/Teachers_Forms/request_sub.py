@@ -66,3 +66,10 @@ async def update_sub_request(status: sch.CanUpdateStatus, Form: sch.Verify_Sub_r
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+#
+# @router.get("/", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+# async def test(db=Depends(get_db)):
+#     status_code, result = Sub_Request.TEST(db)
+#     if status_code not in sch.SUCCESS_STATUS:
+#         raise HTTPException(status_code=status_code, detail=result)
+#     return result

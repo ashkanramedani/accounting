@@ -51,12 +51,17 @@ def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
                 session_pk_id=Form.session_fk_id) \
             .filter(
                 dbm.Session_form.status != "deleted",
-                dbm.Session_form.session_date >= datetime.now(timezone('Asia/Tehran')).date()) \
+                dbm.Session_form.can_accept_sub >= datetime.now(timezone('Asia/Tehran'))) \
             .first()
         if not target_session:
             return 400, "Bad Request: session not found"
 
-        OBJ = dbm.Sub_Request_form(**Form.__dict__)  # type: ignore[call-arg]
+        data = {
+            "course_fk_id": target_session.course_fk_id,
+            "sub_course_fk_id": target_session.sub_course_fk_id,
+            "main_teacher_fk_id": target_session.session_teacher_fk_id}
+
+        OBJ = dbm.Sub_Request_form(**Form.__dict__, **data)  # type: ignore[call-arg]
 
         db.add(OBJ)
         db.commit()
@@ -64,7 +69,6 @@ def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
         return 200, "Record has been Added"
     except Exception as e:
         return Return_Exception(db, e)
-
 
 def delete_sub_request(db: Session, form_id):
     try:
@@ -109,33 +113,30 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
         Warn = []
         new_Record = []
         verified = 0
+        status = "approved"  # NC: 007
         records = db.query(dbm.Sub_Request_form) \
             .filter(
-                dbm.Sub_Request_form.deleted == False,
                 dbm.Sub_Request_form.status != "deleted",
                 dbm.Sub_Request_form.status != status,
                 dbm.Sub_Request_form.sub_request_pk_id.in_(Form.sub_request_pk_id)) \
             .all()
 
         for record in records:
-            old_session = db \
-                .query(dbm.Session_form) \
-                .filter_by(
-                    session_pk_id=record.session_fk_id,
-                    session_teacher_fk_id=record.main_teacher_fk_id) \
-                .filter(dbm.Session_form.deleted == False, dbm.Session_form.status != "deleted")
-            if not old_session.first():
+            target_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id).filter(dbm.Session_form.status != "deleted")
+            if not target_session.first():
                 Warn.append(f'{record.session_fk_id}: Session Not Found.')
                 continue
-            old_session_data = {k: v for k, v in old_session.first().__dict__.items() if k not in ["_sa_instance_state", "is_sub", "session_teacher_fk_id", "session_pk_id", "sub_Request"]}
-            new_Record.append(dbm.Session_form(**old_session_data, sub_Request=record.sub_request_pk_id, is_sub=True, session_teacher_fk_id=record.sub_teacher_fk_id))  # type: ignore[call-arg]
-            old_session.update({"deleted": True, "sub_Request": record.sub_request_pk_id})
+
+            target_session.sub_Request = record.sub_request_pk_id
+            target_session.is_sub = True
+            target_session.session_teacher_fk_id = record.sub_teacher_fk_id
 
             record.status = Set_Status(db, "form", status)
             verified += 1
 
             Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
             if Session_cancellation_record:
+                Session_cancellation_record.status = Set_Status(db, "form", "deleted")
                 Session_cancellation_record.deleted = True
 
         db.add_all(new_Record)
@@ -143,5 +144,19 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
         if Warn:
             return 200, f"{verified} Form Update Status To {status}. {' | '.join(Warn)}"
         return 200, f"{len(records)} Form Update Status To {status}."
+    except Exception as e:
+        return Return_Exception(db, e)
+
+def TEST(db: Session):
+    try:
+
+        target_session = db \
+            .query(dbm.Session_form) \
+            .filter(
+                dbm.Session_form.status != "deleted",
+                dbm.Session_form.can_accept_sub >= datetime.now(timezone('Asia/Tehran'))) \
+            .all()
+
+        return 200, target_session
     except Exception as e:
         return Return_Exception(db, e)

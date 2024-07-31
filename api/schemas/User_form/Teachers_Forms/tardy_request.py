@@ -32,9 +32,11 @@ class Verify_teacher_tardy_reports_schema(BaseModel):
 class teacher_tardy_reports_response(Base_response):
     teacher_tardy_report_pk_id: UUID
     delay: PositiveInt
+
     teacher: export_employee
     course: export_course
     sub_course: export_sub_course
+    session: export_session
 
     class Config:
         extra = 'ignore'

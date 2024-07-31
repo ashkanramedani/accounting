@@ -8,7 +8,8 @@ from db.Extra import *
 # Tardy Form - get_tardy_request
 def get_tardy_request(db: Session, form_id):
     try:
-        return 200, db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
+
+        return 200, db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_report_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
 

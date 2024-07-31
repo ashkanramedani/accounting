@@ -15,7 +15,12 @@ class Verify_Session_Cancellation_schema(BaseModel):
         extra = 'ignore'
 
 
-class Session_Cancellation_Response(BaseModel):
+class Session_Cancellation_Response(Base_response):
+    session_cancellation_pk_id: UUID
+    course: export_course
+    sub_course: export_sub_course
+    session: export_session
+
     class Config:
         extra = 'ignore'
         orm_mode = True
