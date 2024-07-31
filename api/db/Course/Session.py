@@ -32,6 +32,12 @@ def get_all_session(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveIn
     except Exception as e:
         return Return_Exception(db, e)
 
+def get_subcourse_session(db: Session, subcourse_id):
+    try:
+        return 200, db.query(dbm.Session_form).filter_by(sub_course_fk_id=subcourse_id).filter(dbm.Session_form.status != "deleted").all()
+    except Exception as e:
+        return Return_Exception(db, e)
+
 
 def get_sub_party(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
