@@ -16,3 +16,11 @@ async def teacher_sub_course(course_id: UUID, db=Depends(get_db)):
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
+
+@router.get("/teacher/summary/{course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def teacher_summary(course_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.course_report_summary(db, course_id, 0)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result

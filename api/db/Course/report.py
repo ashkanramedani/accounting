@@ -1,20 +1,29 @@
+import json
 from typing import List, Dict
 from uuid import UUID
 
 from sqlalchemy.orm import Session
 
 import db.models as dbm
-from ..Extra import *
+from db.Extra import *
+from lib import DEV_io, logger
 
-Base_salary = {
-    "1-5": {"in_person": 77, "online": 66, "hybrid": 0, "Not_Assigned": 0},
-    "6-9": {"in_person": 77, "online": 66, "hybrid": 0, "Not_Assigned": 0},
-    "10-12": {"in_person": 77, "online": 66, "hybrid": 0, "Not_Assigned": 0},
-    "13": {"in_person": 77, "online": 66, "hybrid": 0, "Not_Assigned": 0}}
+Base_salary = {Cap: {"in_person": 77, "online": 66, "hybrid": 0, "Not_Assigned": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 TEACHER_TARDY = {"0_10": 11, "10_30": 5.5, "30_40": -5.5, "40": -16.5}
 TEACHER_LEVEL = {"regular": 0, "expert": 22, "visiting: 0, guest": 0, "exam: 30, test": 30, "master": 40, "supervisor": 55, "master_supervisor": 5.5, "director_of_education": 5.5}
 COURSE_LEVEL = {"connect": 11, "FCE": 22, "CAE": 44, "CPE": 66}
 
+def Get_Teacher_Level_Score(level: str):
+    if not level:
+        return 0
+    else:
+        return TEACHER_LEVEL.get(level.lower(), 0)
+
+def Get_Course_Level_Score(level: str):
+    if not level:
+        return 0
+    else:
+        return COURSE_LEVEL.get(level.lower(), 0)
 
 def BaseSalary_for_SubCourse(course_cap: int, course_type: str):
     try:
@@ -56,6 +65,7 @@ def safe_field(db: Session, Data: Dict, *fields: UUID | str) -> Dict[str, Dict]:
     return Data
 
 
+@DEV_io()
 def SubCourse_report(db: Session, sub_course: dbm.Sub_Course_form, course_level: str, course_type: dbm.Course_Type_form, Cancellation_factor: float) -> Dict | str:
     BaseSalary_for_course_type = BaseSalary_for_SubCourse(sub_course.sub_course_capacity, course_type.course_type_name)  # Code: 001
     if BaseSalary_for_course_type is None:
@@ -108,18 +118,19 @@ def SubCourse_report(db: Session, sub_course: dbm.Sub_Course_form, course_level:
                 "Cancelled_Session": Cancelled_Session,
                 "Cancelled_Session_Score": Cancelled_Session * Cancellation_factor,
                 "Teacher_Level": Teacher_Level,
-                "Teacher_Level_Score": TEACHER_LEVEL.get(Teacher_Level.lower(), 0),
+                "Teacher_Level_Score": Get_Teacher_Level_Score(Teacher_Level),
                 "Tardy": Tardy,
                 "Tardy_Score": Tardy_Score(Tardy),
                 "Course_Level": course_level,
-                "Course_Level_Score": COURSE_LEVEL.get(course_level.lower(), 0)
+                "Course_Level_Score": Get_Course_Level_Score(course_level)
             })
         else:
             new_sub_course_summary[field] = record
     return new_sub_course_summary
 
 
-def course_report(db, course_id: UUID, Cancellation_factor):
+@DEV_io()
+def course_report_summary(db: Session, course_id: UUID, Cancellation_factor: int):
     try:
         Course_summary = {}
         course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id).filter(dbm.Course_form.status != "deleted").first()

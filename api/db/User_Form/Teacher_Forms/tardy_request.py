@@ -67,7 +67,7 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
 
 def delete_tardy_request(db: Session, form_id):
     try:
-        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
+        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_report_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.deleted = True
@@ -80,7 +80,7 @@ def delete_tardy_request(db: Session, form_id):
 
 def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_schema):
     try:
-        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=Form.teacher_tardy_report_pk_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted")
+        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_report_pk_id=Form.teacher_tardy_report_pk_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted")
 
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
@@ -94,7 +94,7 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
 
 def verify_tardy_request(db: Session, form_id):
     try:
-        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_reports_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
+        record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_report_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         record.status = Set_Status(db, "form", "verified")

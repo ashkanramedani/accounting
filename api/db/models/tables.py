@@ -19,7 +19,7 @@ def Remove_Base_Data(OBJ) -> str:
     for i in ["created_fk_by", "_sa_instance_state", "priority", "visible", "deleted", "can_update", "can_deleted", "create_date", "update_date", "delete_date", "expire_date", "status", "description", "note"]:
         if i in OBJ:
             OBJ.pop(i)
-    return json.dumps(OBJ, cls=JSONEncoder).replace('\\"', "").replace('"\\', "")
+    return repr(OBJ)
 
 
 
@@ -317,7 +317,7 @@ class User_form(Base, Base_form):
     __tablename__ = "user"
     __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name", "is_employee"),)
     user_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form", nullable=True)
+    created_fk_by = create_foreignKey("User_form", nullable=True)
 
     name = Column(String, nullable=False, index=True)
     last_name = Column(String, nullable=False, index=True)
@@ -351,9 +351,9 @@ class Course_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
 
     course_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
-    course_language = create_forenKey("Language_form")
-    course_type = create_forenKey("Course_Type_form")
+    created_fk_by = create_foreignKey("User_form")
+    course_language = create_foreignKey("Language_form")
+    course_type = create_foreignKey("Course_Type_form")
 
     course_name = Column(String)
     course_image = Column(String, nullable=True)
@@ -382,9 +382,9 @@ class Sub_Course_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('sub_course_name', 'course_fk_id'),)
 
     sub_course_pk_id = create_Unique_ID()
-    course_fk_id = create_forenKey("Course_form")
-    created_fk_by = create_forenKey("User_form")
-    sub_course_teacher_fk_id = create_forenKey("User_form")
+    course_fk_id = create_foreignKey("Course_form")
+    created_fk_by = create_foreignKey("User_form")
+    sub_course_teacher_fk_id = create_foreignKey("User_form")
 
     sub_course_name = Column(String, unique=True)
     number_of_session = Column(Integer, nullable=False, default=0)
@@ -409,11 +409,11 @@ class Session_form(Base, Base_form):
 
     session_pk_id = create_Unique_ID()
 
-    created_fk_by = create_forenKey("User_form")
-    course_fk_id = create_forenKey("Course_form")
-    sub_course_fk_id = create_forenKey("sub_course")
-    session_teacher_fk_id = create_forenKey("User_form")
-    sub_Request = create_forenKey("Sub_Request_form", nullable=True)
+    created_fk_by = create_foreignKey("User_form")
+    course_fk_id = create_foreignKey("Course_form")
+    sub_course_fk_id = create_foreignKey("sub_course")
+    session_teacher_fk_id = create_foreignKey("User_form")
+    sub_Request = create_foreignKey("Sub_Request_form", nullable=True)
 
     is_sub = Column(Boolean, nullable=False, default=False)
     canceled = Column(Boolean, nullable=False, default=False)
@@ -443,8 +443,8 @@ class Leave_Request_form(Base, Base_form):
 
     leave_request_pk_id = create_Unique_ID()
 
-    created_fk_by = create_forenKey("User_form")
-    user_fk_id = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
+    user_fk_id = create_foreignKey("User_form")
 
     start = Column(TIME, index=True, nullable=True, default=None)
     end = Column(TIME, index=True, nullable=True, default=None)
@@ -465,8 +465,8 @@ class Business_Trip_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     business_trip_pk_id = create_Unique_ID()
-    user_fk_id = create_forenKey("User_form")
-    created_fk_by = create_forenKey("User_form")
+    user_fk_id = create_foreignKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
     start = Column(TIME, index=True, nullable=True, default=None)
     end = Column(TIME, index=True, nullable=True, default=None)
@@ -487,8 +487,8 @@ class Remote_Request_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     remote_request_pk_id = create_Unique_ID()
-    user_fk_id = create_forenKey("User_form")
-    created_fk_by = create_forenKey("User_form")
+    user_fk_id = create_foreignKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
     working_location = Column(String, nullable=False)
 
@@ -509,8 +509,8 @@ class Payment_Method_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'shaba', 'card_number'),)
 
     payment_method_pk_id = create_Unique_ID()
-    user_fk_id = create_forenKey("User_form")
-    created_fk_by = create_forenKey("User_form")
+    user_fk_id = create_foreignKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
     shaba = Column(String(24), nullable=False, unique=True)
     card_number = Column(String(16), nullable=True, unique=True)
     active = Column(Boolean, default=True)
@@ -527,7 +527,7 @@ class Fingerprint_Scanner_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),)
 
     fingerprint_scanner_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
     EnNo = Column(Integer, nullable=False, index=True)
     Date = Column(DATE, nullable=False, index=True)
     Enter = Column(TIME, nullable=False, index=True)
@@ -555,7 +555,7 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
 
     fingerprint_scanner_backup_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
     TMNo = Column(Integer, nullable=False, index=True)
     EnNo = Column(Integer, nullable=False, index=True)
     GMNo = Column(Integer, nullable=False, index=True)
@@ -581,9 +581,9 @@ class Teachers_Report_form(Base, Base_form):
     # __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     teachers_report_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
-    teacher_fk_id = create_forenKey("User_form")
-    course_fk_id = create_forenKey("Course_form")
+    created_fk_by = create_foreignKey("User_form")
+    teacher_fk_id = create_foreignKey("User_form")
+    course_fk_id = create_foreignKey("Course_form")
     score = Column(Float)
     number_of_student = Column(Integer)
     canceled_course = Column(Integer, default=0)
@@ -601,8 +601,8 @@ class Teachers_Report_form(Base, Base_form):
 class Survey_form(Base, Base_form):
     __tablename__ = "survey"
     survey_pk_id = create_Unique_ID()
-    sub_course_fk_id = create_forenKey("Sub_Course_form")
-    created_fk_by = create_forenKey("User_form")
+    sub_course_fk_id = create_foreignKey("Sub_Course_form")
+    created_fk_by = create_foreignKey("User_form")
     title = Column(String, index=True)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
@@ -616,7 +616,7 @@ class Survey_form(Base, Base_form):
 class Question_form(Base, Base_form):
     __tablename__ = "question"
     question_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
     text = Column(String, unique=True)
     language = Column(String, index=True)
 
@@ -629,9 +629,9 @@ class Question_form(Base, Base_form):
 class Response_form(Base, Base_form):
     __tablename__ = "response"
     response_pk_id = create_Unique_ID()
-    user_fk_id = create_forenKey("User_form")
-    question_fk_id = create_forenKey("Question_form")
-    survey_fk_id = create_forenKey("Survey_form")
+    user_fk_id = create_foreignKey("User_form")
+    question_fk_id = create_foreignKey("Question_form")
+    survey_fk_id = create_foreignKey("Survey_form")
     answer = Column(String, nullable=False)
 
     student = relationship("User_form", foreign_keys=[user_fk_id])
@@ -648,7 +648,7 @@ class Role_form(Base, Base_form):
     __tablename__ = "role"
 
     role_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
     name = Column(String, index=True, nullable=False, unique=True)
     cluster = Column(String, index=True, nullable=False)
@@ -664,8 +664,8 @@ class Salary_Policy_form(Base, Base_form):
     __tablename__ = "salary_policy"
     salary_policy_pk_id = create_Unique_ID()
 
-    created_fk_by = create_forenKey("User_form")
-    user_fk_id = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
+    user_fk_id = create_foreignKey("User_form")
 
     Base_salary = Column(Float, nullable=False)
     Fix_pay = Column(Float, nullable=False, default=0)
@@ -729,13 +729,13 @@ class Employee_Salary_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'year', 'month'),)
     employee_salary_pk_id = create_Unique_ID()
 
-    user_fk_id = create_forenKey("User_form")
+    user_fk_id = create_foreignKey("User_form")
 
     year = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
     fingerprint_scanner_user_id = Column(Integer, nullable=True)
 
-    payment = create_forenKey("Payment_Method_form", nullable=True)
+    payment = create_foreignKey("Payment_Method_form", nullable=True)
     payment_date = Column(Date, nullable=True)
 
     present_time = Column(Integer, nullable=False)
@@ -791,7 +791,7 @@ class Tag_form(Base, Base_form):
 
     tag_pk_id = create_Unique_ID()
     tag_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -804,7 +804,7 @@ class Category_form(Base, Base_form):
 
     category_pk_id = create_Unique_ID()
     category_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -817,7 +817,7 @@ class Language_form(Base, Base_form):
 
     language_pk_id = create_Unique_ID()
     language_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -830,7 +830,7 @@ class Course_Type_form(Base, Base_form):
 
     course_type_pk_id = create_Unique_ID()
     course_type_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -847,7 +847,7 @@ class Status_form(Base, Base_form):  # NC: 002
     status_name = Column(String, index=True, nullable=False)
     status_cluster = Column(String, index=True, nullable=False)
 
-    created_fk_by = create_forenKey("User_form", nullable=True)
+    created_fk_by = create_foreignKey("User_form", nullable=True)
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
     def __repr__(self):
@@ -859,12 +859,12 @@ class Teacher_Tardy_report_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('teacher_fk_id', 'session_fk_id', 'delay'),)
 
     teacher_tardy_report_pk_id = create_Unique_ID()
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
-    teacher_fk_id = create_forenKey("User_form")
-    course_fk_id = create_forenKey("Course_form")
-    sub_course_fk_id = create_forenKey("Sub_Course_form")
-    session_fk_id = create_forenKey("Session_form")
+    teacher_fk_id = create_foreignKey("User_form")
+    course_fk_id = create_foreignKey("Course_form")
+    sub_course_fk_id = create_foreignKey("Sub_Course_form")
+    session_fk_id = create_foreignKey("Session_form")
 
     delay = Column(Integer, nullable=False)
 
@@ -882,14 +882,14 @@ class Sub_Request_form(Base, Base_form):
 
     sub_request_pk_id = create_Unique_ID()
 
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
-    course_fk_id = create_forenKey("Course_form")
-    sub_course_fk_id = create_forenKey("Sub_Course_form")
-    session_fk_id = create_forenKey("Session_form")
+    course_fk_id = create_foreignKey("Course_form")
+    sub_course_fk_id = create_foreignKey("Sub_Course_form")
+    session_fk_id = create_foreignKey("Session_form")
 
-    main_teacher_fk_id = create_forenKey("User_form")
-    sub_teacher_fk_id = create_forenKey("User_form")
+    main_teacher_fk_id = create_foreignKey("User_form")
+    sub_teacher_fk_id = create_foreignKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
@@ -907,11 +907,11 @@ class Session_Cancellation_form(Base, Base_form):
 
     session_cancellation_pk_id = create_Unique_ID()
 
-    created_fk_by = create_forenKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
 
-    course_fk_id = create_forenKey("Course_form")
-    sub_course_fk_id = create_forenKey("Sub_Course_form")
-    session_fk_id = create_forenKey("Session_form")
+    course_fk_id = create_foreignKey("Course_form")
+    sub_course_fk_id = create_foreignKey("Sub_Course_form")
+    session_fk_id = create_foreignKey("Session_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
@@ -934,3 +934,9 @@ class Session_Cancellation_form(Base, Base_form):
 #     sessions = relationship("Session_form", foreign_keys=[sessions_fk_id])
 #     main_teacher = relationship("User_form", foreign_keys=[main_teacher_fk_id])
 #     sub_teacher = relationship("User_form", foreign_keys=[sub_teacher_fk_id])
+
+class Class_Room:  # NC: 008
+    pass
+
+class Branch:  # NC: 008
+    pass

@@ -1,7 +1,7 @@
 import dbm
 import json
 
-from db.Course import course_report
+from db.Course import course_report_summary
 from db.User_Form import *
 
 
@@ -183,8 +183,6 @@ def update_employee_salary(db: Session, form_id, Form: sch.update_employee_salar
         existing.update({**changes}, synchronize_session=False)
         db.commit()
         return 200, existing.first()
-
-
 
     except Exception as e:
         return Return_Exception(db, e)
