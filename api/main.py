@@ -1,9 +1,9 @@
 try:
     from os import getenv
-    from time import sleep
     from typing import List
     from pathlib import Path
     from json import dump, load
+    from time import sleep, time
     from dotenv import load_dotenv
     from datetime import datetime, timedelta, timezone
 
@@ -12,7 +12,7 @@ try:
     from sqlalchemy.exc import OperationalError
 
     # fastApi
-    from fastapi import FastAPI
+    from fastapi import FastAPI, Request
     from fastapi_limiter import FastAPILimiter
     from contextlib import asynccontextmanager
     from fastapi.middleware.cors import CORSMiddleware
@@ -61,7 +61,28 @@ app = FastAPI(
         debug=getenv('SWAGGER_DEBUG') if getenv('SWAGGER_DEBUG') else config["debug"])
 
 WHITELISTED_IPS: List[str] = []
-app.add_middleware(CORSMiddleware, allow_credentials=True, allow_origins=['*'], allow_methods=["*"], allow_headers=["*"])
+# Set up CORS middleware
+app.add_middleware(
+        CORSMiddleware,
+        allow_credentials=True,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+)
+
+
+# Example usage within an async context
+
+# Add custom middleware to track process time
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    start_time = time()
+
+    response = await call_next(request)
+    logger.info(f"{response.status_code} {time() - start_time:.5f} {request.method} {request.url}")
+    # response.headers["X-Process-Time"] = f'{time() - start_time:.5f}'
+    return response
+
 
 if getenv('CREATE_ROUTE_SCHEMA'):
     route_schema = save_route(routes)
