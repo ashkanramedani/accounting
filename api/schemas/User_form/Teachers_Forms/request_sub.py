@@ -25,7 +25,17 @@ class Verify_Sub_request_schema(BaseModel):
         extra = 'ignore'
 
 
-class Sub_teacher_Response(BaseModel):
+class Sub_request_Response(Base_response):
+    sub_request_pk_id: UUID
+
+    created: export_employee
+    course: export_course
+    sub_course: export_sub_course
+    sessions: export_session
+    main_teacher: export_employee
+    sub_teacher: export_employee
+
+
     class Config:
         extra = 'ignore'
         orm_mode = True
