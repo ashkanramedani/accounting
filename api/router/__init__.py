@@ -6,10 +6,14 @@ from .Survey_form import question_route, response_route, survey_route
 from .User_form import *
 from .tools import router as tools_route
 from .dropdown import router as dropdown_route
+from .Template import router as template_route
 
 routes = [
     # dropdown_route
     dropdown_route,
+
+    # Template
+    template_route,
 
     # Router_test Env
     tools_route,
