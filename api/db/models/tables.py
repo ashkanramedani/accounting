@@ -940,3 +940,10 @@ class Class_Room:  # NC: 008
 
 class Branch:  # NC: 008
     pass
+
+class Template_form(Base, Base_form):
+    __tablename__ = "templates"
+    template_pk_id = create_Unique_ID()
+    template_table = Column(String, index=True, nullable=False)
+    template_name = Column(String, index=True, nullable=False)
+    data = Column(JSON, nullable=False)
