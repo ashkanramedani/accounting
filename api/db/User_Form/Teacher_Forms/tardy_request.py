@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session, joinedload
 import schemas as sch
 from db import models as dbm
 from db.Extra import *
+from lib import logger
 
 
 # Tardy Form - get_tardy_request
@@ -43,10 +44,9 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: Employee Not Found"
 
-        # removed the teacher from query --> , sub_course_teacher_fk_id=Form.teacher_fk_id
         target_session = db.query(dbm.Session_form).filter_by(session_pk_id=Form.session_fk_id).filter(dbm.Session_form.status != "deleted").first()
         if not target_session:
-            return 400, "Bad Request: subcourse not found"
+            return 400, "Bad Request: session not found"
 
         Full_Details = {
             "teacher_fk_id": target_session.session_teacher_fk_id,

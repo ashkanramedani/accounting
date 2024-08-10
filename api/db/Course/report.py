@@ -25,6 +25,7 @@ def Get_Course_Level_Score(level: str):
     else:
         return COURSE_LEVEL.get(level.lower(), 0)
 
+@DEV_io()
 def BaseSalary_for_SubCourse(course_cap: int, course_type: str):
     try:
         match course_cap:
@@ -52,56 +53,75 @@ def Tardy_Score(tardy: int):
             return TEACHER_TARDY["40"]
 
 
-def safe_field(db: Session, Data: Dict, *fields: UUID | str) -> Dict[str, Dict]:
-    """Safely add a fields to given dict if not exist"""
-    for teacher_id in fields:
-        if str(teacher_id) not in Data:
-            Data[f'{teacher_id}'] = {
-                "Teacher_Level": db.query(dbm.User_form).filter_by(user_pk_id=teacher_id).filter(dbm.User_form.status != "deleted").first().level,
-                "Attended_Session": 0,
-                "Cancelled_Session": 0,
-                "Sub_point": 0,
-                "Tardy": 0}
-    return Data
-
+def Teacher_data(level: str = None):
+    return {"Teacher_Level": level, "Attended_Session": 0, "Cancelled_Session": 0, "Sub_point": 0, "Tardy": 0}
 
 @DEV_io()
-def SubCourse_report(db: Session, sub_course: dbm.Sub_Course_form, course_level: str, course_type: dbm.Course_Type_form, Cancellation_factor: float) -> Dict | str:
-    BaseSalary_for_course_type = BaseSalary_for_SubCourse(sub_course.sub_course_capacity, course_type.course_type_name)  # Code: 001
-    if BaseSalary_for_course_type is None:
+def SubCourse_report(db: Session, sub_course: dbm.Sub_Course_form, course_level: str, Cancellation_factor: float = 0) -> Dict | str:
+    Parent_course = db.query(dbm.Course_form).filter_by(course_pk_id=sub_course.course_fk_id).first()
+    course_type = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=Parent_course.course_type).first().course_type_name
+    BaseSalary = BaseSalary_for_SubCourse(sub_course.sub_course_capacity, course_type)  # Code: 001
+    if BaseSalary is None:
         return f"No BaseSalary Found for SubCourse: {sub_course.sub_course_name}. "
 
-    sub_course_summary: Dict = {"BaseSalary": BaseSalary_for_course_type, "course_level": course_level}
+    Teachers_Query = db \
+        .query(dbm.Session_form.session_teacher_fk_id) \
+        .filter(dbm.Session_form.sub_course_fk_id == sub_course.sub_course_pk_id, dbm.Session_form.status != "deleted") \
+        .distinct()
 
-    sub_course_Sessions: List[dbm.Session_form] = db.query(dbm.Session_form).filter_by(sub_course_fk_id=sub_course.sub_course_pk_id).filter(dbm.Session_form.status != "deleted").all()
+    Teachers = {str(teacher[0]): Teacher_data() for teacher in Teachers_Query.all()}
+
+    level_Query: List[dbm.User_form] = db \
+        .query(dbm.User_form) \
+        .filter(dbm.User_form.user_pk_id.in_(Teachers.keys()), dbm.User_form.status != "deleted").all()
+
+    for teacher in level_Query:  # NC: 009
+        Teachers[str(teacher.user_pk_id)] |= {"Teacher_Level": teacher.level, "teacher_name": f'{teacher.name} {teacher.last_name}'}
+
+    sub_course_summary: Dict = {"BaseSalary": BaseSalary, "course_level": course_level, **Teachers}
+
+    sub_course_Sessions: List[dbm.Session_form] = db \
+        .query(dbm.Session_form) \
+        .filter_by(sub_course_fk_id=sub_course.sub_course_pk_id) \
+        .filter(dbm.Session_form.status != "deleted") \
+        .all()
+
     if not sub_course_Sessions:
         return f"{sub_course.sub_course_name} has no sessions. "
 
     # Loop Through Sessions
+
     for session in sub_course_Sessions:
         Session_teacher = str(session.session_teacher_fk_id)
-        sub_course_summary = safe_field(db, sub_course_summary, Session_teacher)
+        if Session_teacher not in sub_course_summary:
+            logger.warning(f"Teacher: {Session_teacher} Has Been Skipped. ")
 
         if session.canceled:  # or not session.report:  # NC: 001
             sub_course_summary[Session_teacher]["Cancelled_Session"] += 1
 
         elif session.is_sub:
-            sub_request: dbm.Sub_Request_form = db.query(dbm.Sub_Request_form).filter_by(sub_request_pk_id=session.sub_Request).filter(dbm.Sub_Request_form.status != "deleted").first()
-            main_teacher, sub_teacher = str(sub_request.main_teacher_fk_id), str(sub_request.sub_teacher_fk_id)
-            sub_course_summary = safe_field(db, sub_course_summary, main_teacher, sub_teacher)
-            sub_course_summary[main_teacher]["Sub_point"] -= 1
-            sub_course_summary[sub_teacher]["Sub_point"] += 2
+            sub_request = db \
+                .query(dbm.Sub_Request_form) \
+                .filter(dbm.Sub_Request_form.sub_request_pk_id == session.sub_Request, dbm.Sub_Request_form.status != "deleted") \
+                .first()
+
+            sub_course_summary[str(sub_request.main_teacher_fk_id)]["Sub_point"] -= 1
+            sub_course_summary[str(sub_request.sub_teacher_fk_id)]["Sub_point"] += 2
         else:
             sub_course_summary[Session_teacher]["Attended_Session"] += 1
 
+
     # Calculate the Tardy for Each Teacher
-    for tardy in db.query(dbm.Teacher_Tardy_report_form).filter_by(course_fk_id=sub_course.course_fk_id, sub_course_fk_id=sub_course.sub_course_pk_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").all():
-        sub_course_summary[f"{tardy.teacher_fk_id}"]["Tardy"] += tardy.delay
+    Tardies = db \
+        .query(dbm.Teacher_Tardy_report_form) \
+        .filter_by(course_fk_id=sub_course.course_fk_id, sub_course_fk_id=sub_course.sub_course_pk_id) \
+        .filter(dbm.Teacher_Tardy_report_form.status != "deleted")
 
-    # Calculate Cancellation/Tardy Score
+    for tardy in Tardies.all():
+        logger.debug(f'{tardy.teacher_fk_id = }, {tardy.delay = }')
+        sub_course_summary[str(tardy.teacher_fk_id)]["Tardy"] += tardy.delay
 
-    Users_OBJ = db.query(dbm.User_form).filter(dbm.User_form.status != "deleted").filter(dbm.User_form.user_pk_id.in_([UID for UID, Data in sub_course_summary.items() if isinstance(Data, dict)])).all()
-    Users = {str(user.user_pk_id): f'{user.name} {user.last_name}' for user in Users_OBJ}
+    return sub_course_summary
 
     # Calculate Scores
     new_sub_course_summary = {"Teacher": []}
@@ -145,7 +165,7 @@ def course_report_summary(db: Session, course_id: UUID, Cancellation_factor: int
         course_type = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course.course_type).filter(dbm.Course_Type_form.status != "deleted").first()
         # Loop Through SubCourse
         for sub_course in sub_courses:
-            Course_summary[f"{sub_course.sub_course_name}"] = SubCourse_report(db, sub_course, course_level, course_type, Cancellation_factor)
+            Course_summary[f"{sub_course.sub_course_name}"] = SubCourse_report(db, sub_course, course_level, Cancellation_factor)
 
         return 200, Course_summary
     except Exception as e:

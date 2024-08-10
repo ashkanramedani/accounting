@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session, joinedload
 import schemas as sch
 from db import models as dbm
 from db.Extra import *
+from lib import logger
 
 
 # Sub Request
@@ -117,13 +118,19 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
         records = db.query(dbm.Sub_Request_form) \
             .filter(
                 dbm.Sub_Request_form.status != "deleted",
-                dbm.Sub_Request_form.status != status,
-                dbm.Sub_Request_form.sub_request_pk_id.in_(Form.sub_request_pk_id)) \
-            .all()
+                dbm.Sub_Request_form.sub_request_pk_id.in_(Form.sub_request_pk_id)).all()
+
+        # logger.debug(records)
+        # records = records.all()
 
         for record in records:
-            target_session = db.query(dbm.Session_form).filter_by(session_pk_id=record.session_fk_id).filter(dbm.Session_form.status != "deleted")
-            if not target_session.first():
+            target_session = db \
+                .query(dbm.Session_form) \
+                .filter_by(session_pk_id=record.session_fk_id) \
+                .filter(dbm.Session_form.status != "deleted") \
+                .first()
+
+            if not target_session:
                 Warn.append(f'{record.session_fk_id}: Session Not Found.')
                 continue
 
@@ -134,10 +141,13 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
             record.status = Set_Status(db, "form", status)
             verified += 1
 
-            Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
-            if Session_cancellation_record:
-                Session_cancellation_record.status = Set_Status(db, "form", "deleted")
-                Session_cancellation_record.deleted = True
+            logger.debug(target_session)
+            logger.debug(record.status)
+
+            # Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
+            # if Session_cancellation_record:
+            #     Session_cancellation_record.status = Set_Status(db, "form", "deleted")
+            #     Session_cancellation_record.deleted = True
 
         db.add_all(new_Record)
         db.commit()
@@ -160,3 +170,8 @@ def TEST(db: Session):
         return 200, target_session
     except Exception as e:
         return Return_Exception(db, e)
+
+"""
+datetime.datetime(2024, 4, 23, 10, 0),
+datetime.datetime(2024, 8,  4, 14, 52, 22, 264639, tzinfo=<DstTzInfo 'Asia/Tehran' +0330+3:30:00 STD>)
+"""
