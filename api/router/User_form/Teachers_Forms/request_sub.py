@@ -27,7 +27,7 @@ async def search_sub_request(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=List[sch.teacher_tardy_reports_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Sub_request_Response])
 async def search_all_sub_request(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 100, order: sch.Sort_Order = "desc", SortKey: str = None):
     status_code, result = Sub_Request.get_all_sub_request(db, page, limit, order, SortKey)
     if status_code not in sch.SUCCESS_STATUS:
