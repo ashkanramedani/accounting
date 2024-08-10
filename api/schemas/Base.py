@@ -1,6 +1,6 @@
 from datetime import time, date, datetime, timedelta
 from enum import Enum
-from typing import Optional, Any, List
+from typing import Optional, Any, List, Dict
 from uuid import UUID
 
 from faker import Faker
@@ -237,6 +237,8 @@ class Base_response(BaseModel):
     description: str | None = None
     status: ValidStatus = "submitted"
     priority: int
+    note: Optional[Dict] = {}
+    # create_date: Optional[datetime]
 
     class Config:
         extra = 'ignore'
