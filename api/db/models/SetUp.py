@@ -69,8 +69,8 @@ DEFAULT_LANGUAGE: List[Dict] = [
 
 DEFAULT_COURSE_TYPE: List[Dict] = [
     {"course_type_pk_id": "00000000-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "online"},
-    {"course_type_pk_id": "00000001-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "Offline"},
-    {"course_type_pk_id": "00000002-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "OnSite"}
+    {"course_type_pk_id": "00000001-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "OnSite"},
+    {"course_type_pk_id": "00000002-0004-4b94-8e27-44833c2b940f", "status": "approved", "course_type_name": "hybrid"}
 ]
 
 
