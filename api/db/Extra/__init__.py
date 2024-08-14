@@ -1,12 +1,12 @@
 from lib.Date_Time import *
 from .Status import Set_Status
-from .Test import Test_CRUD
+from .Test import TestRoute
 from .db_utils import *
 from .tools import *
 
 __all__ = [
     "Set_Status",
-    "Test_CRUD",
+    "TestRoute",
     "employee_exist",
     "course_exist",
     'record_order_by',

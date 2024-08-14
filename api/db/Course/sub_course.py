@@ -63,6 +63,7 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
 
         session_signature = data.pop("session_signature")
         data |= {"sub_course_capacity": course.course_capacity, "sub_course_available_seat": course.course_capacity}
+
         OBJ = dbm.Sub_Course_form(**data)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()

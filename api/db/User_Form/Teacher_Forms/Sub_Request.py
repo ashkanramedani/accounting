@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 from pytz import timezone
 from sqlalchemy.orm import Session, joinedload
@@ -71,7 +72,7 @@ def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
-def delete_sub_request(db: Session, form_id):
+def delete_sub_request(db: Session, form_id: UUID):
     try:
         record = db.query(dbm.Sub_Request_form).filter_by(sub_request_pk_id=form_id).filter(dbm.Sub_Request_form.status != "deleted").first()
         if not record:
@@ -141,8 +142,8 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
             record.status = Set_Status(db, "form", status)
             verified += 1
 
-            logger.debug(target_session)
-            logger.debug(record.status)
+            # logger.debug(target_session)
+            # logger.debug(record.status)
 
             # Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
             # if Session_cancellation_record:

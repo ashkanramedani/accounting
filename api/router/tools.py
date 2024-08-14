@@ -1,6 +1,7 @@
-from typing import List
+from typing import List, Any
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from starlette.responses import RedirectResponse
 
 import db as dbf
@@ -38,6 +39,18 @@ async def count():
 
 
 @router.get("/count", tags=["Test"], deprecated=True)
-async def count(field: str, db=Depends(get_db)):
+async def count(*args, **kwargs):
     logger.warning(f'Deprecated. Use /api/v1/form/count')
     raise HTTPException(status_code=410, detail=f'Deprecated. Use /api/v1/form/count')
+
+
+def conv(item: int | float | sch.three_Option | sch.four_Option):
+    if isinstance(item, int) or isinstance(item, float):
+        return f'IorF: {item}'
+    else:
+        return f'ENUM: {item.value}'
+
+
+@router.post("/testRoute", tags=["Test"])
+async def testRoute(Form: sch.teacher_salary_DropDowns, db=Depends(get_db)):
+    return {k: conv(v) for k, v in Form.__dict__.items()}

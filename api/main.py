@@ -39,8 +39,10 @@ async def app_lifespan(api):
             except OperationalError as OE:
                 logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
                 sleep(10)
-        with SessionLocal() as db:
-            SetUp(db)
+
+        if not getenv('MODE') == "DEBUG":
+            with SessionLocal() as db:
+                SetUp(db)
 
         await FastAPILimiter.init(redis=redis.from_url(Create_Redis_URL(), encoding="utf8"))
         logger.info(f'{api.title} V: {api.version} Has been started ...')
@@ -61,6 +63,7 @@ app = FastAPI(
         debug=getenv('SWAGGER_DEBUG') if getenv('SWAGGER_DEBUG') else config["debug"])
 
 WHITELISTED_IPS: List[str] = []
+
 # Set up CORS middleware
 app.add_middleware(
         CORSMiddleware,
@@ -79,7 +82,7 @@ async def add_process_time_header(request: Request, call_next):
     start_time = time()
 
     response = await call_next(request)
-    logger.info(f"{response.status_code} {time() - start_time:.5f} {request.method} {request.url}")
+    logger.info(f"{response.status_code} [ {time() - start_time:.5f}s ] {request.method} {request.url}")
     # response.headers["X-Process-Time"] = f'{time() - start_time:.5f}'
     return response
 
