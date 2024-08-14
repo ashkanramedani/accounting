@@ -2,13 +2,13 @@ import dbm
 import json
 from datetime import date
 
-from db.Course import course_report_summary
+from db.Course import SubCourse_report
 from db.User_Form import *
 
 
-def teacher_salary_report(db: Session, Form: sch.teacher_salary_report):
+def teacher_salary_report(db: Session, subcourse_id: UUID, DropDowns: sch.teacher_salary_DropDowns):
     try:
-        status, report_summary = course_report_summary(db, Form.course_id, Form.Cancellation_factor)
+        status, report_summary = SubCourse_report(db, subcourse_id, DropDowns)
         return status, report_summary
     except Exception as e:
         return Return_Exception(db, e)
