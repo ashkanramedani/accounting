@@ -1,7 +1,10 @@
 import random
 from uuid import uuid4
 
-from ..Entity import *
+from pydantic import root_validator
+
+from lib import logger
+from schemas.Entity import *
 
 
 # ---------------------- class ----------------------
@@ -64,6 +67,23 @@ class course_response(Base_response):
     categories: List[export_categories] = []
     language: export_language
     type: export_course_type
+
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
+
+
+class course_data_for_report(BaseModel):
+    course_level: str
+    course_capacity: int
+    course_type: str
+    BaseSalary: float | None  # Capacity = sub_course.sub_course_capacity  # Code: 001
+
+    @root_validator(pre=True)
+    def flatten_type(cls, values):
+        values['course_type'] = values['type'].course_type_name
+        values["BaseSalary"] = BaseSalary_for_SubCourse(values["course_capacity"], values['course_type'])
+        return values
 
     class Config:
         extra = 'ignore'
