@@ -336,8 +336,10 @@ class User_form(Base, Base_form):
 
     is_employee = Column(Boolean, default=True, nullable=False, index=True)
     level = Column(String, index=True, nullable=True)
+    ID_Experience = Column(Integer, default=0, nullable=False)  # total Working time from start
 
-    roles = relationship('Role_form', secondary=UserRole, backref='user_role')
+    roles = relationship('Role_form', secondary=UserRole, back_populates='users')
+
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
     def __repr__(self):
@@ -573,9 +575,6 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
         return Remove_Base_Data(self.__dict__)
 
 
-
-
-
 class Teachers_Report_form(Base, Base_form):
     __tablename__ = "teachers_report"
     # __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
@@ -652,12 +651,15 @@ class Role_form(Base, Base_form):
 
     name = Column(String, index=True, nullable=False, unique=True)
     cluster = Column(String, index=True, nullable=False)
+    value = Column(Float, default=0.0)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
+    users = relationship('User_form', secondary=UserRole, back_populates='roles')
 
-    # ++++++++++++++++++++++++++ Salary_Policy_form +++++++++++++++++++++++++++
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
+
+    # ++++++++++++++++++++++++++ Salary_Policy_form +++++++++++++++++++++++++++
 
 
 class Salary_Policy_form(Base, Base_form):
