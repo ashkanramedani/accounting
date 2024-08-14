@@ -1,6 +1,6 @@
 from typing import Dict
 
-from pydantic import NonNegativeFloat, NonPositiveFloat
+from pydantic import NonNegativeFloat, NonPositiveFloat, PositiveFloat
 
 from .Base import *
 
@@ -211,6 +211,39 @@ class update_employee_salary(BaseModel):
     loan_installment: NonNegativeFloat = 0
     payment: UUID
     payment_date: date | str
+
+    class Config:
+        extra = 'ignore'
+
+class four_Option(Enum):
+    weak = "weak"
+    average = "average"
+    good = "good"
+    excellent = "excellent"
+
+class three_Option(Enum):
+    weak = "weak"
+    average = "average"
+    good = "good"
+
+class teacher_salary_DropDowns(BaseModel):
+    # on total
+    reward: NonNegativeFloat = 0.0
+    punishment: NonNegativeFloat = 0.0
+    loan: Optional[NonNegativeFloat] = 0.0
+    cancellation_factor: NonNegativeFloat = 0.0
+
+    # on sessions
+    content_creation: float = 0.0
+    event_participate: float = 0.0
+    CPD: float = 0.0
+    Odd_hours: float = 0.0
+
+    report_to_student: four_Option
+    LP_submission: four_Option
+    student_assign_feedback: four_Option
+    survey_score: four_Option
+    result_submission_to_FD: three_Option
 
     class Config:
         extra = 'ignore'
