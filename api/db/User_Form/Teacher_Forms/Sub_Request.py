@@ -25,23 +25,11 @@ def get_all_sub_request(db: Session, page: sch.NonNegativeInt, limit: sch.Positi
         return Return_Exception(db, e)
 
 
-@not_implemented
-def report_sub_request(db: Session, Form: sch.teacher_report):
+def report_sub_request(db: Session, subcourse_id: UUID):
     try:
-        result = (
-            db.query(dbm.Sub_Request_form)
-            .join(dbm.Course_form, dbm.Course_form.course_pk_id == dbm.Sub_Request_form.course_fk_id)
-            .filter_by(teacher_fk_id=Form.teacher_fk_id)
-            .filter(dbm.Course_form.course_time.between(Form.start_date, Form.end_date), dbm.Sub_Request_form.status != "deleted")
-            .options(joinedload(dbm.Sub_Request_form.course))
-            .all()
-        )
-
-        return 200, sum(row.delay for row in result)
+        return 200, db.query(dbm.Sub_Request_form).filter_by(sub_course_fk_id=subcourse_id).filter(dbm.Sub_Request_form.status != "deleted").all()
     except Exception as e:
         return Return_Exception(db, e)
-
-
 def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.sub_teacher_fk_id]):

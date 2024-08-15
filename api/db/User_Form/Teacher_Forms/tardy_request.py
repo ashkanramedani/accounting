@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy.orm import Session, joinedload
 
 import schemas as sch
@@ -22,22 +24,11 @@ def get_all_tardy_request(db: Session, page: sch.NonNegativeInt, limit: sch.Posi
         return Return_Exception(db, e)
 
 
-@not_implemented
-def report_tardy_request(db: Session, Form: sch.teacher_report):
+def report_tardy_request(db: Session, subcourse_id: UUID):
     try:
-        result = (
-            db.query(dbm.Teacher_Tardy_report_form)
-            .join(dbm.Course_form, dbm.Course_form.course_pk_id == dbm.Teacher_Tardy_report_form.course_fk_id)
-            .filter_by(teacher_fk_id=Form.teacher_fk_id)
-            .filter(dbm.Course_form.course_time.between(Form.start_date, Form.end_date), dbm.Teacher_Tardy_report_form.status != "deleted")
-            .options(joinedload(dbm.Teacher_Tardy_report_form.course))
-            .all()
-        )
-
-        return 200, sum(row.delay for row in result)
+        return 200, db.query(dbm.Teacher_Tardy_report_form).filter_by(sub_course_fk_id=subcourse_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").all()
     except Exception as e:
         return Return_Exception(db, e)
-
 
 def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema):
     try:
