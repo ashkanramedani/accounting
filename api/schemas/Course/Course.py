@@ -74,14 +74,17 @@ class course_response(Base_response):
 
 
 class course_data_for_report(BaseModel):
+    course_name: str
     course_level: str
     course_capacity: int
     course_type: str
+    course_language: str
     BaseSalary: float | None  # Capacity = sub_course.sub_course_capacity  # Code: 001
 
     @root_validator(pre=True)
     def flatten_type(cls, values):
         values['course_type'] = values['type'].course_type_name
+        values['course_language'] = values['language'].language_name
         values["BaseSalary"] = BaseSalary_for_SubCourse(values["course_capacity"], values['course_type'])
         return values
 
