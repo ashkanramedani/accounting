@@ -35,6 +35,13 @@ async def search_all_sub_request(db=Depends(get_db), page: sch.NonNegativeInt = 
     return result
 
 
+@router.get("/report/{subcourse_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Sub_request_Response])
+async def report_sub_request(subcourse_id, db=Depends(get_db)):
+    status_code, result = Sub_Request.report_sub_request(db, subcourse_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
 @router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_sub_request(form_id, db=Depends(get_db)):
     status_code, result = Sub_Request.delete_sub_request(db, form_id)

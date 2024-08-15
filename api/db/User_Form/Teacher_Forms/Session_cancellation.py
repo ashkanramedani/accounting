@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from sqlalchemy.orm import Session
 
 import schemas as sch
@@ -20,6 +22,11 @@ def get_all_session_cancellation(db: Session, page: sch.NonNegativeInt, limit: s
     except Exception as e:
         return Return_Exception(db, e)
 
+def report_session_cancellation(db: Session, subcourse_id: UUID):
+    try:
+        return 200, db.query(dbm.Session_Cancellation_form).filter_by(sub_course_fk_id=subcourse_id).filter(dbm.Session_Cancellation_form.status != "deleted").all()
+    except Exception as e:
+        return Return_Exception(db, e)
 
 def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_schema):
     try:

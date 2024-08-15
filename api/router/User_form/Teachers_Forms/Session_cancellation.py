@@ -34,6 +34,12 @@ async def search_all_session_cancellation(db=Depends(get_db), page: sch.NonNegat
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+@router.get("/report/{subcourse_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.Session_Cancellation_Response])
+async def report_session_cancellation(subcourse_id, db=Depends(get_db)):
+    status_code, result = dbf.report_session_cancellation(db, subcourse_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
 
 @router.delete("/delete/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_session_cancellation():
