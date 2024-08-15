@@ -87,27 +87,27 @@ def Create_Admin(db: Session) -> UUID:
         Exception_handler(db, e, "Create_Admin")
 
 
-def Default_user(db: Session, ADIMN_ID: UUID):
+def Default_user(db: Session, Admin_id: UUID):
     try:
         ExistingUsers = [str(user.user_pk_id) for user in db.query(dbm.User_form).filter(dbm.User_form.user_pk_id.in_([User["user_pk_id"] for User in DEFAULT_USER])).all()]
         New_Users = []
         for User in DEFAULT_USER:
             if User["user_pk_id"] not in ExistingUsers:
-                New_Users.append(dbm.User_form(created_fk_by=ADIMN_ID, **User))  # type: ignore[call-arg]
+                New_Users.append(dbm.User_form(created_fk_by=Admin_id, **User))  # type: ignore[call-arg]
         db.add_all(New_Users)
         db.commit()
     except Exception as Error:
         Exception_handler(db, Error, "Default_user")
 
 
-def Default_Role(db: Session, ADIMN_ID: UUID):
+def Default_Role(db: Session, Admin_id: UUID):
     try:
         Existing = [str(role.role_pk_id) for role in db.query(dbm.Role_form).filter(dbm.Role_form.role_pk_id.in_([r["role_pk_id"] for r in DEFAULT_ROLE])).all()]
         New_Roles = []
 
         for Role in DEFAULT_ROLE:
             if Role["role_pk_id"] not in Existing:
-                New_Roles.append(dbm.Role_form(created_fk_by=ADIMN_ID, **Role))  # type: ignore[call-arg]
+                New_Roles.append(dbm.Role_form(created_fk_by=Admin_id, **Role))  # type: ignore[call-arg]
         db.add_all(New_Roles)
         db.commit()
     except Exception as Error:
@@ -124,28 +124,28 @@ def Assign_Roles(db: Session):
         Exception_handler(db, Error, "Assign_Roles")
 
 
-def Default_Language(db: Session, ADIMN_ID: UUID):
+def Default_Language(db: Session, Admin_id: UUID):
     try:
         Existing = [str(record.language_pk_id) for record in db.query(dbm.Language_form).filter(dbm.Language_form.language_pk_id.in_([l["language_pk_id"] for l in DEFAULT_LANGUAGE])).all()]
         New_Languages = []
 
         for Language in DEFAULT_LANGUAGE:
             if Language["language_pk_id"] not in Existing:
-                New_Languages.append(dbm.Language_form(created_fk_by=ADIMN_ID, **Language))  # type: ignore[call-arg]
+                New_Languages.append(dbm.Language_form(created_fk_by=Admin_id, **Language))  # type: ignore[call-arg]
         db.add_all(New_Languages)
         db.commit()
     except Exception as Error:
         Exception_handler(db, Error, "Default_language")
 
 
-def Default_Course_type(db: Session, ADIMN_ID: UUID):
+def Default_Course_type(db: Session, Admin_id: UUID):
     try:
         Existing = [str(record.course_type_pk_id) for record in db.query(dbm.Course_Type_form).filter(dbm.Course_Type_form.course_type_pk_id.in_([c["course_type_pk_id"] for c in DEFAULT_COURSE_TYPE])).all()]
         New_Course_Type = []
 
         for course_type in DEFAULT_COURSE_TYPE:
             if course_type["course_type_pk_id"] not in Existing:
-                New_Course_Type.append(dbm.Course_Type_form(created_fk_by=ADIMN_ID, **course_type))  # type: ignore[call-arg]
+                New_Course_Type.append(dbm.Course_Type_form(created_fk_by=Admin_id, **course_type))  # type: ignore[call-arg]
         db.add_all(New_Course_Type)
         db.commit()
     except Exception as Error:
