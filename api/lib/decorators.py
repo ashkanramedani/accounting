@@ -1,5 +1,6 @@
 import json
 import os.path
+import time
 from datetime import datetime
 from time import perf_counter
 from functools import wraps
@@ -8,12 +9,23 @@ from lib.json_handler import JSONEncoder
 from lib import logger
 
 
+def modify_timer(timer: float):
+    factor = 0
+    while timer < 0.1:
+        timer *= 10
+        factor += 1
+    return f'{timer:.2f} (*1e{factor})'
+
 def DEV_io(mode: str = "w"):
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             file_path = f"{func.__name__}.json"
-            data = {'inputs': {'args': args, 'kwargs': kwargs}, 'output': func(*args, **kwargs)}
+
+            start = time.time()
+            res = func(*args, **kwargs)
+            end = time.time()
+            data = {'time': modify_timer(end - start), 'inputs': {'args': args, 'kwargs': kwargs}, 'output': res}
             if os.path.exists("DBug_IO"):
                 if mode == 'a':
                     OBJ = json.load(open(os.path.join("DBug_IO", file_path)))
