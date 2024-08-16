@@ -239,11 +239,11 @@ class teacher_salary_DropDowns(BaseModel):
     CPD: float = 0.0
     Odd_hours: float = 0.0
 
-    report_to_student: four_Option
-    LP_submission: four_Option
-    student_assign_feedback: four_Option
-    survey_score: four_Option
-    result_submission_to_FD: three_Option
+    report_to_student: four_Option = "average"
+    LP_submission: four_Option = "average"
+    student_assign_feedback: four_Option = "average"
+    survey_score: four_Option = "average"
+    result_submission_to_FD: three_Option = "average"
 
     class Config:
         extra = 'ignore'
