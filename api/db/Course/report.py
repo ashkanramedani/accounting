@@ -152,18 +152,19 @@ def PreProcess_report(db: Session, sub_course_obj: dbm.Sub_Course_form):
     }
 
 def Apply_scores(DropDowns: Dict, sub_course_summary: Dict):
+    Final = {"teachers": [], "score": {}}
     Score = {
         field: value if isinstance(value, float) else DropDown_value_table[field][value.value]
         for field, value in DropDowns.items()
     }
 
     for teacher, data in sub_course_summary.items():
+        Final["teachers"].append({**data, "teacher_id": teacher})
         if not sub_course_summary[teacher]["SUB"]:
             Score["roles_score"] = data.pop("roles_score", 0)
             Score["tardy_score"] = Tardy_Score(data["tardy"])
             Score["course_level_score"] = COURSE_LEVEL.get(data["course_level"] if data["course_level"] else '', 0)
             Score["cancellation_factor"] *= data["cancelled_session"]
-            break
 
     effect_on_session = sum([value for key, value in Score.items() if key in SCORES["effect_on_session"]])
     Score["effect_on_total"] = Score["reward"] - Score["loan"] - Score["punishment"]
@@ -173,7 +174,7 @@ def Apply_scores(DropDowns: Dict, sub_course_summary: Dict):
         data["score"] = effect_on_session
         data["earning"] = Total_session * effect_on_session
 
-    sub_course_summary["score"] = Score
+    Final["score"] = Score
     return sub_course_summary
 
 @DEV_io()

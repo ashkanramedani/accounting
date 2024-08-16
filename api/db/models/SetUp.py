@@ -161,12 +161,3 @@ def SetUp(db: Session):
     Default_Language(db, ADMIN_ID)
     Default_Course_type(db, ADMIN_ID)
     logger.info('Admin Setup Finished')
-
-"""
-Create_Admin:85 - [ Create_Admin / 500 ]InvalidRequestError: InvalidRequestError('Entity namespace for "user" has no property "last_name"')
-Default_user:98 - [ Default_user / 500 ]KeyError: KeyError('ID')
-Default_Role:112 - [ Default_role / 500 ]IntegrityError: IntegrityError('(psycopg2.errors.NotNullViolation) null value in column "created_fk_by" of relation "role" violates not-null constraint\nDETAIL:  Failing row contains (5, t, f, t, t, 2024-07-25 07:11:15.628665+00, null, null, null, approved, , {}, 00000000-0001-4b94-8e27-44833c2b940f, null, Administrator, Administrator).\n')
-Assign_Roles:122 - [ Assign_Roles / 500 ]InvalidRequestError: InvalidRequestError('Entity namespace for "user" has no property "user_fk_id"')
-Default_Language:136 - [ Default_language / 500 ]IntegrityError: IntegrityError('(psycopg2.errors.NotNullViolation) null value in column "created_fk_by" of relation "language" violates not-null constraint\nDETAIL:  Failing row contains (5, t, f, t, t, 2024-07-25 07:11:15.840421+00, null, null, null, approved, , {}, 00000000-0003-4b94-8e27-44833c2b940f, English, null).\n')
-Default_Course_type:150 - [ Default_new_course_type / 500 ]KeyError: KeyError('language_pk_id')
-"""
