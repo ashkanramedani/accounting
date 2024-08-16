@@ -175,7 +175,7 @@ def Apply_scores(DropDowns: Dict, sub_course_summary: Dict):
         data["earning"] = Total_session * effect_on_session
 
     Final["score"] = Score
-    return sub_course_summary
+    return Final
 
 @DEV_io()
 def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_salary_DropDowns) -> Tuple[int, Dict | str]:
