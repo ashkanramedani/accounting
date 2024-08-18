@@ -139,6 +139,7 @@ class employee_salary_Response(Base_response):
         extra = 'ignore'
         orm_mode = True
 
+
 class teacher_salary_report(BaseModel):
     course_id: UUID
     Cancellation_factor: NonNegativeFloat
@@ -205,7 +206,7 @@ class Teacher_subcourse_report(Base_response):
 
 ###
 
-class update_employee_salary(BaseModel):
+class update_salary_report(BaseModel):
     rewards_earning: NonNegativeFloat = 0
     punishment_deductions: NonNegativeFloat = 0
     loan_installment: NonNegativeFloat = 0
@@ -215,22 +216,22 @@ class update_employee_salary(BaseModel):
     class Config:
         extra = 'ignore'
 
+
 class four_Option(Enum):
     weak = "weak"
     average = "average"
     good = "good"
     excellent = "excellent"
 
+
 class three_Option(Enum):
     weak = "weak"
     average = "average"
     good = "good"
 
+
 class teacher_salary_DropDowns(BaseModel):
     # on total
-    reward: NonNegativeFloat = 0.0
-    punishment: NonNegativeFloat = 0.0
-    loan: Optional[NonNegativeFloat] = 0.0
     cancellation_factor: NonNegativeFloat = 0.0
 
     # on sessions
