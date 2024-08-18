@@ -1,4 +1,4 @@
-from typing import List, Dict, Tuple, Union
+from typing import List, Dict, Tuple, Union, Optional
 from uuid import UUID
 
 from sqlalchemy.orm import Session, joinedload
@@ -7,6 +7,7 @@ import db.models as dbm
 import schemas as sch
 from db.Extra import *
 from lib import DEV_io, logger
+from schemas import course_data_for_report
 
 Base_salary = {Cap: {"OnSite": 77, "online": 66, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 TEACHER_TARDY = {"0_10": 11, "10_30": 5.5, "30_40": -5.5, "40": -16.5}
@@ -22,7 +23,6 @@ DropDown_value_table = {
     "survey_score": {"weak": 0, "average": 3, "good": 6, "excellent": 10},
     "result_submission_to_FD": {"weak": -5.5, "average": 0, "good": 5.5}
 }
-
 
 
 @DEV_io()
@@ -53,6 +53,34 @@ def Tardy_Score(tardy: int):
             return TEACHER_TARDY["40"]
 
 
+from pydantic import BaseModel, root_validator
+
+
+class Report(BaseModel):# course_data_for_report):
+    name: str
+    SUB: bool
+    tardy: int = 0
+    sub_point: int = 0
+    experience_gain: int = 0
+    attended_session: int = 0
+    cancelled_session: int = 0
+    roles_score: float
+    roles: Optional[Dict]
+
+    score: float = 0
+    earning: float = 0
+
+    course_name: str
+    course_level: str
+    course_capacity: int
+    course_type: str
+    course_language: str
+    BaseSalary: float | None
+
+
+    class Config:
+        extra = 'ignore'
+
 def Empty_report(teacher: dbm.User_form, **Field) -> Dict:
     if Field["SUB"]:
         return {"SUB": Field["SUB"], "sub_point": 0, "name": f'{teacher.name} {teacher.last_name}'}
@@ -68,7 +96,8 @@ def Empty_report(teacher: dbm.User_form, **Field) -> Dict:
         "roles": {f'{i.cluster}_{i.name}': i.value for i in teacher.roles} if teacher.roles else {},
     }
 
-def PreProcess_report2(db: Session, sub_course_obj: dbm.Sub_Course_form):
+
+def PreProcess_report2(db: Session, sub_course_obj: dbm.Sub_Course_form) -> tuple[int, str | dict[str, Report]]:
     """Fetches and processes report data for a sub-course.
 
     Args:
@@ -89,7 +118,6 @@ def PreProcess_report2(db: Session, sub_course_obj: dbm.Sub_Course_form):
         .options(joinedload(dbm.User_form.roles)) \
         .all()
 
-
     course_data_Query = db.query(dbm.Course_form) \
         .filter_by(course_pk_id=sub_course_obj.course_fk_id) \
         .filter(dbm.Course_form.status != "deleted") \
@@ -106,9 +134,11 @@ def PreProcess_report2(db: Session, sub_course_obj: dbm.Sub_Course_form):
         return 400, f"No BaseSalary Found for {sub_course_obj.sub_course_name}. ({course_data.course_capacity}, {course_data.course_type})"
 
     return 200, {
-        str(teacher.user_pk_id): Empty_report(
-                teacher,
-                **course_data.dict(),
+        str(teacher.user_pk_id): Report(
+                **course_data.__dict__,
+                name=f'{teacher.name} {teacher.last_name}',
+                roles_score=sum(i.value for i in teacher.roles) if teacher.roles else 0,
+                roles={f'{i.cluster}_{i.name}': i.value for i in teacher.roles} if teacher.roles else {},
                 SUB=teacher.user_pk_id != sub_course_obj.sub_course_teacher_fk_id)
         for teacher in teachers_query}
 
@@ -151,31 +181,33 @@ def PreProcess_report(db: Session, sub_course_obj: dbm.Sub_Course_form):
         for teacher in level_Query
     }
 
-def Apply_scores(DropDowns: Dict, sub_course_summary: Dict):
+
+def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: dict[str, Report]):
     Final = {"teachers": [], "score": {}}
     Score = {
-        field: value if isinstance(value, float) else DropDown_value_table[field][value.value]
-        for field, value in DropDowns.items()
+        field: value
+        if isinstance(value, float) else DropDown_value_table[field][value.value]
+        for field, value in DropDowns
     }
 
     for teacher, data in sub_course_summary.items():
-        Final["teachers"].append({**data, "teacher_id": teacher})
-        if not sub_course_summary[teacher]["SUB"]:
-            Score["roles_score"] = data.pop("roles_score", 0)
-            Score["tardy_score"] = Tardy_Score(data["tardy"])
-            Score["course_level_score"] = COURSE_LEVEL.get(data["course_level"] if data["course_level"] else '', 0)
-            Score["cancellation_factor"] *= data["cancelled_session"]
+        Final["teachers"].append({**data.__dict__, "teacher_id": teacher})
+        if not sub_course_summary[teacher].SUB:
+            Score["roles_score"] = data.roles_score
+            Score["tardy_score"] = Tardy_Score(data.tardy)
+            Score["course_level_score"] = COURSE_LEVEL.get(data.course_level, 0)
+            Score["cancellation_factor"] *= data.cancelled_session
 
     effect_on_session = sum([value for key, value in Score.items() if key in SCORES["effect_on_session"]])
-    Score["effect_on_total"] = Score["reward"] - Score["loan"] - Score["punishment"]
 
     for teacher_id, data in sub_course_summary.items():
-        Total_session = data.get("attended_session", 0) + data.get("sub_point", 0)
-        data["score"] = effect_on_session
-        data["earning"] = Total_session * effect_on_session
+        Total_session = data.attended_session + data.sub_point
+        data.score = effect_on_session
+        data.earning = Total_session * effect_on_session
 
     Final["score"] = Score
     return Final
+
 
 @DEV_io()
 def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_salary_DropDowns) -> Tuple[int, Dict | str]:
@@ -197,8 +229,8 @@ def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_sa
             continue
 
         if session.canceled:  # or not session.report:  # NC: 001
-            if not sub_course_summary[Session_teacher]["SUB"]:
-                sub_course_summary[Session_teacher]["cancelled_session"] += 1
+            if not sub_course_summary[Session_teacher].SUB:
+                sub_course_summary[Session_teacher].cancelled_session += 1
 
         elif session.is_sub:
             sub_request = db \
@@ -206,12 +238,11 @@ def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_sa
                 .filter(dbm.Sub_Request_form.sub_request_pk_id == session.sub_Request, dbm.Sub_Request_form.status != "deleted") \
                 .first()
 
-            sub_course_summary[str(sub_request.main_teacher_fk_id)]["sub_point"] -= 1
-            sub_course_summary[str(sub_request.sub_teacher_fk_id)]["sub_point"] += 2
+            sub_course_summary[str(sub_request.main_teacher_fk_id)].sub_point -= 1
+            sub_course_summary[str(sub_request.sub_teacher_fk_id)].sub_point += 2
         else:
-            sub_course_summary[Session_teacher]["attended_session"] += 1
-            sub_course_summary[Session_teacher]["experience_gain"] += session.session_duration
-
+            sub_course_summary[Session_teacher].attended_session += 1
+            sub_course_summary[Session_teacher].experience_gain += session.session_duration
 
     # Calculate the Tardy for Each Teacher
     Tardies: List[dbm.Teacher_Tardy_report_form] = db \
@@ -220,28 +251,56 @@ def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_sa
         .filter(dbm.Teacher_Tardy_report_form.status != "deleted").all()
 
     for tardy in Tardies:
-        sub_course_summary[str(tardy.teacher_fk_id)]["tardy"] += tardy.delay
+        sub_course_summary[str(tardy.teacher_fk_id)].tardy += tardy.delay
+
+    return 200, Apply_scores(DropDowns, sub_course_summary)
+
+
+def update_SubCourse_report(db: Session, sub_course_id: UUID, Form: sch.update_salary_report) -> Tuple[int, Dict | str]:
+    sub_course: dbm.Sub_Course_form = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=sub_course_id).first()
+
+    if not sub_course:
+        return 400, "sub course not found"
+
+    # status, sub_course_summary = PreProcess_report(db, sub_course)
+    status, sub_course_summary = PreProcess_report2(db, sub_course)
+    if status != 200:
+        return status, sub_course_summary
+
+    # Loop Through Sessions
+    for session in db.query(dbm.Session_form).filter_by(sub_course_fk_id=sub_course.sub_course_pk_id).filter(dbm.Session_form.status != "deleted").all():
+        Session_teacher = str(session.session_teacher_fk_id)
+        if Session_teacher not in sub_course_summary:
+            logger.warning(f"Teacher: {Session_teacher} Has Been Skipped. ")
+            continue
+
+        if session.canceled:  # or not session.report:  # NC: 001
+            if not sub_course_summary[Session_teacher].SUB:
+                sub_course_summary[Session_teacher].cancelled_session += 1
+
+        elif session.is_sub:
+            sub_request = db \
+                .query(dbm.Sub_Request_form) \
+                .filter(dbm.Sub_Request_form.sub_request_pk_id == session.sub_Request, dbm.Sub_Request_form.status != "deleted") \
+                .first()
+
+            sub_course_summary[str(sub_request.main_teacher_fk_id)].sub_point -= 1
+            sub_course_summary[str(sub_request.sub_teacher_fk_id)].sub_point += 2
+        else:
+            sub_course_summary[Session_teacher].attended_session += 1
+            sub_course_summary[Session_teacher].experience_gain += session.session_duration
+
+    # Calculate the Tardy for Each Teacher
+    Tardies: List[dbm.Teacher_Tardy_report_form] = db \
+        .query(dbm.Teacher_Tardy_report_form) \
+        .filter_by(sub_course_fk_id=sub_course.sub_course_pk_id, teacher_fk_id=sub_course.sub_course_teacher_fk_id) \
+        .filter(dbm.Teacher_Tardy_report_form.status != "deleted").all()
+
+    for tardy in Tardies:
+        sub_course_summary[str(tardy.teacher_fk_id)].tardy += tardy.delay
 
     return 200, Apply_scores(DropDowns.__dict__, sub_course_summary)
 
 
-@DEV_io()
-def course_report_summary(db: Session, course_id: UUID, main_DropDown: sch.teacher_salary_DropDowns):
-    try:
-        Course_summary = {}
-        course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id).filter(dbm.Course_form.status != "deleted").first()
-        if not course:
-            return 400, "No Course with these id Found"
-
-        sub_courses: List[dbm.Sub_Course_form] = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted")
-        if not sub_courses:
-            return 400, "No Sub Course Found in Given Course"
-
-        # Loop Through SubCourse
-        for sub_course in sub_courses:
-            Course_summary[f"{sub_course.sub_course_name}"] = SubCourse_report(db, sub_course.sub_course_pk_id, main_DropDown)
-            # break
-
-        return 200, Course_summary
-    except Exception as e:
-        return Return_Exception(db, e)
+'tuple[int, dict[str | Report] | str]'
+'tuple[int, dict[str, Report]]'
