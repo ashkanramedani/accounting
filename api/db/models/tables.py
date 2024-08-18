@@ -1,11 +1,11 @@
-import json
+from typing import List
 
 from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time, case
 from sqlalchemy.dialects.postgresql import JSONB, JSON
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import Mapped
 from sqlalchemy.sql import expression, func
 
-from lib import JSONEncoder
 from .Func import *
 from .database import Base
 
@@ -20,7 +20,6 @@ def Remove_Base_Data(OBJ) -> str:
         if i in OBJ:
             OBJ.pop(i)
     return repr(OBJ)
-
 
 
 class Base_form:
@@ -40,6 +39,8 @@ class Base_form:
     description = Column(String, nullable=True, default="")
     note = Column(JSON, nullable=True, default={})
     # status = Column(String, nullable=False, default="approved")  # NC: 006
+
+
 
 
 users_departments_association = Table(
@@ -274,7 +275,6 @@ class Libraries(Base):
         return f'<Library "{self.library_pk_id}">'
 
 
-
 # +++++++++++++++++++++++ association +++++++++++++++++++++++++++
 survey_questions = Table(
         "survey_questions",
@@ -371,9 +371,11 @@ class Course_form(Base, Base_form):
     tags = relationship("Tag_form", secondary=CourseTag, backref="course_tag")
     categories = relationship("Category_form", secondary=CourseCategory, backref="course_category")
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
-    language = relationship("Language_form", foreign_keys=[course_language])
-    type = relationship("Course_Type_form", foreign_keys=[course_type])
+    created: Mapped["User_form"] = relationship("User_form", foreign_keys=[created_fk_by])
+    language: Mapped["Language_form"] = relationship("Language_form", foreign_keys=[course_language])
+    type: Mapped["Course_Type_form"] = relationship("Course_Type_form", foreign_keys=[course_type])
+    sub_courses: Mapped[List["Sub_Course_form"]] = relationship("Sub_Course_form", back_populates='course')
+    sessions: Mapped[List["Session_form"]] = relationship("Session_form", back_populates='course')
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
@@ -399,7 +401,10 @@ class Sub_Course_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     teacher = relationship("User_form", foreign_keys=[sub_course_teacher_fk_id])
-    course = relationship("Course_form", foreign_keys=[course_fk_id])
+    course: Mapped["Course_form"] = relationship("Course_form", foreign_keys=[course_fk_id], back_populates="sub_courses")
+    sessions: Mapped[List["Session_form"]] = relationship("Session_form", back_populates="sub_course")
+
+    # course = relationship("Course_form", foreign_keys=[course_fk_id])
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
@@ -407,7 +412,7 @@ class Sub_Course_form(Base, Base_form):
 
 class Session_form(Base, Base_form):
     __tablename__ = "session"
-    __table_args__ = (UniqueConstraint('session_date', 'session_starting_time', 'session_teacher_fk_id'),)
+    __table_args__ = (UniqueConstraint('session_date', 'session_starting_time'),)
 
     session_pk_id = create_Unique_ID()
 
@@ -427,9 +432,9 @@ class Session_form(Base, Base_form):
     can_accept_sub = Column(DateTime, nullable=False, index=True)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
-    course = relationship("Course_form", foreign_keys=[course_fk_id])
-    sub_course = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id])
-    teacher = relationship("User_form", foreign_keys=[session_teacher_fk_id])
+    teacher: Mapped["User_form"] = relationship("User_form", foreign_keys=[session_teacher_fk_id])
+    course: Mapped["Course_form"] = relationship("Course_form", foreign_keys=[course_fk_id], back_populates="sessions")
+    sub_course: Mapped["Sub_Course_form"] = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id], back_populates="sessions")
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
@@ -437,7 +442,6 @@ class Session_form(Base, Base_form):
 
 # ======================== Forms =============================
 # ++++++++++++++++++++++++++ EmployeeBase +++++++++++++++++++++++++++
-
 
 class Leave_Request_form(Base, Base_form):
     __tablename__ = "leave_request"
@@ -455,8 +459,8 @@ class Leave_Request_form(Base, Base_form):
 
     leave_type = Column(String, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
-    employee = relationship("User_form", foreign_keys=[user_fk_id])
+    created: Mapped["User_form"] = relationship("User_form",foreign_keys=[created_fk_by])
+    employee: Mapped["User_form"] = relationship("User_form", foreign_keys=[user_fk_id])
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
@@ -879,6 +883,7 @@ class Teacher_Tardy_report_form(Base, Base_form):
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
 
+
 class Sub_Request_form(Base, Base_form):
     __tablename__ = "sub_request"
 
@@ -923,6 +928,7 @@ class Session_Cancellation_form(Base, Base_form):
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
 
+
 #class Reassign_Instructor_form(Base, Base_form):
 #     __tablename__ = "reassign_instructor"
 #
@@ -940,8 +946,10 @@ class Session_Cancellation_form(Base, Base_form):
 class Class_Room:  # NC: 008
     pass
 
+
 class Branch:  # NC: 008
     pass
+
 
 class Template_form(Base, Base_form):
     __tablename__ = "templates"
