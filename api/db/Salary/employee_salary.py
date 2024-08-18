@@ -166,7 +166,7 @@ def get_employee_salary(db: Session, user_fk_id, year, month):
     except Exception as e:
         return Return_Exception(db, e)
 
-def update_employee_salary(db: Session, form_id, Form: sch.update_employee_salary):
+def update_employee_salary(db: Session, form_id, Form: sch.update_salary_report):
     try:
         existing = db.query(dbm.Employee_Salary_form).filter_by(employee_salary_pk_id=form_id).filter(dbm.Employee_Salary_form.status != "deleted")
         salary_data = existing.first()

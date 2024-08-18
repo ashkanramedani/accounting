@@ -82,14 +82,16 @@ async def add_process_time_header(request: Request, call_next):
     start_time = time()
 
     response = await call_next(request)
-    logger.info(f"{response.status_code} [ {time() - start_time:.5f}s ] {request.method} {request.url}")
+    logger.info(f"{response.status_code} [ {time() - start_time:.5f}s ] {request.method: <6} {request.url}")
     # response.headers["X-Process-Time"] = f'{time() - start_time:.5f}'
     return response
 
 
 if getenv('CREATE_ROUTE_SCHEMA'):
+    logger.info('Creating Route Schema')
     route_schema = save_route(routes)
     dump(route_schema, open(f'{Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
 
+logger.info(f"Loading Routes to API")
 for route in routes:
     app.include_router(route)
