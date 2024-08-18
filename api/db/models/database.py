@@ -4,11 +4,13 @@ from os import getenv
 from os.path import dirname, normpath
 from typing import Any
 
+import sqlalchemy
 from dotenv import load_dotenv
 from pydantic import ValidationError
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import DeclarativeBase
 
 from lib import logger
 from schemas import Setting
@@ -59,7 +61,18 @@ def Create_Redis_URL() -> str:
 
 engine = Create_engine()
 SessionLocal = sessionmaker(autoflush=False, bind=engine)
-Base = declarative_base()
+
+
+if sqlalchemy.__version__ >= "2.0":
+    from sqlalchemy.orm import DeclarativeBase
+    class Base(DeclarativeBase):  # new approch since SqlAlchemy 2.0
+        pass
+
+else:
+    from sqlalchemy.ext.declarative import declarative_base
+    Base = declarative_base()  # changed due to SqlAlchemy 2.0 update
+
+
 
 
 # Dependency
