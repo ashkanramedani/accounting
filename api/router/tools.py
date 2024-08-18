@@ -51,6 +51,6 @@ def conv(item: int | float | sch.three_Option | sch.four_Option):
         return f'ENUM: {item.value}'
 
 
-@router.post("/testRoute", tags=["Test"])
-async def testRoute(Form: sch.teacher_salary_DropDowns, db=Depends(get_db)):
-    return {k: conv(v) for k, v in Form.__dict__.items()}
+@router.get("/testRoute", tags=["Test"])
+async def testRoute(db=Depends(get_db)):
+    return dbf.TestRoute(db)

@@ -90,9 +90,11 @@ def create_Report(data: Dict):
 
 
 def TestRoute(db: Session):
-    course_data = db.query(dbm.Course_form).options(joinedload(dbm.Course_form.type)).first()
+    session = db.query(dbm.Session_form).first()
 
-    return course_data_for_report(**course_data.__dict__)
+    course_data = db.query(dbm.Course_form).filter_by(course_pk_id=session.course_fk_id).first()
+
+    return course_data.sub_courses
 
 
 """
