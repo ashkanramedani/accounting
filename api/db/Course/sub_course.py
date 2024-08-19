@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 
 import schemas as sch
 from db import models as dbm
+from lib import logger
 from lib.Date_Time import *
 from .Session import delete_session
 from ..Extra import *
@@ -38,6 +39,7 @@ def get_sub_courses_for_course(db: Session, course_id, page, limit, order, SortK
     try:
         sub_course_query = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted")
         return record_order_by(db, dbm.Sub_Course_form, page, limit, order, SortKey, query=sub_course_query)
+
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -128,45 +130,6 @@ def create_sessions(db: Session, Form: sch.post_sub_course_schema, sub_course: d
             db.add(dbm.Session_form(**session_data))  # type: ignore[call-arg]
     db.flush()
     return WARN
-
-def post_subcourse_back(db: Session, Form: sch.post_sub_course_schema):
-    try:
-        if not employee_exist(db, [Form.created_fk_by, Form.sub_course_teacher_fk_id]):
-            return 400, "Bad Request: employee not found"
-
-        course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_fk_id).filter(dbm.Course_form.status != "deleted").first()
-        if not course:
-            return 400, "Bad Request: course not found"
-
-        data = Form.__dict__
-        sub_request_threshold = data["sub_request_threshold"]
-
-        session_signature = data.pop("session_signature")
-        data |= {"sub_course_capacity": course.course_capacity, "sub_course_available_seat": course.course_capacity}
-
-        OBJ = dbm.Sub_Course_form(**data)  # type: ignore[call-arg]
-        db.add(OBJ)
-        db.commit()
-        db.refresh(OBJ)
-    except Exception as e:
-        return Return_Exception(db, e)
-
-    try:
-        if not session_signature:
-            return 200, "Empty SubCourse Added ( NO SESSION )"
-
-        db.commit()
-        return 200, f"SubCourse Added ( {len(days)}/{data['number_of_session']} SESSION )"
-    except Exception as e:
-        db.rollback()
-        try:
-            OBJ.deleted = True
-            OBJ.description = "Deleted due to an error in session creation"
-            db.commit()
-        except Exception as inner_e:
-            db.rollback()
-            return Return_Exception(db, inner_e)
-        return Return_Exception(db, e)
 
 
 def delete_subcourse(db: Session, course_id: UUID, sub_course_ids: List[UUID]):

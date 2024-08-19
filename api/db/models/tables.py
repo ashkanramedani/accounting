@@ -730,66 +730,6 @@ class Salary_Policy_form(Base, Base_form):
         return Remove_Base_Data(self.__dict__)
 
 
-class Employee_Salary_form(Base, Base_form):
-    __tablename__ = "employee_salary"
-    __table_args__ = (UniqueConstraint('user_fk_id', 'year', 'month'),)
-    employee_salary_pk_id = create_Unique_ID()
-
-    user_fk_id = create_foreignKey("User_form")
-
-    year = Column(Integer, nullable=False)
-    month = Column(Integer, nullable=False)
-    fingerprint_scanner_user_id = Column(Integer, nullable=True)
-
-    payment = create_foreignKey("Payment_Method_form", nullable=True)
-    payment_date = Column(Date, nullable=True)
-
-    present_time = Column(Integer, nullable=False)
-    Regular_hours = Column(Integer, nullable=False)
-    Overtime = Column(Integer, nullable=False)
-    Undertime = Column(Integer, nullable=False)
-    Off_Day = Column(Integer, nullable=False)
-
-    delay = Column(Integer, nullable=False)
-    haste = Column(Integer, nullable=False)
-
-    attendance_points = Column(Integer, nullable=False, default=0)
-    rewards_earning = Column(Float, nullable=False, default=0)
-    punishment_deductions = Column(Float, nullable=False, default=0)
-    loan_installment = Column(Float, nullable=False, default=0)
-    Fix_pay = Column(Float, nullable=False, default=0)
-
-    Regular_earning = Column(Float, nullable=False)
-    Overtime_earning = Column(Float, nullable=False)
-    Off_Day_earning = Column(Float, nullable=False)
-
-    Undertime_deductions = Column(Float, nullable=False)
-    insurance_deductions = Column(Float, nullable=False)
-    tax_deductions = Column(Float, nullable=False)
-
-    remote = Column(Integer, nullable=False)
-    vacation_leave = Column(Integer, nullable=False)
-    medical_leave = Column(Integer, nullable=False)
-    business_trip = Column(Integer, nullable=False)
-
-    remote_earning = Column(Float, nullable=False)
-    vacation_leave_earning = Column(Integer, nullable=False)
-    medical_leave_earning = Column(Float, nullable=False)
-    business_trip_earning = Column(Float, nullable=False)
-
-    total_earning = Column(Float, nullable=False)
-    total_deduction = Column(Float, nullable=False)
-    total_income = Column(Float, nullable=False)
-
-    Salary_Policy = Column(JSON, nullable=False)
-    Days = Column(JSON, nullable=False)
-
-    employee = relationship("User_form", foreign_keys=[user_fk_id])
-    card = relationship("Payment_Method_form", foreign_keys=[payment])
-
-    # ------------ Necessary for "Course" ------------
-    def __repr__(self):
-        return Remove_Base_Data(self.__dict__)
 
 
 class Tag_form(Base, Base_form):
@@ -957,3 +897,116 @@ class Template_form(Base, Base_form):
     template_table = Column(String, index=True, nullable=False)
     template_name = Column(String, index=True, nullable=False)
     data = Column(JSON, nullable=False)
+
+
+class Employee_Salary_form(Base, Base_form):
+    __tablename__ = "employee_salary"
+    __table_args__ = (UniqueConstraint('user_fk_id', 'year', 'month'),)
+
+    employee_salary_pk_id = create_Unique_ID()
+    fingerprint_scanner_user_id = Column(Integer, nullable=True)
+
+    user_fk_id = create_foreignKey("User_form")
+
+    year = Column(Integer, nullable=False)
+    month = Column(Integer, nullable=False)
+
+    payment = create_foreignKey("Payment_Method_form", nullable=True)
+    payment_date = Column(Date, nullable=True)
+    rewards_earning = Column(Float, nullable=False, default=0)
+    punishment_deductions = Column(Float, nullable=False, default=0)
+    loan_installment = Column(Float, nullable=False, default=0)
+
+    present_time = Column(Integer, nullable=False)
+    Regular_hours = Column(Integer, nullable=False)
+    Overtime = Column(Integer, nullable=False)
+    Undertime = Column(Integer, nullable=False)
+    Off_Day = Column(Integer, nullable=False)
+
+    delay = Column(Integer, nullable=False)
+    haste = Column(Integer, nullable=False)
+
+    attendance_points = Column(Integer, nullable=False, default=0)
+    Fix_pay = Column(Float, nullable=False, default=0)
+
+    Regular_earning = Column(Float, nullable=False)
+    Overtime_earning = Column(Float, nullable=False)
+    Off_Day_earning = Column(Float, nullable=False)
+
+    Undertime_deductions = Column(Float, nullable=False)
+    insurance_deductions = Column(Float, nullable=False)
+    tax_deductions = Column(Float, nullable=False)
+
+    remote = Column(Integer, nullable=False)
+    vacation_leave = Column(Integer, nullable=False)
+    medical_leave = Column(Integer, nullable=False)
+    business_trip = Column(Integer, nullable=False)
+
+    remote_earning = Column(Float, nullable=False)
+    vacation_leave_earning = Column(Integer, nullable=False)
+    medical_leave_earning = Column(Float, nullable=False)
+    business_trip_earning = Column(Float, nullable=False)
+
+    total_earning = Column(Float, nullable=False)
+    total_deduction = Column(Float, nullable=False)
+    total_income = Column(Float, nullable=False)
+
+    Salary_Policy = Column(JSON, nullable=False)
+    Days = Column(JSON, nullable=False)
+
+    employee = relationship("User_form", foreign_keys=[user_fk_id])
+    card = relationship("Payment_Method_form", foreign_keys=[payment])
+
+    # ------------ Necessary for "Course" ------------
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
+
+
+class Teacher_salary_form(Base, Base_form):
+    __tablename__ = "teacher_salary"
+    __table_args__ = (UniqueConstraint('user_fk_id', 'subcourse_fk_id'),)
+    teacher_salary_pk_id = create_Unique_ID()
+
+    user_fk_id = create_foreignKey("User_form")
+    subcourse_fk_id = create_foreignKey("Sub_Course_form")
+
+    payment = create_foreignKey("Payment_Method_form", nullable=True)
+    payment_date = Column(Date, nullable=True)
+    rewards_earning = Column(Float, nullable=False, default=0)
+    punishment_deductions = Column(Float, nullable=False, default=0)
+    loan_installment = Column(Float, nullable=False, default=0)
+
+    roles_score = Column(Float, nullable=False)
+    survey_score = Column(Float, nullable=False)
+    course_level_score = Column(Float, nullable=False)
+    tardy_score = Column(Float, nullable=False)
+    content_creation = Column(Float, nullable=False)
+    event_participate = Column(Float, nullable=False)
+    CPD = Column(Float, nullable=False)
+    Odd_hours = Column(Float, nullable=False)
+    report_to_student = Column(Float, nullable=False)
+    LP_submission = Column(Float, nullable=False)
+    student_assign_feedback = Column(Float, nullable=False)
+    result_submission_to_FD = Column(Float, nullable=False)
+    name = Column(String, nullable=False)
+    SUB = Column(Boolean, nullable=False)
+    tardy = Column(Integer, nullable=False)
+    sub_point = Column(Float, nullable=False)
+    ID_Experience = Column(Integer, nullable=False)
+    experience_gain = Column(Integer, nullable=False)
+    attended_session = Column(Integer, nullable=False)
+    cancelled_session = Column(Integer, nullable=False)
+    roles = Column(JSON, nullable=False)
+    score = Column(Float, nullable=False)
+    earning = Column(Float, nullable=False)
+
+    BaseSalary = Column(Float, nullable=False)
+    cancellation_factor = Column(Float, nullable=False)
+
+    teacher = relationship("User_form", foreign_keys=[user_fk_id])
+    card = relationship("Payment_Method_form", foreign_keys=[payment])
+    sub_course = relationship("Sub_Course_form", foreign_keys=[subcourse_fk_id])
+
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)

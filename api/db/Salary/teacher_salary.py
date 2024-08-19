@@ -27,13 +27,43 @@ def teacher_courses(db: Session):
         return Return_Exception(db, e)
 
 
+"""
+def get_sub_courses_for_course(db: Session, course_id, page, limit, order, SortKey):
+    try:
+        sub_course_query = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted")
+        status, All_SubCourses = record_order_by(db, dbm.Sub_Course_form, page, limit, order, SortKey, query=sub_course_query)
+
+        if status != 200:
+            return status, All_SubCourses
+
+        Existing_Salary_record_Query = db.query(dbm.Teacher_salary_form).filter(dbm.Teacher_salary_form.status != 'deleted', dbm.Teacher_salary_form.subcourse_fk_id.in_(subcourse.sub_course_pk_id for subcourse in All_SubCourses)).all()
+
+        Existing_Salary_record = [record.subcourse_fk_id for record in Existing_Salary_record_Query]
+        OUT = []
+        for subcourse in All_SubCourses:
+            OUT.append({**subcourse, "Does_Have_Salary_Record": subcourse.subcourse.sub_course_pk_id in Existing_Salary_record})
+
+        logger.debug(OUT)
+        return 200, OUT
+    except Exception as e:
+        return Return_Exception(db, e)
+
+"""
+
+
 def teacher_sub_courses(db: Session, course_ID: UUID):
     try:
         if not db.query(dbm.Course_form).filter_by(course_pk_id=course_ID).filter(dbm.Course_form.status != "deleted").first():
             return 400, "Course Not Found"
 
-        AllSubCourses = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_ID).filter(dbm.Sub_Course_form.status != "deleted").all()
-
+        AllSubCourses = db \
+            .query(dbm.Sub_Course_form) \
+            .filter_by(course_fk_id=course_ID) \
+            .filter(dbm.Sub_Course_form.status != "deleted") \
+            .options(joinedload(dbm.Sub_Course_form.teacher), joinedload(dbm.Sub_Course_form.course)) \
+            .all()
+        Existing_Salary_record_Query = db.query(dbm.Teacher_salary_form).filter(dbm.Teacher_salary_form.status != 'deleted', dbm.Teacher_salary_form.subcourse_fk_id.in_(subcourse.sub_course_pk_id for subcourse in AllSubCourses)).all()
+        OUT: List[sch.Teacher_subcourse_report] = []
         for SubCourse in AllSubCourses:
             sub_teachers: List[dbm.Session_form] = db \
                 .query(dbm.Session_form) \
@@ -42,8 +72,10 @@ def teacher_sub_courses(db: Session, course_ID: UUID):
                 .distinct(dbm.Session_form.session_teacher_fk_id) \
                 .all()
             SubCourse.sub_teachers = [sub_teacher.teacher for sub_teacher in sub_teachers]
-
-        return 200, AllSubCourses
+            RECORD = sch.Teacher_subcourse_report(**SubCourse.__dict__)
+            RECORD.Does_Have_Salary_Record = SubCourse.sub_course_pk_id in [record.subcourse_fk_id for record in Existing_Salary_record_Query]
+            OUT.append(RECORD)
+        return 200, OUT
     except Exception as e:
         return Return_Exception(db, e)
 

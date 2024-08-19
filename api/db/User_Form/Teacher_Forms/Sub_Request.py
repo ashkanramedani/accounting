@@ -41,7 +41,7 @@ def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
                 session_pk_id=Form.session_fk_id) \
             .filter(
                 dbm.Session_form.status != "deleted",
-                dbm.Session_form.can_accept_sub >= datetime.now(timezone('Asia/Tehran'))) \
+                dbm.Session_form.can_accept_sub <= datetime.now(timezone('Asia/Tehran'))) \
             .first()
         if not target_session:
             return 400, "Bad Request: session not found"
@@ -109,9 +109,6 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
                 dbm.Sub_Request_form.status != "deleted",
                 dbm.Sub_Request_form.sub_request_pk_id.in_(Form.sub_request_pk_id)).all()
 
-        # logger.debug(records)
-        # records = records.all()
-
         for record in records:
             target_session = db \
                 .query(dbm.Session_form) \
@@ -130,9 +127,8 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
             record.status = Set_Status(db, "form", status)
             verified += 1
 
-            # logger.debug(target_session)
-            # logger.debug(record.status)
 
+            # sessions cancelation (sub party) Update
             # Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
             # if Session_cancellation_record:
             #     Session_cancellation_record.status = Set_Status(db, "form", "deleted")
@@ -159,8 +155,3 @@ def TEST(db: Session):
         return 200, target_session
     except Exception as e:
         return Return_Exception(db, e)
-
-"""
-datetime.datetime(2024, 4, 23, 10, 0),
-datetime.datetime(2024, 8,  4, 14, 52, 22, 264639, tzinfo=<DstTzInfo 'Asia/Tehran' +0330+3:30:00 STD>)
-"""

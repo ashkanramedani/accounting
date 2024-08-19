@@ -1,6 +1,6 @@
 from typing import Dict
 
-from pydantic import NonNegativeFloat, NonPositiveFloat, PositiveFloat
+from pydantic import NonNegativeFloat, NonPositiveFloat, PositiveFloat, root_validator
 
 from .Base import *
 
@@ -190,18 +190,20 @@ class Teacher_course_report(Base_response):
     type: export_course_type
 
 
-class Teacher_subcourse_report(Base_response):
+class Teacher_subcourse_report(BaseModel):
     sub_course_pk_id: UUID
     sub_course_name: str
     create_date: datetime
 
     sub_course_starting_date: date
     sub_course_ending_date: date
-    note: Dict
+
+    Does_Have_Salary_Record: bool = False
 
     sub_teachers: List[export_employee]
     teacher: export_employee
     course: export_course
+
 
 
 ###
@@ -245,6 +247,36 @@ class teacher_salary_DropDowns(BaseModel):
     student_assign_feedback: four_Option = "average"
     survey_score: four_Option = "average"
     result_submission_to_FD: three_Option = "average"
+
+    class Config:
+        extra = 'ignore'
+
+
+
+class Report(BaseModel):  # course_data_for_report):
+    name: str
+    SUB: bool
+    tardy: int = 0
+    sub_point: int = 0
+    ID_Experience: int
+    experience_gain: int = 0
+    attended_session: int = 0
+    cancelled_session: int = 0
+    roles_score: float = 0
+    roles: Optional[Dict] = {}
+
+    score: float = 0
+    earning: float = 0
+
+    @root_validator(pre=True)
+    def flatten_type(cls, values):
+        # Unpack Teacher data
+        values["name"] = f'{values["name"]} {values["last_name"]}'
+        if values["roles"]:
+            values["roles_score"] = sum(i.value for i in values["roles"])
+            values["roles"] = {f'{i.cluster}_{i.name}': i.value for i in values["roles"]}
+
+        return values
 
     class Config:
         extra = 'ignore'
