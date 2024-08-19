@@ -100,12 +100,14 @@ def Apply_scores(
 def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_salary_DropDowns) -> Tuple[int, List[dbm.Teacher_salary_form] | str]:
     sub_course: dbm.Sub_Course_form = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=sub_course_id).first()
 
+    if not sub_course:
+        return 400, "sub course not found"
+
     Existing_salary = db.query(dbm.Teacher_salary_form).filter_by(subcourse_fk_id=sub_course.sub_course_pk_id).all()
     if Existing_salary:
         return 200, Existing_salary
 
-    if not sub_course:
-        return 400, "sub course not found"
+
 
     course_data = db.query(dbm.Course_form) \
         .filter_by(course_pk_id=sub_course.course_fk_id) \

@@ -2,6 +2,7 @@ from typing import Dict
 
 from pydantic import NonNegativeFloat, NonPositiveFloat, PositiveFloat, root_validator
 
+from lib import logger
 from .Base import *
 
 
@@ -279,4 +280,53 @@ class Report(BaseModel):  # course_data_for_report):
         return values
 
     class Config:
+        orm_mode = True
         extra = 'ignore'
+
+class Teacher_report_response(BaseModel):
+    teacher_salary_pk_id: UUID
+
+    user_fk_id: UUID
+    subcourse_fk_id: UUID
+
+    payment: UUID
+    payment_date: date
+    rewards_earning: float = 0
+    punishment_deductions: float = 0
+    loan_installment: float = 0
+
+    role_score: float
+    survey_score: float
+    course_level_score: float
+    tardy_score: float
+    content_creation: float
+    event_participate: float
+    CPD: float
+    Odd_hours: float
+    report_to_student: float
+    LP_submission: float
+    student_assign_feedback: float
+    result_submission_to_FD: float
+    name: str
+    SUB: bool
+    tardy: int
+    sub_point: float
+    ID_Experience: int
+    experience_gain: int
+    attended_session: int
+    cancelled_session: int
+
+    roles: Dict
+    score: float
+    earning: float
+
+    BaseSalary: float
+    cancellation_factor: float
+
+
+    teacher: export_employee
+    card: export_payment
+    sub_course: export_sub_course
+    class Config:
+        extra = 'ignore'
+        orm_mode = True
