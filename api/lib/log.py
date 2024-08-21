@@ -24,13 +24,9 @@ class Log:
         self.logger = logger_obj
         self.logger.remove()
 
-        self.logger.add("log/Log-{time:YYYY-MM-DD}.log", **config["logger"])
+        self.logger.add("log/Log-{time:YYYY-MM}.log", **config["logger"])
         self.logger.add(sys.stdout, level=config["logger"]["level"])
-        self.logger.info(f" ------------ Logger OBJ created ------------ ")
-
-    @property
-    def log_path(self):
-        return "log/Log-[Date].log"
+        # self.logger.info(f" ------------ Logger OBJ created ------------ ")
 
     def keep_log(self, msg, type_log, user_id, location):
         try:
