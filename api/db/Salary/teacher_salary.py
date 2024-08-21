@@ -6,12 +6,12 @@ from db.Course import SubCourse_report
 from db.User_Form import *
 
 
-def teacher_salary_report(db: Session, subcourse_id: UUID, DropDowns: sch.teacher_salary_DropDowns):
-    try:
-        status, report_summary = SubCourse_report(db, subcourse_id, DropDowns)
-        return status, report_summary
-    except Exception as e:
-        return Return_Exception(db, e)
+# def teacher_salary_report(db: Session, subcourse_id: UUID, DropDowns: sch.teacher_salary_DropDowns):
+#     try:
+#         status, report_summary = SubCourse_report(db, subcourse_id, DropDowns)
+#         return status, report_summary
+#     except Exception as e:
+#         return Return_Exception(db, e)
 
 
 def teacher_courses(db: Session):
@@ -25,30 +25,6 @@ def teacher_courses(db: Session):
         return 200, AllCourses
     except Exception as e:
         return Return_Exception(db, e)
-
-
-"""
-def get_sub_courses_for_course(db: Session, course_id, page, limit, order, SortKey):
-    try:
-        sub_course_query = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course_id).filter(dbm.Sub_Course_form.status != "deleted")
-        status, All_SubCourses = record_order_by(db, dbm.Sub_Course_form, page, limit, order, SortKey, query=sub_course_query)
-
-        if status != 200:
-            return status, All_SubCourses
-
-        Existing_Salary_record_Query = db.query(dbm.Teacher_salary_form).filter(dbm.Teacher_salary_form.status != 'deleted', dbm.Teacher_salary_form.subcourse_fk_id.in_(subcourse.sub_course_pk_id for subcourse in All_SubCourses)).all()
-
-        Existing_Salary_record = [record.subcourse_fk_id for record in Existing_Salary_record_Query]
-        OUT = []
-        for subcourse in All_SubCourses:
-            OUT.append({**subcourse, "Does_Have_Salary_Record": subcourse.subcourse.sub_course_pk_id in Existing_Salary_record})
-
-        logger.debug(OUT)
-        return 200, OUT
-    except Exception as e:
-        return Return_Exception(db, e)
-
-"""
 
 
 def teacher_sub_courses(db: Session, course_ID: UUID):

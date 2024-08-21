@@ -88,14 +88,10 @@ def create_Report(data: Dict):
         data["Role_Score"] = sum(i.value for i in role_data)
     return data
 
-
+import pickle
 def TestRoute(db: Session):
-    session = db.query(dbm.Session_form).first()
-
-    course_data = db.query(dbm.Course_form).filter_by(course_pk_id=session.course_fk_id).first()
-
-    return course_data.sub_courses
-
+    Report = pickle.load(open("Teacher_salary_form.pkl", "rb"))
+    dbm.Teacher_salary_form(**Report)
 
 """
 SELECT
