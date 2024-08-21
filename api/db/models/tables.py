@@ -41,8 +41,6 @@ class Base_form:
     # status = Column(String, nullable=False, default="approved")  # NC: 006
 
 
-
-
 users_departments_association = Table(
         'rel_users_departments',
         Base.metadata,
@@ -459,7 +457,7 @@ class Leave_Request_form(Base, Base_form):
 
     leave_type = Column(String, nullable=False)
 
-    created: Mapped["User_form"] = relationship("User_form",foreign_keys=[created_fk_by])
+    created: Mapped["User_form"] = relationship("User_form", foreign_keys=[created_fk_by])
     employee: Mapped["User_form"] = relationship("User_form", foreign_keys=[user_fk_id])
 
     def __repr__(self):
@@ -730,8 +728,6 @@ class Salary_Policy_form(Base, Base_form):
         return Remove_Base_Data(self.__dict__)
 
 
-
-
 class Tag_form(Base, Base_form):
     __tablename__ = "tag"
 
@@ -956,19 +952,20 @@ class Employee_Salary_form(Base, Base_form):
 
     employee = relationship("User_form", foreign_keys=[user_fk_id])
     card = relationship("Payment_Method_form", foreign_keys=[payment])
-
-    # ------------ Necessary for "Course" ------------
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
 
 
 class Teacher_salary_form(Base, Base_form):
     __tablename__ = "teacher_salary"
-    __table_args__ = (UniqueConstraint('user_fk_id', 'subcourse_fk_id'),)
+    # __table_args__ = (UniqueConstraint('user_fk_id', 'subcourse_fk_id'),)
     teacher_salary_pk_id = create_Unique_ID()
 
     user_fk_id = create_foreignKey("User_form")
     subcourse_fk_id = create_foreignKey("Sub_Course_form")
+
+    course_data = Column(JSON, nullable=False)
+    total_sessions = Column(Integer, nullable=False)
 
     payment = create_foreignKey("Payment_Method_form", nullable=True)
     payment_date = Column(Date, nullable=True)
@@ -1000,13 +997,13 @@ class Teacher_salary_form(Base, Base_form):
     score = Column(Float, nullable=False)
     earning = Column(Float, nullable=False)
 
+
     BaseSalary = Column(Float, nullable=False)
     cancellation_factor = Column(Float, nullable=False)
 
-    teacher = relationship("User_form", foreign_keys=[user_fk_id])
     card = relationship("Payment_Method_form", foreign_keys=[payment])
+    teacher = relationship("User_form", foreign_keys=[user_fk_id])
     sub_course = relationship("Sub_Course_form", foreign_keys=[subcourse_fk_id])
-
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
