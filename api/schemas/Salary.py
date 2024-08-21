@@ -1,6 +1,6 @@
 from typing import Dict
 
-from pydantic import NonNegativeFloat, NonPositiveFloat, PositiveFloat, root_validator
+from pydantic import NonNegativeFloat, NonPositiveFloat, PositiveFloat, root_validator, Field, validator
 
 from lib import logger
 from .Base import *
@@ -206,7 +206,6 @@ class Teacher_subcourse_report(BaseModel):
     course: export_course
 
 
-
 ###
 
 class update_salary_report(BaseModel):
@@ -235,23 +234,32 @@ class three_Option(Enum):
 
 class teacher_salary_DropDowns(BaseModel):
     # on total
-    cancellation_factor: NonNegativeFloat = 0.0
+    cancellation_factor: int = 2
 
     # on sessions
-    content_creation: float = 0.0
-    event_participate: float = 0.0
     CPD: float = 0.0
     Odd_hours: float = 0.0
+    content_creation: float = 0.0
+    event_participate: float = 0.0
 
-    report_to_student: four_Option = "average"
-    LP_submission: four_Option = "average"
-    student_assign_feedback: four_Option = "average"
     survey_score: four_Option = "average"
+    LP_submission: four_Option = "average"
+    report_to_student: four_Option = "average"
+    student_assign_feedback: four_Option = "average"
     result_submission_to_FD: three_Option = "average"
 
+    @root_validator(pre=True)
+    def check_values(cls, values):
+        for field, value in values.items():
+            if field in ["CPD", "Odd_hours", "content_creation", "event_participate"]:
+                if 0 > value or value > 100:
+                    raise ValueError(f'{field} must be between 0 and 100')
+            if field in ["cancellation_factor"]:
+                if 0 > value or value > 10:
+                    raise ValueError(f'{field} must be between 0 and 10')
+        return values
     class Config:
-        extra = 'ignore'
-
+        orm_mode = True
 
 
 class Report(BaseModel):  # course_data_for_report):
@@ -262,6 +270,7 @@ class Report(BaseModel):  # course_data_for_report):
     ID_Experience: int
     experience_gain: int = 0
     attended_session: int = 0
+    total_sessions: int = 0
     cancelled_session: int = 0
     roles_score: float = 0
     roles: Optional[Dict] = {}
@@ -283,50 +292,60 @@ class Report(BaseModel):  # course_data_for_report):
         orm_mode = True
         extra = 'ignore'
 
+class EMP(BaseModel):
+    user_pk_id: UUID
+    name: str
+    last_name: str
+
 class Teacher_report_response(BaseModel):
     teacher_salary_pk_id: UUID
 
     user_fk_id: UUID
     subcourse_fk_id: UUID
 
-    payment: UUID
-    payment_date: date
-    rewards_earning: float = 0
-    punishment_deductions: float = 0
-    loan_installment: float = 0
+    # name: str
+    # SUB: bool
+    # ID_Experience: int
+    # experience_gain: int
+    # attended_session: int
+    #
+    # payment: Optional[UUID]
+    # payment_date: Optional[date]
+    # rewards_earning: float = 0
+    # loan_installment: float = 0
+    # punishment_deductions: float = 0
+    #
+    # tardy: int
+    # tardy_score: float
+    #
+    # sub_point: float
+    # cancelled_session: int
+    #
+    # roles: Dict
+    # roles_score: float
+    #
+    # BaseSalary: float
+    #
+    # # from user
+    # CPD: float
+    # Odd_hours: float
+    # survey_score: float
+    # LP_submission: float
+    # content_creation: float
+    # report_to_student: float
+    # event_participate: float
+    # course_level_score: float
+    # cancellation_factor: float
+    # result_submission_to_FD: float
+    # student_assign_feedback: float
 
-    role_score: float
-    survey_score: float
-    course_level_score: float
-    tardy_score: float
-    content_creation: float
-    event_participate: float
-    CPD: float
-    Odd_hours: float
-    report_to_student: float
-    LP_submission: float
-    student_assign_feedback: float
-    result_submission_to_FD: float
-    name: str
-    SUB: bool
-    tardy: int
-    sub_point: float
-    ID_Experience: int
-    experience_gain: int
-    attended_session: int
-    cancelled_session: int
-
-    roles: Dict
     score: float
     earning: float
-
-    BaseSalary: float
-    cancellation_factor: float
-
-
+    #
+    # card: export_payment
     teacher: export_employee
-    card: export_payment
-    sub_course: export_sub_course
+    # sub_course: export_sub_course
+
     class Config:
         extra = 'ignore'
         orm_mode = True
