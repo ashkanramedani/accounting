@@ -22,8 +22,7 @@ def TIME_NOW(Off_Set: int = 0) -> time:
     return (datetime.now() + timedelta(hours=Off_Set)).time()
 
 
-Base_salary = {Cap: {"OnSite": 77, "online": 66, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
-
+Base_salary = {Cap: {"OnSite": 770_000, "online": 660_000, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 
 def BaseSalary_for_SubCourse(course_cap: int, course_type: str):
     try:
