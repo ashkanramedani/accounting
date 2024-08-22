@@ -275,9 +275,6 @@ class Report(BaseModel):  # course_data_for_report):
     roles_score: float = 0
     roles: Optional[Dict] = {}
 
-    score: float = 0
-    earning: float = 0
-
     @root_validator(pre=True)
     def flatten_type(cls, values):
         # Unpack Teacher data

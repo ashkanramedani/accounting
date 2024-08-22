@@ -999,7 +999,7 @@ class Teacher_salary_form(Base, Base_form):
 
 
     BaseSalary = Column(Float, nullable=False)
-    cancellation_factor = Column(Float, nullable=False)
+    session_cancellation_deduction = Column(Float, nullable=False)
 
     card = relationship("Payment_Method_form", foreign_keys=[payment])
     teacher = relationship("User_form", foreign_keys=[user_fk_id])

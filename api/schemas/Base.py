@@ -22,21 +22,8 @@ def TIME_NOW(Off_Set: int = 0) -> time:
     return (datetime.now() + timedelta(hours=Off_Set)).time()
 
 
-Base_salary = {Cap: {"OnSite": 770_000, "online": 660_000, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 
-def BaseSalary_for_SubCourse(course_cap: int, course_type: str):
-    try:
-        match course_cap:
-            case x if x <= 5:
-                return Base_salary["1-5"][course_type]
-            case x if 6 <= x <= 9:
-                return Base_salary["6-9"][course_type]
-            case x if 10 <= x <= 12:
-                return Base_salary["10-12"][course_type]
-            case x if 13 <= x:
-                return Base_salary["13"][course_type]
-    except KeyError:
-        return None
+
 
 class CanUpdateStatus(str, Enum):
     submitted = "submitted"
@@ -97,6 +84,7 @@ class export_payment(BaseModel):
     shaba: str
     card_number: str
     active: bool
+
     class Config:
         extra = 'ignore'
         orm_mode = True
@@ -254,6 +242,7 @@ class Base_response(BaseModel):
     status: ValidStatus = "submitted"
     priority: int
     note: Optional[Dict] = {}
+
     # create_date: Optional[datetime]
 
     class Config:
