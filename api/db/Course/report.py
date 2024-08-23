@@ -1,6 +1,7 @@
 from typing import List, Dict, Tuple, Union, Optional
 from uuid import UUID
 
+from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
 import db.models as dbm
@@ -12,10 +13,11 @@ from schemas import course_data_for_report
 Base_salary = {Cap: {"OnSite": 770_000, "online": 660_000, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 TEACHER_TARDY = {"0_10": 110_000, "10_30": 55_000, "30_40": -55_000, "40": -165_000}
 COURSE_LEVEL = {"connect": 110_000, "FCE": 220_000, "CAE": 440_000, "CPE": 660_000}
+CANCELLATION = {"0": 110_000, "1": -55_000, "2": -75_000, "3": -165_000}
 SCORES = {
     "effect_on_total": ["loan", "reward", "punishment", "cancelled_session_score"],
-    "Percent_on_session": ["content_creation", "event_participate", "CPD", "Odd_hours"],
-    "effect_on_session": ["report_to_student", "LP_submission", "student_assign_feedback", "x", "result_submission_to_FD", "course_level_score", "BaseSalary"]
+    "Percent_on_session": ["content_creation", "event_participate", "CPD", "Odd_hours", "rewards_earning"],
+    "effect_on_session": ["report_to_student", "LP_submission", "student_assign_feedback", "survey_score", "result_submission_to_FD", "course_level_score", "BaseSalary"]
 }
 DropDown_value_table = {
     "report_to_student": {"weak": -55_000, "average": 0, "good": 55_000, "excellent": 110_000},
@@ -24,6 +26,21 @@ DropDown_value_table = {
     "survey_score": {"weak": 0, "average": 30_000, "good": 60_000, "excellent": 100_000},
     "result_submission_to_FD": {"weak": -55_000, "average": 0, "good": 55_000}
 }
+
+
+def Cancellation_score(cancellation: int):
+    try:
+        match cancellation:
+            case x if x == 0:
+                return CANCELLATION["0"]
+            case x if x == 1:
+                return CANCELLATION["1"]
+            case x if x == 2:
+                return CANCELLATION["2"]
+            case x if 3 <= x:
+                return CANCELLATION["3"]
+    except KeyError:
+        return None
 
 
 def BaseSalary_for_SubCourse(course_cap: int, course_type: str):
@@ -42,6 +59,7 @@ def BaseSalary_for_SubCourse(course_cap: int, course_type: str):
 
 
 def Tardy_Score(tardy: int):
+    tardy = 0 if not tardy else tardy
     match tardy:
         case x if x <= 10:
             return TEACHER_TARDY["0_10"]
@@ -67,16 +85,18 @@ def PreProcess_teacher_report(db: Session, sub_course_obj: dbm.Sub_Course_form) 
 
 
 @DEV_io()
-def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: dict[str, sch.Report], course_data: sch.course_data_for_report) -> List[Dict]:
+def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: dict[str, sch.Report], course_data: sch.course_data_for_report, teacher_tardy: int, cancelled_session: int) -> List[Dict]:
     Final = []
     Score = {
         field: DropDown_value_table[field][value.value]
         if field in DropDown_value_table.keys() else value
         for field, value in DropDowns
     }
-    cancellation_factor = Score.pop("cancellation_factor")
+    # cancellation_factor = Score.pop("cancellation_factor")
 
+    Score["tardy_score"] = Tardy_Score(teacher_tardy)
     Score["course_level_score"] = COURSE_LEVEL.get(course_data.course_level, 0)
+    Score["session_cancellation_deduction"] = Cancellation_score(cancelled_session)
     Score["BaseSalary"] = BaseSalary_for_SubCourse(course_data.course_capacity, course_data.course_type)
 
     Base_Session_score = sum([value for key, value in Score.items() if key in SCORES["effect_on_session"]])
@@ -90,11 +110,9 @@ def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: di
 
     for teacher_id, data in sub_course_summary.items():
         data.ID_Experience = min(60, (data.ID_Experience // 36_000) * 2)
-        teacher_base_score = Base_Session_score + ((Base_Session_score * data.ID_Experience) / 100) + percent_on_session_score + Tardy_Score(data.tardy) + data.roles_score
+        teacher_base_score = Base_Session_score + ((Base_Session_score * data.ID_Experience) / 100) + percent_on_session_score + data.roles_score
 
-        session_cancellation_deduction = cancellation_factor * Base_Session_score * data.cancelled_session
-
-        earning = ((data.attended_session + data.sub_point) * teacher_base_score) - session_cancellation_deduction
+        earning = (data.attended_session + data.sub_point) * teacher_base_score
 
         Final.append({
             **Score,
@@ -102,8 +120,7 @@ def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: di
             **percent_on_session,
             "earning": earning,
             "user_fk_id": teacher_id,
-            "score": teacher_base_score,
-            "session_cancellation_deduction": session_cancellation_deduction})
+            "score": teacher_base_score})
     return Final
 
 
@@ -135,6 +152,7 @@ def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_sa
     if status != 200:
         return status, sub_course_summary
 
+    cancelled_session = 0
     # Loop Through Sessions
     AllSessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=sub_course.sub_course_pk_id).filter(dbm.Session_form.status != "deleted").all()
     sub_course_summary[str(sub_course.sub_course_teacher_fk_id)].total_sessions = len(AllSessions)
@@ -146,7 +164,7 @@ def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_sa
 
         if session.canceled:  # or not session.report:  # NC: 001
             if not sub_course_summary[Session_teacher].SUB:
-                sub_course_summary[Session_teacher].cancelled_session += 1
+                cancelled_session += 1
 
         elif session.is_sub:
             sub_request = db \
@@ -161,23 +179,25 @@ def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_sa
             sub_course_summary[Session_teacher].experience_gain += session.session_duration
 
     # Calculate the Tardy for Each Teacher
-    Tardies: List[dbm.Teacher_Tardy_report_form] = db \
-        .query(dbm.Teacher_Tardy_report_form) \
+    Tardies: Tuple = db \
+        .query(func.sum(dbm.Teacher_Tardy_report_form.delay)) \
         .filter_by(sub_course_fk_id=sub_course.sub_course_pk_id, teacher_fk_id=sub_course.sub_course_teacher_fk_id) \
-        .filter(dbm.Teacher_Tardy_report_form.status != "deleted").all()
-
-    for tardy in Tardies:
-        sub_course_summary[str(tardy.teacher_fk_id)].tardy += tardy.delay
+        .filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
 
     OBJs: List[dbm.Teacher_salary_form] = []
-    teacher_salary_records = Apply_scores(DropDowns, sub_course_summary, course_data, sub_course.sub_course_teacher_fk_id)
+    teacher_salary_records = Apply_scores(
+            DropDowns,
+            sub_course_summary,
+            course_data,
+            Tardies[0],
+            cancelled_session)
 
     Extra = {"subcourse_fk_id": sub_course.sub_course_pk_id, "course_data": course_data.__dict__}
     for salary_record in teacher_salary_records:
         OBJ = dbm.Teacher_salary_form(**salary_record, **Extra)  # type: ignore[call-arg]
 
         User_obj = db.query(dbm.User_form).filter_by(user_pk_id=salary_record["user_fk_id"]).first()
-        User_obj.ID_Experience += salary_record["experience_gain"] + 10_000_000
+        User_obj.ID_Experience += salary_record["experience_gain"]
         OBJs.append(OBJ)
 
     db.add_all(OBJs)
@@ -204,7 +224,7 @@ def update_SubCourse_report(db: Session, form_ID: UUID, Form: sch.update_salary_
         if not salary_data:
             return 400, "Bad Request: Target salary record not found"
 
-        changes = {**Form.__dict__, "earning": salary_data.earning + (Form.rewards_earning - Form.punishment_deductions - Form.loan_installment)}
+        changes = {**Form.__dict__, "earning": salary_data.earning + (Form.punishment_deductions - Form.loan_installment)}
 
         existing.update({**changes}, synchronize_session=False)
         db.commit()

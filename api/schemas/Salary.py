@@ -209,7 +209,6 @@ class Teacher_subcourse_report(BaseModel):
 ###
 
 class update_salary_report(BaseModel):
-    rewards_earning: NonNegativeFloat = 0
     punishment_deductions: NonNegativeFloat = 0
     loan_installment: NonNegativeFloat = 0
     payment: UUID
@@ -233,12 +232,9 @@ class three_Option(Enum):
 
 
 class teacher_salary_DropDowns(BaseModel):
-    # on total
-    cancellation_factor: int = 2
-
-    # on sessions
     CPD: float = 0.0
     Odd_hours: float = 0.0
+    rewards_earning: float = 0.0
     content_creation: float = 0.0
     event_participate: float = 0.0
 
@@ -265,13 +261,11 @@ class teacher_salary_DropDowns(BaseModel):
 class Report(BaseModel):  # course_data_for_report):
     name: str
     SUB: bool
-    tardy: int = 0
     sub_point: int = 0
     ID_Experience: int
     experience_gain: int = 0
     attended_session: int = 0
     total_sessions: int = 0
-    cancelled_session: int = 0
     roles_score: float = 0
     roles: Optional[Dict] = {}
 
