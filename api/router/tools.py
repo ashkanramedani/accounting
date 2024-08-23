@@ -57,7 +57,7 @@ async def testRoute(db=Depends(get_db)):
     return dbf.TestRoute(db)
 
 
-@router.get("/log", tags=["Test"], include_in_schema=True)
+@router.get("/log", tags=["Test"], include_in_schema=False)
 async def Log(log: str = None, limit: int = 100):
     if log:
         try:
