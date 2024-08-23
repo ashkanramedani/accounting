@@ -1,3 +1,4 @@
+import os
 from typing import List, Any
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -54,3 +55,15 @@ def conv(item: int | float | sch.three_Option | sch.four_Option):
 @router.get("/testRoute", tags=["Test"])
 async def testRoute(db=Depends(get_db)):
     return dbf.TestRoute(db)
+
+
+@router.get("/log", tags=["Test"], include_in_schema=True)
+async def Log(log: str = None, limit: int = 100):
+    if log:
+        try:
+            with open(f"./log/{log}") as f:
+                Logs = f.readlines()[::-1]
+            return Logs[:limit]
+        except FileNotFoundError:
+            return "File Not Exist."
+    return os.listdir("./log")
