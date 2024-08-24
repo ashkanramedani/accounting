@@ -12,7 +12,7 @@ router = APIRouter(prefix='/api/v1/template', tags=['Template_form'])
 
 # Sub request
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def add_template(Form: sch.post_Sub_request_schema, db=Depends(get_db)):
+async def add_template(Form: sch.post_template_schema, db=Depends(get_db)):
     status_code, result = Template.post_template(db, Form)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
@@ -44,17 +44,8 @@ async def delete_template(form_id, db=Depends(get_db)):
 
 
 @router.put("/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def update_template(Form: sch.update_Sub_request_schema, db=Depends(get_db)):
+async def update_template(Form: sch.update_template_schema, db=Depends(get_db)):
     status_code, result = Template.update_template(db, Form)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
-
-
-@router.put("/updates", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def update_template(Forms: List[sch.update_Sub_request_schema], db=Depends(get_db)):
-    for Form in Forms:
-        status_code, result = Template.update_template(db, Form)
-        if status_code not in sch.SUCCESS_STATUS:
-            raise HTTPException(status_code=status_code, detail=result)
-        return result
