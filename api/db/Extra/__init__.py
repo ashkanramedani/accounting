@@ -12,7 +12,6 @@ __all__ = [
     'record_order_by',
     'count',
     'safe_run',
-    'log_on_status',
     'Return_Exception',
     'Return_Test_Exception',
     "not_implemented",

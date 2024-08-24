@@ -73,16 +73,12 @@ app.add_middleware(
         allow_headers=["*"],
 )
 
-
-# Example usage within an async context
-
-# Add custom middleware to track process time
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time()
 
     response = await call_next(request)
-    logger.info(f"{response.status_code} [ {time() - start_time:.5f}s ] {request.method: <6} {request.url}")
+    logger.info(f"{response.status_code} [ {time() - start_time:.5f}s ] {request.method: <8} {request.url}")
     # response.headers["X-Process-Time"] = f'{time() - start_time:.5f}'
     return response
 
