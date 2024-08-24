@@ -1,13 +1,31 @@
 import sys
+from datetime import datetime
 from json import load
 from os.path import normpath, dirname, join
+from zoneinfo import ZoneInfo
+
+import loguru
+from pytz import timezone
+from loguru._logger import Core as _Core
+from loguru._logger import Logger as _Logger
 
 from loguru import logger as logger_obj
-
 from lib import requester
 
+STDERR_FORMATTER = " <green>{time:YYYY-MM-DD HH:mm:ss Z}</green> | <level>{level: <8}</level> | <cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
 
-class Log:
+
+def FILE_FORMATTER(record):
+    record["extra"]["serialized"] = {
+        "timestamp": record["time"].astimezone(timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z"),
+        "message": record["message"],
+        "location": f'{record["module"]}:{record["function"]}:{record["line"]}',
+        "level": record["level"].name,
+        "file": record["file"].path,
+    }
+    return "{extra[serialized]}\n"
+
+class Log():
     def __init__(self):
         self.Info_Status = [200, 201]
         self.Warn_Status = [400]
@@ -21,12 +39,22 @@ class Log:
             config = load(open(self.config_path))
 
         self.developer = True
-        self.logger = logger_obj
-        self.logger.remove()
 
-        self.logger.add("log/Log-{time:YYYY-MM}.log", **config["logger"])
-        self.logger.add(sys.stdout, level=config["logger"]["level"])
-        # self.logger.info(f" ------------ Logger OBJ created ------------ ")
+        log_level = config["logger"].pop("level", 20)
+
+        self.logger = _Logger(core=_Core(), exception=None, depth=0, record=False, lazy=False, colors=False, raw=False, capture=True, patchers=[], extra={})
+        self.logger.add(
+                sys.stdout,
+                level=log_level,
+                format=STDERR_FORMATTER)
+        self.logger.add(
+                "log/Log-{time:YYYY-MM}.jsonl",
+                level=log_level,
+                format=FILE_FORMATTER, **config["logger"])
+
+    def __getattr__(self, name):
+        # Delegate attribute access to the underlying logger instance
+        return getattr(logger_obj, name)
 
     def keep_log(self, msg, type_log, user_id, location):
         try:
@@ -52,23 +80,6 @@ class Log:
         if self.developer and type_log == 'i':
             self.logger.opt(depth=1).info(msg)
 
-    def log(self, msg, type_log, user, location, keep=False):
-        self.show_log(msg, type_log)
-        if keep:
-            self.keep_log(msg, type_log, user, location)
-
-    def info(self, msg, depth=1):
-        self.logger.opt(depth=depth).info(msg)
-
-    def warning(self, msg, depth=1):
-        self.logger.opt(depth=depth).warning(msg)
-
-    def error(self, msg, depth=1):
-        self.logger.opt(depth=depth).error(msg)
-
-    def debug(self, msg, depth=1):
-        self.logger.opt(depth=depth).debug(msg)
-
     def on_status_code(self, status_code, msg):
         if not isinstance(msg, str):
             msg = repr(msg)
@@ -81,6 +92,15 @@ class Log:
         else:
             self.logger.opt(depth=2).warning("Status Code Has Not Beet Categorised.\n\t{msg}")
 
+
+    def info(self, msg, depth=1):
+        self.logger.opt(depth=depth).info(msg)
+
+    def warning(self, msg, depth=1):
+        self.logger.opt(depth=depth).warning(msg)
+
+    def error(self, msg, depth=1):
+        self.logger.opt(depth=depth).error(msg)
 
 logger = Log()
 
