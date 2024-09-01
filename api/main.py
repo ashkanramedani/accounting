@@ -9,7 +9,6 @@ try:
 
     # DB
     from redis import asyncio as redis
-    from sqlalchemy.exc import OperationalError
 
     # fastApi
     from fastapi import FastAPI, Request
@@ -22,34 +21,26 @@ except (ImportError, ModuleNotFoundError):
 
 from router import routes
 from lib import logger
-from db import models, save_route, SetUp, engine, SessionLocal, Create_Redis_URL
+from db import save_route
+from models import SetUp, Create_engine, Create_Redis_URL, sessionmaker, SetUp_table
 
 config = load(open("configs/config.json"))
 
 
 @asynccontextmanager
 async def app_lifespan(api):
-    try:
-        logger.info(f"preparing {api.title} V: {api.version} - {datetime.now()}")
-        while True:
-            try:
-                # models.Base.metadata.drop_all(engine)
-                models.Base.metadata.create_all(bind=engine)
-                break
-            except OperationalError as OE:
-                logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
-                sleep(10)
+    logger.info(f"preparing {api.title} V: {api.version} - {datetime.now()}")
+    engine = Create_engine(config.get("db", None))
 
-        if not getenv('MODE') == "DEBUG":
-            with SessionLocal() as db:
-                SetUp(db)
+    SetUp_table(engine)
 
-        await FastAPILimiter.init(redis=redis.from_url(Create_Redis_URL(), encoding="utf8"))
-        logger.info(f'{api.title} V: {api.version} Has been started ...')
-        yield
+    # if not getenv('MODE') == "DEBUG":
+    with sessionmaker(autoflush=False, bind=engine)() as Tmp_Connection:
+        SetUp(Tmp_Connection)
 
-    except KeyboardInterrupt:
-        logger.info(f'Exited')
+    await FastAPILimiter.init(redis=redis.from_url(Create_Redis_URL(config.get("redis", None)), encoding="utf8"))
+    logger.info(f'{api.title} V: {api.version} Has been started ...')
+    yield
     logger.info(f'Exiting from {api.title} V: {api.version} - {datetime.now()}')
     await FastAPILimiter.close()
 
@@ -72,6 +63,7 @@ app.add_middleware(
         allow_methods=["*"],
         allow_headers=["*"],
 )
+
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
