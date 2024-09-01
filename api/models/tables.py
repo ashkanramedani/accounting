@@ -6,20 +6,11 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import Mapped
 from sqlalchemy.sql import expression, func
 
-from .Func import *
-from .database import Base
+from models.Func import *
+from sqlalchemy.orm import declarative_base
 
-# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
-#    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
-
+Base = declarative_base()
 metadata_obj = MetaData()
-
-
-def Remove_Base_Data(OBJ) -> str:
-    for i in ["created_fk_by", "_sa_instance_state", "priority", "visible", "deleted", "can_update", "can_deleted", "create_date", "update_date", "delete_date", "expire_date", "status", "description", "note"]:
-        if i in OBJ:
-            OBJ.pop(i)
-    return repr(OBJ)
 
 
 class Base_form:
@@ -35,9 +26,10 @@ class Base_form:
     delete_date = Column(DateTime(timezone=True), default=None)
     expire_date = Column(DateTime(timezone=True), default=None)
 
-    status = Column(String, nullable=False, default="submitted", index=True)  # NC: 006
     description = Column(String, nullable=True, default="")
     note = Column(JSON, nullable=True, default={})
+
+    status = Column(String, nullable=False, default="submitted", index=True)  # NC: 006
     # status = Column(String, nullable=False, default="approved")  # NC: 006
 
 
@@ -387,6 +379,8 @@ class Sub_Course_form(Base, Base_form):
     course_fk_id = create_foreignKey("Course_form")
     created_fk_by = create_foreignKey("User_form")
     sub_course_teacher_fk_id = create_foreignKey("User_form")
+
+    supervisor_review = Column(JSON, nullable=True)
 
     sub_course_name = Column(String, unique=True)
     number_of_session = Column(Integer, nullable=False, default=0)
@@ -952,6 +946,7 @@ class Employee_Salary_form(Base, Base_form):
 
     employee = relationship("User_form", foreign_keys=[user_fk_id])
     card = relationship("Payment_Method_form", foreign_keys=[payment])
+
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
 
@@ -995,7 +990,6 @@ class Teacher_salary_form(Base, Base_form):
     score = Column(Float, nullable=False)
     earning = Column(Float, nullable=False)
 
-
     BaseSalary = Column(Float, nullable=False)
     session_cancellation_deduction = Column(Float, nullable=False)
 
@@ -1005,3 +999,34 @@ class Teacher_salary_form(Base, Base_form):
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
+
+
+class Reward_card_form(Base, Base_form):
+    __tablename__ = "reward_card"
+
+    reward_card_pk_id = create_Unique_ID()
+    user_fk_id = create_foreignKey("User_form")
+    created_fk_by = create_foreignKey("User_form")
+    reward_amount = Column(Float, nullable=False)
+    reward_type = Column(String, nullable=False)
+
+    start_date = Column(Date, nullable=False)
+    end_date = Column(Date, nullable=False)
+
+    created = relationship("User_form", foreign_keys=[created_fk_by])
+    employee = relationship("User_form", foreign_keys=[user_fk_id])
+
+
+class Deleted_Records(Base):
+    __tablename__ = "deleted_records"
+    deleted_records_pk_id = create_Unique_ID()
+    deleted_fk_by = create_foreignKey("User_form", nullable=True)
+    table = Column(String, nullable=False)
+    rows_data = Column(JSON, nullable=False)
+
+
+class TEMP_form(Base, Base_form):
+    __tablename__ = "temp"
+    temp_pk_id = create_Unique_ID()
+    key = Column(Integer, default=0)
+    value = Column(Integer, default=0)
