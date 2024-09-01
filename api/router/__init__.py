@@ -8,6 +8,7 @@ from .tools import router as tools_route
 from .dropdown import router as dropdown_route
 from .Template import router as template_route
 
+
 routes = [
     # dropdown_route
     dropdown_route,
