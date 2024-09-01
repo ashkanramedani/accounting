@@ -21,8 +21,8 @@ async def add_reward_card(Form: sch.post_reward_card_schema, db=Depends(get_db))
 
 
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.reward_card_response)
-async def search_reward_card(form_id: UUID, user: bool = False, db=Depends(get_db)):
-    status_code, result = dbf.get_reward_card(db, form_id, user)
+async def search_reward_card(form_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.get_reward_card(db, form_id)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
