@@ -1,4 +1,3 @@
-from typing import List
 from uuid import UUID
 
 from fastapi import APIRouter, Depends
@@ -7,7 +6,7 @@ from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
 import schemas as sch
-from db.models import get_db
+from models import get_db
 
 router = APIRouter(prefix='/api/v1/form/salary', tags=['Report'])
 

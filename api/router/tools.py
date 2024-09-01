@@ -1,13 +1,12 @@
 import os
-from typing import List, Any
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
 from starlette.responses import RedirectResponse
 
 import db as dbf
 import schemas as sch
-from db.models import get_db
+from models import get_db
 from lib import logger
 
 router = APIRouter()
@@ -43,13 +42,6 @@ async def count():
 async def count(*args, **kwargs):
     logger.warning(f'Deprecated. Use /api/v1/form/count')
     raise HTTPException(status_code=410, detail=f'Deprecated. Use /api/v1/form/count')
-
-
-def conv(item: int | float | sch.three_Option | sch.four_Option):
-    if isinstance(item, int) or isinstance(item, float):
-        return f'IorF: {item}'
-    else:
-        return f'ENUM: {item.value}'
 
 
 @router.get("/testRoute", tags=["Test"])

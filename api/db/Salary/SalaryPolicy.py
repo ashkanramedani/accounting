@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 import schemas as sch
-from db import models as dbm
+import models as dbm
 from lib import time_gap
 from ..Extra import *
 

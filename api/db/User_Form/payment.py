@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 import schemas as sch
-from db import models as dbm
+import models as dbm
 from db.Extra import *
 
 
@@ -56,8 +56,6 @@ def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.user_fk_id]):
-            return 400, "Bad Request"
 
         record.update(Form.dict(), synchronize_session=False)
 

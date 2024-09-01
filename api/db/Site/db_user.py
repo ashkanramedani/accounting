@@ -1,7 +1,7 @@
 import sqlalchemy.sql.expression as sse
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+import models as dbm
 
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority

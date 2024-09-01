@@ -1,22 +1,14 @@
-from contextlib import contextmanager
 from typing import List, Any, Dict
 from uuid import UUID
-from schemas import course_data_for_report
-from fastapi import APIRouter
-from fastapi import FastAPI
-from starlette.testclient import TestClient
 
 from lib import logger
-from schemas import Route_Result
-from db import models as dbm
-from sqlalchemy import select, join, and_
-from sqlalchemy.orm import aliased, joinedload
+import models as dbm
+from sqlalchemy import and_
 
 # Assuming the models are defined as User, Role, and UsersRoles
 
 
 from sqlalchemy.orm import Session
-from sqlalchemy.sql import true
 
 
 def TestRoute_2(db: Session):
@@ -89,9 +81,18 @@ def create_Report(data: Dict):
     return data
 
 import pickle
-def TestRoute(db: Session):
-    Report = pickle.load(open("Teacher_salary_form.pkl", "rb"))
-    dbm.Teacher_salary_form(**Report)
+def TestRoute(db: Session, created_by="00000000-0000-4b94-8e27-44833c2b940f"):
+    a = dbm.TEMP_form()
+    db.add(a)
+    db.commit()
+    db.refresh(a)
+
+    aa = db.query(dbm.TEMP_form).first()
+    aa._Deleted_BY = created_by
+    if aa:
+        db.delete(aa)
+        db.commit()
+
 
 """
 SELECT

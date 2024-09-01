@@ -1,7 +1,7 @@
 from datetime import timedelta, date, time, datetime
 from typing import List, Tuple, Dict
 
-from db import models as dbm
+import models as dbm
 from lib import *
 
 Day_Schema: dict

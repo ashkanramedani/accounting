@@ -1,9 +1,9 @@
-from typing import List, Dict
+from typing import List
 from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+import models as dbm
 import schemas as sch
 from .sub_course import delete_subcourse
 from ..Extra import *

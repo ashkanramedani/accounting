@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+import models as dbm
 from ..Extra import *
 
 

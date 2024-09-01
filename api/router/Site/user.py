@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import APIRouter, Depends
 
 from db import db_user  # , db_post, db_role, db_gender, db_branch, db_educationalInstitution
-from db.models import get_db
+from models import get_db
 
 # from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority

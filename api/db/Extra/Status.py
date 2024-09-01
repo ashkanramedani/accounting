@@ -1,6 +1,6 @@
 # from lib.decorators import DEV_io
-import db.models as dbm
-from db.models import SessionLocal
+import models as dbm
+from models import Create_engine, sessionmaker
 from sqlalchemy.orm import Session
 
 
@@ -33,5 +33,6 @@ if __name__ == '__main__':
         ('active', 'teacher'),
         ('inactive', 'student'),
         ('inactive', 'teacher')]:
-        s = Set_Status(SessionLocal(), s, c)
+
+        s = Set_Status(sessionmaker(autoflush=False, bind=Create_engine())(), s, c)
         print(s)

@@ -5,7 +5,7 @@ from fastapi_limiter.depends import RateLimiter
 
 import schemas as sch
 from db import Sub_Request
-from db.models import get_db
+from models import get_db
 
 router = APIRouter(prefix='/api/v1/form/sub_request', tags=['Sub Request'])
 

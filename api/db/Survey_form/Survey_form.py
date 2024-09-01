@@ -4,7 +4,7 @@ from uuid import UUID
 from sqlalchemy.orm import Session
 
 import schemas as sch
-from db import models as dbm
+import models as dbm
 from ..Extra import *
 
 

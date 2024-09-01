@@ -6,7 +6,7 @@ from uuid import UUID
 from sqlalchemy import desc
 from sqlalchemy.orm import Session, Query
 
-import db.models as dbm
+import models as dbm
 import schemas as sch
 from lib import logger
 
@@ -201,11 +201,13 @@ def Extract_Unique_keyPair(error_message) -> str | Dict:
 def Return_Exception(db: Session = None, Error: Exception = None):
     if db:
         db.rollback()
-    if "duplicate key" in Error.__repr__() or "UniqueViolation" in Error.__repr__():
+
+    ERR_MSG = Error.__repr__()
+    if "duplicate key" in ERR_MSG or "UniqueViolation" in ERR_MSG:
         logger.warning(f'{Error.__class__.__name__}: Record Already Exist: {Extract_Unique_keyPair(Error.args)}', depth=2)
         return 409, "Already Exist"
-    logger.error(f'{Error.__class__.__name__}: {Error.__repr__()}', depth=2)
-    return 500, f'{Error.__class__.__name__}: {Error.__repr__()}'
+    logger.error(f'{Error.__class__.__name__}: {ERR_MSG}', depth=2)
+    return 500, f'{Error.__class__.__name__}: {ERR_MSG}'
 
 
 def Return_Test_Exception(Error: Exception):

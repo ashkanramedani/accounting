@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Response, HTTPException, status
 
 import schemas as sch
 from db import db_post
-from db.models import get_db
+from models import get_db
 
 # from lib.oauth2 import oauth2_scheme, get_current_user, create_access_token, create_refresh_token
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority

@@ -3,7 +3,7 @@ from datetime import datetime
 import sqlalchemy.sql.expression as sse
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+import models as dbm
 import schemas as sch
 from lib import logger
 

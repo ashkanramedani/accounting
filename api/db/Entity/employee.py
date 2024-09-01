@@ -2,7 +2,7 @@ from typing import List
 
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+import models as dbm
 import schemas as sch
 from ..Extra import *
 

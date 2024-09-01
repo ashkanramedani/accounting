@@ -2,7 +2,7 @@ from typing import Tuple, List, Dict
 
 from sqlalchemy.orm import Session
 
-import db.models as dbm
+import models as dbm
 import schemas as sch
 from db.Extra import *
 from lib import logger, Separate_days
