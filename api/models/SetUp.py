@@ -1,11 +1,16 @@
 import re
+from time import sleep
 from uuid import UUID
 from typing import Dict, List
+
+from sqlalchemy import event
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import OperationalError
+
 
 from lib import logger
-from db import models as dbm
-
+import models.tables as dbm
+from models.Triggers import archive_deleted_record
 
 def Extract_Unique_keyPair(error_message) -> str | Dict:
     error_message = str(error_message)
@@ -24,7 +29,8 @@ def Exception_handler(db, Error, Cluster: str = "Admin_Setup") -> None:
     logger.error(f'[ {Cluster} / 500 ]{Error.__class__.__name__}: {Error.__repr__()}', depth=2)
 
 
-ADMIN: Dict = {"user_pk_id": "00000000-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": None, "name": "Admin", "last_name": "Admin", "email": "Admin@Admin.com"}
+ADMIN: Dict = {
+    "user_pk_id": "00000000-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": None, "name": "Admin", "last_name": "Admin", "email": "Admin@Admin.com"}
 
 DEFAULT_USER: List[Dict] = [
     {"user_pk_id": "00000001-0000-4b94-8e27-44833c2b940f", "status": "approved", "fingerprint_scanner_user_id": 1000, "name": "Test", "last_name": "Teacher", "email": "Test@Teacher.com"},
@@ -150,6 +156,22 @@ def Default_Course_type(db: Session, Admin_id: UUID):
         db.commit()
     except Exception as Error:
         Exception_handler(db, Error, "Default_new_course_type")
+
+
+def SetUp_table(engine):
+    logger.info("Connecting To Database")
+    while True:
+        try:
+            dbm.Base.metadata.create_all(bind=engine)
+            break
+        except OperationalError as OE:
+            logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
+            sleep(10)
+
+    logger.info("Setting Up Listeners")
+    for cls in dbm.Base.__subclasses__():
+        if "_form" in cls.__name__:
+            event.listen(cls, 'before_delete', archive_deleted_record)
 
 
 def SetUp(db: Session):
