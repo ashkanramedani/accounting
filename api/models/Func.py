@@ -2,8 +2,6 @@ from fastapi_utils.guid_type import GUID as GUID_TYPE, GUID_SERVER_DEFAULT_POSTG
 from sqlalchemy import Column, ForeignKey, MetaData
 from sqlalchemy.orm import relationship
 
-# expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority
-#    DateTime,    DateTime,        True,   False,    DateTime,       True,    True,    DateTime,      Int
 
 metadata_obj = MetaData()
 
@@ -28,3 +26,10 @@ def creator_relation(table: str):
         table: table name
     """
     return relationship(table, back_populates="created", foreign_keys=f"{table}.created_fk_by", cascade="all, delete-orphan")
+
+
+def Remove_Base_Data(OBJ) -> str:
+    for i in ["created_fk_by", "_sa_instance_state", "priority", "visible", "deleted", "can_update", "can_deleted", "create_date", "update_date", "delete_date", "expire_date", "status", "description", "note"]:
+        if i in OBJ:
+            OBJ.pop(i)
+    return repr(OBJ)
