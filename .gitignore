@@ -190,4 +190,6 @@ api/.lprof
 api/.env
 api/db/PlayGround/
 api/schemas/PlayGround
-api/db/models/tables_TMP.py
+api/models/tables_TMP.py
+Migration
+./Migration

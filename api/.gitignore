@@ -171,7 +171,7 @@ api/configs/test_config.json
 api/admin.api.ieltsdaily.ir.tar!/router_Dev/
 
 !/Diagram/
-!/db/models/tables_TMP.py
+!/models/tables_TMP.py
 !/log/access.log
 !/log/Log-2024-06-16.log
 !/log/uvicorn.log
