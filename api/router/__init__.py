@@ -13,6 +13,7 @@ routes = [
     # dropdown_route
     dropdown_route,
 
+    reward_card_router,
     # Template
     template_route,
 
