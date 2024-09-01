@@ -1,14 +1,13 @@
-from typing import List, Dict, Tuple, Union, Optional
+from typing import List, Dict, Tuple
 from uuid import UUID
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session, joinedload
 
-import db.models as dbm
+import models as dbm
 import schemas as sch
 from db.Extra import *
 from lib import DEV_io, logger
-from schemas import course_data_for_report
 
 Base_salary = {Cap: {"OnSite": 770_000, "online": 660_000, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 TEACHER_TARDY = {"0_10": 110_000, "10_30": 55_000, "30_40": -55_000, "40": -165_000}
@@ -92,7 +91,6 @@ def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: di
         if field in DropDown_value_table.keys() else value
         for field, value in DropDowns
     }
-    # cancellation_factor = Score.pop("cancellation_factor")
 
     Score["tardy_score"] = Tardy_Score(teacher_tardy)
     Score["course_level_score"] = COURSE_LEVEL.get(course_data.course_level, 0)
@@ -109,6 +107,7 @@ def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: di
     percent_on_session_score = sum(percent_on_session.values())
 
     for teacher_id, data in sub_course_summary.items():
+
         data.ID_Experience = min(60, (data.ID_Experience // 36_000) * 2)
         teacher_base_score = Base_Session_score + ((Base_Session_score * data.ID_Experience) / 100) + percent_on_session_score + data.roles_score
 
@@ -125,11 +124,14 @@ def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: di
 
 
 @DEV_io()
-def SubCourse_report(db: Session, sub_course_id: UUID, DropDowns: sch.teacher_salary_DropDowns):
+def SubCourse_report(db: Session, sub_course_id: UUID):
     sub_course: dbm.Sub_Course_form = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=sub_course_id).first()
-
+    DropDowns = sch.teacher_salary_DropDowns(**sub_course.supervisor_review)
     if not sub_course:
         return 400, "sub course not found"
+
+    if not sub_course.supervisor_review:
+        return 400, "supervisor review not found"
 
     Existing_salary = db.query(dbm.Teacher_salary_form).filter_by(subcourse_fk_id=sub_course.sub_course_pk_id).all()
     if Existing_salary:
@@ -229,6 +231,27 @@ def update_SubCourse_report(db: Session, form_ID: UUID, Form: sch.update_salary_
         existing.update({**changes}, synchronize_session=False)
         db.commit()
         return 200, existing.first()
+
+    except Exception as e:
+        return Return_Exception(db, e)
+
+
+def get_supervisor_review(db: Session, sub_course_id: UUID):
+    try:
+        return 200, db.query(dbm.Sub_Course_form.supervisor_review).filter(dbm.Sub_Course_form.subcourse_pk_id==sub_course_id).first()
+
+    except Exception as e:
+        return Return_Exception(db, e)
+
+
+def post_supervisor_review(db: Session, sub_course_id: UUID, Dropdowns: sch.teacher_salary_DropDowns):
+    try:
+        sub_course = db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.subcourse_pk_id==sub_course_id)
+        if not sub_course.first():
+            return 400, "Bad Request: Target subcourse record not found"
+        sub_course.update({"supervisor_review": Dropdowns.__dict__}, synchronize_session=False)
+        db.commit()
+        return 200, "Review Submitted Successfully"
 
     except Exception as e:
         return Return_Exception(db, e)
