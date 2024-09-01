@@ -1,9 +1,11 @@
-from db import models
-from db.models import SessionLocal
+from sqlalchemy.orm import sessionmaker
+
+import models
+from models import Create_engine
 import pandas as pd
 
 # Initialize database session
-db = SessionLocal()
+db = sessionmaker(autoflush=False, bind=Create_engine())()
 
 # Get the UNKNOWN_ROLE primary key id
 UNKNOWN_ROLE = db.query(models.Role_form).filter_by(deleted=False, name="Unknown", cluster="Users").first().role_pk_id
