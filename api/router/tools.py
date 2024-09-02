@@ -32,7 +32,7 @@ def ping():
 
 @router.get("/api/v1/form/count/help", tags=["Test"], response_model=List[str])
 async def count():
-    return ["User", "employee", "student", "Course", "Sub_Course", "Session", "Leave_Request", "Business_Trip", "Remote_Request", "Payment_Method", "Fingerprint_Scanner", "Fingerprint_Scanner_backup", "Teacher_Tardy_report", "Teachers_Report", "Role", "Salary_Policy", "Employee_Salary", "Tag", "Category", "Language", "Course_Type", "Sub_Request", "Session_Cancellation"]
+    return ["User", "employee", "student", "Course", "Sub_Course", "Session", "Leave_Request", "Business_Trip", "Remote_Request", "Payment_Method", "Fingerprint_Scanner", "Fingerprint_Scanner_backup", "Teacher_Tardy_report", "Teachers_Report", "Role", "Salary_Policy", "Employee_Salary", "Tag", "Category", "Language", "Course_Type", "Sub_Request", "Session_Cancellation", "Reward_card"]
 
 
 # return ["User", "Course", "Sub_Course", "Session", "Leave_Request", "Business_Trip", "Remote_Request", "Payment_Method", "Fingerprint_Scanner", "Fingerprint_Scanner_backup", "Teacher_Tardy_report", "Teachers_Report", "Survey", "Question", "Response", "Role", "Salary_Policy", "Employee_Salary", "Tag", "Category", "Language", "Course_Type", "Status", "Sub_Request", "Session_Cancellation", "Reassign_Instructor"]

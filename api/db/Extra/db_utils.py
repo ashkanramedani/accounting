@@ -29,9 +29,6 @@ Tables = {
     "fingerprintscannerbackup": dbm.Fingerprint_Scanner_backup_form,
     "teachertardyreport": dbm.Teacher_Tardy_report_form,
     "teachersreport": dbm.Teachers_Report_form,
-    # "survey": dbm.Survey_form,
-    # "question": dbm.Question_form,
-    # "response": dbm.Response_form,
     "role": dbm.Role_form,
     "salarypolicy": dbm.Salary_Policy_form,
     "employeesalary": dbm.Employee_Salary_form,
@@ -39,9 +36,13 @@ Tables = {
     "category": dbm.Category_form,
     "language": dbm.Language_form,
     "coursetype": dbm.Course_Type_form,
-    # "status": dbm.Status_form,
     "subrequest": dbm.Sub_Request_form,
     "sessioncancellation": dbm.Session_Cancellation_form,
+    "rewardcard":dbm.Reward_card_form,
+    # "survey": dbm.Survey_form,
+    # "question": dbm.Question_form,
+    # "response": dbm.Response_form,
+    # "status": dbm.Status_form,
     # "reassigninstructor": dbm.Reassign_Instructor_form
 }
 
@@ -158,6 +159,7 @@ def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.Pos
 def count(db, field: str):
     field = field.lower().replace("_form", "").replace("_", "")
     table = Tables.get(field, None)
+
     if not table:
         return 404, f"{field} Not Found"
     query: Query = db.query(table).filter(table.status != "deleted")
