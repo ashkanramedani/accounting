@@ -1,0 +1,82 @@
+@startuml
+<style>
+  partition {
+    LineColor Black
+    LineThickness 2.5
+  }
+</style>
+
+start
+title Employee Salary
+
+:Year ?
+Month ?;
+
+if (employee Does have a salary record) then (Yes)
+    :Open View panel;
+else (No)
+    :open salary process;
+    :Get Finger print records;
+    if (Salary type) then (Fixed)
+        partition Fixed {
+            :Process:
+                - Days Report
+                - Present_time
+                - Overtime / Undertime
+                - Leave report
+                - remote
+                - business trip
+            ;
+        }
+    else (Hourly)
+        partition Hourly {
+            :Process:
+                - Days Report
+                - Present_time
+                - Undertime_score
+                - Leave report
+                - remote
+                - business trip
+            ;
+        }
+    endif
+endif
+stop
+
+
+
+
+
+@enduml
+
+:Submit a Form;
+: OLD_Version >> session -> cancelled = True
+ NEW_Version >> session status -> cancelled;
+partition Sub Party {
+    repeat :Sub Party Process;
+        label A
+        if (Record has Entry Requirement) then (Yes)
+            :wait for a teacher To accept;
+            partition Sub Request {
+                :Submit a Sub Form;
+                if (Accepted) then (Yes)
+                    :Form status = Accepted;
+                    split
+                      :Current session
+                      status -> deleted;
+                    split again
+                        :New session
+                        is-sub = True
+                        session status = Accepted;
+                    end split
+                else (No)
+                endif
+            }
+        else (No)
+            stop
+        endif
+    repeat while (sub request rejected?) is (Yes) -[#blue]->
+}
+stop
+
+@enduml

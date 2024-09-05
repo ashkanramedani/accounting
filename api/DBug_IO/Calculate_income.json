@@ -1,0 +1,40 @@
+{
+    "time": "0.50 (*1e4)",
+    "inputs": {
+        "args": [
+            "{'user_fk_id': UUID('00000001-0000-4b94-8e27-44833c2b940f'), 'Regular_hours_cap': 420, 'off_day_permission': True, 'vacation_leave_cap': 1, 'Base_salary': 1.0, 'overtime_permission': True, 'off_day_factor': 1.0, 'business_trip_permission': True, 'Fix_pay': 0.0, 'overtime_factor': 1.0, 'off_day_cap': 1, 'business_trip_factor': 1.0, 'Salary_Type': 'Fixed', 'overtime_cap': 1, 'remote_permission': True, 'business_trip_cap': 1, 'day_starting_time': datetime.time(9, 0), 'remote_factor': 1.0, 'remote_cap': 1, 'day_ending_time': datetime.time(16, 0), 'overtime_threshold': 1, 'medical_leave_factor': 1.0, 'salary_policy_pk_id': UUID('c6b510ad-9641-4988-a41c-f8558bb9f53a'), 'Regular_hours_factor': 1.0, 'undertime_factor': 1.0, 'medical_leave_cap': 1, 'undertime_threshold': 1, 'vacation_leave_factor': 1.0}"
+        ],
+        "kwargs": {
+            "present_time": 3360,
+            "Regular_hours": 2940,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 420,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 1439,
+            "vacation_leave": 0,
+            "medical_leave": 1080,
+            "business_trip": 1679
+        }
+    },
+    "output": {
+        "Regular_earning": 2940.0,
+        "Overtime_earning": 0.0,
+        "Off_Day_earning": 420.0,
+        "remote_earning": 1439.0,
+        "vacation_leave_earning": 1.0,
+        "medical_leave_earning": -1079.0,
+        "business_trip_earning": 1679.0,
+        "rewards_earning": 0,
+        "Fix_pay": 0.0,
+        "Undertime_deductions": 0.0,
+        "insurance_deductions": 0,
+        "tax_deductions": 0,
+        "punishment_deductions": 0,
+        "total_earning": 5400.0,
+        "total_deduction": 0.0,
+        "total_income": 5400.0
+    }
+}

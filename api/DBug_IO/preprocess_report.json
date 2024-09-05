@@ -1,0 +1,220 @@
+{
+    "time": "0.64 (*1e3)",
+    "inputs": {
+        "args": [
+            [
+                "{'fingerprint_scanner_pk_id': UUID('696e20ed-52cb-4f9c-b088-db24016c2b42'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 21), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}",
+                "{'fingerprint_scanner_pk_id': UUID('8527ed41-fb94-4efa-8ce3-c19dc4f2b694'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 22), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}",
+                "{'fingerprint_scanner_pk_id': UUID('6284dc4f-20f0-4b06-ac80-8f393b2a65b2'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 23), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}",
+                "{'fingerprint_scanner_pk_id': UUID('6668db1c-b357-4ac4-8b7a-19127798eaad'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 24), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}",
+                "{'fingerprint_scanner_pk_id': UUID('b33860f5-b45e-4a68-acbe-e33c922cd20e'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 25), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}",
+                "{'fingerprint_scanner_pk_id': UUID('15d791c7-e23a-46d4-9f2f-8cb1c5816df4'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 26), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}",
+                "{'fingerprint_scanner_pk_id': UUID('e6ce9e18-2112-4b9a-b0ef-b548b504c75c'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 27), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}",
+                "{'fingerprint_scanner_pk_id': UUID('ecff52bf-5c6e-433c-b1f2-918fbbfe5677'), 'EnNo': 1000, 'Date': datetime.date(2024, 5, 28), 'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 0), 'duration': 420}"
+            ],
+            {
+                "remote": {
+                    "2024-05-21": 1439
+                },
+                "business_trip": {
+                    "2024-05-21": 1439,
+                    "2024-05-22": 120,
+                    "2024-05-23": 120
+                },
+                "vacation_leave": {},
+                "medical_leave": {
+                    "2024-05-21": 420,
+                    "2024-05-22": 540,
+                    "2024-05-23": 120
+                }
+            }
+        ],
+        "kwargs": {}
+    },
+    "output": {
+        "2024-05-21": {
+            "Date": "2024-05-21  (1403, 3, 1)",
+            "Holiday": false,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 1439,
+            "vacation_leave": 0,
+            "medical_leave": 420,
+            "business_trip": 1439,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        },
+        "2024-05-22": {
+            "Date": "2024-05-22  (1403, 3, 2)",
+            "Holiday": false,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 0,
+            "vacation_leave": 0,
+            "medical_leave": 540,
+            "business_trip": 120,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        },
+        "2024-05-23": {
+            "Date": "2024-05-23  (1403, 3, 3)",
+            "Holiday": false,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 0,
+            "vacation_leave": 0,
+            "medical_leave": 120,
+            "business_trip": 120,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        },
+        "2024-05-24": {
+            "Date": "2024-05-24  (1403, 3, 4)",
+            "Holiday": true,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 0,
+            "vacation_leave": 0,
+            "medical_leave": 0,
+            "business_trip": 0,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        },
+        "2024-05-25": {
+            "Date": "2024-05-25  (1403, 3, 5)",
+            "Holiday": false,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 0,
+            "vacation_leave": 0,
+            "medical_leave": 0,
+            "business_trip": 0,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        },
+        "2024-05-26": {
+            "Date": "2024-05-26  (1403, 3, 6)",
+            "Holiday": false,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 0,
+            "vacation_leave": 0,
+            "medical_leave": 0,
+            "business_trip": 0,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        },
+        "2024-05-27": {
+            "Date": "2024-05-27  (1403, 3, 7)",
+            "Holiday": false,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 0,
+            "vacation_leave": 0,
+            "medical_leave": 0,
+            "business_trip": 0,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        },
+        "2024-05-28": {
+            "Date": "2024-05-28  (1403, 3, 8)",
+            "Holiday": false,
+            "Accrued_Holiday": false,
+            "IsValid": true,
+            "present_time": 420,
+            "Regular_hours": 0,
+            "Overtime": 0,
+            "Undertime": 0,
+            "Off_Day": 0,
+            "delay": 0,
+            "haste": 0,
+            "attendance_points": 0,
+            "remote": 0,
+            "vacation_leave": 0,
+            "medical_leave": 0,
+            "business_trip": 0,
+            "EnterExit": [
+                "09:00:00",
+                "16:00:00"
+            ],
+            "msg": "Created"
+        }
+    }
+}
