@@ -1,7 +1,9 @@
 import json
+from os import getenv
 from os.path import dirname, normpath
 from typing import Dict
 
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 
@@ -12,8 +14,12 @@ from schemas import Setting
 def Create_engine(DB_config: Dict = None):
     try:
         if not DB_config:
-            directory = normpath(f'{dirname(__file__)}/../configs/config.json')
-            DB_config = json.load(open(directory)).get("db", {})
+            load_dotenv()
+            if getenv('CONFIG_PATH'):
+                DB_config = json.load(open(getenv('CONFIG_PATH'))).get("db", {})
+            else:
+                directory = normpath(f'{dirname(__file__)}/../configs/config.json')
+                DB_config = json.load(open(directory)).get("db", {})
 
         logger.info("Creating engine ...")
 
