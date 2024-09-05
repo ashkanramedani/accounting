@@ -1,0 +1,102 @@
+---
+cancellation_factor:
+  input:
+    type: float
+    default: 0
+    required: false
+reward:
+  input:
+    type: float
+    default: 0
+    required: false
+punishment:
+  input:
+    type: float
+    default: 0
+    required: false
+loan:
+  input:
+    type: float
+    default: 0
+    required: false
+reportToStudent:
+  Option_1:
+    name: weak
+    detail: more_than_3_day
+    value: -5.5
+  Option_2:
+    name: average
+    detail: 2_day
+    value: 0
+  Option_3:
+    name: good
+    detail: 1_day
+    value: 5.5
+  Option_4:
+    name: excellent
+    detail: no_delay
+    Value: 11
+LP_submission:
+  Option_1:
+    name: weak
+    detail: 0-50%_of_LP
+    value: -11
+  Option_2:
+    name: average
+    detail: 50-75%_of_LP
+    value: 5.5
+  Option_3:
+    name: good
+    detail: 75-100%_of_LP
+    value: 11
+  Option_4:
+    name: excellent
+    detail: 100%_of_LP
+    Value: 16.5
+StudentAssignFeedback:
+  Option_1:
+    name: weak
+    detail: ''
+    value: -5.5
+  Option_2:
+    name: average
+    detail: ''
+    value: 0
+  Option_3:
+    name: good
+    detail: ''
+    value: 5.5
+  Option_4:
+    name: excellent
+    detail: ''
+    Value: 11
+survey_score:
+  Option_1:
+    name: weak
+    detail: ''
+    value: 0
+  Option_2:
+    name: average
+    detail: ''
+    value: 3
+  Option_3:
+    name: good
+    detail: ''
+    value: 6
+  Option_4:
+    name: excellent
+    detail: ''
+    value: 10
+result_submission_to_FD:
+  Option_1:
+    name: weak
+    detail: more_than_6_day
+    value: -5.5
+  Option_2:
+    name: average
+    detail: 4_or_5_day
+    value: 0
+  Option_3:
+    name: good
+    detail: less_than_3_day
+    value: 5.5

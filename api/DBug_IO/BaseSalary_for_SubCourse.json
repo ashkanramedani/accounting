@@ -1,0 +1,11 @@
+{
+    "time": "0.12 (*1e4)",
+    "inputs": {
+        "args": [
+            18,
+            "hybrid"
+        ],
+        "kwargs": {}
+    },
+    "output": 0
+}

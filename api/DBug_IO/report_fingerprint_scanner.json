@@ -1,0 +1,46 @@
+{
+    "time": "3.23 (*1e0)",
+    "inputs": {
+        "args": [
+            "<sqlalchemy.orm.session.Session object at 0x11e39ee10>",
+            "2cbfd885-b930-4c1c-b7cd-bb8d5f40a5c6",
+            "2024-07-22",
+            "2024-08-21"
+        ],
+        "kwargs": {}
+    },
+    "output": [
+        200,
+        {
+            "Fingerprint_scanner_report": [
+                "{'Enter': datetime.time(8, 22), 'Exit': datetime.time(16, 32), 'duration': 490, 'fingerprint_scanner_pk_id': UUID('157f9334-27da-4bf7-869e-3d5114f67bfc'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 22)}",
+                "{'Enter': datetime.time(8, 10), 'Exit': datetime.time(18, 51), 'duration': 641, 'fingerprint_scanner_pk_id': UUID('0fe241d6-a8ce-4ea8-8ddf-5375220bca62'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 23)}",
+                "{'Enter': datetime.time(8, 21), 'Exit': datetime.time(16, 43), 'duration': 502, 'fingerprint_scanner_pk_id': UUID('fa81856d-2a6d-48d1-abd1-afa7418b73cc'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 24)}",
+                "{'Enter': datetime.time(8, 18), 'Exit': datetime.time(16, 35), 'duration': 497, 'fingerprint_scanner_pk_id': UUID('f35bccd2-e8cc-4bd6-8b3d-3f5e4d1333f1'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 25)}",
+                "{'Enter': datetime.time(8, 17), 'Exit': datetime.time(16, 29), 'duration': 492, 'fingerprint_scanner_pk_id': UUID('bb86bc5e-227b-4d89-afce-8cacac3c2aec'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 27)}",
+                "{'Enter': datetime.time(8, 18), 'Exit': datetime.time(16, 46), 'duration': 508, 'fingerprint_scanner_pk_id': UUID('87a82101-8689-4b10-8b91-6599fc6ef178'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 28)}",
+                "{'Enter': datetime.time(8, 18), 'Exit': datetime.time(16, 33), 'duration': 495, 'fingerprint_scanner_pk_id': UUID('c59833ba-b113-4305-a74d-955595b099c3'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 29)}",
+                "{'Enter': datetime.time(8, 59), 'Exit': datetime.time(16, 30), 'duration': 451, 'fingerprint_scanner_pk_id': UUID('cb6c0db5-1758-4153-80b4-eff43ccd0473'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 30)}",
+                "{'Enter': datetime.time(9, 1), 'Exit': datetime.time(16, 36), 'duration': 455, 'fingerprint_scanner_pk_id': UUID('9eafdeb6-2a41-4646-9860-8e865ceeee41'), 'EnNo': 5, 'Date': datetime.date(2024, 7, 31)}",
+                "{'Enter': datetime.time(8, 56), 'Exit': datetime.time(16, 35), 'duration': 459, 'fingerprint_scanner_pk_id': UUID('b651330c-3fdc-438c-b544-ab148d69f518'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 1)}",
+                "{'Enter': datetime.time(8, 57), 'Exit': datetime.time(16, 31), 'duration': 454, 'fingerprint_scanner_pk_id': UUID('11f2fb39-0efa-4bfc-8ff7-6d0988634862'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 3)}",
+                "{'Enter': datetime.time(9, 0), 'Exit': datetime.time(16, 40), 'duration': 460, 'fingerprint_scanner_pk_id': UUID('e0e5d0a7-96b4-4ee9-972a-cdf51f29974a'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 4)}",
+                "{'Enter': datetime.time(8, 13), 'Exit': None, 'duration': 0, 'fingerprint_scanner_pk_id': UUID('3103037a-fc5a-4252-96eb-340494188fa7'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 5)}",
+                "{'Enter': datetime.time(8, 20), 'Exit': None, 'duration': 0, 'fingerprint_scanner_pk_id': UUID('6d85409a-528c-4c5f-83d4-92464780a4e4'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 6)}",
+                "{'Enter': datetime.time(8, 56), 'Exit': None, 'duration': 0, 'fingerprint_scanner_pk_id': UUID('830b70cd-bc93-4670-84d0-b287402df7f3'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 10)}",
+                "{'Enter': datetime.time(8, 27), 'Exit': None, 'duration': 0, 'fingerprint_scanner_pk_id': UUID('77b106ae-0c2d-4f01-b08c-a58ad4a2e5b8'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 11)}",
+                "{'Enter': datetime.time(9, 10), 'Exit': None, 'duration': 0, 'fingerprint_scanner_pk_id': UUID('6fe93e61-5a63-4bd3-b2a5-4cfacedc9d8b'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 12)}",
+                "{'Enter': datetime.time(9, 12), 'Exit': datetime.time(16, 36), 'duration': 444, 'fingerprint_scanner_pk_id': UUID('63c6980b-aa13-41c4-9e52-fdc1a63faad6'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 13)}",
+                "{'Enter': datetime.time(8, 49), 'Exit': datetime.time(16, 40), 'duration': 471, 'fingerprint_scanner_pk_id': UUID('9102845d-3588-426c-8698-f1617da7c141'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 14)}",
+                "{'Enter': datetime.time(8, 51), 'Exit': datetime.time(16, 40), 'duration': 469, 'fingerprint_scanner_pk_id': UUID('f1cf0783-55e2-4632-9f48-f2d1c9c2ac25'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 15)}",
+                "{'Enter': datetime.time(8, 52), 'Exit': datetime.time(17, 5), 'duration': 493, 'fingerprint_scanner_pk_id': UUID('10b2c669-2009-488f-bae2-44c7a169f7d2'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 17)}",
+                "{'Enter': datetime.time(8, 58), 'Exit': datetime.time(16, 35), 'duration': 457, 'fingerprint_scanner_pk_id': UUID('787f4777-acfc-43d0-bfdc-ea450c16e8c2'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 18)}",
+                "{'Enter': datetime.time(9, 1), 'Exit': datetime.time(16, 30), 'duration': 449, 'fingerprint_scanner_pk_id': UUID('13788be9-55ea-44a6-aee1-5345ce43ca93'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 19)}",
+                "{'Enter': datetime.time(8, 52), 'Exit': datetime.time(16, 37), 'duration': 465, 'fingerprint_scanner_pk_id': UUID('346727a6-1a39-479c-8ae9-6b514ef6207f'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 20)}",
+                "{'Enter': datetime.time(8, 51), 'Exit': datetime.time(16, 34), 'duration': 463, 'fingerprint_scanner_pk_id': UUID('4d8802cf-10f7-4100-9e68-b1e68ba74aa6'), 'EnNo': 5, 'Date': datetime.date(2024, 8, 21)}"
+            ],
+            "Invalid": 5,
+            "TotalHour": 9615
+        }
+    ]
+}
