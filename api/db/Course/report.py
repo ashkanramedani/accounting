@@ -1,13 +1,15 @@
+import json
 from typing import List, Dict, Tuple
 from uuid import UUID
 
-from sqlalchemy import func
+from sqlalchemy import func, and_
 from sqlalchemy.orm import Session, joinedload
 
 import models as dbm
 import schemas as sch
 from db.Extra import *
-from lib import DEV_io, logger
+from lib import DEV_io, logger, JSONEncoder
+
 
 Base_salary = {Cap: {"OnSite": 770_000, "online": 660_000, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 TEACHER_TARDY = {"0_10": 110_000, "10_30": 55_000, "30_40": -55_000, "40": -165_000}
@@ -84,7 +86,7 @@ def PreProcess_teacher_report(db: Session, sub_course_obj: dbm.Sub_Course_form) 
 
 
 @DEV_io()
-def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: dict[str, sch.Report], course_data: sch.course_data_for_report, teacher_tardy: int, cancelled_session: int) -> List[Dict]:
+def Apply_scores(db: Session, DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: dict[str, sch.Report], course_data: sch.course_data_for_report, teacher_tardy: int, cancelled_session: int) -> List[Dict]:
     Final = []
     Score = {
         field: DropDown_value_table[field][value.value]
@@ -107,17 +109,29 @@ def Apply_scores(DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: di
     percent_on_session_score = sum(percent_on_session.values())
 
     for teacher_id, data in sub_course_summary.items():
+        reward_card_query: List = db \
+            .query(dbm.Reward_card_form.reward_type, func.sum(dbm.Reward_card_form.reward_amount).label("total_amount")) \
+            .filter(
+                dbm.Reward_card_form.user_fk_id == teacher_id,
+                and_(
+                        dbm.Reward_card_form.start_date <= course_data.ending_date,
+                        course_data.ending_date <= dbm.Reward_card_form.end_date
+                )
+            ) \
+            .group_by(dbm.Reward_card_form.reward_type).all()
+
+        reward_card = {r["reward_type"]: r["total_amount"] for r in reward_card_query}
 
         data.ID_Experience = min(60, (data.ID_Experience // 36_000) * 2)
-        teacher_base_score = Base_Session_score + ((Base_Session_score * data.ID_Experience) / 100) + percent_on_session_score + data.roles_score
 
-        earning = (data.attended_session + data.sub_point) * teacher_base_score
+        teacher_base_score = Base_Session_score + ((Base_Session_score * data.ID_Experience) / 100) + percent_on_session_score + data.roles_score
+        teacher_base_score += (teacher_base_score * reward_card.pop("percentage", 0)) / 100
 
         Final.append({
             **Score,
             **data.__dict__,
             **percent_on_session,
-            "earning": earning,
+            "earning": ((data.attended_session + data.sub_point) * teacher_base_score) + reward_card.pop("fix", 0),
             "user_fk_id": teacher_id,
             "score": teacher_base_score})
     return Final
@@ -188,13 +202,14 @@ def SubCourse_report(db: Session, sub_course_id: UUID):
 
     OBJs: List[dbm.Teacher_salary_form] = []
     teacher_salary_records = Apply_scores(
+            db,
             DropDowns,
             sub_course_summary,
             course_data,
             Tardies[0],
             cancelled_session)
 
-    Extra = {"subcourse_fk_id": sub_course.sub_course_pk_id, "course_data": course_data.__dict__}
+    Extra = {"subcourse_fk_id": sub_course.sub_course_pk_id, "course_data": json.loads(json.dumps(course_data.__dict__, cls=JSONEncoder))}
     for salary_record in teacher_salary_records:
         OBJ = dbm.Teacher_salary_form(**salary_record, **Extra)  # type: ignore[call-arg]
 
@@ -238,7 +253,7 @@ def update_SubCourse_report(db: Session, form_ID: UUID, Form: sch.update_salary_
 
 def get_supervisor_review(db: Session, sub_course_id: UUID):
     try:
-        return 200, db.query(dbm.Sub_Course_form.supervisor_review).filter(dbm.Sub_Course_form.subcourse_pk_id==sub_course_id).first()
+        return 200, db.query(dbm.Sub_Course_form.supervisor_review).filter(dbm.Sub_Course_form.subcourse_pk_id == sub_course_id).first()
 
     except Exception as e:
         return Return_Exception(db, e)
@@ -246,7 +261,7 @@ def get_supervisor_review(db: Session, sub_course_id: UUID):
 
 def post_supervisor_review(db: Session, sub_course_id: UUID, Dropdowns: sch.teacher_salary_DropDowns):
     try:
-        sub_course = db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.subcourse_pk_id==sub_course_id)
+        sub_course = db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.subcourse_pk_id == sub_course_id)
         if not sub_course.first():
             return 400, "Bad Request: Target subcourse record not found"
         sub_course.update({"supervisor_review": Dropdowns.__dict__}, synchronize_session=False)
