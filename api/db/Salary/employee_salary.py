@@ -126,7 +126,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if not Salary_Policy:
             return 400, "Bad Request: Target Employee has no salary record"
 
-        start, end = generate_month_interval(year, month, include_nex_month_fist_day=True)
+        start, end = generate_month_interval(year, month)
 
         EnNo = db.query(dbm.User_form).filter_by(user_pk_id=user_fk_id).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         if EnNo is None:
