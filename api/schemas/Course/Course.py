@@ -73,12 +73,14 @@ class course_response(Base_response):
         extra = 'ignore'
         orm_mode = True
 
+
 class course_data_for_report(BaseModel):
     course_name: str
     course_level: str
     course_capacity: int
     course_type: str
     course_language: str
+    ending_date: date
 
     @root_validator(pre=True)
     def flatten_type(cls, values):
