@@ -1,97 +1,52 @@
-from typing import List, Any, Dict
+from datetime import datetime, date, timedelta
+from typing import List, Any, Dict, Tuple
 from uuid import UUID
 
 from lib import logger
 import models as dbm
-from sqlalchemy import and_
+from sqlalchemy import and_, func
 
 # Assuming the models are defined as User, Role, and UsersRoles
 
 
 from sqlalchemy.orm import Session
 
-
-def TestRoute_2(db: Session):
-
-
-
-    # Assuming the models are defined as User, Role, and UsersRoles
-
-
-    stmt = (
-        db.query(
-                dbm.User_form.name.label("username"),
-                dbm.User_form.last_name.label("user_lastname"),
-                dbm.Role_form.name.label("role_name"),
-                dbm.Role_form.cluster.label("role_Cluster")
-        )
-
-        .select_from(dbm.User_form)
-        .join(
-                dbm.Role_form,
-                dbm.UserRole.c.role_fk_id == dbm.Role_form.role_pk_id
-        )
-        .join(
-                dbm.UserRole,
-                and_(
-                        dbm.UserRole.c.role_fk_id == dbm.Role_form.role_pk_id,
-                        dbm.UserRole.c.user_fk_id == dbm.User_form.user_pk_id
-                )
-        )
-    )
-
-    logger.debug(stmt)
-
-    return stmt.all()
-    # q = db.query(dbm.Role_form)
-    # return q
-        # \
-        # .filter(User.id == u.id))
-
-    # # teacher_roles_Query: List[dbm.UserRole] = db.query(dbm.UserRole).filter(dbm.UserRole.user_fk_id.in_(Teachers.keys())).all()
-    # teacher_roles_Query: List[dbm.UserRole] = db \
-    #     .query(dbm.UserRole) \
-    #     .join(dbm.Role_form).all()
-
-
-
 from pydantic import BaseModel
 
-class USER(BaseModel):
-    user_pk_id: UUID
-    roles: Any
-
-    class Config:
-        orm_mode = True
-        extra = "ignore"
-
-class Course(BaseModel):
-    type: Any
-
-    class Config:
-        orm_mode = True
-        extra = "ignore"
-
-
-def create_Report(data: Dict):
-    role_data: List = data.pop("roles", [])
-    if role_data:
-        data["roles"] = {i.name: i.value for i in role_data}
-        data["Role_Score"] = sum(i.value for i in role_data)
-    return data
-
 import pickle
-def TestRoute(db: Session, created_by="00000000-0000-4b94-8e27-44833c2b940f"):
-    a = dbm.TEMP_form()
-    db.add(a)
-    db.commit()
-    db.refresh(a)
 
-    aa = db.query(dbm.TEMP_form).first()
-    aa._Deleted_BY = created_by
-    if aa:
-        db.delete(aa)
-        db.commit()
+
+def TestRoute(db: Session, created_by="00000000-0000-4b94-8e27-44833c2b940f", user_id="00000001-0000-4b94-8e27-44833c2b940f"):
+    a = []
+    for i in range(1, 5):
+        for A, t in [(100, "fix")]:
+            a.append(dbm.Reward_card_form(
+                    start_date=date(2024, 1, i),
+                    end_date=date(2024, 1, i) + timedelta(days=5),
+                    reward_type=t,
+                    user_fk_id=user_id,
+                    created_fk_by=created_by,
+                    reward_amount=A
+            )
+            )
+    db.add_all(a)
+    db.commit()
+    db.flush()
+    r = {}
+
+    R: List = db.query(
+            dbm.Reward_card_form.reward_type,
+            func.sum(dbm.Reward_card_form.reward_amount).label("total_amount")
+    ).filter(
+            dbm.Reward_card_form.user_fk_id == user_id,
+            and_(
+                    dbm.Reward_card_form.start_date <= date(2024, 1, 2),
+                    date(2024, 1, 2) <= dbm.Reward_card_form.end_date
+            )
+    ).group_by(
+            dbm.Reward_card_form.reward_type
+    ).all()
+    return {r["reward_type"]: r["total_amount"] for r in R}
 
 
 """
