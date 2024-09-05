@@ -39,6 +39,7 @@ def teacher_sub_courses(db: Session, course_ID: UUID):
             .options(joinedload(dbm.Sub_Course_form.teacher), joinedload(dbm.Sub_Course_form.course)) \
             .all()
         Existing_Salary_record_Query = db.query(dbm.Teacher_salary_form).filter(dbm.Teacher_salary_form.status != 'deleted', dbm.Teacher_salary_form.subcourse_fk_id.in_(subcourse.sub_course_pk_id for subcourse in AllSubCourses)).all()
+        Existing_Salary_record_Query = [str(record.subcourse_fk_id) for record in Existing_Salary_record_Query]
         OUT: List[sch.Teacher_subcourse_report] = []
         for SubCourse in AllSubCourses:
             sub_teachers: List[dbm.Session_form] = db \
@@ -49,7 +50,7 @@ def teacher_sub_courses(db: Session, course_ID: UUID):
                 .all()
             SubCourse.sub_teachers = [sub_teacher.teacher for sub_teacher in sub_teachers]
             RECORD = sch.Teacher_subcourse_report(**SubCourse.__dict__)
-            RECORD.Does_Have_Salary_Record = SubCourse.sub_course_pk_id in [record.subcourse_fk_id for record in Existing_Salary_record_Query]
+            RECORD.Does_Have_Salary_Record = str(SubCourse.sub_course_pk_id) in Existing_Salary_record_Query
             OUT.append(RECORD)
         return 200, OUT
     except Exception as e:
