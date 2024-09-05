@@ -41,27 +41,26 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
                 return 400, "Selected Employee Doesnt have FingerPrint scanner identifier. ( edit employee or provide EnNo Manually)"
             EnNo = User.fingerprint_scanner_user_id
 
-        Queary = db \
+        FingerScanner_Query = db \
             .query(dbm.Fingerprint_Scanner_form) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
             .filter_by(EnNo=EnNo) \
             .filter(dbm.Fingerprint_Scanner_form.status != "deleted")
 
-        Report: List = Queary.order_by(dbm.Fingerprint_Scanner_form.Date).all()
+        Report: List = FingerScanner_Query.order_by(dbm.Fingerprint_Scanner_form.Date).all()
 
         TotalHour = db \
             .query(func.sum(dbm.Fingerprint_Scanner_form.duration).label("Duration")) \
             .filter(dbm.Fingerprint_Scanner_form.Date.between(start_date, end_date)) \
             .filter_by(valid=True, EnNo=EnNo) \
-            .first() \
-            .Duration
+            .first().Duration
 
         if not Report:
             return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
 
         return 200, {
             "Fingerprint_scanner_report": Report,
-            "Invalid": Queary.filter_by(valid=False).count(),
+            "Invalid": FingerScanner_Query.filter_by(valid=False).count(),
             "TotalHour": TotalHour}
 
     except Exception as e:
