@@ -209,6 +209,7 @@ class Teacher_subcourse_report(BaseModel):
 ###
 
 class update_salary_report(BaseModel):
+    rewards_earning: NonNegativeFloat = 0
     punishment_deductions: NonNegativeFloat = 0
     loan_installment: NonNegativeFloat = 0
     payment: UUID
