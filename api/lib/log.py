@@ -1,15 +1,12 @@
 import sys
-from datetime import datetime
 from json import load
 from os.path import normpath, dirname, join
-from zoneinfo import ZoneInfo
-
-import loguru
-from pytz import timezone
-from loguru._logger import Core as _Core
-from loguru._logger import Logger as _Logger
 
 from loguru import logger as logger_obj
+from loguru._logger import Core as _Core
+from loguru._logger import Logger as _Logger
+from pytz import timezone
+
 from lib import requester
 
 STDERR_FORMATTER = " <green>{time:YYYY-MM-DD HH:mm:ss Z}</green> | <level>{level: <8}</level> | <cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
@@ -25,7 +22,8 @@ def FILE_FORMATTER(record):
     }
     return "{extra[serialized]}\n"
 
-class Log():
+
+class Log:
     def __init__(self):
         self.Info_Status = [200, 201]
         self.Warn_Status = [400]
@@ -92,7 +90,6 @@ class Log():
         else:
             self.logger.opt(depth=2).warning("Status Code Has Not Beet Categorised.\n\t{msg}")
 
-
     def info(self, msg, depth=1):
         self.logger.opt(depth=depth).info(msg)
 
@@ -101,6 +98,7 @@ class Log():
 
     def error(self, msg, depth=1):
         self.logger.opt(depth=depth).error(msg)
+
 
 logger = Log()
 

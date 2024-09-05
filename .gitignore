@@ -194,3 +194,4 @@ api/models/tables_TMP.py
 Migration
 ./Migration
 !/Migration/
+!/api/.lprof/

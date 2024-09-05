@@ -31,11 +31,11 @@ def post_template(db: Session, Form: sch.post_template_schema):
         return Return_Exception(db, e)
 
 
-def delete_template(db: Session, template_id):
+def delete_template(db: Session, template_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Template_form).filter_by(template_pk_id=template_id).filter(dbm.Template_form.status != "deleted").first()
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

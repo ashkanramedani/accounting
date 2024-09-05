@@ -1,8 +1,5 @@
-from typing import Dict
+from pydantic import NonNegativeFloat, root_validator
 
-from pydantic import NonNegativeFloat, NonPositiveFloat, PositiveFloat, root_validator, Field, validator
-
-from lib import logger
 from .Base import *
 
 
@@ -255,6 +252,7 @@ class teacher_salary_DropDowns(BaseModel):
                 if 0 > value or value > 10:
                     raise ValueError(f'{field} must be between 0 and 10')
         return values
+
     class Config:
         orm_mode = True
 
@@ -284,10 +282,12 @@ class Report(BaseModel):  # course_data_for_report):
         orm_mode = True
         extra = 'ignore'
 
+
 class EMP(BaseModel):
     user_pk_id: UUID
     name: str
     last_name: str
+
 
 class Teacher_report_response(BaseModel):
     teacher_salary_pk_id: UUID
@@ -336,6 +336,7 @@ class Teacher_report_response(BaseModel):
     #
     # card: export_payment
     teacher: export_employee
+
     # sub_course: export_sub_course
 
     class Config:

@@ -1,10 +1,9 @@
 from typing import List
-from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-import schemas as sch
 import models as dbm
+import schemas as sch
 from ..Extra import *
 
 
@@ -44,14 +43,14 @@ def post_survey(db: Session, Form: sch.post_survey_schema):
         return Return_Exception(db, e)
 
 
-def delete_survey(db: Session, survey_id):
+def delete_survey(db: Session, survey_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Survey_form).filter_by(survey_id_pk_id=survey_id).filter(dbm.Survey_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
 
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

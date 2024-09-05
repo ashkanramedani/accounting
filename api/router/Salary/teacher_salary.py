@@ -1,6 +1,5 @@
 from typing import Dict, List
 
-from lib import logger
 from .Base import *
 
 
@@ -31,7 +30,7 @@ async def teacher_sub_course(course_id: UUID, db=Depends(get_db)):
 
 
 @router.post("/teacher/summary/{sub_course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def teacher_summary(sub_course_id: UUID, Dropdowns: sch.teacher_salary_DropDowns, db=Depends(get_db)):
+async def teacher_summary(sub_course_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.SubCourse_report(db, sub_course_id)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)

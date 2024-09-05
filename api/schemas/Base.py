@@ -22,9 +22,6 @@ def TIME_NOW(Off_Set: int = 0) -> time:
     return (datetime.now() + timedelta(hours=Off_Set)).time()
 
 
-
-
-
 class CanUpdateStatus(str, Enum):
     submitted = "submitted"
     approved = "approved"

@@ -37,13 +37,13 @@ def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
         return Return_Exception(db, e)
 
 
-def delete_payment_method(db: Session, payment_method_id):
+def delete_payment_method(db: Session, payment_method_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Payment_Method_form).filter_by(payment_method_pk_id=payment_method_id).filter(dbm.Payment_Method_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -55,7 +55,6 @@ def update_payment_method(db: Session, Form: sch.update_payment_method_schema):
         record = db.query(dbm.Payment_Method_form).filter_by(payment_method_pk_id=Form.payment_method_pk_id)
         if not record.first():
             return 404, "Record Not Found"
-
 
         record.update(Form.dict(), synchronize_session=False)
 

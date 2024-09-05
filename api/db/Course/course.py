@@ -1,5 +1,4 @@
 from typing import List
-from uuid import UUID
 
 from sqlalchemy.orm import Session
 
@@ -112,7 +111,7 @@ def post_course(db: Session, Form: sch.post_course_schema):
         return Return_Exception(db, e)
 
 
-def delete_course(db: Session, course_id):
+def delete_course(db: Session, course_id, deleted_by: UUID = None):
     try:
 
         Course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id).filter(dbm.Course_form.status != "deleted").first()
@@ -123,7 +122,9 @@ def delete_course(db: Session, course_id):
         status, message = delete_subcourse(db, course_id, get_Course_active_subcourse(db, course_id))  # ignore type[call-arg]
         if status != 200:
             return status, message
-        Course.deleted = True
+
+        Course._Deleted_By = deleted_by
+        db.delete(Course)
         db.commit()
         return 200, f"Course cancelled successfully. {' | '.join(warnings)} ... {message}"
 

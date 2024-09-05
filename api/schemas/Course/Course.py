@@ -3,7 +3,6 @@ from uuid import uuid4
 
 from pydantic import root_validator
 
-from lib import logger
 from schemas.Entity import *
 
 

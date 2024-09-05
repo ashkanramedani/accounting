@@ -2,11 +2,9 @@ import json
 import os.path
 import time
 from datetime import datetime
-from time import perf_counter
 from functools import wraps
 
 from lib.json_handler import JSONEncoder
-from lib import logger
 
 
 def modify_timer(timer: float):
@@ -15,6 +13,7 @@ def modify_timer(timer: float):
         timer *= 10
         factor += 1
     return f'{timer:.2f} (*1e{factor})'
+
 
 def DEV_io(mode: str = "w"):
     def decorator(func):

@@ -1,11 +1,10 @@
 from datetime import datetime
-from uuid import UUID
 
 from pytz import timezone
 from sqlalchemy.orm import Session
 
-import schemas as sch
 import models as dbm
+import schemas as sch
 from db.Extra import *
 
 
@@ -29,6 +28,8 @@ def report_sub_request(db: Session, subcourse_id: UUID):
         return 200, db.query(dbm.Sub_Request_form).filter_by(sub_course_fk_id=subcourse_id).filter(dbm.Sub_Request_form.status != "deleted").all()
     except Exception as e:
         return Return_Exception(db, e)
+
+
 def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
     try:
         if not employee_exist(db, [Form.created_fk_by, Form.sub_teacher_fk_id]):
@@ -59,13 +60,14 @@ def post_sub_request(db: Session, Form: sch.post_Sub_request_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
-def delete_sub_request(db: Session, form_id: UUID):
+
+def delete_sub_request(db: Session, form_id: UUID, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Sub_Request_form).filter_by(sub_request_pk_id=form_id).filter(dbm.Sub_Request_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -126,8 +128,7 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
             record.status = Set_Status(db, "form", status)
             verified += 1
 
-
-            # sessions cancelation (sub party) Update
+            # sessions cancellation (sub party) Update
             # Session_cancellation_record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=record.session_fk_id).filter(dbm.Session_Cancellation_form.deleted == False, dbm.Session_Cancellation_form.status != "deleted").first()
             # if Session_cancellation_record:
             #     Session_cancellation_record.status = Set_Status(db, "form", "deleted")
@@ -140,6 +141,7 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
         return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def TEST(db: Session):
     try:

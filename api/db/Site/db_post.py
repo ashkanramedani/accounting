@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 import sqlalchemy.sql.expression as sse
 from sqlalchemy.orm import Session
@@ -37,7 +38,7 @@ def get_post_with_pid(db: Session, pid: str):
 
 
 # delete
-def delete_posts(db: Session, topic: str, pid: int):
+def delete_posts(db: Session, topic: str, pid: int, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Posts).filter(sse.and_(dbm.Posts.deleted == False, dbm.Posts.post_pk_id == pid, dbm.Posts.can_deleted == True)).first()
         if record is not None:

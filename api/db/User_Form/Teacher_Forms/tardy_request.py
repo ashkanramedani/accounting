@@ -1,9 +1,7 @@
-from uuid import UUID
-
 from sqlalchemy.orm import Session
 
-import schemas as sch
 import models as dbm
+import schemas as sch
 from db.Extra import *
 
 
@@ -28,6 +26,7 @@ def report_tardy_request(db: Session, subcourse_id: UUID):
         return 200, db.query(dbm.Teacher_Tardy_report_form).filter_by(sub_course_fk_id=subcourse_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").all()
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema):
     try:
@@ -55,13 +54,13 @@ def post_tardy_request(db: Session, Form: sch.post_teacher_tardy_reports_schema)
         return Return_Exception(db, e)
 
 
-def delete_tardy_request(db: Session, form_id):
+def delete_tardy_request(db: Session, form_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Teacher_Tardy_report_form).filter_by(teacher_tardy_report_pk_id=form_id).filter(dbm.Teacher_Tardy_report_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -81,6 +80,7 @@ def update_tardy_request(db: Session, Form: sch.update_teacher_tardy_reports_sch
         return 200, "Form Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def verify_tardy_request(db: Session, form_id):
     try:

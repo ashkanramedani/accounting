@@ -35,14 +35,15 @@ def post_tag(db: Session, Form: sch.post_tag_schema):
         return Return_Exception(db, e)
 
 
-def delete_tag(db: Session, tag_id):
+def delete_tag(db: Session, tag_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Tag_form).filter_by(tag_pk_id=tag_id).filter(dbm.Tag_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
+
         return 200, "Deleted"
     except Exception as e:
         return Return_Exception(db, e)
@@ -92,13 +93,13 @@ def post_category(db: Session, Form: sch.post_category_schema):
         return Return_Exception(db, e)
 
 
-def delete_category(db: Session, category_id):
+def delete_category(db: Session, category_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Category_form).filter_by(category_pk_id=category_id).filter(dbm.Category_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -150,13 +151,13 @@ def post_language(db: Session, Form: sch.post_language_schema):
         return Return_Exception(db, e)
 
 
-def delete_language(db: Session, language_id):
+def delete_language(db: Session, language_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Language_form).filter_by(language_pk_id=language_id).filter(dbm.Language_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:
@@ -206,13 +207,13 @@ def post_course_type(db: Session, Form: sch.post_course_type_schema):
         return Return_Exception(db, e)
 
 
-def delete_course_type(db: Session, course_type_id):
+def delete_course_type(db: Session, course_type_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=course_type_id).filter(dbm.Course_Type_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

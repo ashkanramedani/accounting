@@ -44,15 +44,15 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         return Return_Exception(db, e)
 
 
-def delete_employee(db: Session, employee_id):
+def delete_employee(db: Session, employee_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.User_form).filter_by(user_pk_id=employee_id).filter(dbm.User_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
         if record.name == "Admin":
             return 400, "Admin Cont be deleted"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

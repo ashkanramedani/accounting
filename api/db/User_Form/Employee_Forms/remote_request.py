@@ -54,13 +54,13 @@ def post_remote_request_form(db: Session, Form: sch.post_remote_request_schema):
         return Return_Exception(db, e)
 
 
-def delete_remote_request_form(db: Session, form_id):
+def delete_remote_request_form(db: Session, form_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=form_id).filter(dbm.Remote_Request_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

@@ -26,6 +26,7 @@ async def search_teacher_subcourse(user_id: UUID, db=Depends(get_db)):
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 @router.get("/search/{form_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  #, response_model=Union[sch.sub_course_response_notJoined, List[sch.sub_course_response_notJoined]])
 async def search_subcourse(form_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.get_subcourse(db, form_id)

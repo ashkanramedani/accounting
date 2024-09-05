@@ -1,10 +1,9 @@
 from typing import List
-from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-import schemas as sch
 import models as dbm
+import schemas as sch
 from ..Extra import *
 
 
@@ -48,13 +47,13 @@ def post_response(db: Session, Form: sch.post_response_schema):
         return Return_Exception(db, e)
 
 
-def delete_response(db: Session, response_id):
+def delete_response(db: Session, response_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Response_form).filter_by(response_pk_id=response_id).filter(dbm.Response_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "employee Deleted"
     except Exception as e:

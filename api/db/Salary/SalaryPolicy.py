@@ -45,7 +45,6 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         else:
             return 400, "Bad Request: Invalid Salary Type"
 
-
         OBJ = dbm.Salary_Policy_form(**data)  # type: ignore[call-arg]
 
         db.add(OBJ)
@@ -56,13 +55,13 @@ def post_SalaryPolicy(db: Session, Form: sch.post_SalaryPolicy_schema):
         return Return_Exception(db, e)
 
 
-def delete_SalaryPolicy(db: Session, form_id):
+def delete_SalaryPolicy(db: Session, form_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Salary_Policy_form).filter_by(salary_policy_pk_id=form_id).filter(dbm.Salary_Policy_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

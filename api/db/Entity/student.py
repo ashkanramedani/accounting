@@ -32,13 +32,13 @@ def post_student(db: Session, Form: sch.post_student_schema):
         return Return_Exception(db, e)
 
 
-def delete_student(db: Session, student_id):
+def delete_student(db: Session, student_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.User_form).filter_by(user_pk_id=student_id).filter(dbm.User_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Student Deleted"
     except Exception as e:

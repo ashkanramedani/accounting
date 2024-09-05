@@ -6,6 +6,8 @@ from models import tables as dbm
 from sqlalchemy.engine.base import Connection
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.orm.mapper import Mapper
+
+
 def archive_deleted_record(mapper: Mapper, connection: Connection, target):
     ROW_DATA = target.__dict__
     ROW_DATA.pop("_sa_instance_state", None)

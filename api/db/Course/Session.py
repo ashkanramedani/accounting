@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
 from typing import List
-from uuid import UUID
 
 from pytz import timezone
 from sqlalchemy.orm import Session
 
-import schemas as sch
 import models as dbm
+import schemas as sch
 from ..Extra import *
 
 
@@ -31,6 +30,7 @@ def get_all_session(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveIn
         return record_order_by(db, dbm.Session_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def get_subcourse_session(db: Session, subcourse_id):
     try:
@@ -80,7 +80,7 @@ def post_session(db: Session, Form: sch.post_session_schema):
         return Return_Exception(db, e)
 
 
-def delete_session(db: Session, sub_course: UUID, session: List[UUID]):
+def delete_session(db: Session, sub_course: UUID, session: List[UUID], deleted_by: UUID = None):
     try:
         warnings = []
         sessions_to_cancel = []
@@ -93,7 +93,8 @@ def delete_session(db: Session, sub_course: UUID, session: List[UUID]):
             sessions_to_cancel.append(session_id)
 
         for session in db.query(dbm.Session_form).filter(dbm.Session_form.session_pk_id.in_(sessions_to_cancel), dbm.Session_form.deleted == False).all():
-            session.deleted = True
+            session.deleted_by = deleted_by
+            db.delete(session)
         db.commit()
         return 200, f"Session deleted successfully. {' | '.join(warnings)}"
     except Exception as e:
@@ -127,7 +128,7 @@ def update_session(db: Session, Form: sch.update_session_schema):
         if not session:
             return 400, "Record Not Found"
 
-        if not employee_exist(db, [Form.session_teacher_fk_id, Form.created_fk_by]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: employee not found"
 
         subcourse = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=session.sub_course_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first()

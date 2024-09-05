@@ -1,4 +1,5 @@
 from datetime import datetime
+from uuid import UUID
 
 import sqlalchemy.sql.expression as sse
 from sqlalchemy.orm import Session
@@ -42,7 +43,7 @@ def get_library_with_pid(db: Session, pid: str):
 
 
 # delete
-def delete_libraries(db: Session, topic: str, pid: int):
+def delete_libraries(db: Session, topic: str, pid: int, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Libraries).filter(sse.and_(dbm.Libraries.deleted == False, dbm.Libraries.library_pk_id == pid, dbm.Libraries.can_deleted == True)).first()
         if record is not None:

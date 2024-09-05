@@ -14,6 +14,7 @@ class Session(Base_form):
 class post_session_schema(Session):
     course_fk_id: UUID
     sub_course_fk_id: UUID
+    session_teacher_fk_id: UUID
 
     class Config:
         extra = 'ignore'
@@ -24,7 +25,6 @@ class update_session_schema(Session):
 
     class Config:
         extra = 'ignore'
-
 
 
 class session_response(Base_response):

@@ -4,6 +4,8 @@ from .Test import TestRoute
 from .db_utils import *
 from .tools import *
 
+from uuid import UUID
+
 __all__ = [
     "Set_Status",
     "TestRoute",
@@ -23,5 +25,6 @@ __all__ = [
     "Fix_date",
     "Fix_datetime",
     "save_route",
-    "Primary_key"
+    "Primary_key",
+    "UUID"
 ]

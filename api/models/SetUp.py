@@ -7,10 +7,10 @@ from sqlalchemy import event
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
 
-
 from lib import logger
 import models.tables as dbm
 from models.Triggers import archive_deleted_record
+
 
 def Extract_Unique_keyPair(error_message) -> str | Dict:
     error_message = str(error_message)

@@ -1,6 +1,5 @@
 import json
 from typing import List, Dict, Tuple
-from uuid import UUID
 
 from sqlalchemy import func, and_
 from sqlalchemy.orm import Session, joinedload
@@ -9,7 +8,6 @@ import models as dbm
 import schemas as sch
 from db.Extra import *
 from lib import DEV_io, logger, JSONEncoder
-
 
 Base_salary = {Cap: {"OnSite": 770_000, "online": 660_000, "hybrid": 0} for Cap in ["1-5", "6-9", "10-12", "13"]}
 TEACHER_TARDY = {"0_10": 110_000, "10_30": 55_000, "30_40": -55_000, "40": -165_000}

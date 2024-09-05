@@ -38,7 +38,7 @@ Tables = {
     "coursetype": dbm.Course_Type_form,
     "subrequest": dbm.Sub_Request_form,
     "sessioncancellation": dbm.Session_Cancellation_form,
-    "rewardcard":dbm.Reward_card_form,
+    "rewardcard": dbm.Reward_card_form,
     # "survey": dbm.Survey_form,
     # "question": dbm.Question_form,
     # "response": dbm.Response_form,

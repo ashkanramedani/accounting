@@ -27,14 +27,14 @@ from models import SetUp, Create_engine, Create_Redis_URL, sessionmaker, SetUp_t
 config = load(open("configs/config.json"))
 IRAN_TIMEZONE = timezone(offset=timedelta(hours=3, minutes=30))
 
+
 @asynccontextmanager
 async def app_lifespan(api):
     logger.info(f"preparing {api.title} V: {api.version} - {datetime.now(tz=IRAN_TIMEZONE)}")
     engine = Create_engine(config.get("db", None))
 
-
+    SetUp_table(engine)
     if not getenv('MODE') == "DEBUG":
-        SetUp_table(engine)
         with sessionmaker(autoflush=False, bind=engine)() as Tmp_Connection:
             SetUp(Tmp_Connection)
 

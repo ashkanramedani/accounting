@@ -1,7 +1,6 @@
 import uuid
 from datetime import time, datetime
 from typing import List
-from uuid import UUID
 
 import pandas as pd
 from sqlalchemy import func
@@ -11,8 +10,8 @@ import models as dbm
 import schemas as sch
 from db.Extra import *
 from lib import *
-from .Salary_Utils import calculate_duration
 from lib.decorators import DEV_io
+from .Salary_Utils import calculate_duration
 
 
 # Teacher Replacement
@@ -158,13 +157,13 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: p
         return Return_Exception(db, e)
 
 
-def delete_fingerprint_scanner(db: Session, form_id):
+def delete_fingerprint_scanner(db: Session, form_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id).filter(dbm.Fingerprint_Scanner_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

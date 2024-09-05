@@ -1,5 +1,4 @@
 import dbm
-import json
 
 from db.User_Form import *
 
@@ -165,6 +164,7 @@ def get_employee_salary(db: Session, user_fk_id, year, month):
         return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_employee_salary(db: Session, form_id, Form: sch.update_salary_report):
     try:

@@ -1,9 +1,7 @@
-from uuid import UUID
-
 from sqlalchemy.orm import Session
 
-import schemas as sch
 import models as dbm
+import schemas as sch
 from db.Extra import *
 
 
@@ -21,11 +19,13 @@ def get_all_session_cancellation(db: Session, page: sch.NonNegativeInt, limit: s
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def report_session_cancellation(db: Session, subcourse_id: UUID):
     try:
         return 200, db.query(dbm.Session_Cancellation_form).filter_by(sub_course_fk_id=subcourse_id).filter(dbm.Session_Cancellation_form.status != "deleted").all()
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_schema):
     try:
@@ -49,13 +49,13 @@ def post_session_cancellation(db: Session, Form: sch.post_Session_Cancellation_s
         return Return_Exception(db, e)
 
 
-def delete_session_cancellation(db: Session, form_id):
+def delete_session_cancellation(db: Session, form_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Session_Cancellation_form).filter_by(session_cancellation_pk_id=form_id).filter(dbm.Session_Cancellation_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

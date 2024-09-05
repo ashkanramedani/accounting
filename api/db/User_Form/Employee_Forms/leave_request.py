@@ -85,13 +85,13 @@ def post_leave_request(db: Session, Form: sch.post_leave_request_schema):
         return Return_Exception(db, e)
 
 
-def delete_leave_request(db: Session, form_id):
+def delete_leave_request(db: Session, form_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Leave_Request_form).filter_by(leave_request_pk_id=form_id).filter(dbm.Leave_Request_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

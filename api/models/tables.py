@@ -539,9 +539,9 @@ class Fingerprint_Scanner_form(Base, Base_form):
         return self.Enter is not None and self.Exit is not None
 
     @valid.expression
-    def valid(cls):
+    def valid(self):
         return case(
-                [(cls.Enter.isnot(None) & cls.Exit.isnot(None), True)],
+                [(self.Enter.isnot(None) & self.Exit.isnot(None), True)],
                 else_=False)
 
     def __repr__(self):

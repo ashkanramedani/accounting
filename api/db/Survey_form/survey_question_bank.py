@@ -34,13 +34,13 @@ def post_question(db: Session, Form: sch.post_questions_schema):
         return Return_Exception(db, e)
 
 
-def delete_question(db: Session, question_id):
+def delete_question(db: Session, question_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Question_form).filter_by(question_pk_id=question_id).filter(dbm.Question_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

@@ -35,13 +35,13 @@ def post_reward_card(db: Session, Form: sch.post_reward_card_schema):
         return Return_Exception(db, e)
 
 
-def delete_reward_card(db: Session, reward_card_id):
+def delete_reward_card(db: Session, reward_card_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Reward_card_form).filter_by(reward_card_pk_id=reward_card_id).filter(dbm.Reward_card_form.status != "deleted").first()
         if not record:
             return 404, "Record Not Found"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

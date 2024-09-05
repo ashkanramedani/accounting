@@ -105,7 +105,7 @@ def get_users_withfilter_employes(db: Session, skip: int = 0, limit: int = 1000)
 #         db.rollback()
 #         return -1 
 
-# def delete_user(db: Session, _id: int):
+# def delete_user(db: Session, _id: int, deleted_by: UUID = None):
 #     try:
 #         record = db.query(dbm.Users).filter(sse.and_(dbm.Users.deleted == False, dbm.Users.user_pk_id == _id)).first()
 #         if record is not None:

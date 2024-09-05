@@ -35,7 +35,6 @@ class Sub_request_Response(Base_response):
     main_teacher: export_employee
     sub_teacher: export_employee
 
-
     class Config:
         extra = 'ignore'
         orm_mode = True

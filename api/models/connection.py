@@ -32,7 +32,6 @@ def Create_engine(DB_config: Dict = None):
         logger.error(e.__repr__())
 
 
-
 def Create_Redis_URL(Config):
     if not Config:
         logger.error("Redis config not found.")

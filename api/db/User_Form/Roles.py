@@ -46,15 +46,15 @@ def post_role(db: Session, Form: sch.post_role_schema):
         return Return_Exception(db, e)
 
 
-def delete_role(db: Session, role_id):
+def delete_role(db: Session, role_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Role_form).filter_by(role_pk_id=role_id).filter(dbm.Role_form.status != "deleted").first()
         if not record:
             return 400, "Role Record Not Found"
         if record.name == "Administrator":
             return 400, "Administrator role cant be deleted"
-        record.deleted = True
-        record.status = Set_Status(db, "form", "deleted")
+        record._Deleted_BY = deleted_by
+        db.delete(record)
         db.commit()
         return 200, "Deleted"
     except Exception as e:

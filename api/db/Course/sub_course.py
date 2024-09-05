@@ -1,11 +1,10 @@
 from datetime import timedelta, datetime
 from typing import List, Dict
-from uuid import UUID
 
 from sqlalchemy.orm import Session
 
-import schemas as sch
 import models as dbm
+import schemas as sch
 from lib.Date_Time import *
 from .Session import delete_session
 from ..Extra import *
@@ -131,7 +130,7 @@ def create_sessions(db: Session, Form: sch.post_sub_course_schema, sub_course: d
     return WARN
 
 
-def delete_subcourse(db: Session, course_id: UUID, sub_course_ids: List[UUID]):
+def delete_subcourse(db: Session, course_id: UUID, sub_course_ids: List[UUID], deleted_by: UUID = None):
     try:
         warnings = []
         message = ''
@@ -148,8 +147,9 @@ def delete_subcourse(db: Session, course_id: UUID, sub_course_ids: List[UUID]):
             status, message = delete_session(db, sub_Course.sub_course_pk_id, get_subCourse_active_session(db, sub_Course.sub_course_pk_id))  # ignore type[call-arg]
             if status != 200:
                 return status, message
-            sub_Course.deleted = True
 
+            sub_Course._Deleted_By = deleted_by
+            db.delete(sub_Course)
         db.commit()
         return 200, f"Sub Course cancelled successfully. {' | '.join(warnings)} ... {message}"
 
