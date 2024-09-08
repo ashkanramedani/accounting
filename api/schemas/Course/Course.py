@@ -61,7 +61,8 @@ class course_response(Base_response):
     teachers: List[export_employee | UUID] = None
     session_signature: List = []
     available_seat: int = 0
-    number_of_session: int = 0
+    number_of_session: Dict[UUID, int] = {}
+    available_seat_for_subcourse: Dict[UUID, int] = {}
 
     tags: List[export_tag] = []
     categories: List[export_categories] = []
