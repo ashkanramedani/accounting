@@ -11,7 +11,7 @@ class Session_signature(BaseModel):
         orm_mode = True
 
 
-class Sub_Course(Base_form):
+class Sub_Course(Base_form):  # Q: is sub_course_teacher_fk_id Deletable?
     sub_course_teacher_fk_id: UUID
 
     sub_course_name: str

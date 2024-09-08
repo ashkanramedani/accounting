@@ -192,6 +192,8 @@ api/db/PlayGround/
 api/schemas/PlayGround
 api/models/tables_TMP.py
 Migration
-./Migration
+/Migration/
 !/Migration/
 !/api/.lprof/
+!/Diagram/
+/Diagram/
