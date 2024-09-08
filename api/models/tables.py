@@ -390,6 +390,7 @@ class Sub_Course_form(Base, Base_form):
     sub_request_threshold = Column(Integer, nullable=False, default=24)
     sub_course_capacity = Column(Integer, nullable=False)
     sub_course_available_seat = Column(Integer, nullable=False)
+    sub_course_price = Column(Float, default=0)
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     teacher = relationship("User_form", foreign_keys=[sub_course_teacher_fk_id])
@@ -1030,3 +1031,54 @@ class TEMP_form(Base, Base_form):
     temp_pk_id = create_Unique_ID()
     key = Column(Integer, default=0)
     value = Column(Integer, default=0)
+
+
+class Discount_code_form(Base, Base_form):
+    __tablename__ = "discount_code"
+    discount_code_pk_id = create_Unique_ID()
+    discount_code = Column(String, nullable=False, index=True)
+    discount_type = Column(String, nullable=False, index=True)  # Fix / Percentage
+    discount_amount = Column(Float, nullable=False)
+
+class SignUp_queue(Base):
+    __tablename__ = "signup_queue"
+    __table_args__ = (UniqueConstraint('student_pk_id', 'subcourse_fk_id'),)
+    signup_queue_pk_id = create_Unique_ID()
+    student_pk_id = Column(GUID, nullable=False, index=True)
+    course_fk_id = Column(GUID, nullable=False, index=True)
+    subcourse_fk_id = Column(GUID, nullable=False, index=True)
+
+
+class SignUp_payment_queue_form(Base, Base_form):
+    __tablename__ = "signup_payment_queue"
+    __table_args__ = (UniqueConstraint('student_pk_id', 'subcourse_fk_id'),)
+    signup_queue_pk_id = create_Unique_ID()
+
+    student_pk_id = create_foreignKey("User_form")
+    course_fk_id = create_foreignKey("Course_form")
+    discount_code = create_foreignKey("Discount_code_form", nullable=True)
+
+    subcourse_fk_ids = Column(JSON, nullable=False)
+    total_price = Column(Float, nullable=False)
+    discount_price = Column(Float, nullable=False)
+    package_discount = Column(Float, nullable=False)
+
+    code = relationship("Discount_code_form", foreign_keys=[discount_code])
+    student = relationship("User_form", foreign_keys=[student_pk_id])
+    course = relationship("Course_form", foreign_keys=[course_fk_id])
+
+class SignUp_form(Base):
+    __tablename__ = "signup"
+    __table_args__ = (UniqueConstraint('student_pk_id', 'subcourse_fk_id'),)
+    signup_pk_id = create_Unique_ID()
+
+    student_pk_id = create_foreignKey("User_form")
+    course_fk_id = create_foreignKey("Course_form")
+    subcourse_fk_id = create_foreignKey("Sub_Course_form")
+
+    course = relationship("Course_form", foreign_keys=[course_fk_id])
+    student = relationship("User_form", foreign_keys=[student_pk_id])
+    subcourse = relationship("Sub_Course_form", foreign_keys=[subcourse_fk_id])
+
+    def __repr__(self):
+        return Remove_Base_Data(self.__dict__)
