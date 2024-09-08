@@ -23,7 +23,6 @@ def get_all_payment_method(db: Session, page: sch.NonNegativeInt, limit: sch.Pos
 
 def post_payment_method(db: Session, Form: sch.post_payment_method_schema):
     try:
-
         if not employee_exist(db, [Form.created_fk_by, Form.user_fk_id]):
             return 400, "Bad Request"
 
