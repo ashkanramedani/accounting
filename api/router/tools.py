@@ -61,5 +61,5 @@ async def Log(log: str = None, limit: int = 100):
 
 
 @router.get("/config", tags=["Test"], include_in_schema=False)
-def ping():
+def config():
     return load(open(join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")))
