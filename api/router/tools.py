@@ -1,8 +1,10 @@
+import json
 import os
 from typing import List
-
+from os.path import normpath, dirname, join
 from fastapi import APIRouter, Depends, HTTPException
 from starlette.responses import RedirectResponse
+from json import load
 
 import db as dbf
 import schemas as sch
@@ -56,3 +58,8 @@ async def Log(log: str = None, limit: int = 100):
         except FileNotFoundError:
             return "File Not Exist."
     return os.listdir("./log")
+
+
+@router.get("/config", tags=["Test"], include_in_schema=False)
+def ping():
+    return load(open(join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")))
