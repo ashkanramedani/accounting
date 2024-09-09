@@ -6,11 +6,19 @@ from .Site import *
 from .Survey_form import *
 from .User_Form import *
 
+
 __all__ = [
     "save_route",
     "count",
     'tardy_request',
     "Return_Exception",
+    # Discount_code.py
+    "post_discount_code",
+    "delete_discount_code",
+    "update_discount_code",
+    "get_discount_code",
+    "get_all_discount_code",
+
     # Tag_category.py
     "get_tag",
     "get_all_tag",

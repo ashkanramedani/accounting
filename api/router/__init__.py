@@ -10,6 +10,7 @@ from .Template import router as template_route
 
 
 routes = [
+    discount_code_router,
     # dropdown_route
     dropdown_route,
 

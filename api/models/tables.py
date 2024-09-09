@@ -1036,9 +1036,13 @@ class TEMP_form(Base, Base_form):
 class Discount_code_form(Base, Base_form):
     __tablename__ = "discount_code"
     discount_code_pk_id = create_Unique_ID()
+    created_fk_by = create_foreignKey("User_form")
+
     discount_code = Column(String, nullable=False, index=True)
     discount_type = Column(String, nullable=False, index=True)  # Fix / Percentage
     discount_amount = Column(Float, nullable=False)
+
+    created = relationship("User_form", foreign_keys=[created_fk_by])
 
 class SignUp_queue(Base):
     __tablename__ = "signup_queue"
