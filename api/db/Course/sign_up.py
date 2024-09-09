@@ -52,8 +52,7 @@ def get_sign_up_active_course(db: Session, course_id: UUID):
         .filter_by(course_pk_id=course_id) \
         .filter(
             dbm.Course_form.status != "deleted",
-            dbm.Course_form.starting_date < datetime.now(tz=IRAN_TIMEZONE).date(),
-    ) \
+            dbm.Course_form.starting_date < datetime.now(tz=IRAN_TIMEZONE).date()) \
         .all()
 
     return [course_additional_details(db, course) for course in Courses]
@@ -65,8 +64,7 @@ def get_sign_up_active_subcourse(db: Session, sub_course_id: UUID):
         .filter_by(sub_course_pk_id=sub_course_id) \
         .filter(
             dbm.Sub_Course_form.status != "deleted",
-            dbm.Sub_Course_form.sub_course_starting_date < datetime.now(tz=IRAN_TIMEZONE).date(),
-    ) \
+            dbm.Sub_Course_form.sub_course_starting_date < datetime.now(tz=IRAN_TIMEZONE).date()) \
         .all()
 
 
