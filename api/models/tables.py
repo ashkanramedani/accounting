@@ -1051,7 +1051,7 @@ class SignUp_queue(Base):
 
 class SignUp_payment_queue_form(Base, Base_form):
     __tablename__ = "signup_payment_queue"
-    __table_args__ = (UniqueConstraint('student_pk_id', 'subcourse_fk_id'),)
+    __table_args__ = (UniqueConstraint('student_pk_id', 'course_fk_id'),)
     signup_queue_pk_id = create_Unique_ID()
 
     student_pk_id = create_foreignKey("User_form")
