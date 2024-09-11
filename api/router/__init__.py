@@ -7,9 +7,10 @@ from .User_form import *
 from .tools import router as tools_route
 from .dropdown import router as dropdown_route
 from .Template import router as template_route
-
+from .Status import router as status_route
 
 routes = [
+    status_route,
     discount_code_router,
     # dropdown_route
     dropdown_route,
