@@ -142,17 +142,20 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
     except Exception as e:
         return Return_Exception(db, e)
 
-
-def TEST(db: Session):
+def update_sub_request_status(db: Session, form_id: UUID, status_id: UUID):  # NC: in case of verfiy sub request look Verify_sub_request
     try:
+        record = db.query(dbm.Sub_Request_form).filter_by(sub_request_pk_id=form_id).first()
+        if not record:
+            return 404, "Record Not Found"
 
-        target_session = db \
-            .query(dbm.Session_form) \
-            .filter(
-                dbm.Session_form.status != "deleted",
-                dbm.Session_form.can_accept_sub >= datetime.now(timezone('Asia/Tehran'))) \
-            .all()
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
 
-        return 200, target_session
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
     except Exception as e:
         return Return_Exception(db, e)
