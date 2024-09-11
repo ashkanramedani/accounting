@@ -58,6 +58,8 @@ DEFAULT_STATUS: List[Dict] = [
     {"status_pk_id": "00000003-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "pending"},
     {"status_pk_id": "00000004-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "cancelled"},
     {"status_pk_id": "00000005-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "deleted"},
+    {"status_pk_id": "00000005-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "in_progress"},
+    {"status_pk_id": "00000005-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "closed"}
 ]
 
 DEFAULT_LANGUAGE: List[Dict] = [
