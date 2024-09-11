@@ -253,7 +253,10 @@ def update_SubCourse_report(db: Session, form_ID: UUID, Form: sch.update_salary_
 
 def get_supervisor_review(db: Session, sub_course_id: UUID):
     try:
-        return 200, db.query(dbm.Sub_Course_form.supervisor_review).filter(dbm.Sub_Course_form.sub_course_pk_id == sub_course_id).first()
+        sub = db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.sub_course_pk_id == sub_course_id).first()
+        if sub:
+            return 200, sub.supervisor_review
+        return 200, {}
 
     except Exception as e:
         return Return_Exception(db, e)
