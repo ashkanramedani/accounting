@@ -32,6 +32,7 @@ if __name__ == '__main__':
         ('active', 'student'),
         ('active', 'teacher'),
         ('inactive', 'student'),
-        ('inactive', 'teacher')]:
+        ('inactive', 'teacher')
+    ]:
         s = Set_Status(sessionmaker(autoflush=False, bind=Create_engine())(), s, c)
         print(s)

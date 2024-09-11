@@ -39,12 +39,3 @@ def Create_Redis_URL(Config):
     Redis_url = f"redis://:{Config['password']}@{Config['host']}:{Config['port']}/{Config['db']}"
     logger.info(f'Redis: {Redis_url}')
     return Redis_url
-
-
-# Dependency
-def get_db() -> Session:
-    db = sessionmaker(autoflush=False, bind=Create_engine())()
-    try:
-        yield db
-    finally:
-        db.close()
