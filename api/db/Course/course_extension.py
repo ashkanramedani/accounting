@@ -62,6 +62,24 @@ def update_tag(db: Session, Form: sch.update_tag_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
+def update_tag_status(db: Session, form_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Tag_form).filter_by(tag_pk_id=form_id).first()
+        if not record.first():
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)
+
 
 def get_category(db: Session, category_id):
     try:
@@ -120,6 +138,24 @@ def update_category(db: Session, Form: sch.update_category_schema):
         return Return_Exception(db, e)
 
 
+def update_category_status(db: Session, form_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Category_form).filter_by(category_pk_id=form_id).first()
+        if not record.first():
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)
+
 def get_language(db: Session, language_id):
     try:
         return 200, db.query(dbm.Language_form).filter_by(language_pk_id=language_id).filter(dbm.Language_form.status != "deleted").first()
@@ -177,6 +213,23 @@ def update_language(db: Session, Form: sch.update_language_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
+def update_language_status(db: Session, form_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Language_form).filter_by(language_pk_id=form_id).first()
+        if not record.first():
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)
 
 def get_course_type(db: Session, course_type_id):
     try:
@@ -230,5 +283,23 @@ def update_course_type(db: Session, Form: sch.update_course_type_schema):
 
         db.commit()
         return 200, "Record Updated"
+    except Exception as e:
+        return Return_Exception(db, e)
+
+def update_course_type_status(db: Session, form_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=form_id).first()
+        if not record.first():
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
     except Exception as e:
         return Return_Exception(db, e)

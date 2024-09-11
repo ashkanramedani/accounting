@@ -192,3 +192,21 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         return 200, "Form Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
+def update_fingerprint_scanner_status(db: Session, form_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Fingerprint_Scanner_form).filter_by(fingerprint_scanner_pk_id=form_id).first()
+        if not record:
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)

@@ -146,3 +146,22 @@ def update_session(db: Session, Form: sch.update_session_schema):
         return 200, "Record Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
+
+def update_session_status(db: Session, session_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Session_form).filter_by(session_pk_id=session_id).first()
+        if not record:
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)

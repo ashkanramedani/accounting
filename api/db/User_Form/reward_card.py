@@ -60,3 +60,21 @@ def update_reward_card(db: Session, Form: sch.update_reward_card_schema):
         return 200, "Record Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
+def update_reward_card_status(db: Session, form_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Reward_card_form).filter_by(reward_card_pk_id=form_id).first()
+        if not record:
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)

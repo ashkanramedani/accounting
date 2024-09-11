@@ -76,3 +76,22 @@ def update_role(db: Session, Form: sch.update_role_schema):
         return 200, "Form Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
+
+def update_role_status(db: Session, role_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Role_form).filter_by(role_pk_id=role_id).first()
+        if not record:
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)

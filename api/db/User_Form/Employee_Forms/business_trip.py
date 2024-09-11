@@ -106,3 +106,22 @@ def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema, sta
         return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)
+
+def update_business_trip_status(db: Session, form_id: UUID, status_id: UUID):
+    try:
+        record = db.query(dbm.Business_Trip_form).filter_by(business_trip_pk_id=form_id).first()
+        if not record:
+            return 400, "Record Not Found"
+
+        status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
+        if not status:
+            return 400, "Status Not Found"
+
+        db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
+        record.update({"status": status.status_name}, synchronize_session=False)
+        db.commit()
+
+        return 200, "Status Updated"
+
+    except Exception as e:
+        return Return_Exception(db, e)
