@@ -64,13 +64,22 @@ app.add_middleware(
         allow_headers=["*"],
 )
 
+METHOD = {
+    "GET": "GET",
+    "POST": "PST",
+    "PUT": "PUT",
+    "DELETE": "DEL",
+    "PATCH": "PAT",
+    "OPTIONS": "OPT"
+}
+
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
     start_time = time()
 
     response = await call_next(request)
-    logger.info(f"{response.status_code} [ {time() - start_time:.5f}s ] {request.method: <8} {request.url}")
+    logger.info(f"[ {time() - start_time:.3f}s ] {response.status_code} / {METHOD[request.method]: >3} - {request.url}")
     # response.headers["X-Process-Time"] = f'{time() - start_time:.5f}'
     return response
 
@@ -78,7 +87,7 @@ async def add_process_time_header(request: Request, call_next):
 if getenv('CREATE_ROUTE_SCHEMA'):
     logger.info('Creating Route Schema')
     route_schema = save_route(routes)
-    dump(route_schema, open(f'{Path(__file__).parent}/configs/routes.json', 'w'), indent=4)
+    dump(route_schema, open(f'{Path(__file__).parent}/configs/routes.json', 'w'), indent=4, sort_keys=True)
 
 logger.info(f"Loading Routes to API")
 for route in routes:

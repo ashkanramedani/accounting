@@ -135,6 +135,11 @@ def delete_subcourse(db: Session, course_id: UUID, sub_course_ids: List[UUID], d
         warnings = []
         message = ''
         Sub_course_to_cancel = []
+        if not sub_course_ids:
+            return 400, "No SubCourse Provided"
+        if not course_id:
+            course_id = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=sub_course_ids[0]).first().course_fk_id
+
         Existing_Course_Subcourse = get_Course_active_subcourse(db, course_id)
 
         for sub_course_id in sub_course_ids:

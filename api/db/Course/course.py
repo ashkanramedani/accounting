@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 import models as dbm
 import schemas as sch
+from lib import logger
 from .sub_course import delete_subcourse
 from ..Extra import *
 
@@ -33,9 +34,9 @@ def course_additional_details(db: Session, course: dbm.Course_form):
 
     course.teachers = [OBJ.teacher for OBJ in sub_course]
     course.session_signature = [day["days_of_week"] for day in Unique_signature]
-    course.available_seat = min([OBJ.sub_course_available_seat for OBJ in sub_course])
     course.available_seat_for_subcourse = {OBJ.sub_course_pk_id: available_seat_for_subcourse(db, OBJ) for OBJ in sub_course}
     course.number_of_session = {OBJ.sub_course_pk_id: OBJ.number_of_session for OBJ in sub_course}
+    course.available_seat = min([OBJ.sub_course_available_seat for OBJ in sub_course], default=0)
 
     return course
 

@@ -136,12 +136,6 @@ def sign_up(db: Session, success: bool, pre_payment_id: UUID):
     payment_record.status = "payed"
     all_sign_up: List[dbm.SignUp_queue] = db.query(dbm.SignUp_queue).filter_by(course_fk_id=payment_record.course_fk_id, student_pk_id=payment_record.student_pk_id).all()
 
-    """
-    student_pk_id = create_foreignKey("User_form")
-    course_fk_id = create_foreignKey("Course_form")
-    subcourse_fk_id = create_foreignKey("Sub_Course_form")
-    """
-
     for sign_up in all_sign_up:
         dbm.SignUp_form(student_pk_id=payment_record.student_pk_id, course_fk_id=payment_record.course_fk_id, subcourse_fk_id=sign_up.subcourse_fk_id)
         db.delete(sign_up)

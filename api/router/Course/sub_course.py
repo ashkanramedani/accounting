@@ -53,8 +53,6 @@ async def search_subcourse_by_course_id(course_id: UUID, page: sch.NonNegativeIn
 
 @router.delete("/delete/{sub_course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def delete_subcourse(sub_course_id: UUID, course_id: UUID = None, db=Depends(get_db)):
-    if not course_id:
-        raise HTTPException(status_code=400, detail="Course Not Provided")
     status_code, result = dbf.delete_subcourse(db, course_id, [sub_course_id])
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)

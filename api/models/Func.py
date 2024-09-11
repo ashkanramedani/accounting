@@ -1,7 +1,7 @@
 from fastapi_utils.guid_type import GUID as GUID_TYPE, GUID_SERVER_DEFAULT_POSTGRESQL
 from sqlalchemy import Column, ForeignKey, MetaData
 from sqlalchemy.orm import relationship
-
+from datetime import datetime, timedelta, timezone
 
 metadata_obj = MetaData()
 
@@ -33,3 +33,6 @@ def Remove_Base_Data(OBJ) -> str:
         if i in OBJ:
             OBJ.pop(i)
     return repr(OBJ)
+
+def IRAN_TIME():
+    return datetime.now(tz=timezone(offset=timedelta(hours=3, minutes=30)))

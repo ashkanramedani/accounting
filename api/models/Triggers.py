@@ -17,8 +17,8 @@ def archive_deleted_record(mapper: Mapper, connection: Connection, target):
     with sessionmaker(autoflush=False, bind=connection)() as db:
         BackUp_Row = dbm.Deleted_Records(
                 table=value,
-                rows_data=json.loads(json.dumps(ROW_DATA, cls=JSONEncoder)),
-                deleted_fk_by=ROW_DATA.pop("_Deleted_BY", None))
+                deleted_fk_by=ROW_DATA.pop("_Deleted_BY", None),
+                rows_data=json.loads(json.dumps(ROW_DATA, cls=JSONEncoder)))
 
         db.add(BackUp_Row)
         db.commit()
