@@ -1,3 +1,4 @@
+import datetime
 from typing import List
 
 from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time, case
@@ -31,6 +32,8 @@ class Base_form:
 
     status = Column(String, nullable=False, default="submitted", index=True)  # NC: 006
     # status = Column(String, nullable=False, default="approved")  # NC: 006
+    # status_pk_id = create_foreignKey("Status_form")
+    # status = relationship("Status_form", foreign_keys=[status_pk_id])
 
 
 users_departments_association = Table(
@@ -1044,6 +1047,7 @@ class Discount_code_form(Base, Base_form):
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
+
 class SignUp_queue(Base):
     __tablename__ = "signup_queue"
     __table_args__ = (UniqueConstraint('student_pk_id', 'subcourse_fk_id'),)
@@ -1071,6 +1075,7 @@ class SignUp_payment_queue_form(Base, Base_form):
     student = relationship("User_form", foreign_keys=[student_pk_id])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
 
+
 class SignUp_form(Base):
     __tablename__ = "signup"
     __table_args__ = (UniqueConstraint('student_pk_id', 'subcourse_fk_id'),)
@@ -1086,3 +1091,13 @@ class SignUp_form(Base):
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
+
+
+class Status_history(Base):
+    __tablename__ = "status_status"
+
+    Status_status_pk_id = create_Unique_ID()
+
+    status = Column(String, nullable=False, index=True)
+    table_name = Column(String, nullable=False, index=True)
+    create_date = Column(DateTime, default=IRAN_TIME, nullable=False, index=True)
