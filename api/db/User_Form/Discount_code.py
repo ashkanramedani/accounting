@@ -82,7 +82,7 @@ def update_discount_code_status(db: Session, form_id: UUID, status_id: UUID):
             return 400, "Status Not Found"
 
         db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
-        record.update({"status": status.status_name}, synchronize_session=False)
+        record.status = status.status_name
         db.commit()
 
         return 200, "Status Updated"

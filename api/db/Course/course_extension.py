@@ -65,7 +65,7 @@ def update_tag(db: Session, Form: sch.update_tag_schema):
 def update_tag_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Tag_form).filter_by(tag_pk_id=form_id).first()
-        if not record.first():
+        if not record:
             return 400, "Record Not Found"
 
         status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
@@ -73,7 +73,7 @@ def update_tag_status(db: Session, form_id: UUID, status_id: UUID):
             return 400, "Status Not Found"
 
         db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
-        record.update({"status": status.status_name}, synchronize_session=False)
+        record.status = status.status_name
         db.commit()
 
         return 200, "Status Updated"
@@ -141,7 +141,7 @@ def update_category(db: Session, Form: sch.update_category_schema):
 def update_category_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Category_form).filter_by(category_pk_id=form_id).first()
-        if not record.first():
+        if not record:
             return 400, "Record Not Found"
 
         status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
@@ -149,7 +149,7 @@ def update_category_status(db: Session, form_id: UUID, status_id: UUID):
             return 400, "Status Not Found"
 
         db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
-        record.update({"status": status.status_name}, synchronize_session=False)
+        record.status = status.status_name
         db.commit()
 
         return 200, "Status Updated"
@@ -216,7 +216,7 @@ def update_language(db: Session, Form: sch.update_language_schema):
 def update_language_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Language_form).filter_by(language_pk_id=form_id).first()
-        if not record.first():
+        if not record:
             return 400, "Record Not Found"
 
         status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
@@ -224,7 +224,7 @@ def update_language_status(db: Session, form_id: UUID, status_id: UUID):
             return 400, "Status Not Found"
 
         db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
-        record.update({"status": status.status_name}, synchronize_session=False)
+        record.status = status.status_name
         db.commit()
 
         return 200, "Status Updated"
@@ -289,7 +289,7 @@ def update_course_type(db: Session, Form: sch.update_course_type_schema):
 def update_course_type_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Course_Type_form).filter_by(course_type_pk_id=form_id).first()
-        if not record.first():
+        if not record:
             return 400, "Record Not Found"
 
         status = db.query(dbm.Status_form).filter_by(status_pk_id=status_id).first()
@@ -297,7 +297,7 @@ def update_course_type_status(db: Session, form_id: UUID, status_id: UUID):
             return 400, "Status Not Found"
 
         db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
-        record.update({"status": status.status_name}, synchronize_session=False)
+        record.status = status.status_name
         db.commit()
 
         return 200, "Status Updated"
