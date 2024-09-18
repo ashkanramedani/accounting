@@ -1,3 +1,7 @@
+import sys
+
+import uvicorn
+
 try:
     from os import getenv
     from typing import List
@@ -24,25 +28,34 @@ from lib import logger
 from db import save_route
 from models import SetUp, Create_engine, Create_Redis_URL, sessionmaker, SetUp_table
 
+print(f'{" -.-" * 10}\n\t\tStarting API\n{" -.-" * 10}')
+
 config = load(open("configs/config.json"))
 IRAN_TIMEZONE = timezone(offset=timedelta(hours=3, minutes=30))
 
 
 @asynccontextmanager
 async def app_lifespan(api):
-    logger.info(f"preparing {api.title} V: {api.version} - {datetime.now(tz=IRAN_TIMEZONE)}")
-    engine = Create_engine(config.get("db", None))
+    try:
+        logger.info(f"preparing {api.title} V: {api.version} - {datetime.now(tz=IRAN_TIMEZONE)}")
+        engine = Create_engine(config.get("db", None))
+        res = SetUp_table(engine)
+        if not res:
+            logger.error("Database Setup failed")
+            raise Exception
 
-    SetUp_table(engine)
-    if not getenv('MODE') == "DEBUG":
-        with sessionmaker(autoflush=False, bind=engine)() as Tmp_Connection:
-            SetUp(Tmp_Connection)
+        if not getenv('MODE') == "DEBUG":
+            with sessionmaker(autoflush=False, bind=engine)() as Tmp_Connection:
+                SetUp(Tmp_Connection)
 
-    await FastAPILimiter.init(redis=redis.from_url(Create_Redis_URL(config.get("redis", None)), encoding="utf8"))
-    logger.info(f'{api.title} V: {api.version} Has been started ...')
-    yield
-    logger.info(f'Exiting from {api.title} V: {api.version} - {datetime.now(tz=IRAN_TIMEZONE)}')
-    await FastAPILimiter.close()
+        redis_obj = redis.from_url(Create_Redis_URL(config.get("redis", None)), encoding="utf8")
+        await FastAPILimiter.init(redis=redis_obj)
+
+        logger.info(f'{api.title} V: {api.version} Has been started ...')
+        yield
+    finally:
+        logger.info(f'Exiting from {api.title} V: {api.version} - {datetime.now(tz=IRAN_TIMEZONE)}')
+        await FastAPILimiter.close()
 
 
 load_dotenv()
