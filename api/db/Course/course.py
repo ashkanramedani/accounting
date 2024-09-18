@@ -14,8 +14,8 @@ def available_seat_for_subcourse(db: Session, subcourse: dbm.Sub_Course_form):
     reserved_seat: int = db.query(dbm.SignUp_form).filter_by(subcourse_fk_id=subcourse.sub_course_pk_id).count()
     return subcourse.sub_course_capacity - seat_in_queue - reserved_seat
 
-def course_additional_details(db: Session, course: dbm.Course_form):
 
+def course_additional_details(db: Session, course: dbm.Course_form):
     sub_course: List[dbm.Sub_Course_form] = db.query(dbm.Sub_Course_form).filter_by(course_fk_id=course.course_pk_id).filter(dbm.Sub_Course_form.status != "deleted").all()
 
     if not sub_course:
@@ -109,14 +109,17 @@ def delete_course(db: Session, course_id, deleted_by: UUID = None):
             return 400, "Course Not Found"
 
         warnings = []
-        status, message = delete_subcourse(db, course_id, get_Course_active_subcourse(db, course_id))  # ignore type[call-arg]
-        if status != 200:
-            return status, message
+        active_subcourse = get_Course_active_subcourse(db, course_id)
+        message = ""
+        if active_subcourse:
+            status, message = delete_subcourse(db, course_id, active_subcourse)
+            if status != 200:
+                return status, message
 
         Course._Deleted_By = deleted_by
         db.delete(Course)
         db.commit()
-        return 200, f"Course cancelled successfully. {' | '.join(warnings)} ... {message}"
+        return 200, f"Course cancelled successfully. {' | '.join(warnings)}{(f' ... {message}' if message else '')}"
 
     except Exception as e:
         return Return_Exception(db, e)
@@ -144,6 +147,7 @@ def update_course(db: Session, Form: sch.update_course_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def update_course_status(db: Session, course_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Course_form).filter_by(course_pk_id=course_id).first()
@@ -155,7 +159,7 @@ def update_course_status(db: Session, course_id: UUID, status_id: UUID):
             return 400, "Status Not Found"
 
         db.add(dbm.Status_history(status=record.status, table_name=record.__tablename__))
-        record.update({"status": status.status_name}, synchronize_session=False)
+        record.status = status.status_name
         db.commit()
 
         return 200, "Status Updated"
