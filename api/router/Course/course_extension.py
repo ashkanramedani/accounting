@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
@@ -50,6 +51,14 @@ async def update_tag(Form: sch.update_tag_schema, db=Depends(get_db)):
     return result
 
 
+@router.put("/tag/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+def update_tag_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.update_tag_status(db, form_id, status_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
 # category
 @router.post("/category/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def add_category(Form: sch.post_category_schema, db=Depends(get_db)):
@@ -86,6 +95,14 @@ async def delete_category(form_id, db=Depends(get_db)):
 @router.put("/category/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_category(Form: sch.update_category_schema, db=Depends(get_db)):
     status_code, result = dbf.update_category(db, Form)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.put("/category/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def update_category_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.update_category_status(db, form_id, status_id)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
@@ -133,6 +150,14 @@ async def update_language(Form: sch.update_language_schema, db=Depends(get_db)):
     return result
 
 
+@router.put("/language/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def update_language_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.update_language_status(db, form_id, status_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
 # course_type
 @router.post("/course_type/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def add_course_type(Form: sch.post_course_type_schema, db=Depends(get_db)):
@@ -169,6 +194,14 @@ async def delete_course_type(form_id, db=Depends(get_db)):
 @router.put("/course_type/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_course_type(Form: sch.update_course_type_schema, db=Depends(get_db)):
     status_code, result = dbf.update_course_type(db, Form)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.put("/course_type/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def update_course_type_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.update_course_type_status(db, form_id, status_id)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result

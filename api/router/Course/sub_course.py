@@ -65,3 +65,11 @@ async def update_subcourse(Form: sch.update_sub_course_schema, db=Depends(get_db
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
+
+@router.put("/status/{sub_course_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def update_subcourse_status(db, sub_course_id: UUID, status_id: UUID):
+    status_code, result = dbf.update_subcourse_status(db, sub_course_id, status_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result

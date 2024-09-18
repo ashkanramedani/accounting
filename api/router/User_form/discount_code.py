@@ -50,3 +50,10 @@ async def update_discount_code(Form: sch.update_discount_code_schema, db=Depends
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
+@router.put("/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+def update_status(db, form_id: UUID, status_id: UUID):
+    status_code, result = dbf.update_discount_code_status(db, form_id, status_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result

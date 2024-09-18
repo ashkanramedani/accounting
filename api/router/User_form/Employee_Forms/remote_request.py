@@ -68,3 +68,11 @@ async def verify_remote_request(status: sch.CanUpdateStatus, Form: sch.Verify_re
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
+
+
+@router.put("/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def update_remote_request_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
+    status_code, result = dbf.update_remote_request_status(db, form_id, status_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
