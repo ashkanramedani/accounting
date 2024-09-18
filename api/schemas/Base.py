@@ -236,7 +236,7 @@ class Entity_Response(BaseModel):
 class Base_response(BaseModel):
     created: Optional[export_employee] = {}
     description: str | None = None
-    status: ValidStatus = "submitted"
+    status: str
     priority: int
     note: Optional[Dict] = {}
 

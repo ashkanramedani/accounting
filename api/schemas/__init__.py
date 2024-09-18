@@ -8,4 +8,4 @@ from .Survey import *
 from .TagsCategories import *
 from .User_form import *
 from .Template import *
-from .status import *
+from .Status import *

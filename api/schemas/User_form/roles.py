@@ -14,13 +14,10 @@ class update_role_schema(Role):
     role_pk_id: UUID
 
 
-class role_response(BaseModel):
+class role_response(Base_response):
     role_pk_id: UUID
     name: str
     cluster: str
-    status: str
-    description: str
-    created: export_employee
 
     class Config:
         extra = 'ignore'

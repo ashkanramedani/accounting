@@ -182,7 +182,7 @@ class Teacher_course_report(Base_response):
     ending_date: date
     course_capacity: NonNegativeInt
     course_level: str
-    course_code: int
+    course_code: str
 
     language: export_language
     type: export_course_type
