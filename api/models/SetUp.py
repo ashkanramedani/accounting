@@ -58,8 +58,8 @@ DEFAULT_STATUS: List[Dict] = [
     {"status_pk_id": "00000003-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "pending"},
     {"status_pk_id": "00000004-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "cancelled"},
     {"status_pk_id": "00000005-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "deleted"},
-    {"status_pk_id": "00000005-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "in_progress"},
-    {"status_pk_id": "00000005-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "closed"}
+    {"status_pk_id": "00000006-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "in_progress"},
+    {"status_pk_id": "00000007-0002-4b94-8e27-44833c2b940f", "status": "approved", "status_cluster": "form", "status_name": "closed"}
 ]
 
 DEFAULT_LANGUAGE: List[Dict] = [
@@ -132,6 +132,20 @@ def Assign_Roles(db: Session):
         Exception_handler(db, Error, "Assign_Roles")
 
 
+def Default_Status(db: Session, Admin_id: UUID):
+    try:
+        Existing = [f'{record.status_cluster}/{record.status_name}' for record in db.query(dbm.Status_form).filter(dbm.Status_form.status_pk_id.in_([s["status_pk_id"] for s in DEFAULT_STATUS])).all()]
+        New_Status = []
+
+        for Status in DEFAULT_STATUS:
+            if f'{Status["status_cluster"]}/{Status["status_name"]}' not in Existing:
+                New_Status.append(dbm.Status_form(created_fk_by=Admin_id, **Status))  # type: ignore[call-arg]
+        db.add_all(New_Status)
+        db.commit()
+    except Exception as Error:
+        Exception_handler(db, Error, "Default_Status")
+
+
 def Default_Language(db: Session, Admin_id: UUID):
     try:
         Existing = [str(record.language_pk_id) for record in db.query(dbm.Language_form).filter(dbm.Language_form.language_pk_id.in_([l["language_pk_id"] for l in DEFAULT_LANGUAGE])).all()]
@@ -162,18 +176,27 @@ def Default_Course_type(db: Session, Admin_id: UUID):
 
 def SetUp_table(engine):
     logger.info("Connecting To Database")
-    while True:
+    TRY = 0
+
+    while True and TRY < 10:
         try:
             dbm.Base.metadata.create_all(bind=engine)
+            TRY = 0
             break
         except OperationalError as OE:
+            TRY += 1
             logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
             sleep(10)
 
+    if TRY != 0:
+        logger.error(f"Could Not Create Engine after {TRY} times")
+        return False
     logger.info("Setting Up Listeners")
     for cls in dbm.Base.__subclasses__():
         if "_form" in cls.__name__:
             event.listen(cls, 'before_delete', archive_deleted_record)
+    logger.info("Database Setup finished")
+    return True
 
 
 def SetUp(db: Session):
@@ -182,6 +205,7 @@ def SetUp(db: Session):
     Default_user(db, ADMIN_ID)
     Default_Role(db, ADMIN_ID)
     Assign_Roles(db)
+    Default_Status(db, ADMIN_ID)
     Default_Language(db, ADMIN_ID)
     Default_Course_type(db, ADMIN_ID)
     logger.info('Admin Setup Finished')

@@ -36,6 +36,6 @@ def Create_Redis_URL(Config):
     if not Config:
         logger.error("Redis config not found.")
         return None
-    Redis_url = f"redis://:{Config['password']}@{Config['host']}:{Config['port']}/{Config['db']}"
+    Redis_url = f"redis://:{Config['password']}@{Config['host']}:{Config['port']}/{Config['db']}".replace("//:@", "//")
     logger.info(f'Redis: {Redis_url}')
     return Redis_url
