@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_limiter.depends import RateLimiter
@@ -54,6 +55,13 @@ async def delete_role(form_id, db=Depends(get_db)):
 @router.put("/update", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_role(Form: sch.update_role_schema, db=Depends(get_db)):
     status_code, result = dbf.update_role(db, Form)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+@router.put("/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+def update_status(db, form_id: UUID, status_id: UUID):
+    status_code, result = dbf.update_role_status(db, form_id, status_id)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
