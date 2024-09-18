@@ -73,7 +73,8 @@ def save_route(routes):
                 Rotes_Schema[tag] = []
             for route_signature in route.routes:
                 methods = f'{route_signature.methods}'[2:-2]
-                url = route_signature.path.split("{")[0] + "<UUID>" if "{" in route_signature.path else route_signature.path
+                url = route_signature.path
+                # url = route_signature.path.split("{")[0] + "<UUID>" if "{" in route_signature.path else route_signature.path
                 FullURL = f'[{methods: <6}] {url}'
                 if FullURL not in Rotes_Schema[tag]:
                     Rotes_Schema[tag].append(FullURL)

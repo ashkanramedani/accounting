@@ -1,25 +1,20 @@
 import dbm
-from datetime import date
-
+from datetime import date, timezone, timedelta, datetime
+from typing import List
 from sqlalchemy.orm import joinedload
 
-from db.User_Form import *
 
+from db.User_Form.Teacher_Forms import *
 
-# def teacher_salary_report(db: Session, subcourse_id: UUID, DropDowns: sch.teacher_salary_DropDowns):
-#     try:
-#         status, report_summary = SubCourse_report(db, subcourse_id, DropDowns)
-#         return status, report_summary
-#     except Exception as e:
-#         return Return_Exception(db, e)
 
 
 def teacher_courses(db: Session):
     try:
+        NOW = datetime.now(tz=IRAN_TIMEZONE).date()
         AllCourses = db \
             .query(dbm.Course_form) \
             .order_by(dbm.Course_form.ending_date.desc()) \
-            .filter(dbm.Course_form.ending_date < date.today(), dbm.Course_form.status != "deleted") \
+            .filter(dbm.Course_form.ending_date < NOW, dbm.Course_form.status != "deleted") \
             .all()
 
         return 200, AllCourses

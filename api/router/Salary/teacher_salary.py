@@ -29,7 +29,7 @@ async def teacher_sub_course(course_id: UUID, db=Depends(get_db)):
     return result
 
 
-@router.post("/teacher/summary/{sub_course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+@router.get("/teacher/summary/{sub_course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def teacher_summary(sub_course_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.SubCourse_report(db, sub_course_id)
     if status_code not in sch.SUCCESS_STATUS:

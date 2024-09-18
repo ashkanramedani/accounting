@@ -1,5 +1,6 @@
 # from faker import Faker
 import re
+from datetime import timedelta, timezone
 from typing import List, Dict, Tuple, Any
 from uuid import UUID
 
@@ -9,6 +10,9 @@ from sqlalchemy.orm import Session, Query
 import models as dbm
 import schemas as sch
 from lib import logger
+
+
+IRAN_TIMEZONE = timezone(offset=timedelta(hours=3, minutes=30))
 
 # key format
 #   lower().replace("_form", "").replace("_", "")
