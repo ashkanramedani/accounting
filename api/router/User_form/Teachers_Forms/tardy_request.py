@@ -78,7 +78,7 @@ async def verify_tardy_request(form_id, db=Depends(get_db)):
 
 
 @router.put("/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-def update_status(db, form_id: UUID, status_id: UUID):
+async def update_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.update_tardy_request_status(db, form_id, status_id)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
