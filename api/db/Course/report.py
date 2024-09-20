@@ -71,25 +71,34 @@ def Tardy_Score(tardy: int):
 
 
 def PreProcess_teacher_report(db: Session, sub_course_obj: dbm.Sub_Course_form) -> tuple[int, str | dict[str, sch.Report]]:
-    teachers_query = db.query(dbm.User_form) \
-        .join(dbm.Session_form, dbm.Session_form.session_teacher_fk_id == dbm.User_form.user_pk_id) \
-        .filter(dbm.Session_form.sub_course_fk_id == sub_course_obj.sub_course_pk_id, dbm.Session_form.status != "deleted", dbm.User_form.status != "deleted") \
-        .options(joinedload(dbm.User_form.roles)) \
-        .all()
+    try:
+        teachers_query = db.query(dbm.User_form) \
+            .join(
+                dbm.Session_form,
+                dbm.Session_form.session_teacher_fk_id == dbm.User_form.user_pk_id) \
+            .filter(
+                dbm.Session_form.sub_course_fk_id == sub_course_obj.sub_course_pk_id,
+                dbm.Session_form.status != "deleted",
+                dbm.User_form.status != "deleted") \
+            .options(
+                joinedload(dbm.User_form.roles)) \
+            .all()
 
-    return 200, {
-        str(teacher.user_pk_id): sch.Report(**teacher.__dict__, SUB=teacher.user_pk_id != sub_course_obj.sub_course_teacher_fk_id)
-        for teacher in teachers_query
-    }
+        return 200, {
+            str(teacher.user_pk_id): sch.Report(**teacher.__dict__, SUB=teacher.user_pk_id != sub_course_obj.sub_course_teacher_fk_id)
+            for teacher in teachers_query
+        }
+    except Exception as e:
+        return Return_Exception(db, e)
 
 
 @DEV_io()
-def Apply_scores(db: Session, DropDowns: sch.teacher_salary_DropDowns, sub_course_summary: dict[str, sch.Report], course_data: sch.course_data_for_report, teacher_tardy: int, cancelled_session: int) -> List[Dict]:
+def Apply_scores(db: Session, DropDowns: Dict, sub_course_summary: dict[str, sch.Report], course_data: sch.course_data_for_report, teacher_tardy: int, cancelled_session: int) -> List[Dict]:
     Final = []
     Score = {
         field: DropDown_value_table[field][value.value]
         if field in DropDown_value_table.keys() else value
-        for field, value in DropDowns
+        for field, value in DropDowns.items()
     }
 
     Score["tardy_score"] = Tardy_Score(teacher_tardy)
@@ -139,7 +148,9 @@ def Apply_scores(db: Session, DropDowns: sch.teacher_salary_DropDowns, sub_cours
 def SubCourse_report(db: Session, sub_course_id: UUID):
     try:
         sub_course: dbm.Sub_Course_form = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=sub_course_id).first()
-        DropDowns = sch.teacher_salary_DropDowns(**sub_course.supervisor_review)
+        if not sub_course.supervisor_review:
+            return 400, "supervisor_review Not found"
+        DropDowns = sub_course.supervisor_review
         if not sub_course:
             return 400, "sub course not found"
 
@@ -164,15 +175,22 @@ def SubCourse_report(db: Session, sub_course_id: UUID):
         course_data = sch.course_data_for_report(**course_data)
 
         status, sub_course_summary = PreProcess_teacher_report(db, sub_course)
+        logger.warning(sub_course_summary)
         if status != 200:
             return status, sub_course_summary
 
+        if not sub_course_summary:
+            return 400, "No session teacher to work with"
+
         cancelled_session = 0
-        # Loop Through Sessions
         AllSessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=sub_course.sub_course_pk_id).filter(dbm.Session_form.status != "deleted").all()
         sub_course_summary[str(sub_course.sub_course_teacher_fk_id)].total_sessions = len(AllSessions)
+
+        # Loop Through Sessions
         for session in AllSessions:
             Session_teacher = str(session.session_teacher_fk_id)
+
+
             if Session_teacher not in sub_course_summary:
                 logger.warning(f"Teacher: {Session_teacher} Has Been Skipped. ")
                 continue
@@ -264,10 +282,12 @@ def get_supervisor_review(db: Session, sub_course_id: UUID):
 
 def post_supervisor_review(db: Session, sub_course_id: UUID, Dropdowns: sch.teacher_salary_DropDowns):
     try:
-        sub_course = db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.subcourse_pk_id == sub_course_id)
+        sub_course = db.query(dbm.Sub_Course_form).filter(dbm.Sub_Course_form.sub_course_pk_id == sub_course_id)
         if not sub_course.first():
             return 400, "Bad Request: Target subcourse record not found"
-        sub_course.update({"supervisor_review": Dropdowns.__dict__}, synchronize_session=False)
+
+        supervisor_review = json.loads(json.dumps(Dropdowns.__dict__, cls=JSONEncoder))
+        sub_course.update({"supervisor_review": supervisor_review}, synchronize_session=False)
         db.commit()
         return 200, "Review Submitted Successfully"
 

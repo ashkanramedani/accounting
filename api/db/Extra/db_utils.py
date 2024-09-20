@@ -125,20 +125,6 @@ def record_order_by(db: Session, table, page: sch.NonNegativeInt, limit: sch.Pos
     try:
         query = db.query(table).filter(table.status != "deleted").filter_by(**filter_kwargs) if not query else query
 
-        # Search functionality
-        # if SearchKey is not None:
-        #     search_conditions = []
-        #     for column in table.__table__.columns:
-        #         column_type = column.type
-        #         if isinstance(column_type, (String, Integer, Float)):
-        #             search_conditions.append(column.ilike(f'%{SearchKey}%'))
-        #         elif isinstance(column_type, Boolean):
-        #             if SearchKey.lower() in ["true", "1"]:
-        #                 search_conditions.append(column.is_(True))
-        #             elif SearchKey.lower() in ["false", "0"]:
-        #                 search_conditions.append(column.is_(False))
-        #     query = query.filter(or_(*search_conditions))
-
         # Sort functionality
         if SortKey:
             if SortKey not in table.__table__.columns.keys():

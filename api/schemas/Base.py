@@ -1,3 +1,5 @@
+import random
+import string
 from datetime import time, date, datetime, timedelta
 from enum import Enum
 from typing import Optional, Any, List, Dict
@@ -206,9 +208,9 @@ class user_dropdown(BaseModel):
 
 
 class Entity(BaseModel):
-    name: str = identity.first_name()
-    last_name: str = identity.last_name()
-    email: EmailStr = identity.email()
+    name: str
+    last_name: str
+    email: EmailStr = ''.join(random.choices(string.ascii_letters, k=10)) + "@test.com"
 
     level: Optional[str] = ""
     address: Optional[str] = None
