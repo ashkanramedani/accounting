@@ -52,7 +52,7 @@ def post_session(db: Session, Form: sch.post_session_schema):
         if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request: employee not found"
 
-        subcourse = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first()
+        subcourse: dbm.Sub_Course_form = db.query(dbm.Sub_Course_form).filter_by(sub_course_pk_id=Form.sub_course_fk_id).filter(dbm.Sub_Course_form.status != "deleted").first()
         if not subcourse:
             return 400, "Bad Request: sub course not found"
 
@@ -60,7 +60,7 @@ def post_session(db: Session, Form: sch.post_session_schema):
             return 400, f"Bad Request: session is not in range of subcourse"
         data = Form.__dict__
 
-        current_sessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.sub_course_fk_id, course_fk_id=Form.course_fk_id).filter(dbm.Session_form.status != "deleted").count()
+        current_sessions = db.query(dbm.Session_form).filter_by(sub_course_fk_id=Form.sub_course_fk_id, course_fk_id=subcourse.course_fk_id).filter(dbm.Session_form.status != "deleted").count()
         if subcourse.number_of_session <= current_sessions:
             return 400, "SubCourse is Full"
 
@@ -70,7 +70,7 @@ def post_session(db: Session, Form: sch.post_session_schema):
         data["session_ending_time"] = (datetime.combine(datetime.today(), Fix_time(Form.session_starting_time)) + timedelta(minutes=Form.session_duration)).time()
         data["session_teacher_fk_id"] = subcourse.sub_course_teacher_fk_id
 
-        OBJ = dbm.Session_form(**data, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
+        OBJ = dbm.Session_form(**data, session_teacher_fk_id=subcourse.sub_course_teacher_fk_id, can_accept_sub=can_accept_sub)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
