@@ -1,7 +1,3 @@
-import sys
-
-import uvicorn
-
 try:
     from os import getenv
     from typing import List
@@ -89,13 +85,16 @@ METHOD = {
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
-    start_time = time()
+    # start_time = time()
 
     response = await call_next(request)
-    logger.info(f"[ {time() - start_time:.3f}s ] {response.status_code} / {METHOD[request.method]: >3} - {request.url}")
+    # try:
+    #     logger.log("INFO_access", f"[ {time() - start_time:.3f}s ] {response.status_code} / {METHOD[request.method]: >3} - {request.url}")
+    # except ValueError:
+    #     pass
+
     # response.headers["X-Process-Time"] = f'{time() - start_time:.5f}'
     return response
-
 
 if getenv('CREATE_ROUTE_SCHEMA'):
     logger.info('Creating Route Schema')
