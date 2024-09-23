@@ -10,7 +10,10 @@ from pytz import timezone
 from lib import requester
 
 STDERR_FORMATTER = " <green>{time:YYYY-MM-DD HH:mm:ss Z}</green> | <level>{level.no: <2}</level> | <cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
+OLD_LOG_PATH = "log/Log-{time:YYYY-MM}.jsonl"
 
+# filter = lambda record: record["level"].name != "INFO_access",
+    # self.logger.level("INFO_access", no=25, icon="✔️")
 
 def FILE_FORMATTER(record):
     record["extra"]["serialized"] = {
@@ -41,14 +44,18 @@ class Log:
         log_level = config["logger"].pop("level", 20)
 
         self.logger = _Logger(core=_Core(), exception=None, depth=0, record=False, lazy=False, colors=False, raw=False, capture=True, patchers=[], extra={})
+
         self.logger.add(
                 sys.stdout,
                 level=log_level,
                 format=STDERR_FORMATTER)
+
         self.logger.add(
-                "log/Log-{time:YYYY-MM}.jsonl",
+                "log/Api_Log.jsonl",
                 level=log_level,
-                format=FILE_FORMATTER, **config["logger"])
+                format=FILE_FORMATTER,
+                **config["logger"])
+
 
     def __getattr__(self, name):
         # Delegate attribute access to the underlying logger instance
