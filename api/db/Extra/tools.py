@@ -1,7 +1,9 @@
 import functools
 from functools import wraps
 # from faker import Faker
-from typing import Tuple
+from typing import Tuple, List
+
+import fastapi
 
 from lib import logger
 
@@ -63,8 +65,19 @@ def safe_run(func):
     return wrapper
 
 
-def save_route(routes):
+def get_attr(Obj):
+    Res = {}
+    for atr in dir(Obj):
+        try:
+            Value = str(getattr(Obj, atr))
+        except AttributeError:
+            Value = str(atr)
 
+        Res[atr] = Value
+    return Res
+
+
+def save_route(routes):
     Rotes_Schema = {}
     for route in routes:
         try:
@@ -80,4 +93,24 @@ def save_route(routes):
                     Rotes_Schema[tag].append(FullURL)
         except AttributeError:
             continue
+    return Rotes_Schema
+
+
+def save_route2(routes: List[fastapi.APIRouter]) -> dict:
+    def prepare_inner_dict(sub_route):
+        return {
+            "url": sub_route.path,
+            "method": f'{sub_route.methods}'[2:-2],
+            "params": str(getattr(getattr(sub_route, "endpoint"), "__annotations__"))
+        }
+
+    Rotes_Schema = {}
+    for route in routes:
+        try:
+            tag = f'{route.tags}'[2:-2] if route.tags else "[]"
+            if tag in Rotes_Schema:
+                continue
+            Rotes_Schema[tag] = [prepare_inner_dict(route_signature) for route_signature in route.routes]
+        except Exception as e:
+            logger.error(e)
     return Rotes_Schema
