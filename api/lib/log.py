@@ -11,13 +11,19 @@ from lib import requester
 
 STDERR_FORMATTER = " <green>{time:YYYY-MM-DD HH:mm:ss Z}</green> | <level>{level.no: <2}</level> | <cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
 OLD_LOG_PATH = "log/Log-{time:YYYY-MM}.jsonl"
+BASE_LOG_FILE = f'{normpath(f"{dirname(__file__)}/../log")}'
+
 
 # filter = lambda record: record["level"].name != "INFO_access",
-    # self.logger.level("INFO_access", no=25, icon="✔️")
+# self.logger.level("INFO_access", no=25, icon="✔️")
+
+def Time_formatter(time_record):
+    return time_record.astimezone(timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z")
+
 
 def FILE_FORMATTER(record):
     record["extra"]["serialized"] = {
-        "timestamp": record["time"].astimezone(timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z"),
+        "timestamp": Time_formatter(record["time"]),
         "message": record["message"],
         "location": f'{record["module"]}:{record["function"]}:{record["line"]}',
         "level": record["level"].name,
@@ -26,7 +32,12 @@ def FILE_FORMATTER(record):
     return "{extra[serialized]}\n"
 
 
-class Log:
+def ACCESS_FORMATTER(record):
+    record["extra"]["serialized"] = {"timestamp": Time_formatter(record["time"]), "message": record["message"], "data": record["extra"]["data"]}
+    return "{extra[serialized]}\n"
+
+
+class LOG:
     def __init__(self):
         self.Info_Status = [200, 201]
         self.Warn_Status = [400]
@@ -34,32 +45,48 @@ class Log:
 
         try:
             self.config_path = "configs/config.json"
-            config = load(open(self.config_path))
+            self.config = load(open(self.config_path))["logger"]
         except FileNotFoundError:
             self.config_path = join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")
-            config = load(open(self.config_path))
+            self.config = load(open(self.config_path))["logger"]
 
         self.developer = True
 
-        log_level = config["logger"].pop("level", 20)
-
+        self.log_level = self.config.pop("level", 20)
+        self.rotation = self.config.pop("rotation", "1 MB")
+        self.compression = self.config.pop("compression", "zip")
         self.logger = _Logger(core=_Core(), exception=None, depth=0, record=False, lazy=False, colors=False, raw=False, capture=True, patchers=[], extra={})
 
-        self.logger.add(
-                sys.stdout,
-                level=log_level,
-                format=STDERR_FORMATTER)
-
-        self.logger.add(
-                "log/Api_Log.jsonl",
-                level=log_level,
-                format=FILE_FORMATTER,
-                **config["logger"])
-
-
     def __getattr__(self, name):
-        # Delegate attribute access to the underlying logger instance
         return getattr(logger_obj, name)
+
+    def info(self, msg, depth=1):
+        self.logger.opt(depth=depth).info(msg)
+
+    def warning(self, msg, depth=1):
+        self.logger.opt(depth=depth).warning(msg)
+
+    def error(self, msg, depth=1):
+        self.logger.opt(depth=depth).error(msg)
+
+    def debug(self, msg, depth=1):
+        self.logger.opt(depth=depth).debug(msg)
+
+
+class Main_Log(LOG):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(Main_Log, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def __init__(self):
+        if not hasattr(self, '_initialized'):
+            super().__init__()
+            self.logger.add(sys.stdout, level=self.log_level, format=STDERR_FORMATTER)
+            self.logger.add(f"{BASE_LOG_FILE}/Api_Log.jsonl", level=self.log_level, format=FILE_FORMATTER, rotation=self.rotation, compression=self.compression)
+            self._initialized = True
 
     def keep_log(self, msg, type_log, user_id, location):
         try:
@@ -97,17 +124,27 @@ class Log:
         else:
             self.logger.opt(depth=2).warning("Status Code Has Not Beet Categorised.\n\t{msg}")
 
-    def info(self, msg, depth=1):
-        self.logger.opt(depth=depth).info(msg)
 
-    def warning(self, msg, depth=1):
-        self.logger.opt(depth=depth).warning(msg)
+class Access_Log(LOG):
+    _instance = None
 
-    def error(self, msg, depth=1):
-        self.logger.opt(depth=depth).error(msg)
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(Access_Log, cls).__new__(cls, *args, **kwargs)
+        return cls._instance
+
+    def __init__(self):
+        if not hasattr(self, '_initialized'):
+            super().__init__()
+            self.logger.add(f"{BASE_LOG_FILE}/Api_access.jsonl", format=ACCESS_FORMATTER, rotation=self.rotation, compression=self.compression)
+            self._initialized = True
+
+    def info(self, msg, depth=1, **Binds):
+        self.logger.opt(depth=depth).bind(**Binds).info(msg)
 
 
-logger = Log()
+logger = Main_Log()
+access_log = Access_Log()
 
 if __name__ == '__main__':
     logger.info('test')
