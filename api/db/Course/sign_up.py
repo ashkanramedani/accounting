@@ -1,49 +1,12 @@
-from datetime import timedelta, datetime, timezone
-from typing import List, Dict
-
 from sqlalchemy.orm import Session
 
 import models as dbm
-import schemas as sch
-from lib.Date_Time import *
 from api.db.Course import course_additional_details
-from .Session import delete_session
-from ..Extra import *
+from db.Extra import *
+import schemas as sch
 
-from datetime import datetime, date
-
-IRAN_TIMEZONE = timezone(offset=timedelta(hours=3, minutes=30))
-
-from pydantic import BaseModel
-from schemas.Base import *
-
-
-class active_course_response(BaseModel):
-    course_pk_id: UUID
-
-    course_name: str
-    package_discount: float
-    course_image: str
-    course_capacity: int
-    course_level: str
-    course_code: str
-
-    starting_date: date
-    ending_date: date
-
-    teachers: List[export_employee | UUID] = None
-    session_signature: List = []
-    available_seat: int = 0
-    number_of_session: int = 0
-
-    tags: List[export_tag] = []
-    categories: List[export_categories] = []
-    language: export_language
-    type: export_course_type
-
-    class Config:
-        extra = 'ignore'
-        orm_mode = True
+from datetime import datetime
+from typing import List
 
 
 def get_sign_up_active_course(db: Session, course_id: UUID):
@@ -68,14 +31,9 @@ def get_sign_up_active_subcourse(db: Session, sub_course_id: UUID):
         .all()
 
 
-class post_pre_payment_sign_up(BaseModel):
-    student_pk_id: UUID
-    course_id: UUID
-    sub_course_ids: List[UUID] = None
-    discount_code: str = None
 
 
-def pre_payment_sign_up(db: Session, Form: post_pre_payment_sign_up):
+def pre_payment_sign_up(db: Session, Form: sch.post_pre_payment_sign_up):
     try:
         course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_id).first()
         if course is None:
@@ -136,9 +94,9 @@ def sign_up(db: Session, success: bool, pre_payment_id: UUID):
     payment_record.status = "payed"
     all_sign_up: List[dbm.SignUp_queue] = db.query(dbm.SignUp_queue).filter_by(course_fk_id=payment_record.course_fk_id, student_pk_id=payment_record.student_pk_id).all()
 
-    for sign_up in all_sign_up:
-        dbm.SignUp_form(student_pk_id=payment_record.student_pk_id, course_fk_id=payment_record.course_fk_id, subcourse_fk_id=sign_up.subcourse_fk_id)
-        db.delete(sign_up)
+    for signup in all_sign_up:
+        dbm.SignUp_form(student_pk_id=payment_record.student_pk_id, course_fk_id=payment_record.course_fk_id, subcourse_fk_id=signup.subcourse_fk_id)
+        db.delete(signup)
     db.commit()
 
     return 200, payment_record
