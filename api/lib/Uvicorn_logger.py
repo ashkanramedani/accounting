@@ -26,11 +26,15 @@ class AccessFormatter(logging.Formatter):
         super().__init__(fmt=fmt, datefmt=datefmt)
 
     def formatMessage(self, record: logging.LogRecord) -> str:
-        record_copy = copy(record)
-        client_addr, method, full_path, http_version, status_code = record_copy.args
-        status_code = get_status_code(int(status_code))
-        record_copy.__dict__.update({"client_addr": client_addr, "request_line": f"{method} {full_path}", "status_code": status_code})
-        return super().formatMessage(record_copy)
+        return super().formatMessage(record)
+        # record_copy = copy(record)
+        # r = record_copy.__dict__
+        # print(r)
+        # client_addr, method, full_path, http_version, status_code = record_copy.args
+        # status_code = get_status_code(int(status_code))
+        # record_copy.__dict__.update({"client_addr": client_addr, "request_line": f"{method} {full_path}", "status_code": status_code})
+
+        # record_copy.__dict__.update({})
 
 
 class StatReloadFilter(logging.Filter):
