@@ -11,7 +11,7 @@ class discount_code(Base_form):
 
 
 class post_discount_code_schema(discount_code):
-    discount_type: str = Literal["percentage", "fix"]
+    discount_type: Literal["percentage", "fix"]
     discount_amount: float
 
     target_user_fk_id: Optional[UUID] = None

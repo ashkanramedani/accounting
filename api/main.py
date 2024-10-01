@@ -15,6 +15,7 @@ try:
 
     # fastApi
     from fastapi import FastAPI, Request
+    from fastapi.responses import HTMLResponse
     from fastapi_limiter import FastAPILimiter
     from contextlib import asynccontextmanager
     from fastapi.middleware.cors import CORSMiddleware
