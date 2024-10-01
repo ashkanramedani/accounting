@@ -1,4 +1,7 @@
-import dbm
+from datetime import timedelta
+from typing import Literal
+
+from sqlalchemy import and_
 
 from db.User_Form import *
 
@@ -111,6 +114,16 @@ def Get_Report(db: Session, Salary_Policy: dbm.Salary_Policy_form, user_fk_id: U
 
 
 def employee_salary_report(db: Session, user_fk_id, year, month):
+    """
+    Calculate the salary of an employee
+    :param db: DataBase connection
+    :param user_fk_id: target user
+    :param year: international
+    :param month: international
+    :return: employee salary record
+    """
+    year, month, _ = to_international(year, month, return_obj=False)
+
     try:
         existing = db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
         if existing:
@@ -159,9 +172,21 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         return Return_Exception(db, e)
 
 
-def get_employee_salary(db: Session, user_fk_id, year, month):
+def get_employee_salary(db: Session, user_fk_id: UUID | None, target_date: datetime.date, field: Literal["create", "update"] = "create"):
     try:
-        return 200, db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
+        target_date = to_international(target_date.year, target_date.month, target_date.day)
+        start = datetime.combine(target_date, time())
+        end = start + timedelta(days=1)
+        time_alias = dbm.Employee_Salary_form.create_date if field == "create" else dbm.Employee_Salary_form.update_date
+
+        Query = db.query(dbm.Employee_Salary_form).filter(dbm.Employee_Salary_form.status != "deleted", and_(time_alias >= start, time_alias < end))
+
+        match user_fk_id:
+            case None:
+                return 200, Query.all()
+            case _:
+                return 200, Query.filter_by(user_fk_id=user_fk_id).all()
+
     except Exception as e:
         return Return_Exception(db, e)
 

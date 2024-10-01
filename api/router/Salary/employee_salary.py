@@ -1,4 +1,5 @@
-from typing import List
+import datetime
+from typing import List, Literal
 
 from .Base import *
 
@@ -13,12 +14,6 @@ async def employee_salary(Form: sch.Input, db=Depends(get_db)):
 
 @router.get("/employee/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.employee_salary_Response)
 async def search_report(employee_id: UUID, year: sch.PositiveInt, month: sch.PositiveInt, db=Depends(get_db)):
-    if not employee_id:
-        raise HTTPException(status_code=400, detail="Employee ID Not provided")
-    if not year:
-        raise HTTPException(status_code=400, detail="Year Not provided")
-    if not month:
-        raise HTTPException(status_code=400, detail="Month Not provided")
     if month > 12:
         raise HTTPException(status_code=400, detail="Invalid Month")
     status_code, result = dbf.employee_salary_report(db, employee_id, year, month)
@@ -27,11 +22,20 @@ async def search_report(employee_id: UUID, year: sch.PositiveInt, month: sch.Pos
     return result
 
 
+@router.get("/employee/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.employee_salary_Response)
+async def search_employee_salary(employee_id: UUID, target_date: datetime.date, field: Literal["create", "update"] = "create", db=Depends(get_db)):
+    status_code, result = dbf.get_employee_salary(db, employee_id, target_date, field)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
 #
-# @router.post("/search/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-# async def search_teacher_report(employee_id: UUID, year: sch.PositiveInt, month: sch.PositiveInt, db=Depends(get_db)):
-#     raise HTTPException(status_code=501, detail="Not Implemented")
-#     status_code, result = dbf.get_employee_salary(db, employee_id, year, month)
+# @router.get("/sand/", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.employee_salary_Response)
+# async def sand_search_report(db=Depends(get_db)):
+#     employee_id = "00000001-0000-4b94-8e27-44833c2b940f"
+#     year = 2025
+#     month = 1
+#     status_code, result = dbf.employee_salary_report(db, employee_id, year, month)
 #     if status_code not in sch.SUCCESS_STATUS:
 #         raise HTTPException(status_code=status_code, detail=result)
 #     return result
