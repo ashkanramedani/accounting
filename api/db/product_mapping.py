@@ -33,7 +33,7 @@ def post_product_mapping(db: Session, Form: sch.post_product_mapping_schema):
 
 def update_product_mapping(db: Session, Form: sch.update_product_mapping_schema):
     try:
-        record = db.query(dbm.Products_Mapping_form).filter_by(product_pk_id=Form.product_mapping_pk_id).filter(dbm.Products_Mapping_form.product_mapping != "deleted")
+        record = db.query(dbm.Products_Mapping_form).filter_by(product_pk_id=Form.products_mapping_pk_id).filter(dbm.Products_Mapping_form.product_mapping != "deleted")
         if not record.first():
             return 404, "Record Not Found"
 

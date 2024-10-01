@@ -175,28 +175,32 @@ def Default_Course_type(db: Session, Admin_id: UUID):
 
 
 def SetUp_table(engine):
-    logger.info("Connecting To Database")
-    TRY = 0
+    try:
+        logger.info("Connecting To Database")
+        TRY = 0
 
-    while True and TRY < 10:
-        try:
-            dbm.Base.metadata.create_all(bind=engine)
-            TRY = 0
-            break
-        except OperationalError as OE:
-            TRY += 1
-            logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
-            sleep(10)
+        while True and TRY < 10:
+            try:
+                dbm.Base.metadata.create_all(bind=engine)
+                TRY = 0
+                break
+            except OperationalError as OE:
+                TRY += 1
+                logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
+                sleep(10)
 
-    if TRY != 0:
-        logger.error(f"Could Not Create Engine after {TRY} times")
+        if TRY != 0:
+            logger.error(f"Could Not Create Engine after {TRY} times")
+            return False
+        logger.info("Setting Up Listeners")
+        for cls in dbm.Base.__subclasses__():
+            if "_form" in cls.__name__:
+                event.listen(cls, 'before_delete', archive_deleted_record)
+        logger.info("Database Setup finished")
+        return True
+    except Exception as e:
+        logger.error(f"Database Setup failed: {e}")
         return False
-    logger.info("Setting Up Listeners")
-    for cls in dbm.Base.__subclasses__():
-        if "_form" in cls.__name__:
-            event.listen(cls, 'before_delete', archive_deleted_record)
-    logger.info("Database Setup finished")
-    return True
 
 
 def SetUp(db: Session):

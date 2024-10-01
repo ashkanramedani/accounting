@@ -1034,25 +1034,6 @@ class TEMP_form(Base, Base_form):
     value = Column(Integer, default=0)
 
 
-class Discount_code_form(Base, Base_form):
-    __tablename__ = "discount_code"
-    discount_code_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
-    target_user_fk_id = create_foreignKey("User_form", nullable=True)
-    target_product_fk_id = create_foreignKey("Products_Mapping_form", nullable=True)
-
-    discount_code = Column(String, nullable=False, index=True)
-    discount_type = Column(String, nullable=False, index=True)  # Fix / Percentage
-    discount_amount = Column(Float, nullable=False)
-
-    start_date = Column(DATE, nullable=True, index=True, default=None)
-    end_date = Column(DATE, nullable=True, index=True, default=None)
-
-    created = relationship("User_form", foreign_keys=[created_fk_by])
-    target_user = relationship("User_form", foreign_keys=[target_user_fk_id])
-    target_product = relationship("Products_Mapping_form", foreign_keys=[target_product_fk_id])
-
-
 class Discount_code_usage_form(Base, Base_form):
     __tablename__ = "discount_code_usage"
 
@@ -1063,6 +1044,7 @@ class Discount_code_usage_form(Base, Base_form):
 
     user = relationship("User_form", foreign_keys=[user_fk_id])
     discount_code = relationship("Discount_code_form", foreign_keys=[discount_code_fk_id])
+
 
 class SignUp_queue(Base):
     __tablename__ = "signup_queue"
@@ -1108,6 +1090,7 @@ class SignUp_form(Base):
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
 
+
 class Status_history(Base):
     __tablename__ = "status_history"
 
@@ -1117,11 +1100,12 @@ class Status_history(Base):
     table_name = Column(String, nullable=False, index=True)
     create_date = Column(DateTime, default=IRAN_TIME, nullable=False, index=True)
 
-class Products_Mapping_form(Base, Base_form):
-    __tablename__ = "product_mapping"
-    # __table_args__ = (UniqueConstraint('product_pk_id', 'target_product_fk_id'),)
 
-    product_pk_id = create_Unique_ID()
+class Products_Mapping_form(Base, Base_form):
+    __tablename__ = "products_mapping"
+    # __table_args__ = (UniqueConstraint('product_mapping_pk_id', 'target_product_fk_id'),)
+
+    products_mapping_pk_id = create_Unique_ID()
     target_product_fk_id = Column(GUID, nullable=False, unique=False, index=True)
     target_product_table = Column(String, nullable=True, index=True)
 
@@ -1146,3 +1130,26 @@ class Shopping_card_form(Base, Base_form):
 
     total = Column(Float, nullable=False)
     total_discounted = Column(Float, nullable=False)
+
+
+class Discount_code_form(Base, Base_form):
+    __tablename__ = "discount_code"
+    discount_code_pk_id = create_Unique_ID()
+    created_fk_by = create_foreignKey("User_form")
+    target_user_fk_id = create_foreignKey("User_form", nullable=True)
+    target_product_fk_id = create_foreignKey("Products_Mapping_form", nullable=True)
+
+    discount_code = Column(String, nullable=False, index=True)
+    discount_type = Column(String, nullable=False, index=True)  # Fix / Percentage
+    discount_amount = Column(Float, nullable=False)
+
+    start_date = Column(DATE, nullable=True, index=True, default=None)
+    end_date = Column(DATE, nullable=True, index=True, default=None)
+
+    created = relationship("User_form", foreign_keys=[created_fk_by])
+    target_user = relationship("User_form", foreign_keys=[target_user_fk_id])
+    target_product = relationship("Products_Mapping_form", foreign_keys=[target_product_fk_id])
+
+"""
+ Database Setup failed: Could not initialize target column for ForeignKey 'products_mapping.products_mapping_pk_id' on table 'discount_code': table 'products_mapping' has no column named 'products_mapping_pk_id'
+"""

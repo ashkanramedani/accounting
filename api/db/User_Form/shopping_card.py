@@ -110,13 +110,13 @@ def refresh_shopping_card(db: Session, shopping_card_id: UUID):
         bucket: List[Dict] = record.bucket
         items_id = {item["item_pk_id"]: {**item} for item in bucket}
 
-        product: List[dbm.Products_Mapping_form] = db.query(dbm.Products_Mapping_form).filter(dbm.Products_Mapping_form.product_pk_id.in_(items_id.keys())).all()
+        product: List[dbm.Products_Mapping_form] = db.query(dbm.Products_Mapping_form).filter(dbm.Products_Mapping_form.products_mapping_pk_id.in_(items_id.keys())).all()
 
         WARN = {}
         for item in product:
-            if (item_needed := items_id[item.product_pk_id]["quantity"]) > item.quantity:
+            if (item_needed := items_id[item.products_mapping_pk_id]["quantity"]) > item.quantity:
                 WARN[item.product_name] = {"item_needed": item_needed, "item_available": item.quantity, "WARN": "Not Enough Stock"}
-            if (item_price := items_id[item.product_pk_id]["price"]) != item.product_price:
+            if (item_price := items_id[item.products_mapping_pk_id]["price"]) != item.product_price:
                 WARN[item.product_name] = {"item_price": item_price, "new_price": item.product_price, "WARN": "Price Change"}
         if WARN:
             return 400, WARN

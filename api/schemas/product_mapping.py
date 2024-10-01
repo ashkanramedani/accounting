@@ -17,7 +17,7 @@ class post_product_mapping_schema(product_mapping):
 
 
 class update_product_mapping_schema(product_mapping):
-    product_mapping_pk_id: UUID
+    products_mapping_pk_id: UUID
 
     class Config:
         extra = 'ignore'

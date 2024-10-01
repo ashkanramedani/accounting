@@ -31,8 +31,6 @@ def get_sign_up_active_subcourse(db: Session, sub_course_id: UUID):
         .all()
 
 
-
-
 def pre_payment_sign_up(db: Session, Form: sch.post_pre_payment_sign_up):
     try:
         course = db.query(dbm.Course_form).filter_by(course_pk_id=Form.course_id).first()
