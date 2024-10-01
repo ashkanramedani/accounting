@@ -2,6 +2,7 @@ import io
 from typing import List
 from uuid import UUID
 
+import cchardet as chardet
 import pandas as pd
 from fastapi import APIRouter, Depends
 from fastapi import File, UploadFile
@@ -10,10 +11,8 @@ from fastapi_limiter.depends import RateLimiter
 
 import db as dbf
 import schemas as sch
-from lib import logger
-from models import get_db
 from lib.Date_Time import generate_month_interval
-import cchardet as chardet
+from models import get_db
 
 router = APIRouter(prefix='/api/v1/form/fingerprint_scanner', tags=['Fingerprint_scanner'])
 
@@ -37,6 +36,8 @@ def Decode(content):
         except UnicodeDecodeError:
             continue
     return None
+
+
 # Assuming the LoadFile function is already defined here
 async def LoadFile(file: UploadFile):
     try:
@@ -79,6 +80,7 @@ async def LoadFile(file: UploadFile):
     except Exception as e:
         print(f'{e.__class__.__name__}: {e}')
         return 500, f'{e.__class__.__name__}: {e.args}'
+
 
 @router.post("/bulk_add/{created_by}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def bulk_add_fingerprint_scanner(created_by: UUID, db=Depends(get_db), file: UploadFile = File(...)):
