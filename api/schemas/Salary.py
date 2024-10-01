@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import NonNegativeFloat, root_validator
 
 from .Base import *
@@ -11,13 +13,6 @@ class salary_type(Enum):
 
 # ---------------------- Employee_Salary_form ----------------------
 class SalaryPolicy(Base_form):
-    user_fk_id: UUID
-
-    day_starting_time: Optional[time | str | None] = None
-    day_ending_time: Optional[time | str | None] = None
-    Regular_hours_cap: Optional[int | None] = None
-    Salary_Type: str
-
     # finger_print
     Base_salary: NonNegativeFloat
     Regular_hours_factor: NonNegativeFloat
@@ -55,7 +50,11 @@ class SalaryPolicy(Base_form):
 
 
 class post_SalaryPolicy_schema(SalaryPolicy):
-    pass
+    user_fk_id: UUID
+    day_starting_time: Optional[time | str | None] = None
+    day_ending_time: Optional[time | str | None] = None
+    Regular_hours_cap: Optional[int | None] = None
+    Salary_Type: Literal["Fixed", "Split", "Hourly"]
 
 
 class update_SalaryPolicy_schema(SalaryPolicy):
