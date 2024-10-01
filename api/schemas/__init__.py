@@ -9,3 +9,4 @@ from .TagsCategories import *
 from .User_form import *
 from .Template import *
 from .Status import *
+from .product_mapping import *

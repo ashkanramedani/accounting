@@ -5,3 +5,4 @@ from .Teacher_Forms import Sub_Request
 from .payment import *
 from .reward_card import *
 from .Discount_code import *
+from .shopping_card import *
