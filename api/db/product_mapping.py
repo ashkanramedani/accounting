@@ -21,7 +21,7 @@ def get_all_product_mapping(db: Session, page: sch.NonNegativeInt, limit: sch.Po
 
 def post_product_mapping(db: Session, Form: sch.post_product_mapping_schema):
     try:
-        OBJ = dbm.Products_Mapping_form(**Form.__dict__)  # type: ignore[call-arg]
+        OBJ = dbm.Products_Mapping_form(**Form.__dict__, target_product_table="")  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
@@ -73,3 +73,20 @@ def delete_product_mapping(db: Session, product_mapping_id, deleted_by: UUID = N
         return 200, "Deleted"
     except Exception as e:
         return Return_Exception(db, e)
+
+
+entity_registry = {
+    'course': dbm.Course_form,
+}
+
+
+def get_product_ID(db: Session, product_mapping_id):
+    Mapped_record = db.query(dbm.Products_Mapping_form).filter_by(products_mapping_pk_id=product_mapping_id).first()
+
+    if not Mapped_record:
+        return 400, "product not found"
+
+    if not (entity_class := entity_registry.get(Mapped_record.target_product_table, None)):
+        return 400, "Mapped product not found"
+
+    return 200, db.query(entity_class).filter_by(id=Mapped_record.target_product_fk_id).first()
