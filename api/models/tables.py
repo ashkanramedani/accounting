@@ -1,14 +1,12 @@
-import datetime
 from typing import List
 
-from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time, case
+from sqlalchemy import Boolean, Integer, String, DateTime, Table, BigInteger, Float, UniqueConstraint, DATE, TIME, Date, Time, case, MetaData
 from sqlalchemy.dialects.postgresql import JSONB, JSON
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import Mapped, relationship, declarative_base
 from sqlalchemy.sql import expression, func
 
 from models.Func import *
-from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 metadata_obj = MetaData()
@@ -83,7 +81,7 @@ class EducationalInstitutions(Base, Base_form):
         return f'<EducationalInstitution "{self.educational_institution_pk_id}">'
 
 
-#class Authentications(Base, Base_form):
+# class Authentications(Base, Base_form):
 #     __tablename__ = "tbl_authentications"
 #     authentication_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
 #     username = Column(String, index=True, unique=True, nullable=False)
@@ -863,7 +861,7 @@ class Session_Cancellation_form(Base, Base_form):
         return Remove_Base_Data(self.__dict__)
 
 
-#class Reassign_Instructor_form(Base, Base_form):
+# class Reassign_Instructor_form(Base, Base_form):
 #     __tablename__ = "reassign_instructor"
 #
 #     reassign_instructor_pk_id = create_Unique_ID()
@@ -1040,13 +1038,31 @@ class Discount_code_form(Base, Base_form):
     __tablename__ = "discount_code"
     discount_code_pk_id = create_Unique_ID()
     created_fk_by = create_foreignKey("User_form")
+    target_user_fk_id = create_foreignKey("User_form", nullable=True)
+    target_product_fk_id = create_foreignKey("Products_Mapping_form", nullable=True)
 
     discount_code = Column(String, nullable=False, index=True)
     discount_type = Column(String, nullable=False, index=True)  # Fix / Percentage
     discount_amount = Column(Float, nullable=False)
 
-    created = relationship("User_form", foreign_keys=[created_fk_by])
+    start_date = Column(DATE, nullable=True, index=True, default=None)
+    end_date = Column(DATE, nullable=True, index=True, default=None)
 
+    created = relationship("User_form", foreign_keys=[created_fk_by])
+    target_user = relationship("User_form", foreign_keys=[target_user_fk_id])
+    target_product = relationship("Products_Mapping_form", foreign_keys=[target_product_fk_id])
+
+
+class Discount_code_usage_form(Base, Base_form):
+    __tablename__ = "discount_code_usage"
+
+    discount_code_usage_pk_id = create_Unique_ID()
+
+    user_fk_id = create_foreignKey("User_form")
+    discount_code_fk_id = create_foreignKey("Discount_code_form")
+
+    user = relationship("User_form", foreign_keys=[user_fk_id])
+    discount_code = relationship("Discount_code_form", foreign_keys=[discount_code_fk_id])
 
 class SignUp_queue(Base):
     __tablename__ = "signup_queue"
@@ -1092,12 +1108,41 @@ class SignUp_form(Base):
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
 
-
 class Status_history(Base):
-    __tablename__ = "status_status"
+    __tablename__ = "status_history"
 
-    Status_status_pk_id = create_Unique_ID()
+    status_history_pk_id = create_Unique_ID()
 
     status = Column(String, nullable=False, index=True)
     table_name = Column(String, nullable=False, index=True)
     create_date = Column(DateTime, default=IRAN_TIME, nullable=False, index=True)
+
+class Products_Mapping_form(Base, Base_form):
+    __tablename__ = "product_mapping"
+    # __table_args__ = (UniqueConstraint('product_pk_id', 'target_product_fk_id'),)
+
+    product_pk_id = create_Unique_ID()
+    target_product_fk_id = Column(GUID, nullable=False, unique=False, index=True)
+    target_product_table = Column(String, nullable=True, index=True)
+
+    product_name = Column(String, nullable=False, index=True)
+    product_quantity = Column(Integer, default=0)
+    product_price = Column(Float, nullable=False)
+
+
+class Transaction_form(Base, Base_form):
+    __tablename__ = "transaction"
+    transaction_pk_id = create_Unique_ID()
+
+
+class Shopping_card_form(Base, Base_form):
+    __tablename__ = "shopping_card"
+    shopping_card_fk_id = create_Unique_ID()
+    user_fk_id = create_foreignKey("User_form")
+    transaction_fk_id = create_foreignKey("Transaction_form", nullable=True)
+    discount_fk_id = create_foreignKey("Discount_code_form", nullable=True)
+
+    bucket = Column(JSON, nullable=False)
+
+    total = Column(Float, nullable=False)
+    total_discounted = Column(Float, nullable=False)
