@@ -1,11 +1,11 @@
+import datetime
 from random import choices
+from string import ascii_letters, digits
 
 from sqlalchemy.orm import Session
 
-from string import ascii_letters, digits
-
-import schemas as sch
 import models as dbm
+import schemas as sch
 from db.Extra import *
 
 
@@ -14,6 +14,7 @@ def generate_unique_discount_code(existing_codes):
         new_code = ''.join(choices(ascii_letters + digits, k=8))
         if new_code not in existing_codes:
             return new_code
+
 
 def get_discount_code(db: Session, discount_code_id):
     try:
@@ -71,6 +72,7 @@ def update_discount_code(db: Session, Form: sch.update_discount_code_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def update_discount_code_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Discount_code_form).filter_by(discount_code_pk_id=form_id).first()
@@ -86,5 +88,45 @@ def update_discount_code_status(db: Session, form_id: UUID, status_id: UUID):
         db.commit()
 
         return 200, "Status Updated"
+    except Exception as e:
+        return Return_Exception(db, e)
+
+
+def apply_discount_code(db: Session, Form: sch.apply_code):
+    """
+        return new price if discount_code is valid
+    """
+    try:
+        record = db \
+            .query(dbm.Discount_code_form) \
+            .filter_by(discount_code=Form.discount_code) \
+            .filter(dbm.Discount_code_form.status != "deleted") \
+            .first()
+
+        if not record:
+            return 400, "Discount Code Not Found"
+
+        now = datetime.datetime.now(tz=IRAN_TIMEZONE)
+        if record.start_date and now < record.start_date:
+            return 400, "Discount Code not available yet"
+        if record.end_date and record.end_date < now:
+            return 400, "Discount Code Expired"
+
+        if record.target_user and record.target_user != Form.target_user:
+            return 400, "target user cant use this code"
+
+        if record.target_product and record.target_product != Form.target_product:
+            return 400, "target product cant use this code"
+
+        match record.discount_type:
+            case "percentage":
+                discounted_price = Form.price - (Form.price * record.discount_amount / 100)
+            case "fix":
+                discounted_price = Form.price - record.discount_amount
+            case _:
+                return 400, "Invalid Discount Type"
+
+        return 200, round(max(discounted_price, 0), 2)
+
     except Exception as e:
         return Return_Exception(db, e)

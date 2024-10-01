@@ -51,9 +51,18 @@ async def update_discount_code(Form: sch.update_discount_code_schema, db=Depends
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 @router.put("/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.update_discount_code_status(db, form_id, status_id)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result
+
+
+@router.get("/apply_code", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
+async def apply_discount_code(Form: sch.apply_code, db=Depends(get_db)):
+    status_code, result = dbf.apply_discount_code(db, Form)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
     return result
