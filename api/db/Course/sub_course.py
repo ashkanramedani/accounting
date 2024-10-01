@@ -6,8 +6,8 @@ from sqlalchemy.orm import Session
 import models as dbm
 import schemas as sch
 from lib.Date_Time import *
-from .Session import delete_session
-from ..Extra import *
+from db.Course.Session import delete_session
+from db.Extra import *
 
 
 def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:
@@ -64,11 +64,12 @@ def post_subcourse(db: Session, Form: sch.post_sub_course_schema):
         session_signature = data.pop("session_signature")
         # Create SubCourse
         sub_course: dbm.Sub_Course_form = create_subcourse(db, data, course)
+        sessions: List | None = sub_course.sessions
 
         # Create Sessions
         if session_signature:
             duplicates = create_sessions(db, Form, sub_course, session_signature, [f'{session.session_date} {session.session_starting_time}' for session in (course.sessions if course.sessions else [])])
-            MSG = f"SubCourse Added ( {len(sub_course.sessions)}/{Form.number_of_session} SESSION ) {duplicates}"
+            MSG = f"SubCourse Added ( {len(sessions)}/{Form.number_of_session} SESSION ) {duplicates}"
         else:
             MSG = "Empty SubCourse Added ( NO SESSION )"
 
@@ -179,6 +180,7 @@ def update_subcourse(db: Session, Form: sch.update_sub_course_schema):
         return 200, "Record Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_subcourse_status(db: Session, form_id: UUID, status_id: UUID):
     try:

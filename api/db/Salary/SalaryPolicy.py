@@ -74,7 +74,7 @@ def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
         if not record.first():
             return 404, "Record Not Found"
 
-        if not employee_exist(db, [Form.user_fk_id, Form.created_fk_by]):
+        if not employee_exist(db, [Form.created_fk_by]):
             return 400, "Bad Request"
 
         data = Form.dict()
@@ -84,6 +84,7 @@ def update_SalaryPolicy(db: Session, Form: sch.update_SalaryPolicy_schema):
         return 200, "Form Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_SalaryPolicy_status(db: Session, form_id: UUID, status_id: UUID):
     try:

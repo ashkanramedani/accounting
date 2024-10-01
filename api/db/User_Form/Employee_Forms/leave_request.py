@@ -121,7 +121,11 @@ def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema, sta
         Warn = []
         verified = 0
         records = db.query(dbm.Leave_Request_form) \
-            .filter(dbm.Leave_Request_form.deleted == False, dbm.Leave_Request_form.status != "deleted", dbm.Leave_Request_form.status != status, dbm.Leave_Request_form.leave_request_pk_id.in_(Form.leave_request_id)) \
+            .filter(
+                dbm.Leave_Request_form.deleted == False,
+                dbm.Leave_Request_form.status != "deleted",
+                dbm.Leave_Request_form.status != status,
+                dbm.Leave_Request_form.leave_request_pk_id.in_(Form.leave_request_id)) \
             .all()
 
         for record in records:
@@ -134,6 +138,7 @@ def Verify_leave_request(db: Session, Form: sch.Verify_leave_request_schema, sta
         return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_leave_request_status(db: Session, form_id: UUID, status_id: UUID):
     try:

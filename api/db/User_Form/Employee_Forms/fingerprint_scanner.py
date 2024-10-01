@@ -10,7 +10,6 @@ import models as dbm
 import schemas as sch
 from db.Extra import *
 from lib import *
-from lib.decorators import DEV_io
 from .Salary_Utils import calculate_duration
 
 
@@ -29,7 +28,7 @@ def get_all_fingerprint_scanner(db: Session, page: sch.NonNegativeInt, limit: sc
         return Return_Exception(db, e)
 
 
-@DEV_io()
+# @DEV_io()
 def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_date):
     try:
         if isinstance(EnNo, UUID):
@@ -106,12 +105,12 @@ def post_bulk_fingerprint_scanner(db: Session, created_fk_by: uuid.UUID, Data: p
 
         start = datetime.combine(Data.iloc[0]["DateTime"], time())
         end = datetime.combine(Data.iloc[-1]["DateTime"] + pd.Timedelta(days=1), time())
-        history_query = (
-            db.query(dbm.Fingerprint_Scanner_backup_form.EnNo, dbm.Fingerprint_Scanner_backup_form.DateTime)
-            .filter(dbm.Fingerprint_Scanner_backup_form.status != "deleted")
-            .filter(dbm.Fingerprint_Scanner_backup_form.DateTime.between(start, end))
+        history_query = db \
+            .query(dbm.Fingerprint_Scanner_backup_form.EnNo, dbm.Fingerprint_Scanner_backup_form.DateTime) \
+            .filter(dbm.Fingerprint_Scanner_backup_form.status != "deleted") \
+            .filter(dbm.Fingerprint_Scanner_backup_form.DateTime.between(start, end)) \
             .all()
-        )
+
         Processed, total = 0, 0
         history = [f'{EnNo}{DateTime}' for EnNo, DateTime in history_query]
         Data = Data.to_dict(orient="records")
@@ -192,6 +191,7 @@ def update_fingerprint_scanner(db: Session, Form: sch.update_fingerprint_scanner
         return 200, "Form Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_fingerprint_scanner_status(db: Session, form_id: UUID, status_id: UUID):
     try:

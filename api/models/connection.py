@@ -5,7 +5,6 @@ from typing import Dict
 
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, Session
 
 from lib import logger
 from schemas import Setting

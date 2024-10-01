@@ -58,6 +58,7 @@ def update_student(db: Session, Form: sch.update_student_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def update_student_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.User_form).filter_by(user_pk_id=form_id, is_employee=False).first()

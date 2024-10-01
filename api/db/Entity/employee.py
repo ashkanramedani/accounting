@@ -36,7 +36,6 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         db.refresh(OBJ)
 
         if roles:
-            
             Warn = Add_role(db, roles, OBJ, OBJ.user_pk_id)
         return 201, sch.Base_record_add(Warning=' | '.join(Warn), id=Primary_key(OBJ))
 
@@ -82,6 +81,7 @@ def update_employee(db: Session, Form: sch.update_employee_schema):
         return 200, "Record Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_employee_status(db: Session, form_id: UUID, status_id: UUID):
     try:

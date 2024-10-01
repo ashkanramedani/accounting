@@ -4,7 +4,6 @@ from sqlalchemy.orm import Session
 
 import models as dbm
 import schemas as sch
-from lib import logger
 from .sub_course import delete_subcourse
 from ..Extra import *
 

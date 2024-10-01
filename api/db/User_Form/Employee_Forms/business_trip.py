@@ -93,7 +93,11 @@ def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema, sta
         Warn = []
         verified = 0
         records = db.query(dbm.Business_Trip_form) \
-            .filter(dbm.Business_Trip_form.deleted == False, dbm.Business_Trip_form.status != "deleted", dbm.Business_Trip_form.status != status, dbm.Business_Trip_form.business_trip_pk_id.in_(Form.business_trip_id)) \
+            .filter(
+                dbm.Business_Trip_form.deleted == False,
+                dbm.Business_Trip_form.status != "deleted",
+                dbm.Business_Trip_form.status != status,
+                dbm.Business_Trip_form.business_trip_pk_id.in_(Form.business_trip_id)) \
             .all()
 
         for record in records:
@@ -106,6 +110,7 @@ def Verify_business_trip(db: Session, Form: sch.Verify_business_trip_schema, sta
         return 200, f"{len(records)} Form Update Status To {status}."
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_business_trip_status(db: Session, form_id: UUID, status_id: UUID):
     try:

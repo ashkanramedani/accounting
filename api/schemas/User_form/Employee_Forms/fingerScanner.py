@@ -2,8 +2,8 @@ from schemas.Base import *
 
 
 class fingerprint_scanner(Base_form):
-    Enter: time | str | None = TIME_NOW()
-    Exit: time | str | None = TIME_NOW()
+    Enter: time | str
+    Exit: time | str
 
 
 class post_fingerprint_scanner_schema(fingerprint_scanner):

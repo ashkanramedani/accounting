@@ -1,7 +1,7 @@
 # from lib.decorators import DEV_io
-import models as dbm
-from models import Create_engine, sessionmaker
 from sqlalchemy.orm import Session
+
+import models as dbm
 
 
 def preprocess_keys(*args) -> list[str]:
@@ -24,15 +24,3 @@ def Set_Status(db: Session, cluster: str, status: str) -> str:
         return status
 
     return status
-
-
-if __name__ == '__main__':
-
-    for s, c in [
-        ('active', 'student'),
-        ('active', 'teacher'),
-        ('inactive', 'student'),
-        ('inactive', 'teacher')
-    ]:
-        s = Set_Status(sessionmaker(autoflush=False, bind=Create_engine())(), s, c)
-        print(s)

@@ -11,11 +11,13 @@ def get_status(db: Session, status_id):
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def get_all_status(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
         return record_order_by(db, dbm.Status_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def post_status(db: Session, Form: sch.post_status_schema):
     try:
@@ -27,7 +29,6 @@ def post_status(db: Session, Form: sch.post_status_schema):
 
     except Exception as e:
         return Return_Exception(db, e)
-
 
 
 def update_status(db: Session, Form: sch.update_status_schema):
@@ -61,6 +62,7 @@ def update_status_status(db: Session, form_id: UUID, status_id: UUID):
         return 200, "Status Updated"
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def delete_status(db: Session, status_id, deleted_by: UUID = None):
     try:

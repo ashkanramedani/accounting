@@ -1,17 +1,15 @@
-import json
 import os
-from typing import List
+from json import load
 from os.path import normpath, dirname, join
-from uuid import UUID
+from typing import List
 
 from fastapi import APIRouter, Depends, HTTPException
 from starlette.responses import RedirectResponse
-from json import load
 
 import db as dbf
 import schemas as sch
-from models import get_db
 from lib import logger
+from models import get_db
 
 router = APIRouter()
 

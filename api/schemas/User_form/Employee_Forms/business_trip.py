@@ -7,8 +7,8 @@ class business_trip(Base_form):
 
 class post_business_trip_schema(business_trip):
     user_fk_id: UUID
-    start_date: datetime | str = DATETIME_NOW(2)
-    end_date: datetime | str = DATETIME_NOW(1)
+    start_date: datetime | str
+    end_date: datetime | str
 
 
 class update_business_trip_schema(business_trip):

@@ -2,7 +2,7 @@ from ..Base import *
 
 
 class Employee(Entity, Base_form):
-    fingerprint_scanner_user_id: Optional[int] = None
+    fingerprint_scanner_user_id: int
     roles: Optional[List[Update_Relation]] = []
 
 

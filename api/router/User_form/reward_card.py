@@ -51,6 +51,7 @@ async def update_reward_card(Form: sch.update_reward_card_schema, db=Depends(get
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 @router.put("/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
     status_code, result = dbf.update_reward_card_status(db, form_id, status_id)

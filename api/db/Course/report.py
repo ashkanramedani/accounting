@@ -124,7 +124,7 @@ def Apply_scores(db: Session, DropDowns: Dict, sub_course_summary: dict[str, sch
                         dbm.Reward_card_form.start_date <= course_data.ending_date,
                         course_data.ending_date <= dbm.Reward_card_form.end_date
                 )
-            ) \
+        ) \
             .group_by(dbm.Reward_card_form.reward_type).all()
 
         reward_card = {r["reward_type"]: r["total_amount"] for r in reward_card_query}
@@ -190,7 +190,6 @@ def SubCourse_report(db: Session, sub_course_id: UUID):
         for session in AllSessions:
             Session_teacher = str(session.session_teacher_fk_id)
 
-
             if Session_teacher not in sub_course_summary:
                 logger.warning(f"Teacher: {Session_teacher} Has Been Skipped. ")
                 continue
@@ -247,6 +246,7 @@ def SubCourse_report(db: Session, sub_course_id: UUID):
             .all()
     except Exception as e:
         return Return_Exception(db, e)
+
 
 def update_SubCourse_report(db: Session, form_ID: UUID, Form: sch.update_salary_report):
     try:

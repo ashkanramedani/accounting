@@ -142,6 +142,7 @@ def Verify_sub_request(db: Session, Form: sch.Verify_Sub_request_schema, status:
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def update_sub_request_status(db: Session, form_id: UUID, status_id: UUID):  # NC: in case of verfiy sub request look Verify_sub_request
     try:
         record = db.query(dbm.Sub_Request_form).filter_by(sub_request_pk_id=form_id).first()

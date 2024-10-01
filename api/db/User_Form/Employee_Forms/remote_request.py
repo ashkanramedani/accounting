@@ -102,6 +102,7 @@ def Verify_remote_request(db: Session, Form: sch.Verify_remote_request_schema, s
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def update_remote_request_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Remote_Request_form).filter_by(remote_request_pk_id=form_id).first()

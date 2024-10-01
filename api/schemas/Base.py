@@ -8,6 +8,10 @@ from uuid import UUID
 from faker import Faker
 from pydantic import BaseModel, EmailStr, NonNegativeInt, PositiveInt
 
+from datetime import timedelta, timezone
+
+IRAN_TIMEZONE = timezone(offset=timedelta(hours=3, minutes=30))
+
 SUCCESS_STATUS: List[PositiveInt] = [200, 201]
 identity: Faker = Faker()
 

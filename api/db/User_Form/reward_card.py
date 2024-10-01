@@ -61,6 +61,7 @@ def update_reward_card(db: Session, Form: sch.update_reward_card_schema):
     except Exception as e:
         return Return_Exception(db, e)
 
+
 def update_reward_card_status(db: Session, form_id: UUID, status_id: UUID):
     try:
         record = db.query(dbm.Reward_card_form).filter_by(reward_card_pk_id=form_id).first()

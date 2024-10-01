@@ -76,6 +76,7 @@ async def update_sub_request(status: sch.CanUpdateStatus, Form: sch.Verify_Sub_r
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 @router.put("/status/{form_id}/{status_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def update_sub_request_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
     status_code, result = Sub_Request.update_sub_request_status(db, form_id, status_id)
