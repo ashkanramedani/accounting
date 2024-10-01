@@ -157,21 +157,21 @@ def Debug(func):
     return wrapper
 
 
+
 def Fix_time(time_obj: str | datetime | time):
     if isinstance(time_obj, time):
         return time_obj.replace(second=0)
     if isinstance(time_obj, datetime):
         return time_obj.time().replace(second=0)
-    time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
-    if " " in time_obj:
-        time_obj = time_pattern.match(time_obj)
-    else:
-        time_obj = time_pattern.match(time_obj)
 
-    if not time_obj:
-        raise ValueError(f"Incorrect data format, should be HH:MM:SS or HH:MM:SS.MMM, received: {time_obj}")
-    time_obj = time_obj.groups()
-    return time(hour=int(time_obj[-3]), minute=int(time_obj[-2]), second=int(time_obj[-1]))
+    time_obj = time_obj.replace("T", " ")
+    time_match = time_pattern.match(time_obj)
+
+    if not time_match:
+        raise ValueError(f"Incorrect data format, should be HH:MM:SS or similar, received: {time_obj}")
+
+    hour, minute, second = map(int, time_match.groups())
+    return time(hour=hour, minute=minute, second=second)
 
 
 def Fix_date(time_obj: str | datetime | date):
@@ -179,33 +179,28 @@ def Fix_date(time_obj: str | datetime | date):
         return time_obj
     if isinstance(time_obj, datetime):
         return time_obj.date()
-    time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
 
-    if " " in time_obj:
-        time_obj = date_pattern.match(time_obj)
-    else:
-        time_obj = date_pattern.match(time_obj)
+    time_obj = time_obj.replace("T", " ")
+    date_match = date_pattern.match(time_obj)
 
-    if not time_obj:
-        raise ValueError(f"Incorrect data format, should be YYYY:MM:DD, received: {time_obj}")
-    time_obj = time_obj.groups()
-    return date(year=int(time_obj[0]), month=int(time_obj[1]), day=int(time_obj[2]))
+    if not date_match:
+        raise ValueError(f"Incorrect data format, should be YYYY-MM-DD or similar, received: {time_obj}")
+
+    year, month, day = map(int, date_match.groups())
+    return date(year=year, month=month, day=day)
 
 
 def Fix_datetime(time_obj: str | datetime):
-    try:
-        if isinstance(time_obj, datetime):
-            return time_obj
-        time_obj = time_obj.replace("T", " ") if "T" in time_obj else time_obj
-        time_str = datetime_pattern.match(time_obj)
-        if time_str is None:
-            return
+    if isinstance(time_obj, datetime):
+        return time_obj
+    time_obj = time_obj.replace("T", " ")
+    datetime_match = datetime_pattern.match(time_obj)
 
-        time_str = time_str.groups()
-        return datetime(year=int(time_str[0]), month=int(time_str[1]), day=int(time_str[2]), hour=int(time_str[3]), minute=int(time_str[4]), second=int(time_str[5]))
-    except Exception as e:
-        raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or YYYY-MM-DD HH:MM:SS.MMM, received: {time_obj}\n{e}")
+    if not datetime_match:
+        raise ValueError(f"Incorrect data format, should be YYYY-MM-DD HH:MM:SS or similar, received: {time_obj}")
 
+    year, month, day, hour, minute, second = map(int, datetime_match.groups())
+    return datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
 
 def is_off_day(day: date | datetime) -> bool:
     day = day if isinstance(day, date) else day.date()
@@ -304,8 +299,8 @@ def to_persian(year, month, day, return_obj=True) -> tuple | date:
     return jy, jm, jd
 
 
-def to_international(year, month, day, return_obj=True) -> tuple | date:
-    if year > 2000:
+def to_international(year, month, day=1, return_obj=True) -> tuple | date:
+    if year < 2000:
         d_4 = (year + 1) % 4
         doy_j = ((month - 1) * 31 + day) if month < 7 else ((month - 7) * 30 + day + 186)
         d_33 = int(((year - 55) % 132) * .0305)
