@@ -3,7 +3,6 @@ from schemas.Base import *
 
 class product_mapping(Base_form):
     target_product_fk_id: UUID
-    target_product_table: str
     product_name: str
     product_quantity: int
     product_price: float
