@@ -18,7 +18,7 @@ BASE_LOG_FILE = f'{normpath(f"{dirname(__file__)}/../log")}'
 # self.logger.level("INFO_access", no=25, icon="✔️")
 
 def Time_formatter(time_record):
-    return time_record.astimezone(timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z")
+    return time_record.astimezone(tz=timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z")
 
 
 def FILE_FORMATTER(record):
