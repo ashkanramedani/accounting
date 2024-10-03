@@ -2,6 +2,7 @@ print(f'\n{" -.-" * 11}\n\t\tStarting API\n{" -.-" * 11}')
 
 try:
     from os import getenv
+    from re import search
     from typing import List
     from pathlib import Path
     from json import dump, load
@@ -93,8 +94,11 @@ METHOD = {
 
 @app.middleware("http")
 async def Access(request: Request, call_next):
-    start_time = time()
+    # match = search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url))
+    # if match:
+    #     print("Sub_routes:", match.group(1))
 
+    start_time = time()
     try:
         response = await call_next(request)
         body = b"".join([chunk async for chunk in response.body_iterator])
@@ -104,13 +108,12 @@ async def Access(request: Request, call_next):
 
         response = Response(content=body, status_code=response.status_code, headers=dict(response.headers))
 
-    except Exception as e:
-        MSG = f"Error in parsing: {e.__class__.__name__} - {e.args}"
-        return Response(content=f"Error processing request: {MSG}", status_code=500)
+    except Exception as Access_error:
+        MSG = f"Error in parsing: {Access_error.__class__.__name__} - {Access_error.args}"
+        response = Response(content=f"Error processing request: {MSG}", status_code=500)
 
     end_time = time()
     access_log.info(f"[ {end_time - start_time:.3f}s ] - {request.method} - {request.url}", data=MSG)
-
     return response
 
 
