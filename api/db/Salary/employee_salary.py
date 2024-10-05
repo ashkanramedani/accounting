@@ -122,7 +122,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
     :param month: international
     :return: employee salary record
     """
-    year, month, _ = to_international(year, month, return_obj=False)
+    year, month, day = to_international(year, month, return_obj=False)
 
     try:
         existing = db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
@@ -138,7 +138,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if not Salary_Policy:
             return 400, "Bad Request: Target Employee has no salary record"
 
-        start, end = generate_month_interval(year, month)
+        start, end = generate_month_interval(year, month, day)
 
         EnNo = db.query(dbm.User_form).filter_by(user_pk_id=user_fk_id).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         if EnNo is None:
@@ -149,7 +149,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
             return status, report_summary
 
         if report_summary["Invalid"] != 0:
-            return 400, "Invalid Date Found."
+            return 400, f"Invalid Date Found. {report_summary['Invalid_record']}"
 
         status, report_summary = generate_daily_report(
                 Salary_Policy=Salary_Policy,

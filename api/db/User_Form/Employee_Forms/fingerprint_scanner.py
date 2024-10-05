@@ -56,9 +56,11 @@ def report_fingerprint_scanner(db: Session, EnNo: int | UUID, start_date, end_da
         if not Report:
             return 400, f"Employee Has No fingerprint record from {start_date} to {end_date}"
 
+        Invalid_record = [str(f.Date) for f in FingerScanner_Query.filter_by(valid=False).all()]
         return 200, {
             "Fingerprint_scanner_report": Report,
-            "Invalid": FingerScanner_Query.filter_by(valid=False).count(),
+            "Invalid": len(Invalid_record),
+            "Invalid_record": Invalid_record,
             "TotalHour": TotalHour}
 
     except Exception as e:

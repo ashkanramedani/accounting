@@ -14,6 +14,8 @@ async def employee_salary(Form: sch.Input, db=Depends(get_db)):
 
 @router.get("/employee/{employee_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.employee_salary_Response)
 async def search_report(employee_id: UUID, year: sch.PositiveInt, month: sch.PositiveInt, db=Depends(get_db)):
+    if year > 1600:
+        return HTTPException(status_code=400, detail="Input Year is not persian")
     if month > 12:
         raise HTTPException(status_code=400, detail="Invalid Month")
     status_code, result = dbf.employee_salary_report(db, employee_id, year, month)

@@ -320,7 +320,7 @@ def to_international(year, month, day=1, return_obj=True) -> tuple | date:
     return year, month, day
 
 
-def generate_month_interval(year, month, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
+def generate_month_interval(year, month, day=1, include_nex_month_fist_day: bool = False) -> tuple[date, date]:
     """
     this function takes a year and month and returns two date object representing the start and end of the month
     """
@@ -328,8 +328,8 @@ def generate_month_interval(year, month, include_nex_month_fist_day: bool = Fals
     end_year = year + 1 if month == 12 else year
     end_month = 1 if month == 12 else month + 1
 
-    start_date = to_international(year, month, 1)
-    end_date = to_international(end_year, end_month, 1)
+    start_date = to_international(year, month, day)
+    end_date = to_international(end_year, end_month, day)
     if not include_nex_month_fist_day:
         end_date = end_date - timedelta(days=1)
     return start_date, end_date
