@@ -92,19 +92,22 @@ METHOD = {
 }
 
 
+BlackList = ["/openapi.json"]
+
 @app.middleware("http")
 async def Access(request: Request, call_next):
-    # match = search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url))
+    # match = 
     # if match:
     #     print("Sub_routes:", match.group(1))
 
+    MSG = ""
     start_time = time()
     try:
         response = await call_next(request)
         body = b"".join([chunk async for chunk in response.body_iterator])
-
-        MSG = body.decode()
-        MSG = None if "<!DOCTYPE html>" in MSG else MSG
+        if str(search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url)).group(1)) not in BlackList:
+            MSG = body.decode()
+            MSG = None if "<!DOCTYPE html>" in MSG else MSG
 
         response = Response(content=body, status_code=response.status_code, headers=dict(response.headers))
 
