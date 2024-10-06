@@ -43,7 +43,7 @@ def post_employee(db: Session, Form: sch.post_employee_schema):
         return Return_Exception(db, e)
 
 
-def delete_employee(db: Session, employee_id, deleted_by: UUID = None):
+def delete_employee(db: Session, employee_id, deleted_by=None):
     try:
         record = db.query(dbm.User_form).filter_by(user_pk_id=employee_id).filter(dbm.User_form.status != "deleted").first()
         if not record:

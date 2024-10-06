@@ -1,4 +1,3 @@
-import re
 from time import sleep
 from uuid import UUID
 from typing import Dict, List, Tuple
@@ -9,37 +8,9 @@ from sqlalchemy.exc import OperationalError
 
 from lib import logger
 import models.tables as dbm
+
 from models.Triggers import archive_deleted_record
-
-
-def Extract_Unique_keyPair(error_message) -> str | Dict:
-    error_message = str(error_message)
-    match = re.search(r'Key \((.*?)\)=\((.*?)\)', error_message)
-    if match:
-        return ', '.join([f'{k} -> {v}' for k, v in zip(match.group(1).split(', '), match.group(2).split(', '))]).replace('"', '')
-    else:
-        return error_message
-
-
-CODES = {
-    "user": "0",
-    "role": "1",
-    "status": "2",
-    "language": "3",
-    "course_type": "4"
-}
-
-def Exception_handler(db, Error, Cluster: str = "Admin_Setup") -> None:
-    db.rollback()
-    if "duplicate key" in Error.__repr__() or "UniqueViolation" in Error.__repr__():
-        logger.warning(f'[ {Cluster} / 409 ]{Error.__class__.__name__}: Record Already Exist: {Extract_Unique_keyPair(Error.args)}', depth=2)
-        return
-    logger.error(f'[ {Cluster} / 500 ]{Error.__class__.__name__}: {Error.__repr__()}', depth=2)
-
-def Unique_ID(num: int, code: str) -> str:
-    return f"{str(num).zfill(8)}-{CODES.get(code, 0).zfill(4)}-4b94-8e27-44833c2b940f"
-
-
+from models.Func import Unique_ID, Exception_Wrapper
 
 # Name, LastName, FID
 USER: List[Tuple] = [
@@ -89,14 +60,17 @@ COURSE_TYPE: List[str] = [
     "hybrid"]
 
 
+def Exception_handler(*args, **kwargs):
+    pass
+
+
 def Default_user(db: Session):
-    DEFAULT_USER: List[Dict] = [
-        {"user_pk_id": Unique_ID(i, "user"), "status": "approved", "fingerprint_scanner_user_id": FID, "name": N, "last_name": L, "email": f"{N}@{L}.com"}
-        for i, (N, L, FID) in enumerate(USER)]
-
-    Admin_id = DEFAULT_USER[0]["user_pk_id"]
-
     try:
+        DEFAULT_USER: List[Dict] = [
+            {"user_pk_id": Unique_ID(i, "user"), "status": "approved", "fingerprint_scanner_user_id": FID, "name": N, "last_name": L, "email": f"{N}@{L}.com"}
+            for i, (N, L, FID) in enumerate(USER)]
+
+        Admin_id = DEFAULT_USER[0]["user_pk_id"]
         ExistingUsers = [str(user.user_pk_id) for user in db.query(dbm.User_form).filter(dbm.User_form.user_pk_id.in_([User["user_pk_id"] for User in DEFAULT_USER])).all()]
         New_Users = []
         for User in DEFAULT_USER:
@@ -131,8 +105,7 @@ def Assign_Roles(db: Session):
     try:
         USER_ROLE: List[Dict] = [
             {"user_fk_id": U, "status": "approved", "role_fk_id": R}
-            for U, R in USER_ROLE_MAP
-        ]
+            for U, R in USER_ROLE_MAP]
         for record in USER_ROLE:
             User = db.query(dbm.User_form).filter_by(user_pk_id=record["user_fk_id"]).first()
             if Role := db.query(dbm.Role_form).filter_by(role_pk_id=record["role_fk_id"]).filter(dbm.Role_form.status != "deleted").first():
@@ -224,7 +197,7 @@ def SetUp_table(engine):
 
 def SetUp(db: Session):
     logger.info('Admin Setup Started')
-    ADMIN_ID = Default_user(db)
+    ADMIN_ID = Default_user(db=db)
     Default_Role(db, ADMIN_ID)
     Assign_Roles(db)
     Default_Status(db, ADMIN_ID)

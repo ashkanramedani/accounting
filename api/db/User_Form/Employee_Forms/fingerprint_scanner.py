@@ -73,7 +73,6 @@ def post_fingerprint_scanner(db: Session, Form: sch.post_fingerprint_scanner_sch
             return 400, "Bad Request"
 
         data = Form.dict()
-        # EnNo = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         User = db.query(dbm.User_form).filter_by(user_pk_id=data.pop("user_fk_id")).filter(dbm.User_form.status != "deleted").first()
         if not User:
             return 400, "Employee Not Found"
