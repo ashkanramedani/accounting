@@ -5,7 +5,7 @@ try:
     from re import search
     from typing import List
     from pathlib import Path
-    from json import dump, load
+    from json import dump, load, loads
     from time import sleep, time
     from dotenv import load_dotenv
     from datetime import datetime, timedelta, timezone
@@ -92,28 +92,41 @@ METHOD = {
 }
 
 
+BlackList = ["/openapi.json", 'docs']
+
 @app.middleware("http")
 async def Access(request: Request, call_next):
-    # match = search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url))
+    # match = 
     # if match:
     #     print("Sub_routes:", match.group(1))
 
+    response_body = ""
     start_time = time()
     try:
+        request_body = await request.body()
+        request_body = request_body.decode('utf-8')
+
+        try:
+            request_body = loads(request_body)
+        except Exception as E:
+            pass
+
         response = await call_next(request)
         body = b"".join([chunk async for chunk in response.body_iterator])
-
-        MSG = body.decode()
-        MSG = None if "<!DOCTYPE html>" in MSG else MSG
+        if str(search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url)).group(1)) not in BlackList:
+            response_body = body.decode()
+            response_body = None if "<!DOCTYPE html>" in response_body else response_body
 
         response = Response(content=body, status_code=response.status_code, headers=dict(response.headers))
 
     except Exception as Access_error:
-        MSG = f"Error in parsing: {Access_error.__class__.__name__} - {Access_error.args}"
-        response = Response(content=f"Error processing request: {MSG}", status_code=500)
+        response_body = f"Error in parsing: {Access_error.__class__.__name__} - {Access_error.args}"
+        response = Response(content=f"Error processing request: {response_body}", status_code=500)
 
     end_time = time()
-    access_log.info(f"[ {end_time - start_time:.3f}s ] - {request.method} - {request.url}", data=MSG)
+
+    Addectional_data = {"request_body": request_body, "response_body": response_body}
+    access_log.info(f"[ {end_time - start_time:.3f}s ] - {request.method} - {request.url}" , **Addectional_data)
     return response
 
 

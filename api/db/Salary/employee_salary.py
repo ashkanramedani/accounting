@@ -4,6 +4,7 @@ from typing import Literal
 from sqlalchemy import and_
 
 from db.User_Form import *
+from lib import logger
 
 
 def permissions(db: Session, User_ID):
@@ -23,6 +24,10 @@ def permissions(db: Session, User_ID):
 
 
 def employee_salary(db: Session, year, month):  # NC: 003
+    """
+        year:int (in persian)
+        month: int (in persian)
+    """
     try:
         start, end = generate_month_interval(year, month)
         Finger_Scanner_Result: list = db \
@@ -45,20 +50,19 @@ def employee_salary(db: Session, year, month):  # NC: 003
             .filter(dbm.Employee_Salary_form.fingerprint_scanner_user_id.in_(Unique_EnNo)) \
             .all()
 
-        Salary_Result = [obj[0] for obj in salaries]
+        Salary_Result = [str(obj[0]) for obj in salaries]
 
         Salary_policies = db \
             .query(dbm.Salary_Policy_form.user_fk_id) \
             .filter(dbm.Salary_Policy_form.status != "deleted", dbm.Salary_Policy_form.user_fk_id.in_([user.user_pk_id for user in users_with_fingerprints])) \
             .all()
 
-        Salary_Policy_Result = [obj[0] for obj in Salary_policies]
-
+        Salary_Policy_Result = [str(obj[0]) for obj in Salary_policies]
         Result = []
         for user in users_with_fingerprints:
             data = user.__dict__
-            data["Does_Have_Salary_Record"] = user.fingerprint_scanner_user_id in Salary_Result
-            data["Does_Have_Salary_Policy"] = user.user_pk_id in Salary_Policy_Result
+            data["Does_Have_Salary_Record"] = str(user.fingerprint_scanner_user_id) in Salary_Result
+            data["Does_Have_Salary_Policy"] = str(user.user_pk_id) in Salary_Policy_Result
             Result.append(data)
 
         return 200, Result
@@ -118,11 +122,11 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
     Calculate the salary of an employee
     :param db: DataBase connection
     :param user_fk_id: target user
-    :param year: international
-    :param month: international
+    :param year: persian
+    :param month: persian
     :return: employee salary record
     """
-    year, month, day = to_international(year, month, return_obj=False)
+    # year, month, day = to_international(year, month, return_obj=False)
 
     try:
         existing = db.query(dbm.Employee_Salary_form).filter_by(user_fk_id=user_fk_id, year=year, month=month).filter(dbm.Employee_Salary_form.status != "deleted").first()
@@ -138,7 +142,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         if not Salary_Policy:
             return 400, "Bad Request: Target Employee has no salary record"
 
-        start, end = generate_month_interval(year, month, day)
+        start, end = generate_month_interval(year, month)
 
         EnNo = db.query(dbm.User_form).filter_by(user_pk_id=user_fk_id).filter(dbm.User_form.status != "deleted").first().fingerprint_scanner_user_id
         if EnNo is None:

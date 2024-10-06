@@ -33,7 +33,11 @@ def FILE_FORMATTER(record):
 
 
 def ACCESS_FORMATTER(record):
-    record["extra"]["serialized"] = {"timestamp": Time_formatter(record["time"]), "message": record["message"], "data": record["extra"]["data"]}
+    record["extra"]["serialized"] = {
+        "timestamp": Time_formatter(record["time"]),
+        "message": record["message"],
+        "request_body": record["extra"]["request_body"],
+        "response_body": record["extra"]["response_body"]}
     return "{extra[serialized]}\n"
 
 

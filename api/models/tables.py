@@ -12,26 +12,23 @@ Base = declarative_base()
 metadata_obj = MetaData()
 
 
+
 class Base_form:
     priority = Column(Integer, default=5, nullable=True)
 
-    visible = Column(Boolean, server_default=expression.true(), nullable=False)
-    deleted = Column(Boolean, server_default=expression.false(), nullable=False, index=True)
-    can_update = Column(Boolean, server_default=expression.true(), nullable=False)
-    can_deleted = Column(Boolean, server_default=expression.true(), nullable=False)
+    visible = Column(Boolean, default=True, nullable=False)
+    deleted = Column(Boolean, default=False, nullable=False, index=True)
+    can_update = Column(Boolean, default=True, nullable=False)
+    can_deleted = Column(Boolean, default=True, nullable=False)
 
-    create_date = Column(DateTime(timezone=True), server_default=func.now(), nullable=False, index=True)
-    update_date = Column(DateTime(timezone=True), default=None, onupdate=func.now())
-    delete_date = Column(DateTime(timezone=True), default=None)
-    expire_date = Column(DateTime(timezone=True), default=None)
+    create_date = Column(DateTime, default=IRAN_TIME(dump=True), nullable=False, index=True)
+    update_date = Column(DateTime, default=None, onupdate=IRAN_TIME(dump=True))
+    expire_date = Column(DateTime, default=None)
 
     description = Column(String, nullable=True, default="")
     note = Column(JSON, nullable=True, default={})
 
     status = Column(String, nullable=False, default="submitted", index=True)  # NC: 006
-    # status = Column(String, nullable=False, default="approved")  # NC: 006
-    # status_pk_id = create_foreignKey("Status_form")
-    # status = relationship("Status_form", foreign_keys=[status_pk_id])
 
 
 users_departments_association = Table(
