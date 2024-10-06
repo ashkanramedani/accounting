@@ -1,0 +1,50 @@
+version: 1
+disable_existing_loggers: false
+
+filters:
+  stat_reload_filter:
+    (): lib.Uvicorn_logger.StatReloadFilter
+
+formatters:
+  default:
+    "()": lib.Uvicorn_logger.DefaultFormatter
+    fmt: '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}'
+    datefmt: "%Y-%m-%d %H:%M:%S"
+  access:
+    "()": lib.Uvicorn_logger.AccessFormatter
+    fmt: '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "message": "%(message)s"}'
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  default:
+    formatter: default
+    class: logging.handlers.TimedRotatingFileHandler
+    filename: log/uvicorn.log
+    when: "D"  # Rotate logs based on days
+    interval: 7  # Rotate every 7 days
+    backupCount: 5
+    encoding: utf-8
+  access:
+    formatter: access
+    class: logging.handlers.TimedRotatingFileHandler
+    filename: log/access.log
+    when: "D"
+    interval: 7
+    backupCount: 5
+    encoding: utf-8
+
+loggers:
+  uvicorn:
+    handlers: [default]
+    level: INFO
+    propagate: False
+    filters: [stat_reload_filter]
+  uvicorn.error:
+    handlers: [default]
+    level: WARNING
+    propagate: False
+    filters: [stat_reload_filter]
+  uvicorn.access:
+    handlers: [access]
+    level: INFO
+    propagate: False
