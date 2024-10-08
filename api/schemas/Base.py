@@ -244,7 +244,7 @@ class Base_response(BaseModel):
     description: str | None = None
     status: str
     priority: int
-    note: Optional[Dict] = {}
+    note: Optional[Dict | str] = {}
 
     # create_date: Optional[datetime]
 
