@@ -15,7 +15,7 @@ class update_student_schema(Student):
 
 class student_response(Entity_Response):
     deleted: bool
-    note: Optional[Dict]
+    note: Optional[Dict | str] = {}
     user_pk_id: UUID
     emergency_number: Optional[int | str]
     # create_date: str
