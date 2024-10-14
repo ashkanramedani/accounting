@@ -62,6 +62,7 @@ async def update_status(form_id: UUID, status_id: UUID, db=Depends(get_db)):
 
 @router.get("/apply_code", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def apply_discount_code(Form: sch.apply_code, db=Depends(get_db)):
+    return 503, "NOT AVALABLE"
     status_code, result = dbf.apply_discount_code(db, Form)
     if status_code not in sch.SUCCESS_STATUS:
         raise HTTPException(status_code=status_code, detail=result)
