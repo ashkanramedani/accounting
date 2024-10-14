@@ -2,16 +2,25 @@ from schemas.Base import *
 
 
 class shopping_card_Item(BaseModel):
-    item_pk_id: UUID
-    price: float
-    quantity: float
+    price: float = 0
+    quantity: int = 0
+    total_price: float = 0
+    discounted_price: float = 0
+
+    class Config:
+        extra = 'ignore'
+
+class add_to_card(BaseModel):
+    item_id: UUID
+    quantity: int
 
 
 class shopping_card(BaseModel):
-    discount_code: str | None = None
-    shopping_card_fk_id: UUID
+    pass
 
-    bucket: List[shopping_card_Item]
+
+# shopping_card_pk_id: UUID
+# discount_code: str | None = None
 
 
 class post_shopping_card_schema(shopping_card):
@@ -31,9 +40,8 @@ class update_shopping_card_schema(shopping_card):
 class shopping_card_response(BaseModel):
     shopping_card_pk_id: UUID
 
-    total: float
-    total_discounted: float
-
+    user: export_employee
+    bucket: List[Any] = []
     transaction_fk_id: Optional[UUID] = None
 
     class Config:
