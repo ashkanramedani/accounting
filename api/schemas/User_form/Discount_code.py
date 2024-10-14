@@ -50,11 +50,8 @@ class discount_code_response(Base_response):
 
 
 class apply_code(BaseModel):
-    price: float
     discount_code: str
-
-    target_user: Optional[UUID] = None
-    target_product: Optional[UUID] = None
+    shopping_card_id: UUID
 
     class Config:
         extra = 'ignore'
