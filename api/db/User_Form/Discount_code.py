@@ -1,4 +1,5 @@
 import datetime
+from typing import Literal, List, Dict
 from random import choices
 from string import ascii_letters, digits
 
@@ -8,6 +9,13 @@ import models as dbm
 import schemas as sch
 from db.Extra import *
 
+def apply_code_on_price(price: float, record: dbm.Discount_code_form):
+    discount_type , discount_amount = record.discount_type, record.discount_amount
+    if discount_type == "percentage":
+        discounted_price = price - (price * discount_amount / 100)
+    else:
+        discounted_price = price - discount_amount
+    return 200, round(max(discounted_price, 0), 2)
 
 def generate_unique_discount_code(existing_codes):
     while True:
@@ -56,6 +64,8 @@ def delete_discount_code(db: Session, discount_code_id, deleted_by: UUID = None)
         db.commit()
         return 200, "Deleted"
     except Exception as e:
+        from lib import logger
+        logger.error(e)
         return Return_Exception(db, e)
 
 
@@ -106,27 +116,53 @@ def apply_discount_code(db: Session, Form: sch.apply_code):
         if not record:
             return 400, "Discount Code Not Found"
 
-        now = datetime.datetime.now(tz=IRAN_TIMEZONE)
-        if record.start_date and now < record.start_date:
-            return 400, "Discount Code not available yet"
-        if record.end_date and record.end_date < now:
-            return 400, "Discount Code Expired"
+        shopping_card = db \
+            .query(dbm.Shopping_card_form) \
+            .filter_by(shopping_card_fk_id=Form.shopping_card_id) \
+            .first()
 
-        if record.target_user and record.target_user != Form.target_user:
+        if not shopping_card:
+            return 400, "shopping card not found"
+
+        now = datetime.datetime.now(tz=IRAN_TIMEZONE)
+
+        if record.start_date and now < record.start_date or record.end_date and record.end_date < now:
+            return 400, "Discount Code not available at this time"
+
+        if record.target_user and record.target_user != shopping_card.user_fk_id:
             return 400, "target user cant use this code"
 
-        if record.target_product and record.target_product != Form.target_product:
-            return 400, "target product cant use this code"
 
-        match record.discount_type:
-            case "percentage":
-                discounted_price = Form.price - (Form.price * record.discount_amount / 100)
-            case "fix":
-                discounted_price = Form.price - record.discount_amount
-            case _:
-                return 400, "Invalid Discount Type"
+        elif record.target_product:
+            Bucket: List[dbm.Shopping_card_item_form] = db.query(dbm.Shopping_card_item_form).filter_by(shopping_card_fk_id=Form.shopping_card_id).all()
+            product_in_card: dbm.Shopping_card_item_form = next((key for key in Bucket if key.product_fk_id == record.target_product), None)
+            TOTAL = 0
+            TOTAL_Discounted = 0
+            for product in Bucket:
+                product_in_mapping = db.query(dbm.Products_Mapping_form).filter_by(products_mapping_pk_id=product_in_card.product_fk_id).first()
+                product_in_card.pri = apply_code_on_price(product_in_mapping.discounted_price, record)
+                Bucket: List[sch.shopping_card_Item] = [item for item in Unpacked_bucket.values()]
+                shopping_card.bucket = Bucket
+                db.commit()
+                return 200, shopping_card
 
-        return 200, round(max(discounted_price, 0), 2)
+        else:
+            shopping_card.total_discounted = apply_code_on_price(shopping_card.total_discounted, record)
+            db.commit()
+            return 200, shopping_card
 
     except Exception as e:
         return Return_Exception(db, e)
+
+
+"""
+class Shopping_card_item_form(Base):
+    __tablename__ = "shopping_card_item"
+
+    shopping_card_item_pk_id = create_Unique_ID()
+    shopping_card_fk_id = create_foreignKey("Shopping_card_form")
+    product_fk_id = create_foreignKey("Products_Mapping_form")
+
+    quantity = Column(Integer, nullable=False, default=1)
+    expire_date = Column(DateTime, default=None)
+"""
