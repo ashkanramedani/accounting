@@ -1,17 +1,34 @@
-from typing import List, Dict
+import datetime
+from random import randint
+from typing import List, Dict, Tuple
 
+import sqlalchemy.orm
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 import models as dbm
 import schemas as sch
 from db.Extra import *
 
+CAN_ACCEPT_ITEM = ["ready_to_use", "ready_to_pay"]
 
-# shopping_card
 
-def get_shopping_card(db: Session, shopping_card_id):
+def genCardID(db: Session) -> str:
+    card_ids = [record[0] for record in db.query(dbm.Shopping_card_form.card_id).all()]
+    rnd = ''.join(str(randint(0, 9)) for _ in range(17))
+    while rnd in card_ids:
+        rnd = ''.join(str(randint(0, 9)) for _ in range(17))
+    return rnd
+
+
+def get_shopping_card(db: Session, shopping_card_id: UUID):
     try:
-        return 200, db.query(dbm.Shopping_card_form).filter_by(shopping_card_pk_id=shopping_card_id).filter(dbm.Shopping_card_form.status != "deleted").first()
+        Shopping_card = db \
+            .query(dbm.Shopping_card_form) \
+            .filter_by(shopping_card_pk_id=shopping_card_id) \
+            .filter(dbm.Shopping_card_form.status.in_(CAN_ACCEPT_ITEM)) \
+            .first()
+        return 200, Shopping_card
     except Exception as e:
         return Return_Exception(db, e)
 
@@ -23,61 +40,86 @@ def get_all_shopping_card(db: Session, page: sch.NonNegativeInt, limit: sch.Posi
         return Return_Exception(db, e)
 
 
-def post_shopping_card(db: Session, Form: sch.post_shopping_card_schema):
+def create_empty_shopping_card(db: Session, user_id: UUID):
     try:
-        data = Form.__dict__
-        discount_code = data.pop("discount_code", None)
-        bucket: List[sch.shopping_card_Item] = data.pop("bucket", [])
+        Shopping_card = db \
+            .query(dbm.Shopping_card_form) \
+            .filter_by(user_fk_id=user_id) \
+            .filter(dbm.Shopping_card_form.status.in_(CAN_ACCEPT_ITEM)) \
+            .first()
+        if not Shopping_card:
+            Shopping_card = dbm.Shopping_card_form(user_fk_id=user_id, card_id=genCardID(db), status="ready_to_use")  # type: ignore
+            db.add(Shopping_card)
+            db.commit()
+        return 200, Shopping_card
 
-        total = 0.0
-        for item in bucket:
-            total += item.quantity * item.price
 
-        total_discounted = total
-        if discount_code:
-            if not (discount := db.query(dbm.Discount_code_form).filter_by(discount_code=discount_code).filter(dbm.Discount_code_form.status != "deleted").first()):
-                return 400, "Not a valid discount code"
-
-            match discount.discount_type:
-                case "percentage":
-                    total_discounted = max(total - discount.discount_amount, 0)
-                case "fix":
-                    total_discounted = (total / 100) * discount.discount_amount
-
-        OBJ = dbm.Shopping_card_form(**data, total=total, total_discounted=total_discounted)  # type: ignore[call-arg]
-
-        db.add(OBJ)
-        db.commit()
-        db.refresh(OBJ)
-        return 200, "Record has been Added"
     except Exception as e:
         return Return_Exception(db, e)
+
+
+def add_item(db: Session, shopping_card_id, Form: List[sch.add_to_card]):
+    shopping_card = db.query(dbm.Shopping_card_form).filter_by(shopping_card_pk_id=shopping_card_id).filter(dbm.Shopping_card_form.status != "deleted").first()
+    if not shopping_card:
+        return 400, "shopping_card Not Found"
+
+    bucket: [dbm.Shopping_card_item_form] = []
+
+    ItemIDs: List[UUID] = [item.item_id for item in Form]
+    NOW = datetime.datetime.now(tz=IRAN_TIMEZONE)
+
+    product_query: List[dbm.Products_Mapping_form] = db \
+        .query(
+            dbm.Products_Mapping_form) \
+        .filter(
+            dbm.Products_Mapping_form.products_mapping_pk_id.in_(ItemIDs)) \
+        .all()
+
+    reserve_product_id = sqlalchemy.orm.aliased(dbm.Shopping_card_item_form.product_fk_id)
+    reserve_expire = sqlalchemy.orm.aliased(dbm.Shopping_card_item_form.expire_date)
+
+    reserve_query: List[Tuple] = db \
+        .query(
+            reserve_product_id,
+            func.sum(dbm.Shopping_card_item_form.quantity)) \
+        .filter(
+            reserve_product_id.in_(ItemIDs), reserve_expire > NOW) \
+        .group_by(
+            reserve_product_id) \
+        .all()
+
+    products: Dict[str, dbm.Products_Mapping_form] = {str(product.products_mapping_pk_id): product for product in product_query}
+    reserves: Dict[str, int] = {str(product): product_count for product, product_count in reserve_query}
+
+    WARN = []
+    for item in Form:
+        if item.item_id not in products:
+            WARN.append(f'Product with not found. ID: {item.item_id}')
+        elif products[str(item.item_id)].product_quantity - reserves.get(str(item.item_id), 0) < item.quantity:
+            WARN.append(f"Not Enough item {item.item_id}")
+        else:
+            existing: dbm.Shopping_card_item_form = db.query(dbm.Shopping_card_item_form).filter_by(shopping_card_fk_id=shopping_card_id, product_fk_id=item.item_id).first()
+            if existing:
+                existing.quantity += item.quantity
+                db.flush()
+            else:
+                bucket.append(dbm.Shopping_card_item_form(shopping_card_fk_id=shopping_card_id, product_fk_id=item.item_id, quantity=item.quantity, expire_date=NOW + datetime.timedelta(hours=1)))  # type: ignore
+
+    db.add_all(bucket)
+    db.commit()
+    return 200, f'Items has been Added. {(WARN if WARN else "")}'
 
 
 def delete_shopping_card(db: Session, shopping_card_id, deleted_by: UUID = None):
     try:
         record = db.query(dbm.Shopping_card_form).filter_by(shopping_card_pk_id=shopping_card_id).filter(dbm.Shopping_card_form.status != "deleted").first()
         if not record:
-            return 400, "shopping_card Record Not Found"
+            return 400, "shopping_card Not Found"
 
         record._Deleted_BY = deleted_by
         db.delete(record)
         db.commit()
         return 200, "Deleted"
-    except Exception as e:
-        return Return_Exception(db, e)
-
-
-def update_shopping_card(db: Session, Form: sch.update_shopping_card_schema):
-    try:
-        record = db.query(dbm.Shopping_card_form).filter_by(shopping_card_pk_id=Form.shopping_card_pk_id).filter(dbm.Shopping_card_form.status != "deleted")
-        if not record.first():
-            return 404, "Record Not Found"
-
-        record.update(Form.dict(), synchronize_session=False)
-
-        db.commit()
-        return 200, "Form Updated"
     except Exception as e:
         return Return_Exception(db, e)
 
