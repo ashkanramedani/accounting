@@ -9,8 +9,8 @@ class PaymentRequest(BaseModel):
     # description: str = ''
     email: str
     mobile: str
-    order_id: UUID
-    # shopping_card_id: UUID
+    # order_id: UUID
+    shopping_card_id: UUID
 
     class Config:
         extra = 'ignore'
