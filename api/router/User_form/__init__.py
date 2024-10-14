@@ -4,8 +4,10 @@ from .payment import router as payment_route
 from .roles import router as roles_route
 from .reward_card import router as reward_card_router
 from .discount_code import router as discount_code_router
+from .shopping_card import router as shopping_card_router
 
 __all__ = [
+    "shopping_card_router",
     "reward_card_router",
     "discount_code_router",
     "session_cancellation_route",

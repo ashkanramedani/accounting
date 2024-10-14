@@ -19,6 +19,8 @@ from .gateway import *
 # ]
 
 routes = [
+    shopping_card_router,
+    parsian_route,
     zarinpal_route,
     status_route,
     discount_code_router,
