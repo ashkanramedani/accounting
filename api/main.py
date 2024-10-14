@@ -120,13 +120,14 @@ async def Access(request: Request, call_next):
         response = Response(content=body, status_code=response.status_code, headers=dict(response.headers))
 
     except Exception as Access_error:
+        request_body = ""
         response_body = f"Error in parsing: {Access_error.__class__.__name__} - {Access_error.args}"
         response = Response(content=f"Error processing request: {response_body}", status_code=500)
 
     end_time = time()
 
-    Addectional_data = {"request_body": request_body, "response_body": response_body}
-    access_log.info(f"[ {end_time - start_time:.3f}s ] - {request.method} - {request.url}" , **Addectional_data)
+    Additional_data = {"request_body": request_body, "response_body": response_body}
+    access_log.info(f"[ {end_time - start_time:.3f}s ] - {request.method} - {request.url}", **Additional_data)
     return response
 
 
