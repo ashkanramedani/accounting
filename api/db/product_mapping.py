@@ -21,7 +21,7 @@ def get_all_product_mapping(db: Session, page: sch.NonNegativeInt, limit: sch.Po
 
 def post_product_mapping(db: Session, Form: sch.post_product_mapping_schema):
     try:
-        OBJ = dbm.Products_Mapping_form(**Form.__dict__, target_product_table="")  # type: ignore[call-arg]
+        OBJ = dbm.Products_Mapping_form(**Form.__dict__, target_product_table="", product_discounted_price=Form.product_price)  # type: ignore[call-arg]
         db.add(OBJ)
         db.commit()
         db.refresh(OBJ)
