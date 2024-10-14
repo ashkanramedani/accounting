@@ -11,8 +11,10 @@ from sqlalchemy.orm.mapper import Mapper
 
 
 def archive_deleted_record(mapper: Mapper, connection: Connection, target):
+    """
+        ROW_DATA should not be modify it can effect deleting process
+    """
     try:
-
         Fields = {}
         ROW_DATA = target.__dict__
         ROW_DATA.pop("_sa_instance_state", None)

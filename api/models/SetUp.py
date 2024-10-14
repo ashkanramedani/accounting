@@ -60,6 +60,7 @@ COURSE_TYPE: List[str] = [
     "hybrid"]
 
 
+
 def Exception_handler(*args, **kwargs):
     pass
 
