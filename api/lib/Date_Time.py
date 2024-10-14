@@ -143,8 +143,7 @@ __all__ = [
     "time_gap",
     "is_off_day",
     "to_persian",
-    "to_international",
-]
+    "to_international"]
 
 
 def Debug(func):
