@@ -10,7 +10,7 @@ from lib import logger
 import models.tables as dbm
 
 from models.Triggers import archive_deleted_record
-from models.Func import Unique_ID, Exception_Wrapper
+from models.Func import Unique_ID
 
 # Name, LastName, FID
 USER: List[Tuple] = [
@@ -171,7 +171,7 @@ def SetUp_table(engine):
         logger.info("Connecting To Database")
         TRY = 0
 
-        while True and TRY < 10:
+        while True and TRY < 5:
             try:
                 dbm.Base.metadata.create_all(bind=engine)
                 TRY = 0
@@ -179,7 +179,7 @@ def SetUp_table(engine):
             except OperationalError as OE:
                 TRY += 1
                 logger.warning(f"[ Could Not Create Engine ]: {OE.__repr__()}")
-                sleep(10)
+                sleep(5)
 
         if TRY != 0:
             logger.error(f"Could Not Create Engine after {TRY} times")
