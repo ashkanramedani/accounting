@@ -27,13 +27,13 @@ class Base_form:
     status = Column(String, nullable=False, default="submitted", index=True)  # NC: 006
 
 
-survey_questions = Table(
-        "survey_questions",
-        Base.metadata,
-        Column("survey_fk_id", ForeignKey("survey.survey_pk_id")),
-        Column("question_fk_id", ForeignKey("question.question_pk_id")),
-        Column("deleted", Boolean, default=False, nullable=False),
-        UniqueConstraint("survey_fk_id", "question_fk_id", "deleted"), )
+# survey_questions = Table(
+#         "survey_questions",
+#         Base.metadata,
+#         Column("survey_fk_id", ForeignKey("survey.survey_pk_id")),
+#         Column("question_fk_id", ForeignKey("question.question_pk_id")),
+#         Column("deleted", Boolean, default=False, nullable=False),
+#         UniqueConstraint("survey_fk_id", "question_fk_id", "deleted"), )
 
 UserRole = Table(
         "users_roles",
