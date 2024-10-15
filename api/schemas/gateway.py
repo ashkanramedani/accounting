@@ -33,7 +33,7 @@ class parsian_conform_response(BaseModel):
 @dataclass
 class Zarinpal:
     request: str = "https://api.zarinpal.com/pg/v4/payment/request.json"
-    callback: str = "https://sand.admin.api.ieltsdaily.ir/Zarinpal/callback"
+    callback: str = "https://sand.admin.api.ieltsdaily.ir/api/v1/form/Zarinpal/callback"
     StartPay: str = "https://www.zarinpal.com/pg/StartPay/"
     verify: str = "https://payment.zarinpal.com/pg/v4/payment/verify.json"
     merchant_id: str = "74ca3eb9-387f-4b78-b233-90ade2bd395b"
