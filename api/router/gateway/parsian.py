@@ -19,8 +19,6 @@ import db as dbf
 router = APIRouter(prefix='/parsian', tags=['gateway'])
 
 
-
-
 @router.post("/create_gateway", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
 async def payment_request(Form: sch.PaymentRequest, db=Depends(get_db)):
     status_code, result = dbf.parsian_create_gateway(db, Form)
