@@ -1,24 +1,16 @@
 import json
-from random import randint
+import time
+from random import getrandbits
 
-from sqlalchemy.orm import Session
-from zeep.proxy import ServiceProxy
-
-from db import Set_Status
-from lib import JSONEncoder
 from fastapi import HTTPException
+from sqlalchemy.orm import Session
 from zeep import Client
+from zeep.proxy import ServiceProxy
 
 import models as dbm
 import schemas as sch
+from db import Set_Status
 from .StatusCodes import Parsian_Status
-
-def genCardID(db: Session) -> str:
-    card_ids = [record[0] for record in db.query(dbm.Shopping_card_form.card_id).all()]
-    rnd = ''.join(str(randint(0, 9)) for _ in range(17))
-    while rnd in card_ids:
-        rnd = ''.join(str(randint(0, 9)) for _ in range(17))
-    return rnd
 
 
 def parsian_create_gateway(db: Session, Form: sch.PaymentRequest):
@@ -30,7 +22,7 @@ def parsian_create_gateway(db: Session, Form: sch.PaymentRequest):
         if not shopping_card:
             return 400, "Shopping card not found"
 
-        order_id = genCardID(db)
+        order_id: int = (int(time.time() * 1000) << 16) | getrandbits(32)
         with Client('https://pec.shaparak.ir/NewIPGServices/Sale/SaleService.asmx?wsdl') as client:
             request_data = {
                 'LoginAccount': sch.Parsian.LoginAcc,
@@ -63,21 +55,29 @@ def parsian_create_gateway(db: Session, Form: sch.PaymentRequest):
         raise HTTPException(status_code=500, detail=e.__repr__())
 
 
-def parsian_callback(db, Status, Authority):
-    pass
+def parsian_callback(db, Form: sch.parsian_callBack):
+    shopping_card, transaction = db \
+        .query(
+            dbm.Shopping_card_form, dbm.Transaction_form) \
+        .join(
+            dbm.Transaction_form,
+            dbm.Transaction_form.transaction_pk_id == dbm.Shopping_card_form.shopping_card_pk_id) \
+        .filter(
+            dbm.Shopping_card_form.card_id == Form.OrderId) \
+        .first()
 
-
-"""
-{
-  "data": [],
-  "errors": {
-    "code": -9,
-    "message": "The input params invalid, validation error.",
-    "validations": [
-      {
-        "description": "The description field is required."
-      }
-    ]
-  }
-}
-"""
+    transaction.data = Form.dict()
+    if Form.status == 0 and Form.Token > 0:  # Successful transaction
+        with Client("https://pec.shaparak.ir/NewIPGServices/Confirm/ConfirmService.asmx?wsdl") as client:
+            request_data = {'LoginAccount': sch.Parsian.LoginAcc, 'Token': Form.Token}
+            response: ServiceProxy = client.service.ConfirmPayment(requestData=request_data)
+            if response["Status"] == 0 and response["RRN"] > 0:  # Confirmed
+                transaction.status = Set_Status(db, "payment", "Paid - Confirmed")
+                db.commit()
+                return 200, "Paid - Confirmed"
+            else:  # Confirmed Failed
+                transaction.status = Set_Status(db, "payment", "conform Failed")
+                db.commit()
+                return 400, f"conform Failed. contact administrator Token: {transaction.transaction_pk_id}"
+    else:  # Failed transaction
+        return 400, f"transaction Failed. contact administrator Token: {transaction.transaction_pk_id}"

@@ -1,7 +1,7 @@
 import json
 import uuid
 from dataclasses import dataclass
-from typing import Literal, Dict
+from typing import Literal, Dict, Any
 from uuid import UUID
 
 import requests
@@ -28,6 +28,12 @@ async def payment_request(Form: sch.PaymentRequest, db=Depends(get_db)):
     # return RedirectResponse(result)
 
 
+
+
+
 @router.post("/callback", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
-async def payment_request(db=Depends(get_db)):
-    raise NotImplemented
+async def payment_request(Form: sch.parsian_callBack, db=Depends(get_db)):
+    status_code, result = dbf.parsian_callback(db, Form)
+    if status_code not in sch.SUCCESS_STATUS:
+        raise HTTPException(status_code=status_code, detail=result)
+    return result

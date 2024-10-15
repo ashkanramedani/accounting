@@ -15,6 +15,20 @@ class PaymentRequest(BaseModel):
     class Config:
         extra = 'ignore'
 
+class parsian_callBack(BaseModel):
+    Token: Any
+    status: Any
+    OrderId: Any
+    TerminalNo: Any
+    RRN: Any
+    HashCardNumber: Any
+    Amount: Any
+
+class parsian_conform_response(BaseModel):
+    Status: Any
+    RRN: Any
+    CardNumberMasked: Any
+    Token: Any
 
 @dataclass
 class Zarinpal:
