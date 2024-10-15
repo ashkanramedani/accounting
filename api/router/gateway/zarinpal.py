@@ -18,7 +18,7 @@ from models import get_db
 import schemas as sch
 import db as dbf
 
-router = APIRouter(prefix='/Zarinpal', tags=['gateway'])
+router = APIRouter(prefix='/zarinpal', tags=['gateway'])
 
 
 @router.post("/create_gateway", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
