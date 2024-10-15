@@ -16,7 +16,7 @@ from models import get_db
 import schemas as sch
 import db as dbf
 
-router = APIRouter(prefix='/parsian', tags=['gateway'])
+router = APIRouter(prefix='/api/v1/form/parsian', tags=['gateway'])
 
 
 @router.post("/create_gateway", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
