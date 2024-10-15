@@ -13,12 +13,6 @@ from db.Extra import *
 CAN_ACCEPT_ITEM = ["ready_to_use", "ready_to_pay"]
 
 
-def genCardID(db: Session) -> str:
-    card_ids = [record[0] for record in db.query(dbm.Shopping_card_form.card_id).all()]
-    rnd = ''.join(str(randint(0, 9)) for _ in range(17))
-    while rnd in card_ids:
-        rnd = ''.join(str(randint(0, 9)) for _ in range(17))
-    return rnd
 
 
 def get_shopping_card(db: Session, shopping_card_id: UUID):
@@ -48,7 +42,7 @@ def create_empty_shopping_card(db: Session, user_id: UUID):
             .filter(dbm.Shopping_card_form.status.in_(CAN_ACCEPT_ITEM)) \
             .first()
         if not Shopping_card:
-            Shopping_card = dbm.Shopping_card_form(user_fk_id=user_id, card_id=genCardID(db), status="ready_to_use")  # type: ignore
+            Shopping_card = dbm.Shopping_card_form(user_fk_id=user_id, status="ready_to_use")  # type: ignore
             db.add(Shopping_card)
             db.commit()
         return 200, Shopping_card

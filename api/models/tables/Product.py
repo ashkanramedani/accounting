@@ -33,7 +33,7 @@ class Seasonal_Discount_form(Base, Base_form):
 class Shopping_card_form(Base, Base_form):
     __tablename__ = "shopping_card"
     shopping_card_pk_id = create_Unique_ID()
-    card_id = Column(String, nullable=False)
+    card_id = Column(String, nullable=True)
     user_fk_id = create_foreignKey("User_form")
     transaction_fk_id = create_foreignKey("Transaction_form", nullable=True)
     discount_fk_id = create_foreignKey("Discount_code_form", nullable=True)
