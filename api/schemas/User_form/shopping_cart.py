@@ -41,7 +41,6 @@ class shopping_card_response(BaseModel):
     shopping_card_pk_id: UUID
 
     user: export_employee
-    bucket: List[Any] = []
     transaction_fk_id: Optional[UUID] = None
 
     class Config:

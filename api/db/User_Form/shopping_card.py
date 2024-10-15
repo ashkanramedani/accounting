@@ -13,8 +13,6 @@ from db.Extra import *
 CAN_ACCEPT_ITEM = ["ready_to_use", "ready_to_pay"]
 
 
-
-
 def get_shopping_card(db: Session, shopping_card_id: UUID):
     try:
         Shopping_card = db \
@@ -32,6 +30,7 @@ def get_all_shopping_card(db: Session, page: sch.NonNegativeInt, limit: sch.Posi
         return record_order_by(db, dbm.Shopping_card_form, page, limit, order, SortKey)
     except Exception as e:
         return Return_Exception(db, e)
+
 
 
 def create_empty_shopping_card(db: Session, user_id: UUID):

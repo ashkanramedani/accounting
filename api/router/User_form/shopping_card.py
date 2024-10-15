@@ -28,7 +28,7 @@ async def search_Shopping_card(form_id, db=Depends(get_db)):
     return result
 
 
-@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=List[sch.shopping_card_response])
+@router.get("/search", dependencies=[Depends(RateLimiter(times=1000, seconds=1))]) #, response_model=List[sch.shopping_card_response])
 async def search_all_Shopping_card(db=Depends(get_db), page: sch.NonNegativeInt = 1, limit: sch.PositiveInt = 100, order: sch.Sort_Order = "desc", SortKey: str = None):
     status_code, result = dbf.get_all_shopping_card(db, page, limit, order, SortKey)
     if status_code not in sch.SUCCESS_STATUS:
