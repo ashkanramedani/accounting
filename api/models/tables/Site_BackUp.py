@@ -34,17 +34,6 @@ users_posts_speaker_association = Table(
 )
 
 
-# class Authentications(Base, Base_form):
-#     __tablename__ = "tbl_authentications"
-#     authentication_pk_id = Column(BigInteger, nullable=False, autoincrement=True, unique=True, primary_key=True, index=True)
-#     username = Column(String, index=True, unique=True, nullable=False)
-#     password = Column(String, nullable=False)
-#     auth_users = relationship("Users")
-#
-#     def __repr__(self):
-#         return f'<Authentication "{self.username}">'
-
-
 class Users(Base, Base_form):
     __tablename__ = "tbl_users"
 

@@ -45,6 +45,7 @@ class Shopping_card_form(Base, Base_form):
     transaction = relationship("Transaction_form", foreign_keys=[transaction_fk_id])
     items = relationship("Shopping_card_item_form", back_populates="shopping_card", cascade="all, delete-orphan")
 
+
 class Shopping_card_item_form(Base):
     __tablename__ = "shopping_card_item"
 
@@ -57,8 +58,6 @@ class Shopping_card_item_form(Base):
 
     product = relationship("Products_Mapping_form", foreign_keys=[product_fk_id])
     shopping_card = relationship("Shopping_card_form", back_populates="items")
-
-
 
 
 class Discount_code_form(Base, Base_form):
