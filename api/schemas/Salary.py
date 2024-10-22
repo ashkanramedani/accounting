@@ -89,6 +89,7 @@ class employee_report(BaseModel):
 
 
 class employee_salary_Response(Base_response):
+
     employee_salary_pk_id: UUID
     employee: Employee_salary
     fingerprint_scanner_user_id: int
@@ -119,19 +120,19 @@ class employee_salary_Response(Base_response):
     vacation_leave: int
     medical_leave: int
     business_trip: int
-
+    #
     remote_earning: NonNegativeFloat
     vacation_leave_earning: int
     medical_leave_earning: int
     business_trip_earning: NonNegativeFloat
-
-    total_earning: NonNegativeFloat
-    total_deduction: NonNegativeFloat
-    total_income: NonNegativeFloat
-
-    card: Optional[export_payment]
-    payment_date: Optional[date]
-
+    #
+    total_earning: float
+    total_deduction: float
+    total_income: float
+    #
+    card: Optional[export_payment | None] = None
+    payment_date: date | None = None
+    #
     class Config:
         extra = 'ignore'
         orm_mode = True
