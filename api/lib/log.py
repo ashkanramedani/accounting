@@ -1,24 +1,47 @@
 import sys
 from json import load
 from os.path import normpath, dirname, join
+from typing import Literal
 
 from loguru import logger as logger_obj
 from loguru._logger import Core as _Core
 from loguru._logger import Logger as _Logger
+from loguru._defaults import *
 from pytz import timezone
 
 from lib import requester
 
-STDERR_FORMATTER = " <green>{time:YYYY-MM-DD HH:mm:ss Z}</green> | <level>{level.no: <2}</level> | <cyan>{module}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> | <level>{message}</level>"
-OLD_LOG_PATH = "log/Log-{time:YYYY-MM}.jsonl"
+
+def Time_formatter(time_record):
+    return time_record.astimezone(tz=timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z")
+
+
+def STDERR_FORMATTER(record):
+    record["IR_time"] = Time_formatter(record["time"])
+
+    Record = (" <y>{extra[name]: <6}</y> "
+              " <g>{IR_time}</g> |"
+              " <level>{level.no: <2}</level> |"
+              " <c>{module}</c>:<c>{function}</c>:<c>{line}</c> |"
+              " <level>{message}</level>\n")
+
+    if record["extra"]["name"] == "Access":
+        record["request_body"] = record["extra"].get("request_body", "Empty")
+        record["response_body"] = record["extra"].get("response_body", "Empty")
+        Record += (
+            " >>> <y>request_body:</y><w> {request_body}</w>\n"
+            " >>> <y>response_body:</y><w> {response_body}</w>\n"
+        )
+
+    return Record
+
+
+OLD_LOG_PATH = "log/Log-{time:YYYY-MM}.jsonl"  # Deprecated
 BASE_LOG_FILE = f'{normpath(f"{dirname(__file__)}/../log")}'
 
 
 # filter = lambda record: record["level"].name != "INFO_access",
 # self.logger.level("INFO_access", no=25, icon="✔️")
-
-def Time_formatter(time_record):
-    return time_record.astimezone(tz=timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z")
 
 
 def FILE_FORMATTER(record):
@@ -49,17 +72,11 @@ class LOG:
 
         try:
             self.config_path = "configs/config.json"
-            self.config = load(open(self.config_path))["logger"]
         except FileNotFoundError:
             self.config_path = join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")
-            self.config = load(open(self.config_path))["logger"]
 
+        self.config = load(open(self.config_path))["logger"]
         self.developer = True
-
-        self.log_level = self.config.pop("level", 20)
-        self.rotation = self.config.pop("rotation", "1 MB")
-        self.compression = self.config.pop("compression", "zip")
-        self.logger = _Logger(core=_Core(), exception=None, depth=0, record=False, lazy=False, colors=False, raw=False, capture=True, patchers=[], extra={})
 
     def __getattr__(self, name):
         return getattr(logger_obj, name)
@@ -88,8 +105,17 @@ class Main_Log(LOG):
     def __init__(self):
         if not hasattr(self, '_initialized'):
             super().__init__()
-            self.logger.add(sys.stdout, level=self.log_level, format=STDERR_FORMATTER)
-            self.logger.add(f"{BASE_LOG_FILE}/Api_Log.jsonl", level=self.log_level, format=FILE_FORMATTER, rotation=self.rotation, compression=self.compression)
+            self.logger = _Logger(core=_Core(), exception=None, depth=0, record=False, lazy=False, colors=False, raw=False, capture=True, patchers=[], extra={})
+            self.logger = self.logger.bind(name="Main")
+            self.Main_Log_config = self.config["handler"]["Main"]
+
+            self.log_level = self.Main_Log_config.pop("level", LOGURU_LEVEL)
+            self.rotation = self.Main_Log_config.pop("rotation", None)
+            self.compression = self.Main_Log_config.pop("compression", None)
+
+            if self.Main_Log_config.pop("std_out", False):
+                self.logger.add(sys.stdout, level=self.log_level, format=STDERR_FORMATTER)
+            self.logger.add(f"{BASE_LOG_FILE}/{self.Main_Log_config.pop('file', 'Main_TMP.jsonl')}", level=self.log_level, format=FILE_FORMATTER, rotation=self.rotation, compression=self.compression)
             self._initialized = True
 
     def keep_log(self, msg, type_log, user_id, location):
@@ -140,7 +166,18 @@ class Access_Log(LOG):
     def __init__(self):
         if not hasattr(self, '_initialized'):
             super().__init__()
-            self.logger.add(f"{BASE_LOG_FILE}/Api_access.jsonl", format=ACCESS_FORMATTER, rotation=self.rotation, compression=self.compression)
+            self.logger = _Logger(core=_Core(), exception=None, depth=0, record=False, lazy=False, colors=False, raw=False, capture=True, patchers=[], extra={})
+            self.logger = self.logger.bind(name="Access")
+            self.Main_Log_config = self.config["handler"]["Access"]
+
+            self.log_level = self.Main_Log_config.pop("level", LOGURU_LEVEL)
+            self.rotation = self.Main_Log_config.pop("rotation", None)
+            self.compression = self.Main_Log_config.pop("compression", None)
+
+            if self.Main_Log_config.pop("std_out", False):
+                self.logger.add(sys.stdout, level=self.log_level, format=STDERR_FORMATTER)
+
+            self.logger.add(f"{BASE_LOG_FILE}/{self.Main_Log_config.pop('file', 'Access_TMP.jsonl')}", level=self.log_level, format=ACCESS_FORMATTER, rotation=self.rotation, compression=self.compression)
             self._initialized = True
 
     def info(self, msg, depth=1, **Binds):
