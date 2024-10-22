@@ -20,11 +20,11 @@ class Salary_Policy_form(Base, Base_form):
 
     # finger_print
     Regular_hours_factor = Column(Float, nullable=False)
-    Regular_hours_cap = Column(Integer, nullable=False)
+    Regular_hours_cap = Column(Integer, nullable=False)  # Daily work (minute)
 
     overtime_permission = Column(Boolean, nullable=False)
     overtime_factor = Column(Float, nullable=False)
-    overtime_cap = Column(Integer, nullable=False)
+    overtime_cap = Column(Integer, nullable=False)  # monthly (minute)
     overtime_threshold = Column(Integer, nullable=False)
 
     undertime_factor = Column(Float, nullable=False)
@@ -33,24 +33,24 @@ class Salary_Policy_form(Base, Base_form):
     # off day work
     off_day_permission = Column(Boolean, nullable=False)
     off_day_factor = Column(Float, nullable=False)
-    off_day_cap = Column(Integer, nullable=False)
+    off_day_cap = Column(Integer, nullable=False)  # monthly (minute)
 
     # Remote
     remote_permission = Column(Boolean, nullable=False)
     remote_factor = Column(Float, nullable=False)
-    remote_cap = Column(Integer, nullable=False)
+    remote_cap = Column(Integer, nullable=False)  # monthly (minute)
 
     # Leave_form
     medical_leave_factor = Column(Float, nullable=False)
-    medical_leave_cap = Column(Integer, nullable=False)
+    medical_leave_cap = Column(Integer, nullable=False)  # monthly (minute)
 
     vacation_leave_factor = Column(Float, nullable=False)
-    vacation_leave_cap = Column(Integer, nullable=False)
+    vacation_leave_cap = Column(Integer, nullable=False)  # monthly (minute)
 
     # business_Trip
     business_trip_permission = Column(Boolean, nullable=False)
     business_trip_factor = Column(Float, nullable=False)
-    business_trip_cap = Column(Integer, nullable=False)
+    business_trip_cap = Column(Integer, nullable=False)  # monthly (minute)
 
     employee = relationship("User_form", foreign_keys=[user_fk_id])
     created = relationship("User_form", foreign_keys=[created_fk_by])
@@ -102,6 +102,8 @@ class Employee_Salary_form(Base, Base_form):
     year = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
 
+    # ID Experience Should be added
+    Total_Holiday = Column(Integer, nullable=False)
     payment = create_foreignKey("Payment_Method_form", nullable=True)
     payment_date = Column(Date, nullable=True)
     rewards_earning = Column(Float, nullable=False, default=0)
