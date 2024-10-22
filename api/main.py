@@ -44,7 +44,7 @@ IRAN_TIMEZONE: timezone = timezone(offset=timedelta(hours=3, minutes=30))
 
 @asynccontextmanager
 async def app_lifespan(api):
-    logger.info(f"preparing {api.title} V: {api.version} - {datetime.now(tz=IRAN_TIMEZONE)}")
+    logger.info(f"preparing {api.title} V: {api.version}")
     res = SetUp_table(engine)
     if not res:
         logger.error("Database Setup failed")
@@ -60,7 +60,7 @@ async def app_lifespan(api):
     logger.info(f'{api.title} V: {api.version} Has been started ...')
     yield
 
-    logger.info(f'Exiting from {api.title} V: {api.version} - {datetime.now(tz=IRAN_TIMEZONE)}')
+    logger.info(f'Exiting from {api.title} V: {api.version}')
     await FastAPILimiter.close()
 
 
@@ -96,11 +96,6 @@ BlackList = ["/openapi.json", '/docs', '/']
 
 @app.middleware("http")
 async def Access(request: Request, call_next):
-    # match = 
-    # if match:
-    #     print("Sub_routes:", match.group(1))
-
-    response_body = ""
     start_time = time()
     try:
         request_body = await request.body()
@@ -113,13 +108,14 @@ async def Access(request: Request, call_next):
 
         response = await call_next(request)
         body = b"".join([chunk async for chunk in response.body_iterator])
-        if str(search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url)).group(1)) not in BlackList:
+        if str(search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url)).group(1)) in BlackList:
+            response_body = "IGNORED. (BlackList)"
+        else:
             response_body = body.decode()
-
         response = Response(content=body, status_code=response.status_code, headers=dict(response.headers))
 
     except Exception as Access_error:
-        request_body = ""
+        request_body = "Empty"
         response_body = f"Error in parsing: {Access_error.__class__.__name__} - {Access_error.args}"
         response = Response(content=f"Error processing request: {response_body}", status_code=500)
 
