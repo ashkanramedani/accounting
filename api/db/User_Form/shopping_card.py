@@ -32,7 +32,6 @@ def get_all_shopping_card(db: Session, page: sch.NonNegativeInt, limit: sch.Posi
         return Return_Exception(db, e)
 
 
-
 def create_empty_shopping_card(db: Session, user_id: UUID):
     try:
         Shopping_card = db \
@@ -138,11 +137,11 @@ def update_shopping_card_status(db: Session, shopping_card_id: UUID, status_id: 
 
 def refresh_shopping_card(db: Session, shopping_card_id: UUID):
     try:
-        record: dbm.Shopping_card_form = db.query(dbm.Shopping_card_form).filter_by(shopping_card_pk_id=shopping_card_id).first()
-        if not record:
+        shopping_card: dbm.Shopping_card_form = db.query(dbm.Shopping_card_form).filter_by(shopping_card_pk_id=shopping_card_id).first()
+        if not shopping_card:
             return 400, "Record Not Found"
 
-        bucket: List[Dict] = record.bucket
+        bucket: List[Dict] = shopping_card.bucket
         items_id = {item["item_pk_id"]: {**item} for item in bucket}
 
         product: List[dbm.Products_Mapping_form] = db.query(dbm.Products_Mapping_form).filter(dbm.Products_Mapping_form.products_mapping_pk_id.in_(items_id.keys())).all()
@@ -155,6 +154,6 @@ def refresh_shopping_card(db: Session, shopping_card_id: UUID):
                 WARN[item.product_name] = {"item_price": item_price, "new_price": item.product_price, "WARN": "Price Change"}
         if WARN:
             return 400, WARN
-        return 200, record
+        return 200, "Refresh Completed"
     except Exception as e:
         return Return_Exception(db, e)
