@@ -103,9 +103,11 @@ class Session_form(Base, Base_form):
 
 class Tag_form(Base, Base_form):
     __tablename__ = "tag"
+    __table_args__ = (UniqueConstraint('tag_name', 'tag_cluster'),)
 
     tag_pk_id = create_Unique_ID()
-    tag_name = Column(String, index=True, nullable=False, unique=True)
+    tag_name = Column(String, index=True, nullable=False)
+    tag_cluster = Column(String, index=True, nullable=False, default="Main")
     created_fk_by = create_foreignKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
@@ -116,9 +118,12 @@ class Tag_form(Base, Base_form):
 
 class Category_form(Base, Base_form):
     __tablename__ = "category"
+    __table_args__ = (UniqueConstraint('category_pk_id', 'category_name'),)
 
     category_pk_id = create_Unique_ID()
     category_name = Column(String, index=True, nullable=False, unique=True)
+    category_cluster = Column(String, index=True, nullable=False, default="Main")
+
     created_fk_by = create_foreignKey("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
