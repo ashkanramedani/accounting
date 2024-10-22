@@ -70,26 +70,21 @@ def employee_salary(db: Session, year, month):  # NC: 003
         return Return_Exception(db, e)
 
 
-def Get_Report(db: Session, Salary_Policy: dbm.Salary_Policy_form, user_fk_id: UUID, start, end) -> Dict:
-    Remote_Request_report = []
-    Business_Trip_report = []
-
+def Get_Report(db: Session, user_fk_id: UUID, start, end) -> Dict:
     # Remote
-    if Salary_Policy.remote_permission:
-        Remote_Request_report: List = db \
-            .query(dbm.Remote_Request_form.date, func.sum(dbm.Remote_Request_form.duration).label('duration')) \
-            .filter_by(user_fk_id=user_fk_id).filter(dbm.Remote_Request_form.status != "deleted") \
-            .filter(dbm.Remote_Request_form.date.between(start, end)) \
-            .group_by(dbm.Remote_Request_form.date) \
-            .all()
+    Remote_Request_report: List = db \
+        .query(dbm.Remote_Request_form.date, func.sum(dbm.Remote_Request_form.duration).label('duration')) \
+        .filter_by(user_fk_id=user_fk_id).filter(dbm.Remote_Request_form.status != "deleted") \
+        .filter(dbm.Remote_Request_form.date.between(start, end)) \
+        .group_by(dbm.Remote_Request_form.date) \
+        .all()
 
-    if Salary_Policy.business_trip_permission:
-        Business_Trip_report: List = db \
-            .query(dbm.Business_Trip_form.date, func.sum(dbm.Business_Trip_form.duration).label('duration')) \
-            .filter_by(user_fk_id=user_fk_id).filter(dbm.Business_Trip_form.status != "deleted") \
-            .filter(dbm.Business_Trip_form.date.between(start, end)) \
-            .group_by(dbm.Business_Trip_form.date) \
-            .all()
+    Business_Trip_report: List = db \
+        .query(dbm.Business_Trip_form.date, func.sum(dbm.Business_Trip_form.duration).label('duration')) \
+        .filter_by(user_fk_id=user_fk_id).filter(dbm.Business_Trip_form.status != "deleted") \
+        .filter(dbm.Business_Trip_form.date.between(start, end)) \
+        .group_by(dbm.Business_Trip_form.date) \
+        .all()
 
     Vacation_leave_report: List = db \
         .query(dbm.Leave_Request_form.date, func.sum(dbm.Leave_Request_form.duration).label('duration')) \
@@ -158,7 +153,7 @@ def employee_salary_report(db: Session, user_fk_id, year, month):
         status, report_summary = generate_daily_report(
                 Salary_Policy=Salary_Policy,
                 Fingerprint_scanner_report=report_summary["Fingerprint_scanner_report"],
-                Activities=Get_Report(db, Salary_Policy, user_fk_id, start, end))
+                Activities=Get_Report(db, user_fk_id, start, end))
 
         if status != 200:
             return status, report_summary
