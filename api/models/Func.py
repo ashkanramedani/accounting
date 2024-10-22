@@ -31,8 +31,16 @@ CODES = {
     "course_type": "4"
 }
 
+
 class GUID(GTYPE):
     cache_ok = True
+
+
+from sqlalchemy import BigInteger
+
+
+def create_OLD_id():
+    return Column(BigInteger, nullable=True, unique=True, index=True)
 
 
 def create_Unique_ID():
