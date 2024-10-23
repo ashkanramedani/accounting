@@ -109,13 +109,13 @@ async def Access(request: Request, call_next):
         response = await call_next(request)
         body = b"".join([chunk async for chunk in response.body_iterator])
         if str(search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url)).group(1)) in BlackList:
-            response_body = "IGNORED. (BlackList)"
+            response_body = None
         else:
             response_body = body.decode()
         response = Response(content=body, status_code=response.status_code, headers=dict(response.headers))
 
     except Exception as Access_error:
-        request_body = "Empty"
+        request_body = None
         response_body = f"Error in parsing: {Access_error.__class__.__name__} - {Access_error.args}"
         response = Response(content=f"Error processing request: {response_body}", status_code=500)
 
