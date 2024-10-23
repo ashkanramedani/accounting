@@ -1,5 +1,5 @@
 from .Course import course_route, course_extension_route, sub_course_route, session_route
-from .Entity import student_route, employee_route
+from .Entity import student_route, employee_route, user_route
 from .Salary import report_route, salary_policy_route
 # from .Site import files, user, post, library
 from .Survey_form import question_route, response_route, survey_route
@@ -19,6 +19,7 @@ from .gateway import *
 # ]
 
 routes = [
+    user_route,
     shopping_card_router,
     parsian_route,
     zarinpal_route,

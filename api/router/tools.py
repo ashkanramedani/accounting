@@ -44,8 +44,8 @@ async def count(*args, **kwargs):
 
 
 @router.get("/testRoute", tags=["Test"])
-async def testRoute(db=Depends(get_db)):
-    return dbf.TestRoute(db)
+async def testRoute(role: str, db=Depends(get_db)):
+    return dbf.TestRoute(db, role)
 
 
 @router.get("/log", tags=["Test"], include_in_schema=False)

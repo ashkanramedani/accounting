@@ -75,7 +75,7 @@ class export_employee(BaseModel):
     name: str
     last_name: str
 
-    # roles: List[export_role] | None
+    roles: Optional[List[export_role]]
 
     class Config:
         extra = 'ignore'
