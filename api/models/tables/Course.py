@@ -11,9 +11,9 @@ class Course_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('course_name', 'course_level', 'course_code'),)
 
     course_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
-    course_language = create_foreignKey("Language_form")
-    course_type = create_foreignKey("Course_Type_form")
+    created_fk_by = FK_Column("User_form")
+    course_language = FK_Column("Language_form")
+    course_type = FK_Column("Course_Type_form")
 
     course_name = Column(String)
     course_image = Column(String, nullable=True)
@@ -44,9 +44,9 @@ class Sub_Course_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('sub_course_name', 'course_fk_id'),)
 
     sub_course_pk_id = create_Unique_ID()
-    course_fk_id = create_foreignKey("Course_form")
-    created_fk_by = create_foreignKey("User_form")
-    sub_course_teacher_fk_id = create_foreignKey("User_form")
+    course_fk_id = FK_Column("Course_form")
+    created_fk_by = FK_Column("User_form")
+    sub_course_teacher_fk_id = FK_Column("User_form")
 
     supervisor_review = Column(JSON, nullable=True)
 
@@ -77,11 +77,11 @@ class Session_form(Base, Base_form):
 
     session_pk_id = create_Unique_ID()
 
-    created_fk_by = create_foreignKey("User_form")
-    course_fk_id = create_foreignKey("Course_form")
-    sub_course_fk_id = create_foreignKey("sub_course")
-    session_teacher_fk_id = create_foreignKey("User_form")
-    sub_Request = create_foreignKey("Sub_Request_form", nullable=True)
+    created_fk_by = FK_Column("User_form")
+    course_fk_id = FK_Column("Course_form")
+    sub_course_fk_id = FK_Column("sub_course")
+    session_teacher_fk_id = FK_Column("User_form")
+    sub_Request = FK_Column("Sub_Request_form", nullable=True)
 
     is_sub = Column(Boolean, nullable=False, default=False)
     canceled = Column(Boolean, nullable=False, default=False)
@@ -107,8 +107,8 @@ class Tag_form(Base, Base_form):
 
     tag_pk_id = create_Unique_ID()
     tag_name = Column(String, index=True, nullable=False)
-    tag_cluster = Column(String, index=True, nullable=False, default="Main")
-    created_fk_by = create_foreignKey("User_form")
+    tag_cluster = Column(String, index=True, nullable=True, default="Main")
+    created_fk_by = FK_Column("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -122,9 +122,9 @@ class Category_form(Base, Base_form):
 
     category_pk_id = create_Unique_ID()
     category_name = Column(String, index=True, nullable=False, unique=True)
-    category_cluster = Column(String, index=True, nullable=False, default="Main")
+    category_cluster = Column(String, index=True, nullable=True, default="Main")
 
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -137,7 +137,7 @@ class Language_form(Base, Base_form):
 
     language_pk_id = create_Unique_ID()
     language_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -150,7 +150,7 @@ class Course_Type_form(Base, Base_form):
 
     course_type_pk_id = create_Unique_ID()
     course_type_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
@@ -172,9 +172,9 @@ class SignUp_payment_queue_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('student_pk_id', 'course_fk_id'),)
     signup_queue_pk_id = create_Unique_ID()
 
-    student_pk_id = create_foreignKey("User_form")
-    course_fk_id = create_foreignKey("Course_form")
-    discount_code = create_foreignKey("Discount_code_form", nullable=True)
+    student_pk_id = FK_Column("User_form")
+    course_fk_id = FK_Column("Course_form")
+    discount_code = FK_Column("Discount_code_form", nullable=True)
 
     subcourse_fk_ids = Column(JSON, nullable=False)
     total_price = Column(Float, nullable=False)
@@ -191,9 +191,9 @@ class SignUp_form(Base):
     __table_args__ = (UniqueConstraint('student_pk_id', 'subcourse_fk_id'),)
     signup_pk_id = create_Unique_ID()
 
-    student_pk_id = create_foreignKey("User_form")
-    course_fk_id = create_foreignKey("Course_form")
-    subcourse_fk_id = create_foreignKey("Sub_Course_form")
+    student_pk_id = FK_Column("User_form")
+    course_fk_id = FK_Column("Course_form")
+    subcourse_fk_id = FK_Column("Sub_Course_form")
 
     course = relationship("Course_form", foreign_keys=[course_fk_id])
     student = relationship("User_form", foreign_keys=[student_pk_id])

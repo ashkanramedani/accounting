@@ -11,8 +11,8 @@ class Leave_Request_form(Base, Base_form):
 
     leave_request_pk_id = create_Unique_ID()
 
-    created_fk_by = create_foreignKey("User_form")
-    user_fk_id = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
+    user_fk_id = FK_Column("User_form")
 
     start = Column(TIME, index=True, nullable=True, default=None)
     end = Column(TIME, index=True, nullable=True, default=None)
@@ -33,8 +33,8 @@ class Business_Trip_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     business_trip_pk_id = create_Unique_ID()
-    user_fk_id = create_foreignKey("User_form")
-    created_fk_by = create_foreignKey("User_form")
+    user_fk_id = FK_Column("User_form")
+    created_fk_by = FK_Column("User_form")
 
     start = Column(TIME, index=True, nullable=True, default=None)
     end = Column(TIME, index=True, nullable=True, default=None)
@@ -55,8 +55,8 @@ class Remote_Request_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     remote_request_pk_id = create_Unique_ID()
-    user_fk_id = create_foreignKey("User_form")
-    created_fk_by = create_foreignKey("User_form")
+    user_fk_id = FK_Column("User_form")
+    created_fk_by = FK_Column("User_form")
 
     working_location = Column(String, nullable=False)
 
@@ -77,8 +77,8 @@ class Payment_Method_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('user_fk_id', 'shaba', 'card_number'),)
 
     payment_method_pk_id = create_Unique_ID()
-    user_fk_id = create_foreignKey("User_form")
-    created_fk_by = create_foreignKey("User_form")
+    user_fk_id = FK_Column("User_form")
+    created_fk_by = FK_Column("User_form")
     shaba = Column(String(24), nullable=False, unique=True)
     card_number = Column(String(16), nullable=True, unique=True)
     active = Column(Boolean, default=True)
@@ -95,7 +95,7 @@ class Fingerprint_Scanner_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('EnNo', 'Date', 'Enter', 'Exit'),)
 
     fingerprint_scanner_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
     EnNo = Column(Integer, nullable=False, index=True)
     Date = Column(DATE, nullable=False, index=True)
     Enter = Column(TIME, nullable=False, index=True)
@@ -123,7 +123,7 @@ class Fingerprint_Scanner_backup_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('EnNo', 'DateTime'),)
 
     fingerprint_scanner_backup_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
     TMNo = Column(Integer, nullable=False, index=True)
     EnNo = Column(Integer, nullable=False, index=True)
     GMNo = Column(Integer, nullable=False, index=True)
@@ -146,12 +146,12 @@ class Teacher_Tardy_report_form(Base, Base_form):
     __table_args__ = (UniqueConstraint('teacher_fk_id', 'session_fk_id', 'delay'),)
 
     teacher_tardy_report_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
 
-    teacher_fk_id = create_foreignKey("User_form")
-    course_fk_id = create_foreignKey("Course_form")
-    sub_course_fk_id = create_foreignKey("Sub_Course_form")
-    session_fk_id = create_foreignKey("Session_form")
+    teacher_fk_id = FK_Column("User_form")
+    course_fk_id = FK_Column("Course_form")
+    sub_course_fk_id = FK_Column("Sub_Course_form")
+    session_fk_id = FK_Column("Session_form")
 
     delay = Column(Integer, nullable=False)
 
@@ -170,14 +170,14 @@ class Sub_Request_form(Base, Base_form):
 
     sub_request_pk_id = create_Unique_ID()
 
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
 
-    course_fk_id = create_foreignKey("Course_form")
-    sub_course_fk_id = create_foreignKey("Sub_Course_form")
-    session_fk_id = create_foreignKey("Session_form")
+    course_fk_id = FK_Column("Course_form")
+    sub_course_fk_id = FK_Column("Sub_Course_form")
+    session_fk_id = FK_Column("Session_form")
 
-    main_teacher_fk_id = create_foreignKey("User_form")
-    sub_teacher_fk_id = create_foreignKey("User_form")
+    main_teacher_fk_id = FK_Column("User_form")
+    sub_teacher_fk_id = FK_Column("User_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
@@ -195,11 +195,11 @@ class Session_Cancellation_form(Base, Base_form):
 
     session_cancellation_pk_id = create_Unique_ID()
 
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
 
-    course_fk_id = create_foreignKey("Course_form")
-    sub_course_fk_id = create_foreignKey("Sub_Course_form")
-    session_fk_id = create_foreignKey("Session_form")
+    course_fk_id = FK_Column("Course_form")
+    sub_course_fk_id = FK_Column("Sub_Course_form")
+    session_fk_id = FK_Column("Session_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     course = relationship("Course_form", foreign_keys=[course_fk_id])
@@ -214,7 +214,7 @@ class Role_form(Base, Base_form):
     __tablename__ = "role"
 
     role_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
 
     name = Column(String, index=True, nullable=False, unique=True)
     cluster = Column(String, index=True, nullable=False)

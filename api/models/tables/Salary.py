@@ -8,8 +8,8 @@ class Salary_Policy_form(Base, Base_form):
     __tablename__ = "salary_policy"
     salary_policy_pk_id = create_Unique_ID()
 
-    created_fk_by = create_foreignKey("User_form")
-    user_fk_id = create_foreignKey("User_form")
+    created_fk_by = FK_Column("User_form")
+    user_fk_id = FK_Column("User_form")
 
     Base_salary = Column(Float, nullable=False)
     Fix_pay = Column(Float, nullable=False, default=0)
@@ -73,9 +73,9 @@ class Teachers_Report_form(Base, Base_form):
     # __table_args__ = (UniqueConstraint('user_fk_id', 'start', 'end', 'date'),)
 
     teachers_report_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
-    teacher_fk_id = create_foreignKey("User_form")
-    course_fk_id = create_foreignKey("Course_form")
+    created_fk_by = FK_Column("User_form")
+    teacher_fk_id = FK_Column("User_form")
+    course_fk_id = FK_Column("Course_form")
     score = Column(Float)
     number_of_student = Column(Integer)
     canceled_course = Column(Integer, default=0)
@@ -97,14 +97,14 @@ class Employee_Salary_form(Base, Base_form):
     employee_salary_pk_id = create_Unique_ID()
     fingerprint_scanner_user_id = Column(Integer, nullable=True)
 
-    user_fk_id = create_foreignKey("User_form")
+    user_fk_id = FK_Column("User_form")
 
     year = Column(Integer, nullable=False)
     month = Column(Integer, nullable=False)
 
     # ID Experience Should be added
     Total_Holiday = Column(Integer, nullable=False)
-    payment = create_foreignKey("Payment_Method_form", nullable=True)
+    payment = FK_Column("Payment_Method_form", nullable=True)
     payment_date = Column(Date, nullable=True)
     rewards_earning = Column(Float, nullable=False, default=0)
     punishment_deductions = Column(Float, nullable=False, default=0)
@@ -159,13 +159,13 @@ class Teacher_salary_form(Base, Base_form):
     # __table_args__ = (UniqueConstraint('user_fk_id', 'subcourse_fk_id'),)
     teacher_salary_pk_id = create_Unique_ID()
 
-    user_fk_id = create_foreignKey("User_form")
-    subcourse_fk_id = create_foreignKey("Sub_Course_form")
+    user_fk_id = FK_Column("User_form")
+    subcourse_fk_id = FK_Column("Sub_Course_form")
 
     course_data = Column(JSON, nullable=False)
     total_sessions = Column(Integer, nullable=False)
 
-    payment = create_foreignKey("Payment_Method_form", nullable=True)
+    payment = FK_Column("Payment_Method_form", nullable=True)
     payment_date = Column(Date, nullable=True)
     rewards_earning = Column(Float, nullable=False, default=0)
     punishment_deductions = Column(Float, nullable=False, default=0)

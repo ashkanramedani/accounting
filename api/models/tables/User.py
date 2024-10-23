@@ -7,7 +7,7 @@ class User_form(Base, Base_form):
     __tablename__ = "user"
     __table_args__ = (UniqueConstraint('email', 'mobile_number', 'name', "last_name", "is_employee"),)
     user_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form", nullable=True)
+    created_fk_by = FK_Column("User_form", nullable=True)
 
     name = Column(String, nullable=False, index=True)
     last_name = Column(String, nullable=False, index=True)

@@ -3,7 +3,7 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Dict, no_type_check
 from uuid import UUID
-
+from sqlalchemy import Table, Column, ForeignKey, UniqueConstraint, Integer
 from fastapi_utils.guid_type import GUID_SERVER_DEFAULT_POSTGRESQL as UNIQUE_ID, UUIDTypeDecorator, GUID as GTYPE
 from sqlalchemy import Column, ForeignKey
 from sqlalchemy.sql.sqltypes import CHAR
@@ -47,9 +47,25 @@ def create_Unique_ID():
     return Column(GUID, server_default=UNIQUE_ID, primary_key=True, nullable=False, unique=True, index=True)
 
 
-def create_foreignKey(table: str, unique: bool = False, index: bool = True, nullable: bool = False):
+def FK_Column(table: str, unique: bool = False, index: bool = True, nullable: bool = False, name=None):
     table_name = table.lower().replace("_form", "")
+    if name:
+        return Column(name, GUID, ForeignKey(f'{table_name}.{table_name + "_pk_id"}'), nullable=nullable, unique=unique, index=index)
     return Column(GUID, ForeignKey(f'{table_name}.{table_name + "_pk_id"}'), nullable=nullable, unique=unique, index=index)
+
+
+def FKA_Column(fk: str, pk: str):
+    return Column(fk, GUID, ForeignKey(pk), nullable=False, unique=False, index=True)
+
+
+def association_table(base, *tables, field: str = None):
+    if len(tables) < 2:
+        raise ValueError("At least two tables are required to create an association table.")
+
+    tables = sorted({table.lower().replace('_form', '') for table in tables})
+    FKA_Columns = (FKA_Column(fk, pk) for fk, pk in [(f'{table}_fk_id', f'{table}.{table}_pk_id') for table in tables])
+
+    return Table(f'{"_".join(tables)}{("_" + field if field else "")}_Association', base.metadata, *FKA_Columns, UniqueConstraint(*(f'{table}_fk_id' for table in tables)))
 
 
 def Remove_Base_Data(OBJ) -> str:

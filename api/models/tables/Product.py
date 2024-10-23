@@ -24,7 +24,7 @@ class Seasonal_Discount_form(Base, Base_form):
     __tablename__ = "seasonal_discount"
 
     seasonal_discount_pk_id = create_Unique_ID()
-    target_product_fk_id = create_foreignKey("Products_Mapping_form")
+    target_product_fk_id = FK_Column("Products_Mapping_form")
     discount_type = Column(String, nullable=False, index=True)  # Fix / Percentage
     discount_amount = Column(Float, nullable=False)
     discounted_price = Column(Float, nullable=False)
@@ -34,9 +34,9 @@ class Shopping_card_form(Base, Base_form):
     __tablename__ = "shopping_card"
     shopping_card_pk_id = create_Unique_ID()
     card_id = Column(String, nullable=True)
-    user_fk_id = create_foreignKey("User_form")
-    transaction_fk_id = create_foreignKey("Transaction_form", nullable=True)
-    discount_fk_id = create_foreignKey("Discount_code_form", nullable=True)
+    user_fk_id = FK_Column("User_form")
+    transaction_fk_id = FK_Column("Transaction_form", nullable=True)
+    discount_fk_id = FK_Column("Discount_code_form", nullable=True)
 
     # bucket = Column(JSON, nullable=False, default={})
     total = Column(Float, nullable=False, default=0)
@@ -50,8 +50,8 @@ class Shopping_card_item_form(Base):
     __tablename__ = "shopping_card_item"
 
     shopping_card_item_pk_id = create_Unique_ID()
-    shopping_card_fk_id = create_foreignKey("Shopping_card_form")
-    product_fk_id = create_foreignKey("Products_Mapping_form")
+    shopping_card_fk_id = FK_Column("Shopping_card_form")
+    product_fk_id = FK_Column("Products_Mapping_form")
 
     quantity = Column(Integer, nullable=False, default=1)
     expire_date = Column(DateTime, default=None)
@@ -63,9 +63,9 @@ class Shopping_card_item_form(Base):
 class Discount_code_form(Base, Base_form):
     __tablename__ = "discount_code"
     discount_code_pk_id = create_Unique_ID()
-    created_fk_by = create_foreignKey("User_form")
-    target_user_fk_id = create_foreignKey("User_form", nullable=True)
-    target_product_fk_id = create_foreignKey("Products_Mapping_form", nullable=True)
+    created_fk_by = FK_Column("User_form")
+    target_user_fk_id = FK_Column("User_form", nullable=True)
+    target_product_fk_id = FK_Column("Products_Mapping_form", nullable=True)
 
     discount_code = Column(String, nullable=False, index=True)
     discount_type = Column(String, nullable=False, index=True)  # Fix / Percentage
@@ -84,8 +84,8 @@ class Discount_code_usage_form(Base, Base_form):
 
     discount_code_usage_pk_id = create_Unique_ID()
 
-    user_fk_id = create_foreignKey("User_form")
-    discount_code_fk_id = create_foreignKey("Discount_code_form")
+    user_fk_id = FK_Column("User_form")
+    discount_code_fk_id = FK_Column("Discount_code_form")
 
     user = relationship("User_form", foreign_keys=[user_fk_id])
     discount_code = relationship("Discount_code_form", foreign_keys=[discount_code_fk_id])

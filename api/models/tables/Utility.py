@@ -21,7 +21,7 @@ class Status_form(Base, Base_form):  # NC: 002
     status_name = Column(String, index=True, nullable=False)
     status_cluster = Column(String, index=True, nullable=False)
 
-    created_fk_by = create_foreignKey("User_form", nullable=True)
+    created_fk_by = FK_Column("User_form", nullable=True)
     created = relationship("User_form", foreign_keys=[created_fk_by])
 
     def __repr__(self):
@@ -31,7 +31,7 @@ class Status_form(Base, Base_form):  # NC: 002
 class Deleted_Records(Base):
     __tablename__ = "deleted_records"
     deleted_records_pk_id = create_Unique_ID()
-    deleted_fk_by = create_foreignKey("User_form", nullable=True)
+    deleted_fk_by = FK_Column("User_form", nullable=True)
     table = Column(String, nullable=False)
     rows_data = Column(JSON, nullable=False)
 
@@ -40,8 +40,8 @@ class Reward_card_form(Base, Base_form):
     __tablename__ = "reward_card"
 
     reward_card_pk_id = create_Unique_ID()
-    user_fk_id = create_foreignKey("User_form")
-    created_fk_by = create_foreignKey("User_form")
+    user_fk_id = FK_Column("User_form")
+    created_fk_by = FK_Column("User_form")
     reward_amount = Column(Float, nullable=False)
     reward_type = Column(String, nullable=False)
 

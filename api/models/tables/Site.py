@@ -1,47 +1,27 @@
+from typing import Optional
+
 from sqlalchemy import Float
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-
+from functools import partial
 from .Base_form import *
 
-users_departments_association = Table(
-        'rel_users_departments',
-        Base.metadata,
-        create_foreignKey("User_form", name="user_fk_id"),
-        create_foreignKey("Departments_form", name="department_fk_id"),
-        create_foreignKey("Educational_institutions_form", name="educational_institution_fk_id"))
+association_table_base = partial(association_table, base=Base)
 
-users_posts_actor_association = Table(
-        'rel_users_posts_actor',
-        Base.metadata,
-        create_foreignKey("User_form", name="user_fk_id"),
-        create_foreignKey("Posts_form", name="post_fk_id"))
 
-users_posts_writer_association = Table(
-        'rel_users_posts_writer',
-        Base.metadata,
-        create_foreignKey("User_form", name="user_fk_id"),
-        create_foreignKey("Posts_form", name="post_fk_id"))
+def FKA_Column(table: str):
+    table_name = table.lower().replace("_form", "")
+    return Column(f'{table}_fk_id', GUID, ForeignKey(f'{table_name}.{table_name}_pk_id'), nullable=False, unique=False, index=True)
 
-users_posts_speaker_association = Table(
-        'rel_users_posts_speaker',
-        Base.metadata,
-        create_foreignKey("User_form", name="user_fk_id"),
-        create_foreignKey("Posts_form", name="post_fk_id"))
 
-PostTag = Table(
-        "post_tag",
-        Base.metadata,
-        create_foreignKey("Tag_form", name="tag_fk_id"),
-        create_foreignKey("Posts_form", name="post_fk_id"),
-        UniqueConstraint("tag_fk_id", "post_fk_id"), )
+users_departments_association = association_table_base("User_form", "Departments_form", "Educational_institutions_form")
+users_posts_actor_association = association_table_base("User_form", "Posts_form", field="actor")
+users_posts_writer_association = association_table_base("User_form", "Posts_form", field="writer")
+users_posts_speaker_association = association_table_base("User_form", "Posts_form", field="speaker")
+users_posts_view_association = association_table_base("User_form", "Posts_form", field="view")
 
-PostCategory = Table(
-        "post_category",
-        Base.metadata,
-        create_foreignKey("Category_form", name="category_fk_id"),
-        create_foreignKey("Posts_form", name="post_fk_id"),
-        UniqueConstraint("category_fk_id", "course_fk_id"), )
+PostTag = association_table_base("Tag_form", "Posts_form")
+PostCategory = association_table_base("Tag_form", "Category_form")
 
 
 class Departments_form(Base, Base_form):
@@ -59,7 +39,6 @@ class Educational_institutions_form(Base, Base_form):
     educational_institutions_pk_id = create_Unique_ID()
 
 
-
 class PostViews(Base, Base_form):
     __tablename__ = "tbl_post_views"
 
@@ -70,9 +49,9 @@ class PostViews(Base, Base_form):
     country = Column(String(250), default=None)
     meta_data = Column(JSONB, server_default='{}')
 
-    post_fk_id = create_foreignKey("Posts_form")
-    created_fk_by = create_foreignKey("User_form")
-    educational_institution_fk_id = create_foreignKey("Educational_institutions_form")
+    post_fk_id = FK_Column("Posts_form")
+    created_fk_by = FK_Column("User_form")
+    educational_institution_fk_id = FK_Column("Educational_institutions_form")
 
     post = relationship("Posts_form", foreign_keys=[post_fk_id])
     created = relationship("User_form", foreign_keys=[created_fk_by])
@@ -101,19 +80,18 @@ class Posts_form(Base, Base_form):
     post_data_file_path = Column(String)
     post_direction = Column(String)
 
-    post_tags = relationship("Tag_form", secondary=PostTag, backref="post_tag")
-    post_categories = relationship("Category_form", secondary=PostCategory, backref="post_category")
-
-    created_fk_by = create_foreignKey("User_form")
-    educational_institution_fk_id = create_foreignKey("Educational_institutions_form")
+    created_fk_by = FK_Column("User_form")
+    educational_institution_fk_id = FK_Column("Educational_institutions_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     educational_institution = relationship("Educational_institutions_form", foreign_keys=[educational_institution_fk_id])
 
-    # users_post_speaker = relationship("Users", secondary=users_posts_speaker_association)
-    # users_post_writer = relationship("Users", secondary=users_posts_writer_association)
-    # users_post_actor = relationship("Users", secondary=users_posts_actor_association)
-    # post_view = relationship("Users", secondary=users_posts_writer_association)
+    post_tags = relationship("Tag_form", secondary=PostTag, backref="post_tag")
+    post_categories = relationship("Category_form", secondary=PostCategory, backref="post_category")
+    post_view = relationship("Users", secondary=users_posts_view_association)
+    users_post_actor = relationship("Users", secondary=users_posts_actor_association)
+    users_post_writer = relationship("Users", secondary=users_posts_writer_association)
+    users_post_speaker = relationship("Users", secondary=users_posts_speaker_association)
 
     # comments = relationship("PostComments", backref="rel_comments")
     # list_views = relationship("PostViews", backref="rel_views")
@@ -148,11 +126,13 @@ class Library_form(Base, Base_form):
 
     library_download_count = Column(Integer, default=0, nullable=False)
 
-    created_fk_by = create_foreignKey("User_form")
-    educational_institution_fk_id = create_foreignKey("Educational_institutions_form")
+    created_fk_by = FK_Column("User_form")
+    educational_institution_fk_id = FK_Column("Educational_institutions_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
+
     educational_institution = relationship("Educational_institutions_form", foreign_keys=[educational_institution_fk_id])
+
 
 class Exams_form(Base, Base_form):
     tablename = 'exams'
@@ -171,12 +151,18 @@ class Exams_form(Base, Base_form):
     exam_tax = Column(Float, default=0.09)
     exam_capacity = Column(Integer, default=0)
 
-    created_fk_by = create_foreignKey("User_form")
-    language_fk_id = create_foreignKey("Language_form")
-    exam_template_fk_id = create_foreignKey("Exam_template_form")
-    educational_institution_fk_id = create_foreignKey("Educational_institutions_form")
+    created_fk_by = FK_Column("User_form")
+    language_fk_id = FK_Column("Language_form")
+    exam_template_fk_id = FK_Column("Exam_template_form")
+    educational_institution_fk_id = FK_Column("Educational_institutions_form")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
     language = relationship("Language_form", foreign_keys=[language_fk_id])
     exam_template = relationship("Exam_template_form", foreign_keys=[exam_template_fk_id])
     educational_institution = relationship("Educational_institutions_form", foreign_keys=[educational_institution_fk_id])
+
+
+class Membership_form(Base, Base_form):
+    tablename = 'membership'
+
+    Membership_pk_id = create_Unique_ID()
