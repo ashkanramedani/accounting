@@ -26,12 +26,12 @@ def STDERR_FORMATTER(record):
               " <level>{message}</level>\n")
 
     if record["extra"]["name"] == "Access":
-        record["request_body"] = record["extra"].get("request_body", "Empty")
-        record["response_body"] = record["extra"].get("response_body", "Empty")
-        Record += (
-            " >>> <y>request_body:</y><w> {request_body}</w>\n"
-            " >>> <y>response_body:</y><w> {response_body}</w>\n"
-        )
+        if request_body := record["extra"].get("request_body", None):
+            record["request_body"] = request_body
+            Record += " >>> <y>request_body:</y><w> {request_body}</w>\n"
+        if response_body := record["extra"].get("response_body", None):
+            record["response_body"] = response_body
+            Record += " >>> <y>response_body:</y><w> {response_body}</w>\n"
 
     return Record
 
