@@ -8,7 +8,7 @@ import schemas as sch
 from db import Template
 from models import get_db
 
-router = APIRouter(prefix='/api/v1/template', tags=['Template_form'])
+router = APIRouter(prefix='/api/v1/template', tags=['Template'])
 
 
 # Sub request

@@ -84,7 +84,6 @@ class update_post_schema(Post):
         extra = 'ignore'
 
 
-
 class post_response_schema(Post):
     category: Optional[Any] = []
     tag: Optional[Any] = []

@@ -14,7 +14,7 @@ import schemas as sch
 from lib.Date_Time import generate_month_interval
 from models import get_db
 
-router = APIRouter(prefix='/api/v1/form/fingerprint_scanner', tags=['Fingerprint_scanner'])
+router = APIRouter(prefix='/api/v1/form/fingerprint_scanner', tags=['Fingerprint scanner'])
 
 
 # leave forms

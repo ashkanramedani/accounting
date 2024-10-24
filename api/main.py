@@ -91,8 +91,8 @@ METHOD = {
     "OPTIONS": "OPT"
 }
 
+BlackList = ["/openapi.json", '/docs', '/', '/log']
 
-BlackList = ["/openapi.json", '/docs', '/']
 
 @app.middleware("http")
 async def Access(request: Request, call_next):
@@ -103,12 +103,12 @@ async def Access(request: Request, call_next):
 
         try:
             request_body = loads(request_body)
-        except Exception as E:
+        except:
             pass
 
         response = await call_next(request)
         body = b"".join([chunk async for chunk in response.body_iterator])
-        if str(search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url)).group(1)) in BlackList:
+        if str(search(r"https?://[^:/]+:\d+(/[^?]*)", str(request.url)).group(1)).split("?")[0] in BlackList:
             response_body = None
         else:
             response_body = body.decode()

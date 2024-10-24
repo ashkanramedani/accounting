@@ -89,7 +89,6 @@ class employee_report(BaseModel):
 
 
 class employee_salary_Response(Base_response):
-
     employee_salary_pk_id: UUID
     employee: Employee_salary
     fingerprint_scanner_user_id: int
@@ -132,6 +131,7 @@ class employee_salary_Response(Base_response):
     #
     card: Optional[export_payment | None] = None
     payment_date: date | None = None
+
     #
     class Config:
         extra = 'ignore'

@@ -35,16 +35,16 @@ handlers:
 
 loggers:
   uvicorn:
-    handlers: [default]
+    handlers: [ default ]
     level: INFO
     propagate: False
-    filters: [stat_reload_filter]
+    filters: [ stat_reload_filter ]
   uvicorn.error:
-    handlers: [default]
+    handlers: [ default ]
     level: WARNING
     propagate: False
-    filters: [stat_reload_filter]
+    filters: [ stat_reload_filter ]
   uvicorn.access:
-    handlers: [access]
+    handlers: [ access ]
     level: INFO
     propagate: False

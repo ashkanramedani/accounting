@@ -1,4 +1,4 @@
-from sqlalchemy import func, BigInteger
+from sqlalchemy import func
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.sql import expression
 

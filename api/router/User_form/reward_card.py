@@ -8,7 +8,7 @@ import db as dbf
 import schemas as sch
 from models import get_db
 
-router = APIRouter(prefix='/api/v1/form/reward_card', tags=['reward_card'])
+router = APIRouter(prefix='/api/v1/form/reward_card', tags=['reward card'])
 
 
 # tardy request

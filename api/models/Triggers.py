@@ -1,13 +1,12 @@
 import json
 
+from sqlalchemy.engine.base import Connection
 from sqlalchemy.exc import StatementError
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.mapper import Mapper
 
 from lib import JSONEncoder, logger
 from models import tables as dbm
-
-from sqlalchemy.engine.base import Connection
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.orm.mapper import Mapper
 
 
 def archive_deleted_record(mapper: Mapper, connection: Connection, target):

@@ -1,20 +1,20 @@
 from ..Base import *
 
 
-class Employee(Entity, Base_form):
-    fingerprint_scanner_user_id: int | None
+class User(Entity, Base_form):
+    fingerprint_scanner_user_id: int
     roles: Optional[List[Update_Relation]] = []
 
 
-class post_employee_schema(Employee):
+class post_user_schema(User):
     pass
 
 
-class update_employee_schema(Employee):
+class update_user_schema(User):
     user_pk_id: UUID
 
 
-class employee_response(Entity):
+class user_response(Entity_Response):
     user_pk_id: UUID
     roles: List[export_role] | None
     fingerprint_scanner_user_id: Optional[int | str] = None

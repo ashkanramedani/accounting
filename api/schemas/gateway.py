@@ -15,6 +15,7 @@ class PaymentRequest(BaseModel):
     class Config:
         extra = 'ignore'
 
+
 class parsian_callBack(BaseModel):
     Token: Any
     status: Any
@@ -24,11 +25,13 @@ class parsian_callBack(BaseModel):
     HashCardNumber: Any
     Amount: Any
 
+
 class parsian_conform_response(BaseModel):
     Status: Any
     RRN: Any
     CardNumberMasked: Any
     Token: Any
+
 
 @dataclass
 class Zarinpal:
@@ -37,8 +40,6 @@ class Zarinpal:
     StartPay: str = "https://www.zarinpal.com/pg/StartPay/"
     verify: str = "https://payment.zarinpal.com/pg/v4/payment/verify.json"
     merchant_id: str = "74ca3eb9-387f-4b78-b233-90ade2bd395b"
-
-
 
 
 @dataclass

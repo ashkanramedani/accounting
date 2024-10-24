@@ -1,12 +1,10 @@
 import re
-import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Dict, no_type_check
-from uuid import UUID
-from sqlalchemy import Table, Column, ForeignKey, UniqueConstraint, Integer
-from fastapi_utils.guid_type import GUID_SERVER_DEFAULT_POSTGRESQL as UNIQUE_ID, UUIDTypeDecorator, GUID as GTYPE
+from typing import Dict
+
+from fastapi_utils.guid_type import GUID_SERVER_DEFAULT_POSTGRESQL as UNIQUE_ID, GUID as GTYPE
 from sqlalchemy import Column, ForeignKey
-from sqlalchemy.sql.sqltypes import CHAR
+from sqlalchemy import Table, UniqueConstraint
 
 BASE_ATTR = [
     "created_fk_by",

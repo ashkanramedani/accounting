@@ -1,16 +1,15 @@
 from time import sleep
-from uuid import UUID
 from typing import Dict, List, Tuple
+from uuid import UUID
 
 from sqlalchemy import event
-from sqlalchemy.orm import Session
 from sqlalchemy.exc import OperationalError
+from sqlalchemy.orm import Session
 
-from lib import logger
 import models.tables as dbm
-
-from models.Triggers import archive_deleted_record
+from lib import logger
 from models.Func import Unique_ID
+from models.Triggers import archive_deleted_record
 
 # Name, LastName, FID
 USER: List[Tuple] = [
@@ -58,7 +57,6 @@ COURSE_TYPE: List[str] = [
     "online",
     "OnSite",
     "hybrid"]
-
 
 
 def Exception_handler(*args, **kwargs):

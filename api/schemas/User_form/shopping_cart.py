@@ -10,6 +10,7 @@ class shopping_card_Item(BaseModel):
     class Config:
         extra = 'ignore'
 
+
 class add_to_card(BaseModel):
     item_id: UUID
     quantity: int
@@ -59,9 +60,11 @@ class add_item(Base_form):
     shopping_card_fk_id: UUID
     items: List[item]
 
+
 class update_item(Base_form):
     shopping_card_fk_id: UUID
     items: List[item]
+
 
 class delete_item(Base_form):
     shopping_card_fk_id: UUID

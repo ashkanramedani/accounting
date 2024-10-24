@@ -8,7 +8,7 @@ import schemas as sch
 import db as dbf
 from models import get_db
 
-router = APIRouter(prefix='/api/v1/product_mapping', tags=['Template_form'])
+router = APIRouter(prefix='/api/v1/product_mapping', tags=['Template'])
 
 
 # Sub request

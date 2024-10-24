@@ -255,7 +255,7 @@ class Base_response(BaseModel):
 
 class Base_record_add(BaseModel):
     id: UUID
-    Warning: Optional[str] = None
+    Warning: Optional[Any] = None
 
 
 class Update_Relation(BaseModel):

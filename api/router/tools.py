@@ -11,7 +11,7 @@ import schemas as sch
 from lib import logger
 from models import get_db
 
-router = APIRouter()
+router = APIRouter(tags=["Test"])
 
 
 @router.get("/", include_in_schema=False)
@@ -19,7 +19,12 @@ async def docs_redirect():
     return RedirectResponse(url='/docs')
 
 
-@router.get("/api/v1/form/count", tags=["Test"], response_model=int | str)
+@router.get("/ping", response_model=str)
+def ping():
+    return "Pong"
+
+
+@router.get("/api/v1/form/count", response_model=int | str)
 async def count(field: str, db=Depends(get_db)):
     status_code, result = dbf.count(db, field)
     if status_code not in sch.SUCCESS_STATUS:
@@ -27,28 +32,23 @@ async def count(field: str, db=Depends(get_db)):
     return result
 
 
-@router.get("/ping", tags=["Test"], response_model=str)
-def ping():
-    return "Pong"
-
-
-@router.get("/api/v1/form/count/help", tags=["Test"], response_model=List[str])
+@router.get("/api/v1/form/count/help", response_model=List[str])
 async def count():
     return ["User", "employee", "student", "Course", "Sub_Course", "Session", "Leave_Request", "Business_Trip", "Remote_Request", "Payment_Method", "Fingerprint_Scanner", "Fingerprint_Scanner_backup", "Teacher_Tardy_report", "Teachers_Report", "Role", "Salary_Policy", "Employee_Salary", "Tag", "Category", "Language", "Course_Type", "Sub_Request", "Session_Cancellation", "Reward_card"]
 
 
-@router.get("/count", tags=["Test"], deprecated=True)
+@router.get("/count", deprecated=True)
 async def count(*args, **kwargs):
     logger.warning(f'Deprecated. Use /api/v1/form/count')
     raise HTTPException(status_code=410, detail=f'Deprecated. Use /api/v1/form/count')
 
 
-@router.get("/testRoute", tags=["Test"])
+@router.get("/testRoute")
 async def testRoute(role: str, db=Depends(get_db)):
     return dbf.TestRoute(db, role)
 
 
-@router.get("/log", tags=["Test"], include_in_schema=False)
+@router.get("/log", include_in_schema=False)
 async def Log(log: str = None, limit: int = 100):
     if log:
         try:
@@ -56,10 +56,10 @@ async def Log(log: str = None, limit: int = 100):
                 Logs = f.readlines()[::-1]
             return Logs[:limit]
         except FileNotFoundError:
-            return "File Not Exist."
+            return "<h1>File Not Exist.</h1>"
     return os.listdir("./log")
 
 
-@router.get("/config", tags=["Test"], include_in_schema=False)
+@router.get("/config", include_in_schema=False)
 def config():
     return load(open(join(normpath(f'{dirname(__file__)}/../'), "configs/config.json")))

@@ -31,6 +31,7 @@ async def search_employee_salary(employee_id: UUID, target_date: datetime.date, 
         raise HTTPException(status_code=status_code, detail=result)
     return result
 
+
 #
 # @router.get("/sand/", dependencies=[Depends(RateLimiter(times=1000, seconds=1))], response_model=sch.employee_salary_Response)
 # async def sand_search_report(db=Depends(get_db)):

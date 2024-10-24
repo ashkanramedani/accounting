@@ -53,7 +53,7 @@ async def get_supervisor_review(sub_course_id: UUID, db=Depends(get_db)):
     return result
 
 
-@router.post("/teacher/supervisor_review/{sub_course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  #, response_model=sch.Teacher_report_response)
+@router.post("/teacher/supervisor_review/{sub_course_id}", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])  # , response_model=sch.Teacher_report_response)
 async def post_supervisor_review(sub_course_id: UUID, Dropdowns: sch.teacher_salary_DropDowns, db=Depends(get_db)):
     status_code, result = dbf.post_supervisor_review(db, sub_course_id, Dropdowns)
     if status_code not in sch.SUCCESS_STATUS:
