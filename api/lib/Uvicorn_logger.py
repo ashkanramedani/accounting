@@ -1,6 +1,5 @@
 import http
 import logging
-from copy import copy
 
 
 class DefaultFormatter(logging.Formatter):
@@ -8,9 +7,10 @@ class DefaultFormatter(logging.Formatter):
         super().__init__(fmt=fmt, datefmt=datefmt)
 
     def formatMessage(self, record: logging.LogRecord) -> str:
-        record_copy = copy(record)
-        record_copy.__dict__["levelprefix"] = f'{record_copy.levelname: <{8 - len(record_copy.levelname)}}'
-        return super().formatMessage(record_copy)
+        return super().formatMessage(record)
+
+        # record_copy = copy(record)
+        # record_copy.__dict__["levelprefix"] = f'{record_copy.levelname: <{8 - len(record_copy.levelname)}}'
 
 
 def get_status_code(status_code: int) -> str:
@@ -40,7 +40,7 @@ class AccessFormatter(logging.Formatter):
 class StatReloadFilter(logging.Filter):
     def filter(self, record: logging.LogRecord):
         try:
-            if "StatReload detected changes" in record.message:
+            if "StatReload" in record.message:
                 return False
             return True
         except AttributeError:

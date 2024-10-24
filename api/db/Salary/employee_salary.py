@@ -4,7 +4,6 @@ from typing import Literal
 from sqlalchemy import and_
 
 from db.User_Form import *
-from lib import logger
 
 
 def permissions(db: Session, User_ID):

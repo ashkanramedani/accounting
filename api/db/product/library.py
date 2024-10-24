@@ -1,13 +1,11 @@
-from datetime import datetime
 from typing import Tuple, Any
 from uuid import UUID
 
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import and_
 
 import models as dbm
-from db import Return_Exception
 import schemas as sch
+from db import Return_Exception
 
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority

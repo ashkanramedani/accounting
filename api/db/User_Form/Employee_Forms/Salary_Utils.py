@@ -1,8 +1,8 @@
 from datetime import timedelta, date, time, datetime
-from typing import List, Dict, Literal, Tuple
+from typing import List, Dict, Tuple
 
-from db import Return_Exception
 import models as dbm
+from db import Return_Exception
 from lib import *
 from lib import DEV_io
 
@@ -139,11 +139,13 @@ def Accrued_Holiday(Day):
     Day["msg"] = "Accrued_Holiday"
     return Day
 
+
 def finalize(Day: Dict) -> Dict:
     Day["Undertime"] = max(0, Day["Undertime"] - sum(Day[field] for field in ["remote", "vacation_leave", "medical_leave", "business_trip"]))
     Day["EnterExit"] = ' '.join([str(t) for t in Day.pop("EnterExit", [])])
     Day["msg"] = "Finished"
     return Day
+
 
 @DEV_io()
 def Fixed_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days: Dict[str, Dict]) -> Tuple[List[Dict], int]:
@@ -247,7 +249,7 @@ def Split_schedule(EMP_Salary: dbm.Salary_Policy_form, preprocess_Days) -> Tuple
             Day_OBJ["Regular_hours"] = min(Regular_hours_cap, Day_OBJ["present_time"])
 
         Days.append(finalize(Day_OBJ))
-    return Days,Total_Holiday
+    return Days, Total_Holiday
 
 
 @DEV_io()

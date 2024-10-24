@@ -1,19 +1,15 @@
-import datetime
 import json
-import uuid
-from typing import Literal, List, Dict
-from random import choices
-from string import ascii_letters, digits
+from typing import Dict
 
 import requests
-from fastapi import HTTPException
-from sqlalchemy.orm import Session
-from lib import JSONEncoder
+
 import models as dbm
 import schemas as sch
 from db.Extra import *
+from lib import JSONEncoder
 
 headers: Dict = {'accept': 'application/json', 'content-type': 'application/json'}
+
 
 def zarinpal_create_gateway(db, Form: sch.PaymentRequest):
     try:

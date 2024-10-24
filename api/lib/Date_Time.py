@@ -156,7 +156,6 @@ def Debug(func):
     return wrapper
 
 
-
 def Fix_time(time_obj: str | datetime | time):
     if isinstance(time_obj, time):
         return time_obj.replace(second=0)
@@ -200,6 +199,7 @@ def Fix_datetime(time_obj: str | datetime):
 
     year, month, day, hour, minute, second = map(int, datetime_match.groups())
     return datetime(year=year, month=month, day=day, hour=hour, minute=minute, second=second)
+
 
 def is_off_day(day: date | datetime) -> bool:
     day = day if isinstance(day, date) else day.date()

@@ -5,9 +5,9 @@ from sqlalchemy.orm import Session
 
 import models as dbm
 import schemas as sch
-from lib.Date_Time import *
 from db.Course.Session import delete_session
 from db.Extra import *
+from lib.Date_Time import *
 
 
 def get_subCourse_active_session(db: Session, SubCourse: UUID) -> List[UUID]:

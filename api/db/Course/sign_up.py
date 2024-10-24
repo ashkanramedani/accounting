@@ -1,12 +1,12 @@
+from datetime import datetime
+from typing import List
+
 from sqlalchemy.orm import Session
 
 import models as dbm
+import schemas as sch
 from api.db.Course import course_additional_details
 from db.Extra import *
-import schemas as sch
-
-from datetime import datetime
-from typing import List
 
 
 def get_sign_up_active_course(db: Session, course_id: UUID):

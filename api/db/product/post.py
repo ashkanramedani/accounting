@@ -1,13 +1,11 @@
-from datetime import datetime
 from uuid import UUID
 
-from sqlalchemy.sql.expression import *
 from sqlalchemy.orm import Session
+from sqlalchemy.sql.expression import *
 
 import models as dbm
 import schemas as sch
 from db import Return_Exception
-from lib import logger
 
 
 # expire_date, delete_date, can_deleted, deleted, update_date, can_update, visible, create_date, priority

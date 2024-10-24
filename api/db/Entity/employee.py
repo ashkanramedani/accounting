@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 
 import models as dbm
 import schemas as sch
@@ -16,7 +16,8 @@ def get_employee(db: Session, employee_id):
 
 def get_all_employee(db: Session, page: sch.NonNegativeInt, limit: sch.PositiveInt, order: str = "desc", SortKey: str = None):
     try:
-        return record_order_by(db, dbm.User_form, page, limit, order, SortKey, is_employee=True)
+        query = db.query(dbm.User_form).filter(dbm.User_form.status != "deleted").options(joinedload(dbm.User_form.roles))
+        return record_order_by(db, dbm.User_form, page, limit, order, SortKey, query=query)
     except Exception as e:
         return Return_Exception(db, e)
 

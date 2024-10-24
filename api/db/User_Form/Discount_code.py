@@ -1,7 +1,7 @@
 import datetime
-from typing import Literal, List, Dict
 from random import choices
 from string import ascii_letters, digits
+from typing import List
 
 from sqlalchemy.orm import Session
 
@@ -9,13 +9,15 @@ import models as dbm
 import schemas as sch
 from db.Extra import *
 
+
 def apply_code_on_price(price: float, record: dbm.Discount_code_form):
-    discount_type , discount_amount = record.discount_type, record.discount_amount
+    discount_type, discount_amount = record.discount_type, record.discount_amount
     if discount_type == "percentage":
         discounted_price = price - (price * discount_amount / 100)
     else:
         discounted_price = price - discount_amount
     return 200, round(max(discounted_price, 0), 2)
+
 
 def generate_unique_discount_code(existing_codes):
     while True:

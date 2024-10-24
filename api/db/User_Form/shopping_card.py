@@ -1,5 +1,4 @@
 import datetime
-from random import randint
 from typing import List, Dict, Tuple
 
 import sqlalchemy.orm

@@ -1,6 +1,3 @@
-from sqlalchemy import BigInteger
-from sqlalchemy.orm import relationship
-
 from .Base_form import *
 
 
@@ -26,7 +23,6 @@ class Class_Room:  # NC: 008
 
 class Branch:  # NC: 008
     pass
-
 
 # class Reassign_Instructor_form(Base, Base_form):
 #     __tablename__ = "reassign_instructor"

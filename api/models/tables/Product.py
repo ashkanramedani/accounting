@@ -1,5 +1,3 @@
-from random import randint
-
 from sqlalchemy import Float, DATE
 from sqlalchemy.orm import relationship
 
