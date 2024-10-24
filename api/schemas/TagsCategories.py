@@ -4,6 +4,7 @@ from .Base import *
 # -------------------------------   Tag  -------------------------------
 class Tag(Base_form):
     tag_name: str
+    tag_cluster: str = "Main"
 
 
 class post_tag_schema(Tag):
@@ -25,6 +26,7 @@ class tag_response(update_tag_schema):
 # -------------------   Categories  -------------------
 class Category(Base_form):
     category_name: str
+    category_cluster: str = "Main"
 
 
 class post_category_schema(Category):

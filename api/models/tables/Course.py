@@ -30,7 +30,7 @@ class Course_form(Base, Base_form):
     categories = relationship("Category_form", secondary=CourseCategory, backref="course_category")
 
     created = relationship("User_form", foreign_keys=[created_fk_by])
-    language: Mapped["Language_form"] = relationship("Language_form", foreign_keys=[course_language])
+    language = relationship("Language_form", foreign_keys=[course_language])
     type: Mapped["Course_Type_form"] = relationship("Course_Type_form", foreign_keys=[course_type])
     sub_courses: Mapped[List["Sub_Course_form"]] = relationship("Sub_Course_form", back_populates='course')
     sessions: Mapped[List["Session_form"]] = relationship("Session_form", back_populates='course')
@@ -96,50 +96,6 @@ class Session_form(Base, Base_form):
     teacher = relationship("User_form", foreign_keys=[session_teacher_fk_id])
     course: Mapped["Course_form"] = relationship("Course_form", foreign_keys=[course_fk_id], back_populates="sessions")
     sub_course: Mapped["Sub_Course_form"] = relationship("Sub_Course_form", foreign_keys=[sub_course_fk_id], back_populates="sessions")
-
-    def __repr__(self):
-        return Remove_Base_Data(self.__dict__)
-
-
-class Tag_form(Base, Base_form):
-    __tablename__ = "tag"
-    __table_args__ = (UniqueConstraint('tag_name', 'tag_cluster'),)
-
-    tag_pk_id = create_Unique_ID()
-    tag_name = Column(String, index=True, nullable=False)
-    tag_cluster = Column(String, index=True, nullable=True, default="Main")
-    created_fk_by = FK_Column("User_form")
-
-    created = relationship("User_form", foreign_keys=[created_fk_by])
-
-    def __repr__(self):
-        return Remove_Base_Data(self.__dict__)
-
-
-class Category_form(Base, Base_form):
-    __tablename__ = "category"
-    __table_args__ = (UniqueConstraint('category_pk_id', 'category_name'),)
-
-    category_pk_id = create_Unique_ID()
-    category_name = Column(String, index=True, nullable=False, unique=True)
-    category_cluster = Column(String, index=True, nullable=True, default="Main")
-
-    created_fk_by = FK_Column("User_form")
-
-    created = relationship("User_form", foreign_keys=[created_fk_by])
-
-    def __repr__(self):
-        return Remove_Base_Data(self.__dict__)
-
-
-class Language_form(Base, Base_form):
-    __tablename__ = "language"
-
-    language_pk_id = create_Unique_ID()
-    language_name = Column(String, index=True, nullable=False, unique=True)
-    created_fk_by = FK_Column("User_form")
-
-    created = relationship("User_form", foreign_keys=[created_fk_by])
 
     def __repr__(self):
         return Remove_Base_Data(self.__dict__)
