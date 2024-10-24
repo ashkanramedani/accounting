@@ -1,12 +1,11 @@
 import sys
 from json import load
 from os.path import normpath, dirname, join
-from typing import Literal
 
 from loguru import logger as logger_obj
+from loguru._defaults import *
 from loguru._logger import Core as _Core
 from loguru._logger import Logger as _Logger
-from loguru._defaults import *
 from pytz import timezone
 
 from lib import requester
@@ -16,22 +15,40 @@ def Time_formatter(time_record):
     return time_record.astimezone(tz=timezone("Iran")).strftime("%d-%m-%Y %H:%M:%S %Z")
 
 
-def STDERR_FORMATTER(record):
+def MAIN_FORMATTER_STD(record):
     record["IR_time"] = Time_formatter(record["time"])
+    return " <y>M</y>  <g>{IR_time}</g> | <level>{level.no: <2}</level> | <c>{module}</c>:<c>{function}</c>:<c>{line}</c> | <level>{message}</level>\n"
 
-    Record = (" <y>{extra[name]: <6}</y> "
-              " <g>{IR_time}</g> |"
-              " <level>{level.no: <2}</level> |"
-              " <c>{module}</c>:<c>{function}</c>:<c>{line}</c> |"
-              " <level>{message}</level>\n")
 
-    if record["extra"]["name"] == "Access":
-        if request_body := record["extra"].get("request_body", None):
-            record["request_body"] = request_body
-            Record += " >>> <y>request_body:</y><w> {request_body}</w>\n"
-        if response_body := record["extra"].get("response_body", None):
-            record["response_body"] = response_body
-            Record += " >>> <y>response_body:</y><w> {response_body}</w>\n"
+def MAIN_FORMATTER_LOG(record):
+    record["IR_time"] = Time_formatter(record["time"])
+    return " {IR_time} | {level.no} | {module}:{function}:{line} | {message}\n"
+
+
+def ACCESS_FORMATTER_STR(record):
+    record["IR_time"] = Time_formatter(record["time"])
+    Record = " <y>A</y>  <g>{IR_time}</g> | <level>{level.no: <2}</level> | <c>{module}</c>:<c>{function}</c>:<c>{line}</c> | <level>{message}</level>\n"
+
+    if request_body := record["extra"].get("request_body", None):
+        record["request_body"] = request_body
+        Record += " >>> <y>request_body:</y><w> {request_body}</w>\n"
+    if response_body := record["extra"].get("response_body", None):
+        record["response_body"] = response_body
+        Record += " >>> <y>response_body:</y><w> {response_body}</w>\n"
+
+    return Record
+
+
+def ACCESS_FORMATTER_LOG(record):
+    record["IR_time"] = Time_formatter(record["time"])
+    Record = " {IR_time} | {level.no} | {module}:{function}:{line} | {message}\n"
+
+    if request_body := record["extra"].get("request_body", None):
+        record["request_body"] = request_body
+        Record += " >>> request_body: {request_body}\n"
+    if response_body := record["extra"].get("response_body", None):
+        record["response_body"] = response_body
+        Record += " >>> response_body: {response_body}`\n"
 
     return Record
 
@@ -40,22 +57,7 @@ OLD_LOG_PATH = "log/Log-{time:YYYY-MM}.jsonl"  # Deprecated
 BASE_LOG_FILE = f'{normpath(f"{dirname(__file__)}/../log")}'
 
 
-# filter = lambda record: record["level"].name != "INFO_access",
-# self.logger.level("INFO_access", no=25, icon="✔️")
-
-
-def FILE_FORMATTER(record):
-    record["extra"]["serialized"] = {
-        "timestamp": Time_formatter(record["time"]),
-        "message": record["message"],
-        "location": f'{record["module"]}:{record["function"]}:{record["line"]}',
-        "level": record["level"].name,
-        "file": record["file"].path,
-    }
-    return "{extra[serialized]}\n"
-
-
-def ACCESS_FORMATTER(record):
+def JSONL_FORMATTER(record):  # Deprecated
     record["extra"]["serialized"] = {
         "timestamp": Time_formatter(record["time"]),
         "message": record["message"],
@@ -114,8 +116,9 @@ class Main_Log(LOG):
             self.compression = self.Main_Log_config.pop("compression", None)
 
             if self.Main_Log_config.pop("std_out", False):
-                self.logger.add(sys.stdout, level=self.log_level, format=STDERR_FORMATTER)
-            self.logger.add(f"{BASE_LOG_FILE}/{self.Main_Log_config.pop('file', 'Main_TMP.jsonl')}", level=self.log_level, format=FILE_FORMATTER, rotation=self.rotation, compression=self.compression)
+                self.logger.add(sys.stdout, level=self.log_level, format=MAIN_FORMATTER_STD)
+
+            self.logger.add(f"{BASE_LOG_FILE}/{self.Main_Log_config.pop('file', 'Main_TMP.log')}", level=self.log_level, format=MAIN_FORMATTER_LOG, rotation=self.rotation, compression=self.compression)
             self._initialized = True
 
     def keep_log(self, msg, type_log, user_id, location):
@@ -175,9 +178,9 @@ class Access_Log(LOG):
             self.compression = self.Main_Log_config.pop("compression", None)
 
             if self.Main_Log_config.pop("std_out", False):
-                self.logger.add(sys.stdout, level=self.log_level, format=STDERR_FORMATTER)
+                self.logger.add(sys.stdout, level=self.log_level, format=ACCESS_FORMATTER_STR)
 
-            self.logger.add(f"{BASE_LOG_FILE}/{self.Main_Log_config.pop('file', 'Access_TMP.jsonl')}", level=self.log_level, format=ACCESS_FORMATTER, rotation=self.rotation, compression=self.compression)
+            self.logger.add(f"{BASE_LOG_FILE}/{self.Main_Log_config.pop('file', 'Access_TMP.log')}", level=self.log_level, format=ACCESS_FORMATTER_LOG, rotation=self.rotation, compression=self.compression)
             self._initialized = True
 
     def info(self, msg, depth=1, **Binds):
