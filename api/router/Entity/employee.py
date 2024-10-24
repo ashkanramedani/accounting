@@ -8,7 +8,7 @@ import db as dbf
 import schemas as sch
 from models import get_db
 
-router = APIRouter(prefix='/api/v1/employee', tags=['Employee'])
+router = APIRouter(prefix='/api/v1/employee', tags=['Employee'], include_in_schema=False)
 
 
 @router.post("/add", dependencies=[Depends(RateLimiter(times=1000, seconds=1))])
