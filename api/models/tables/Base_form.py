@@ -1,4 +1,6 @@
-from sqlalchemy import Boolean, Integer, String, DateTime, Table, UniqueConstraint, MetaData
+import functools
+
+from sqlalchemy import Boolean, String, DateTime, MetaData, Integer
 from sqlalchemy.dialects.postgresql import JSON
 from sqlalchemy.orm import declarative_base
 
@@ -27,35 +29,6 @@ class Base_form:
     status = Column(String, nullable=False, default="submitted", index=True)  # NC: 006
 
 
-# survey_questions = Table(
-#         "survey_questions",
-#         Base.metadata,
-#         Column("survey_fk_id", ForeignKey("survey.survey_pk_id")),
-#         Column("question_fk_id", ForeignKey("question.question_pk_id")),
-#         Column("deleted", Boolean, default=False, nullable=False),
-#         UniqueConstraint("survey_fk_id", "question_fk_id", "deleted"), )
-
-UserRole = Table(
-        "users_roles",
-        Base.metadata,
-        Column("user_fk_id", ForeignKey("user.user_pk_id")),
-        Column("role_fk_id", ForeignKey("role.role_pk_id")),
-        Column("deleted", Boolean, default=False, nullable=False),
-        UniqueConstraint("user_fk_id", "role_fk_id", "deleted"), )
-
-CourseTag = Table(
-        "course_tag",
-        Base.metadata,
-        Column("tag_fk_id", ForeignKey("tag.tag_pk_id")),
-        Column("course_fk_id", ForeignKey("course.course_pk_id")),
-        Column("deleted", Boolean, default=False, nullable=False),
-        UniqueConstraint("tag_fk_id", "course_fk_id", "deleted"), )
-
-CourseCategory = Table(
-        "course_category",
-        Base.metadata,
-        Column("category_fk_id", ForeignKey("category.category_pk_id")),
-        Column("course_fk_id", ForeignKey("course.course_pk_id")),
-        Column("deleted", Boolean, default=False, nullable=False),
-        UniqueConstraint("category_fk_id", "course_fk_id", "deleted"),
-)
+UserRole = association_table(Base, "User_form", "Role_form")
+CourseTag = association_table(Base, "Course_form", "Tag_form")
+CourseCategory = association_table(Base, "Course_form", "Category_form")

@@ -1,27 +1,18 @@
-from typing import Optional
-
 from sqlalchemy import Float
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
-from functools import partial
+
 from .Base_form import *
 
-association_table_base = partial(association_table, base=Base)
+users_posts_actor_association = association_table(Base, "User_form", "Posts_form", field="actor")
+users_posts_writer_association = association_table(Base, "User_form", "Posts_form", field="writer")
+users_posts_speaker_association = association_table(Base, "User_form", "Posts_form", field="speaker")
+users_posts_view_association = association_table(Base, "User_form", "Posts_form", field="view")
 
+PostTag = association_table(Base, "Tag_form", "Posts_form")
+PostCategory = association_table(Base, "Tag_form", "Category_form")
 
-def FKA_Column(table: str):
-    table_name = table.lower().replace("_form", "")
-    return Column(f'{table}_fk_id', GUID, ForeignKey(f'{table_name}.{table_name}_pk_id'), nullable=False, unique=False, index=True)
-
-
-users_departments_association = association_table_base("User_form", "Departments_form", "Educational_institutions_form")
-users_posts_actor_association = association_table_base("User_form", "Posts_form", field="actor")
-users_posts_writer_association = association_table_base("User_form", "Posts_form", field="writer")
-users_posts_speaker_association = association_table_base("User_form", "Posts_form", field="speaker")
-users_posts_view_association = association_table_base("User_form", "Posts_form", field="view")
-
-PostTag = association_table_base("Tag_form", "Posts_form")
-PostCategory = association_table_base("Tag_form", "Category_form")
+users_departments_association = association_table(Base, "User_form", "Departments_form", "Educational_institutions_form")
 
 
 class Departments_form(Base, Base_form):
