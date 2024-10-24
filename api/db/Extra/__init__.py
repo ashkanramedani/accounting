@@ -6,8 +6,6 @@ from .Test import TestRoute
 from .db_utils import *
 from .tools import *
 
-from uuid import UUID
-
 __all__ = [
     "IRAN_TIMEZONE",
     "Set_Status",
@@ -23,7 +21,8 @@ __all__ = [
     "NOT_AVAILABLE",
     "out_of_service",
     "Add_role",
-    "Add_tags_category",
+    "Add_tags",
+    "Add_categories",
     "Fix_time",
     "Fix_date",
     "Fix_datetime",

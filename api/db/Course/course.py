@@ -93,16 +93,15 @@ def post_course(db: Session, Form: sch.post_course_schema):
         db.commit()
         db.refresh(OBJ)
 
-        Warn = Add_tags_category(db, OBJ, OBJ.course_pk_id, tags, categories)
-
-        return 201, sch.Base_record_add(Warning=' | '.join(Warn), id=OBJ.course_pk_id)
+        TAG_WARN = Add_tags(db, OBJ, tags)
+        CAT_WARN = Add_categories(db, OBJ, categories)
+        return 201, sch.Base_record_add(Warning={"tag": TAG_WARN, "category": CAT_WARN}, id=OBJ.course_pk_id)
     except Exception as e:
         return Return_Exception(db, e)
 
 
 def delete_course(db: Session, course_id, deleted_by: UUID = None):
     try:
-
         Course = db.query(dbm.Course_form).filter_by(course_pk_id=course_id).filter(dbm.Course_form.status != "deleted").first()
         if not Course:
             return 400, "Course Not Found"
@@ -139,9 +138,12 @@ def update_course(db: Session, Form: sch.update_course_schema):
 
         course.update(data, synchronize_session=False)
         db.commit()
-        Errors = Add_tags_category(db, course.first(), Form.course_pk_id, tags, categories)
-        if Errors:
-            return 200, "Course updated but there was an error in the tags or categories: " + ", ".join(Errors)
+
+        TAG_WARN = Add_tags(db, course.first(), tags)
+        CAT_WARN = Add_categories(db, course.first(), categories)
+
+        if TAG_WARN or CAT_WARN:
+            return 200, "Course updated but there was an error in the tags or categories: " + ", ".join([TAG_WARN, CAT_WARN])
         return 200, "Record Updated"
     except Exception as e:
         return Return_Exception(db, e)

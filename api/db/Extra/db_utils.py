@@ -11,7 +11,6 @@ import models as dbm
 import schemas as sch
 from lib import logger
 
-
 IRAN_TIMEZONE = timezone(offset=timedelta(hours=3, minutes=30))
 
 # key format
@@ -51,37 +50,44 @@ Tables = {
 }
 
 
-def Add_tags_category(db: Session, course, course_pk_id: UUID, tags: List[sch.Update_Relation], categories: List[sch.Update_Relation]):
-    Errors = []
-    all_tags = [TAG.tag_pk_id for TAG in db.query(dbm.Tag_form).filter(dbm.Tag_form.status != "deleted").all()]
-    all_categories = [CTG.category_pk_id for CTG in db.query(dbm.Category_form).filter(dbm.Category_form.status != "deleted").all()]
-    for tag in tags:
-        if existing_tag := tag.old_id:
-            tag_OBJ = db.query(dbm.CourseTag).filter_by(course_fk_id=course_pk_id, tag_fk_id=existing_tag).filter(dbm.CourseTag.status != "deleted")
-            if not tag_OBJ.first():
-                Errors.append(f'Course does not have this tag {existing_tag}')
-            else:
-                tag_OBJ.update({"deleted": True}, synchronize_session=False)
-        if new_tag := tag.new_id:
-            if new_tag not in all_tags:
-                Errors.append(f'this tag does not exist {new_tag}')
-            else:
-                course.tags.append(db.query(dbm.Tag_form).filter_by(tag_pk_id=new_tag).filter(dbm.Tag_form.status != "deleted").first())
+def Add_tags(db: Session, course, tags: List[sch.Update_Relation]):
+    try:
+        tag_ids = [tag.new_id for tag in tags] + [tag.old_id for tag in tags]
 
-    for category in categories:
-        if existing_category := category.old_id:
-            category_OBJ = db.query(dbm.CourseCategory).filter_by(course_fk_id=course_pk_id, category_fk_id=existing_category).filter(dbm.CourseCategory.status != "deleted")
-            if not category_OBJ.first():
-                Errors.append(f'Course does not have this category {existing_category}')
-            else:
-                category_OBJ.update({"deleted": True}, synchronize_session=False)
-        if new_category := category.new_id:
-            if new_category not in all_categories:
-                Errors.append(f'this category does not exist {new_category}')
-            else:
-                course.categories.append(db.query(dbm.Category_form).filter_by(category_pk_id=new_category).filter(dbm.Category_form.status != "deleted").first())
-    db.commit()
-    return Errors
+        all_tags = db.query(dbm.Tag_form).filter(dbm.Tag_form.status != "deleted", dbm.Tag_form.tag_pk_id.in_(tag_ids)).all()
+
+        new_tag_ids, old_tag_ids = {tag.new_id for tag in tags}, {tag.old_id for tag in tags}
+
+        current_tags = set(course.tags)
+
+        for tag in all_tags:
+            if tag.tag_pk_id in new_tag_ids and tag not in current_tags:
+                course.tags.append(tag)
+            elif tag.tag_pk_id in old_tag_ids and tag in current_tags:
+                course.tags.remove(tag)
+        return None
+    except Exception as e:
+        return f'{e.__class__.__name__}: {e.__repr__()}'
+
+
+def Add_categories(db: Session, course, categories: List[sch.Update_Relation]) -> str:
+    try:
+        category_ids: List[UUID] = [category.new_id for category in categories] + [category.old_id for category in categories]
+
+        all_categories: List[dbm.Category_form] = db.query(dbm.Category_form).filter(dbm.Category_form.status != "deleted", dbm.Category_form.category_pk_id.in_(category_ids)).all()
+
+        new_category_ids, old_category_ids = {category.new_id for category in categories}, {category.old_id for category in categories}
+
+        current_categories = set(course.categories)
+
+        for category in all_categories:
+            if category.category_pk_id in new_category_ids and category not in current_categories:
+                course.categories.append(category)
+            elif category.category_pk_id in old_category_ids and category in current_categories:
+                course.categories.remove(category)
+        return ""
+    except Exception as e:
+        return f'{e.__class__.__name__}: {e.__repr__()}'
 
 
 def Add_role(db, roles: List[sch.Update_Relation | Dict], UserOBJ, UserID):
